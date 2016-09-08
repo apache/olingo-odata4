@@ -89,6 +89,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   private static final String NS_METADATA = Constants.NS_METADATA;
   private static final String DATA = Constants.PREFIX_DATASERVICES;
   private static final String NS_DATA = Constants.NS_DATASERVICES;
+  
+  private Set<String> parentEntities = new HashSet<String>(); 
 
   @Override
   public SerializerResult serviceDocument(final ServiceMetadata metadata, final String serviceRoot)
@@ -418,85 +420,97 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final XMLStreamWriter writer, final boolean top, final boolean writeOnlyRef)
       throws XMLStreamException, SerializerException {
 
-    if (writeOnlyRef) {
+    boolean cyclic = false;
+    if (expand != null && !parentEntities.add(entity.getId().toASCIIString())) {
+      //cycle detected, use an entity reference
+      cyclic = true;
+    }  
+      
+    if (cyclic || writeOnlyRef) {
       writeReference(entity, contextURL, writer, top);
       return;
     }
-    writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ENTRY, NS_ATOM);
-    if (top) {
-      writer.writeNamespace(ATOM, NS_ATOM);
-      writer.writeNamespace(METADATA, NS_METADATA);
-      writer.writeNamespace(DATA, NS_DATA);
-
-      if (contextURL != null) { // top-level entity
-        writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
-            ContextURLBuilder.create(contextURL).toASCIIString());
-        writeMetadataETag(metadata, writer);
+    try {
+      writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ENTRY, NS_ATOM);
+      if (top) {
+        writer.writeNamespace(ATOM, NS_ATOM);
+        writer.writeNamespace(METADATA, NS_METADATA);
+        writer.writeNamespace(DATA, NS_DATA);
+  
+        if (contextURL != null) { // top-level entity
+          writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
+              ContextURLBuilder.create(contextURL).toASCIIString());
+          writeMetadataETag(metadata, writer);
+        }
+      }
+      if (entity.getETag() != null) {
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATOM_ATTR_ETAG, entity.getETag());
+      }
+  
+      if (entity.getId() != null) {
+        writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_ID);
+        writer.writeCharacters(entity.getId().toASCIIString());
+        writer.writeEndElement();
+      }
+  
+      writerAuthorInfo(entity.getTitle(), writer);
+  
+      if (entity.getId() != null) {
+        writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_LINK);
+        writer.writeAttribute(Constants.ATTR_REL, Constants.EDIT_LINK_REL);
+        writer.writeAttribute(Constants.ATTR_HREF, entity.getId().toASCIIString());
+        writer.writeEndElement();
+      }
+  
+      if (entityType.hasStream()) {
+        writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
+        writer.writeAttribute(Constants.ATTR_TYPE, entity.getMediaContentType());
+        if (entity.getMediaContentSource() != null) {
+          writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource().toString());
+        } else {
+          String id = entity.getId().toASCIIString();
+          writer.writeAttribute(Constants.ATOM_ATTR_SRC,
+              id + (id.endsWith("/") ? "" : "/") + "$value");
+        }
+        writer.writeEndElement();
+      }
+  
+      // write media links
+      for (Link link : entity.getMediaEditLinks()) {
+        writeLink(writer, link);
+      }
+  
+      EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
+      writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, xml10InvalidCharReplacement, writer);
+  
+      writer.writeStartElement(ATOM, Constants.ATOM_ELEM_CATEGORY, NS_ATOM);
+      writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, Constants.NS_SCHEME);
+      writer.writeAttribute(Constants.ATOM_ATTR_TERM,
+          "#" + resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
+      writer.writeEndElement();
+  
+      // In the case media, content is sibiling
+      if (!entityType.hasStream()) {
+        writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
+        writer.writeAttribute(Constants.ATTR_TYPE, "application/xml");
+      }
+  
+      writer.writeStartElement(METADATA, Constants.PROPERTIES, NS_METADATA);
+      writeProperties(metadata, resolvedType, entity.getProperties(), select, xml10InvalidCharReplacement, writer);
+      writer.writeEndElement(); // properties
+  
+      if (!entityType.hasStream()) { // content
+        writer.writeEndElement();
+      }
+      
+      writeOperations(entity.getOperations(), writer);
+      
+      writer.writeEndElement(); // entry
+    } finally {
+      if (!cyclic && expand != null) {
+          parentEntities.remove(entity.getId().toASCIIString());
       }
     }
-    if (entity.getETag() != null) {
-      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATOM_ATTR_ETAG, entity.getETag());
-    }
-
-    if (entity.getId() != null) {
-      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_ID);
-      writer.writeCharacters(entity.getId().toASCIIString());
-      writer.writeEndElement();
-    }
-
-    writerAuthorInfo(entity.getTitle(), writer);
-
-    if (entity.getId() != null) {
-      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_LINK);
-      writer.writeAttribute(Constants.ATTR_REL, Constants.EDIT_LINK_REL);
-      writer.writeAttribute(Constants.ATTR_HREF, entity.getId().toASCIIString());
-      writer.writeEndElement();
-    }
-
-    if (entityType.hasStream()) {
-      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
-      writer.writeAttribute(Constants.ATTR_TYPE, entity.getMediaContentType());
-      if (entity.getMediaContentSource() != null) {
-        writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource().toString());
-      } else {
-        String id = entity.getId().toASCIIString();
-        writer.writeAttribute(Constants.ATOM_ATTR_SRC,
-            id + (id.endsWith("/") ? "" : "/") + "$value");
-      }
-      writer.writeEndElement();
-    }
-
-    // write media links
-    for (Link link : entity.getMediaEditLinks()) {
-      writeLink(writer, link);
-    }
-
-    EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
-    writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, xml10InvalidCharReplacement, writer);
-
-    writer.writeStartElement(ATOM, Constants.ATOM_ELEM_CATEGORY, NS_ATOM);
-    writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, Constants.NS_SCHEME);
-    writer.writeAttribute(Constants.ATOM_ATTR_TERM,
-        "#" + resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
-    writer.writeEndElement();
-
-    // In the case media, content is sibiling
-    if (!entityType.hasStream()) {
-      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
-      writer.writeAttribute(Constants.ATTR_TYPE, "application/xml");
-    }
-
-    writer.writeStartElement(METADATA, Constants.PROPERTIES, NS_METADATA);
-    writeProperties(metadata, resolvedType, entity.getProperties(), select, xml10InvalidCharReplacement, writer);
-    writer.writeEndElement(); // properties
-
-    if (!entityType.hasStream()) { // content
-      writer.writeEndElement();
-    }
-    
-    writeOperations(entity.getOperations(), writer);
-    
-    writer.writeEndElement(); // entry
   }
 
   private void writeOperations(final List<Operation> operations,

@@ -1234,6 +1234,28 @@ public class ODataJsonSerializerTest {
         + "\"PropertyTimeOfDay\":\"03:26:05\"}}",
         resultString);
   }
+  
+  @Test
+  public void expandRef() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(3);
+    ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne");
+    Mockito.when(mockExpandItem.isRef()).thenReturn(true);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        mockExpandItem));
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
+            + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+            + "\"PropertyInt16\":32767,"
+            + "\"PropertyString\":\"Test String4\","
+            + "\"NavPropertyETAllPrimOne\":{\"@odata.id\":\"ESAllPrim(32767)\"}}",
+        resultString);
+  }
 
   @Test
   public void expandSelect() throws Exception {

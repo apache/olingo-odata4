@@ -84,6 +84,8 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   private final boolean isIEEE754Compatible;
   private final boolean isODataMetadataNone;
   private final boolean isODataMetadataFull;
+  
+  private Set<String> parentEntities = new HashSet<String>(); 
 
   public ODataJsonSerializer(final ContentType contentType) {
     isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
@@ -315,54 +317,66 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final SelectOption select, final boolean onlyReference, final JsonGenerator json)
       throws IOException, SerializerException {
     json.writeStartObject();
-    if (!isODataMetadataNone) {
-      // top-level entity
-      if (contextURL != null) {
-        writeContextURL(contextURL, json);
-        writeMetadataETag(metadata, json);
-      }
-      if (entity.getETag() != null) {
-        json.writeStringField(Constants.JSON_ETAG, entity.getETag());
-      }
-      if (entityType.hasStream()) {
-        if (entity.getMediaETag() != null) {
-          json.writeStringField(Constants.JSON_MEDIA_ETAG, entity.getMediaETag());
-        }
-        if (entity.getMediaContentType() != null) {
-          json.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entity.getMediaContentType());
-        }
-        if (entity.getMediaContentSource() != null) {
-          json.writeStringField(Constants.JSON_MEDIA_READ_LINK, entity.getMediaContentSource().toString());
-        }
-        if (entity.getMediaEditLinks() != null && !entity.getMediaEditLinks().isEmpty()) {
-          json.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, entity.getMediaEditLinks().get(0).getHref());
-        }
-      }
+    boolean cyclic = false;
+    if (expand != null && !parentEntities.add(getEntityId(entity))) {
+        //cycle detected, use an entity reference
+        cyclic = true;
     }
-    if (onlyReference) {
-      json.writeStringField(Constants.JSON_ID, getEntityId(entity));
-    } else {
-      final EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
-      if ((!isODataMetadataNone && !resolvedType.equals(entityType)) || isODataMetadataFull) {
-        json.writeStringField(Constants.JSON_TYPE, "#" + entity.getType());
+    try {
+      if (!isODataMetadataNone) {
+        // top-level entity
+        if (contextURL != null) {
+          writeContextURL(contextURL, json);
+          writeMetadataETag(metadata, json);
+        }
+        if (entity.getETag() != null) {
+          json.writeStringField(Constants.JSON_ETAG, entity.getETag());
+        }
+        if (entityType.hasStream()) {
+          if (entity.getMediaETag() != null) {
+            json.writeStringField(Constants.JSON_MEDIA_ETAG, entity.getMediaETag());
+          }
+          if (entity.getMediaContentType() != null) {
+            json.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entity.getMediaContentType());
+          }
+          if (entity.getMediaContentSource() != null) {
+            json.writeStringField(Constants.JSON_MEDIA_READ_LINK, entity.getMediaContentSource().toString());
+          }
+          if (entity.getMediaEditLinks() != null && !entity.getMediaEditLinks().isEmpty()) {
+            json.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, entity.getMediaEditLinks().get(0).getHref());
+          }
+        }
       }
-      if ((!isODataMetadataNone && !areKeyPredicateNamesSelected(select, resolvedType)) || isODataMetadataFull) {
+      if (cyclic || onlyReference) {
         json.writeStringField(Constants.JSON_ID, getEntityId(entity));
-      }
-      
-      if (isODataMetadataFull) {
-        if (entity.getSelfLink() != null) {
-          json.writeStringField(Constants.JSON_READ_LINK, entity.getSelfLink().getHref());
+      } else {
+        final EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
+        if ((!isODataMetadataNone && !resolvedType.equals(entityType)) || isODataMetadataFull) {
+          json.writeStringField(Constants.JSON_TYPE, "#" + entity.getType());
         }
-        if (entity.getEditLink() != null) {
-          json.writeStringField(Constants.JSON_EDIT_LINK, entity.getEditLink().getHref());
+        if ((!isODataMetadataNone && !areKeyPredicateNamesSelected(select, resolvedType)) || isODataMetadataFull) {
+          json.writeStringField(Constants.JSON_ID, getEntityId(entity));
         }
+        
+        if (isODataMetadataFull) {
+          if (entity.getSelfLink() != null) {
+            json.writeStringField(Constants.JSON_READ_LINK, entity.getSelfLink().getHref());
+          }
+          if (entity.getEditLink() != null) {
+            json.writeStringField(Constants.JSON_EDIT_LINK, entity.getEditLink().getHref());
+          }
+        }
+        
+        writeProperties(metadata, resolvedType, entity.getProperties(), select, json);
+        writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, json);
+        writeOperations(entity.getOperations(), json);
+        
       }
-      
-      writeProperties(metadata, resolvedType, entity.getProperties(), select, json);
-      writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, json);
-      writeOperations(entity.getOperations(), json);
       json.writeEndObject();
+    } finally {
+      if (expand != null && !cyclic) {
+        parentEntities.remove(getEntityId(entity));
+      }
     }
   }
 
