@@ -927,4 +927,20 @@ public class PropertyProvider {
       .setName("CollPropertyDefString")
       .setType(TypeDefinitionProvider.nameTDString)
       .setCollection(true);
+
+  public static final CsdlProperty propertyId = new CsdlProperty()
+    .setName("id")
+    .setType(nameInt32)
+    .setNullable(false);
+  
+  public static final CsdlProperty propertyName = new CsdlProperty()
+    .setName("name")
+    .setType(nameString)
+    .setNullable(true);  
+  
+  public static final CsdlNavigationProperty navPropertyFriends = new CsdlNavigationProperty()
+    .setName("friends")
+    .setType(EntityTypeProvider.nameETPeople)
+    .setNullable(true)
+    .setCollection(true);
 }

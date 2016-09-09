@@ -391,7 +391,9 @@ public class ODataJsonSerializerTest {
       }
       @Override
       public Entity next() {
-        return new Entity();
+        Entity e =  new Entity();
+        e.setId(URI.create("id"));
+        return e;
       }
     };
     CountOption countOption = Mockito.mock(CountOption.class);
@@ -421,7 +423,7 @@ public class ODataJsonSerializerTest {
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
     result.write(bout);
     final String resultString = new String(bout.toByteArray(), "UTF-8");
-    Assert.assertEquals(resultString, "ERROR: MISSING_PROPERTY");
+    Assert.assertEquals("ERROR: MISSING_PROPERTY", resultString);
   }
 
 
@@ -540,6 +542,7 @@ public class ODataJsonSerializerTest {
   public void nullCollectionButInDataMap() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
     Entity entity = new Entity();
+    entity.setId(URI.create("id"));
     entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
     entity.addProperty(new Property(null, "CollPropertyEnumString", ValueType.COLLECTION_ENUM, null));
     entity.addProperty(new Property(null, "PropertyDefString", ValueType.PRIMITIVE, "Test"));
@@ -572,6 +575,7 @@ public class ODataJsonSerializerTest {
   public void nullComplexValueButInDataMapAndNullCollectionsNotInDataMap() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
     Entity entity = new Entity();
+    entity.setId(URI.create("id"));
     entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
     entity.addProperty(new Property(null, "PropertyDefString", ValueType.PRIMITIVE, "Test"));
     entity.addProperty(new Property(null, "PropertyCompMixedEnumDef", ValueType.COMPLEX, null));
@@ -594,6 +598,7 @@ public class ODataJsonSerializerTest {
   public void enumAndTypeDefinition() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
     Entity entity = new Entity();
+    entity.setId(URI.create("id"));
     entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
     entity.addProperty(new Property(null, "CollPropertyEnumString", ValueType.COLLECTION_ENUM,
         Arrays.asList(2, 4, 6)));
@@ -1903,4 +1908,153 @@ public class ODataJsonSerializerTest {
     }
     Assert.assertEquals(3, count);
   }
+  
+   @Test
+   public void expandCycle() throws Exception {
+     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESPeople");
+     final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+     ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "friends");
+     LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
+     Mockito.when(levels.isMax()).thenReturn(Boolean.TRUE);
+     Mockito.when(mockExpandItem.getLevelsOption()).thenReturn(levels);
+     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+         mockExpandItem));
+     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+         EntitySerializerOptions.with()
+             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+             .expand(expand)
+             .build()).getContent();
+     final String resultString = IOUtils.toString(result);
+     String expected = "{" + 
+         "\"@odata.context\":\"$metadata#ESPeople/$entity\"," + 
+         "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+         "\"id\":1," + 
+         "\"name\":\"B\"," + 
+         "\"friends\":[" + 
+               "{" + 
+                  "\"id\":0," + 
+                  "\"name\":\"A\"," + 
+                  "\"friends\":[" + 
+                     "{" + 
+                        "\"@odata.id\":\"ESPeople(1)\"" + 
+                     "}," + 
+                     "{" + 
+                        "\"id\":2," + 
+                        "\"name\":\"C\"," + 
+                        "\"friends\":[" + 
+                           "{" + 
+                              "\"@odata.id\":\"ESPeople(0)\"" + 
+                           "}," + 
+                           "{" + 
+                              "\"id\":3," + 
+                              "\"name\":\"D\"," + 
+                              "\"friends\":[" + 
+                              "]" + 
+                           "}" + 
+                        "]" + 
+                     "}" + 
+                  "]" + 
+               "}," + 
+               "{" + 
+                  "\"id\":2," + 
+                  "\"name\":\"C\"," + 
+                  "\"friends\":[" + 
+                     "{" + 
+                        "\"id\":0," + 
+                        "\"name\":\"A\"," + 
+                        "\"friends\":[" + 
+                           "{" + 
+                              "\"@odata.id\":\"ESPeople(1)\"" + 
+                           "}," + 
+                           "{" + 
+                              "\"@odata.id\":\"ESPeople(2)\"" + 
+                           "}" + 
+                        "]" + 
+                     "}," + 
+                     "{" + 
+                        "\"id\":3," + 
+                        "\"name\":\"D\"," + 
+                        "\"friends\":[" + 
+                        "]" + 
+                     "}" + 
+                  "]" + 
+               "}" + 
+            "]" + 
+         "}";
+     Assert.assertEquals(expected, resultString);
+   }
+   
+   @Test
+   public void expandCycleWith3Level() throws Exception {
+     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESPeople");
+     final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+     ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "friends");
+     LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
+     Mockito.when(levels.isMax()).thenReturn(Boolean.FALSE);
+     Mockito.when(levels.getValue()).thenReturn(3);
+     Mockito.when(mockExpandItem.getLevelsOption()).thenReturn(levels);
+     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+         mockExpandItem));
+     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+         EntitySerializerOptions.with()
+             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+             .expand(expand)
+             .build()).getContent();
+     final String resultString = IOUtils.toString(result);
+     String expected = "{" + 
+       "\"@odata.context\":\"$metadata#ESPeople/$entity\"," + 
+       "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+       "\"id\":1," + 
+       "\"name\":\"B\"," + 
+       "\"friends\":[" + 
+         "{" + 
+           "\"id\":0," + 
+           "\"name\":\"A\"," + 
+           "\"friends\":[" + 
+             "{" + 
+               "\"@odata.id\":\"ESPeople(1)\"" + 
+             "}," + 
+             "{" + 
+               "\"id\":2," + 
+               "\"name\":\"C\"," + 
+               "\"friends\":[" + 
+                 "{" + 
+                   "\"@odata.id\":\"ESPeople(0)\"" + 
+                 "}," + 
+                 "{" + 
+                   "\"id\":3," + 
+                   "\"name\":\"D\"" + 
+                 "}" + 
+               "]" + 
+             "}" + 
+           "]" + 
+         "}," + 
+         "{" + 
+           "\"id\":2," + 
+           "\"name\":\"C\"," + 
+           "\"friends\":[" + 
+             "{" + 
+               "\"id\":0," + 
+               "\"name\":\"A\"," + 
+               "\"friends\":[" + 
+                 "{" + 
+                   "\"@odata.id\":\"ESPeople(1)\"" + 
+                 "}," + 
+                 "{" + 
+                   "\"@odata.id\":\"ESPeople(2)\"" + 
+                 "}" + 
+               "]" + 
+             "}," + 
+             "{" + 
+               "\"id\":3," + 
+               "\"name\":\"D\"," + 
+               "\"friends\":[" + 
+               "]" + 
+             "}" + 
+           "]" + 
+         "}" + 
+       "]" + 
+       "}"; 
+     Assert.assertEquals(expected, resultString);
+   }   
 }

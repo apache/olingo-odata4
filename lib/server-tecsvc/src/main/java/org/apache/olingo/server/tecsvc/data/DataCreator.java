@@ -87,11 +87,13 @@ public class DataCreator {
     data.put("ESMixEnumDefCollComp", createESMixEnumDefCollComp(edm, odata));
     data.put("ESStream", createESStream(edm, odata));
     data.put("ESWithStream", createESWithStream(edm, odata));
+    data.put("ESPeople", createESPeople(edm, odata));
 
     linkESTwoPrim(data);
     linkESAllPrim(data);
     linkESKeyNav(data);
     linkESTwoKeyNav(data);
+    linkESPeople(data);
   }
 
   private EntityCollection createESMixEnumDefCollComp(Edm edm, OData odata) {
@@ -1101,32 +1103,56 @@ public class DataCreator {
     return entityCollection;
   }
 
-  private EntityCollection createESWithStream(final Edm edm, final OData odata) {
-    EntityCollection entityCollection = new EntityCollection();
+  private EntityCollection createESPeople(final Edm edm, final OData odata) {
+      EntityCollection entityCollection = new EntityCollection();
 
-    Link readLink = new Link();
-    readLink.setRel(Constants.NS_MEDIA_READ_LINK_REL);
-    readLink.setHref("readLink");
-    
-    entityCollection.getEntities().add(new Entity()
-        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
-        .addProperty(new Property(null, "PropertyStream", ValueType.PRIMITIVE, readLink)));
+      entityCollection.getEntities().add(new Entity()
+          .addProperty(createPrimitive("id", 0))
+          .addProperty(createPrimitive("name", "A")));
 
-    Link editLink = new Link();
-    editLink.setRel(Constants.NS_MEDIA_EDIT_LINK_REL);
-    editLink.setHref("http://mediaserver:1234/editLink");
-    editLink.setMediaETag("eTag");
-    editLink.setType("image/jpeg");
+      entityCollection.getEntities().add(new Entity()
+          .addProperty(createPrimitive("id", 1))
+          .addProperty(createPrimitive("name", "B")));
 
-    entityCollection.getEntities().add(new Entity()
-        .addProperty(createPrimitive("PropertyInt16", (short) 7))
-        .addProperty(new Property(null, "PropertyStream", ValueType.PRIMITIVE, editLink)));
+      entityCollection.getEntities().add(new Entity()
+          .addProperty(createPrimitive("id", 2))
+          .addProperty(createPrimitive("name", "C")));
 
-    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETStream));
-    createEntityId(edm, odata, "ESWithStream", entityCollection);
-    createOperations("ESWithStream", entityCollection, EntityTypeProvider.nameETStream);
-    return entityCollection;
+      entityCollection.getEntities().add(new Entity()
+          .addProperty(createPrimitive("id", 3))
+          .addProperty(createPrimitive("name", "D")));
+
+      setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETPeople));
+      createEntityId(edm, odata, "ESPeople", entityCollection);
+      return entityCollection;
   }
+  
+  private EntityCollection createESWithStream(final Edm edm, final OData odata) {
+      EntityCollection entityCollection = new EntityCollection();
+
+      Link readLink = new Link();
+      readLink.setRel(Constants.NS_MEDIA_READ_LINK_REL);
+      readLink.setHref("readLink");
+      
+      entityCollection.getEntities().add(new Entity()
+          .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+          .addProperty(new Property(null, "PropertyStream", ValueType.PRIMITIVE, readLink)));
+
+      Link editLink = new Link();
+      editLink.setRel(Constants.NS_MEDIA_EDIT_LINK_REL);
+      editLink.setHref("http://mediaserver:1234/editLink");
+      editLink.setMediaETag("eTag");
+      editLink.setType("image/jpeg");
+
+      entityCollection.getEntities().add(new Entity()
+          .addProperty(createPrimitive("PropertyInt16", (short) 7))
+          .addProperty(new Property(null, "PropertyStream", ValueType.PRIMITIVE, editLink)));
+
+      setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETStream));
+      createEntityId(edm, odata, "ESWithStream", entityCollection);
+      createOperations("ESWithStream", entityCollection, EntityTypeProvider.nameETStream);
+      return entityCollection;
+    }  
   
   @SuppressWarnings("unchecked")
   private Property createCollPropertyComp() {
@@ -1259,6 +1285,18 @@ public class DataCreator {
         + "    <circle cx=\"50\" cy=\"50\" r=\"42\"/>\n" + "  </g>\n" + "</svg>\n").getBytes(Charset.forName("UTF-8"));
   }
 
+  private void linkESPeople(final Map<String, EntityCollection> data) {
+      final EntityCollection entityCollection = data.get("ESPeople");
+      final List<Entity> targetEntities = data.get("ESPeople").getEntities();
+
+      setLinks(entityCollection.getEntities().get(0), "friends", targetEntities.get(1),
+          targetEntities.get(2));
+      setLinks(entityCollection.getEntities().get(1), "friends", targetEntities.get(0),
+              targetEntities.get(2));
+      setLinks(entityCollection.getEntities().get(2), "friends", targetEntities.get(0),
+              targetEntities.get(3));      
+  }
+  
   private void linkESTwoPrim(final Map<String, EntityCollection> data) {
     final EntityCollection entityCollection = data.get("ESTwoPrim");
     final List<Entity> targetEntities = data.get("ESAllPrim").getEntities();

@@ -29,9 +29,9 @@ import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
-import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
@@ -59,6 +59,7 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
+import org.apache.olingo.server.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
@@ -724,6 +725,7 @@ public class ODataXmlSerializerTest {
   public void enumAndTypeDefinition() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");
     Entity entity = new Entity();
+    entity.setId(URI.create("id"));
     entity.addProperty(new Property(null, "PropertyEnumString", ValueType.ENUM, 6));
     entity.addProperty(new Property(null, "CollPropertyEnumString", ValueType.COLLECTION_ENUM,
         Arrays.asList(2, 4, 6)));
@@ -748,9 +750,11 @@ public class ODataXmlSerializerTest {
         + "<a:entry xmlns:a=\"" + Constants.NS_ATOM + "\""
         + "  xmlns:m=\"" + Constants.NS_METADATA + "\" xmlns:d=\"" + Constants.NS_DATASERVICES + "\""
         + " m:context=\"$metadata#ESMixEnumDefCollComp/$entity\" m:metadata-etag=\"metadataETag\">\n"
+        + "  <a:id>id</a:id>"
         + "  <a:title /> <a:summary />\n"
         + "  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis)) + "</a:updated>\n"
         + "  <a:author> <a:name /> </a:author>\n"
+        + "  <a:link rel=\"edit\" href=\"id\" />"
         + "  <a:category scheme=\"" + Constants.NS_SCHEME + "\"\n"
         + "    term=\"#olingo.odata.test1.ETMixEnumDefCollComp\" />\n"
         + "  <a:content type=\"application/xml\">\n"
@@ -2305,7 +2309,409 @@ public class ODataXmlSerializerTest {
         "</a:feed>";
     checkXMLEqual(expected, resultString);
   }
+  
+  @Test
+  public void expandCycle() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESPeople");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "friends");
+    LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
+    Mockito.when(levels.isMax()).thenReturn(Boolean.TRUE);
+    Mockito.when(mockExpandItem.getLevelsOption()).thenReturn(levels);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        mockExpandItem));
+    long currentTimeMillis = System.currentTimeMillis();
+    SerializerResult result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build());
+    final String resultString = IOUtils.toString(result.getContent());
 
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+            "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
+            + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+            + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+            + "m:context=\"$metadata#ESPeople/$entity\" m:metadata-etag=\"metadataETag\">\n" + 
+            "   <a:id>ESPeople(1)</a:id>\n" + 
+            "   <a:title />\n" + 
+            "   <a:summary />\n" + 
+            "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+            "   <a:author>\n" + 
+            "      <a:name />\n" + 
+            "   </a:author>\n" + 
+            "   <a:link rel=\"edit\" href=\"ESPeople(1)\" />\n" + 
+            "   <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(1)/friends\">\n" + 
+            "      <m:inline>\n" + 
+            "         <a:feed>\n" + 
+            "            <a:entry>\n" + 
+            "               <a:id>ESPeople(0)</a:id>\n" + 
+            "               <a:title />\n" + 
+            "               <a:summary />\n" + 
+            "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+            "               <a:author>\n" + 
+            "                  <a:name />\n" + 
+            "               </a:author>\n" + 
+            "               <a:link rel=\"edit\" href=\"ESPeople(0)\" />\n" + 
+            "               <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(0)/friends\">\n" + 
+            "                  <m:inline>\n" + 
+            "                     <a:feed>\n" + 
+            "                        <m:ref id=\"ESPeople(1)\" />\n" + 
+            "                        <a:entry>\n" + 
+            "                           <a:id>ESPeople(2)</a:id>\n" + 
+            "                           <a:title />\n" + 
+            "                           <a:summary />\n" + 
+            "                     <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+            "                           <a:author>\n" + 
+            "                              <a:name />\n" + 
+            "                           </a:author>\n" + 
+            "                           <a:link rel=\"edit\" href=\"ESPeople(2)\" />\n" + 
+            "                           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(2)/friends\">\n" + 
+            "                              <m:inline>\n" + 
+            "                                 <a:feed>\n" + 
+            "                                    <m:ref id=\"ESPeople(0)\" />\n" + 
+            "                                    <a:entry>\n" + 
+            "                                       <a:id>ESPeople(3)</a:id>\n" + 
+            "                                       <a:title />\n" + 
+            "                                       <a:summary />\n" + 
+            "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+            "                                       <a:author>\n" + 
+            "                                          <a:name />\n" + 
+            "                                       </a:author>\n" + 
+            "                                       <a:link rel=\"edit\" href=\"ESPeople(3)\" />\n" + 
+            "                                     <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(3)/friends\">\n" + 
+            "                                          <m:inline>\n" + 
+            "                                             <a:feed />\n" + 
+            "                                          </m:inline>\n" + 
+            "                                       </a:link>\n" + 
+            "                                       <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+            + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+            "                                       <a:content type=\"application/xml\">\n" + 
+            "                                          <m:properties>\n" + 
+            "                                             <d:id m:type=\"Int32\">3</d:id>\n" + 
+            "                                             <d:name>D</d:name>\n" + 
+            "                                          </m:properties>\n" + 
+            "                                       </a:content>\n" + 
+            "                                    </a:entry>\n" + 
+            "                                 </a:feed>\n" + 
+            "                              </m:inline>\n" + 
+            "                           </a:link>\n" + 
+            "                           <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+            + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+            "                           <a:content type=\"application/xml\">\n" + 
+            "                              <m:properties>\n" + 
+            "                                 <d:id m:type=\"Int32\">2</d:id>\n" + 
+            "                                 <d:name>C</d:name>\n" + 
+            "                              </m:properties>\n" + 
+            "                           </a:content>\n" + 
+            "                        </a:entry>\n" + 
+            "                     </a:feed>\n" + 
+            "                  </m:inline>\n" + 
+            "               </a:link>\n" + 
+            "               <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+            + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+            "               <a:content type=\"application/xml\">\n" + 
+            "                  <m:properties>\n" + 
+            "                     <d:id m:type=\"Int32\">0</d:id>\n" + 
+            "                     <d:name>A</d:name>\n" + 
+            "                  </m:properties>\n" + 
+            "               </a:content>\n" + 
+            "            </a:entry>\n" + 
+            "            <a:entry>\n" + 
+            "               <a:id>ESPeople(2)</a:id>\n" + 
+            "               <a:title />\n" + 
+            "               <a:summary />\n" + 
+            "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+            "               <a:author>\n" + 
+            "                  <a:name />\n" + 
+            "               </a:author>\n" + 
+            "               <a:link rel=\"edit\" href=\"ESPeople(2)\" />\n" + 
+            "               <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(2)/friends\">\n" + 
+            "                  <m:inline>\n" + 
+            "                     <a:feed>\n" + 
+            "                        <a:entry>\n" + 
+            "                           <a:id>ESPeople(0)</a:id>\n" + 
+            "                           <a:title />\n" + 
+            "                           <a:summary />\n" + 
+            "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+            "                           <a:author>\n" + 
+            "                              <a:name />\n" + 
+            "                           </a:author>\n" + 
+            "                           <a:link rel=\"edit\" href=\"ESPeople(0)\" />\n" + 
+            "                           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(0)/friends\">\n" + 
+            "                              <m:inline>\n" + 
+            "                                 <a:feed>\n" + 
+            "                                    <m:ref id=\"ESPeople(1)\" />\n" + 
+            "                                    <m:ref id=\"ESPeople(2)\" />\n" + 
+            "                                 </a:feed>\n" + 
+            "                              </m:inline>\n" + 
+            "                           </a:link>\n" + 
+            "                           <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+            + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+            "                           <a:content type=\"application/xml\">\n" + 
+            "                              <m:properties>\n" + 
+            "                                 <d:id m:type=\"Int32\">0</d:id>\n" + 
+            "                                 <d:name>A</d:name>\n" + 
+            "                              </m:properties>\n" + 
+            "                           </a:content>\n" + 
+            "                        </a:entry>\n" + 
+            "                        <a:entry>\n" + 
+            "                           <a:id>ESPeople(3)</a:id>\n" + 
+            "                           <a:title />\n" + 
+            "                           <a:summary />\n" + 
+            "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+            "                           <a:author>\n" + 
+            "                              <a:name />\n" + 
+            "                           </a:author>\n" + 
+            "                           <a:link rel=\"edit\" href=\"ESPeople(3)\" />\n" + 
+            "                           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(3)/friends\">\n" + 
+            "                              <m:inline>\n" + 
+            "                                 <a:feed />\n" + 
+            "                              </m:inline>\n" + 
+            "                           </a:link>\n" + 
+            "                           <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+            + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+            "                           <a:content type=\"application/xml\">\n" + 
+            "                              <m:properties>\n" + 
+            "                                 <d:id m:type=\"Int32\">3</d:id>\n" + 
+            "                                 <d:name>D</d:name>\n" + 
+            "                              </m:properties>\n" + 
+            "                           </a:content>\n" + 
+            "                        </a:entry>\n" + 
+            "                     </a:feed>\n" + 
+            "                  </m:inline>\n" + 
+            "               </a:link>\n" + 
+            "               <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+            + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+            "               <a:content type=\"application/xml\">\n" + 
+            "                  <m:properties>\n" + 
+            "                     <d:id m:type=\"Int32\">2</d:id>\n" + 
+            "                     <d:name>C</d:name>\n" + 
+            "                  </m:properties>\n" + 
+            "               </a:content>\n" + 
+            "            </a:entry>\n" + 
+            "         </a:feed>\n" + 
+            "      </m:inline>\n" + 
+            "   </a:link>\n" + 
+            "   <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+            + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+            "   <a:content type=\"application/xml\">\n" + 
+            "      <m:properties>\n" + 
+            "         <d:id m:type=\"Int32\">1</d:id>\n" + 
+            "         <d:name>B</d:name>\n" + 
+            "      </m:properties>\n" + 
+            "   </a:content>\n" + 
+            "</a:entry>\n" + 
+            "";
+    checkXMLEqual(expected, resultString);
+  }  
+
+  @Test
+  public void expandCycleWith3Level() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESPeople");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "friends");
+    LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
+    Mockito.when(levels.isMax()).thenReturn(Boolean.FALSE);
+    Mockito.when(levels.getValue()).thenReturn(3);
+    Mockito.when(mockExpandItem.getLevelsOption()).thenReturn(levels);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        mockExpandItem));
+    long currentTimeMillis = System.currentTimeMillis();
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
+        + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+        + "m:context=\"$metadata#ESPeople/$entity\" m:metadata-etag=\"metadataETag\">\n" + 
+        "  <a:id>ESPeople(1)</a:id>\n" + 
+        "  <a:title />\n" + 
+        "  <a:summary />\n" + 
+        "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+        "  <a:author>\n" + 
+        "    <a:name />\n" + 
+        "  </a:author>\n" + 
+        "  <a:link rel=\"edit\" href=\"ESPeople(1)\" />\n" + 
+        "  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(1)/friends\">\n" + 
+        "    <m:inline>\n" + 
+        "      <a:feed>\n" + 
+        "        <a:entry>\n" + 
+        "          <a:id>ESPeople(0)</a:id>\n" + 
+        "          <a:title />\n" + 
+        "          <a:summary />\n" + 
+        "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+        "          <a:author>\n" + 
+        "            <a:name />\n" + 
+        "          </a:author>\n" + 
+        "          <a:link rel=\"edit\" href=\"ESPeople(0)\" />\n" + 
+        "          <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(0)/friends\">\n" + 
+        "            <m:inline>\n" + 
+        "              <a:feed>\n" + 
+        "                <m:ref id=\"ESPeople(1)\" />\n" + 
+        "                <a:entry>\n" + 
+        "                  <a:id>ESPeople(2)</a:id>\n" + 
+        "                  <a:title />\n" + 
+        "                  <a:summary />\n" + 
+        "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+        "                  <a:author>\n" + 
+        "                    <a:name />\n" + 
+        "                  </a:author>\n" + 
+        "                  <a:link rel=\"edit\" href=\"ESPeople(2)\" />\n" + 
+        "                  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+        + "type=\"application/atom+xml;type=feed\""
+        + " title=\"friends\" href=\"ESPeople(2)/friends\">\n" + 
+        "                    <m:inline>\n" + 
+        "                      <a:feed>\n" + 
+        "                        <m:ref id=\"ESPeople(0)\" />\n" + 
+        "                        <a:entry>\n" + 
+        "                          <a:id>ESPeople(3)</a:id>\n" + 
+        "                          <a:title />\n" + 
+        "                          <a:summary />\n" + 
+        "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+        "                          <a:author>\n" + 
+        "                            <a:name />\n" + 
+        "                          </a:author>\n" + 
+        "                          <a:link rel=\"edit\" href=\"ESPeople(3)\" />\n" + 
+        "                          <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(3)/friends\" />\n" + 
+        "                          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+        "                          <a:content type=\"application/xml\">\n" + 
+        "                            <m:properties>\n" + 
+        "                              <d:id m:type=\"Int32\">3</d:id>\n" + 
+        "                              <d:name>D</d:name>\n" + 
+        "                            </m:properties>\n" + 
+        "                          </a:content>\n" + 
+        "                        </a:entry>\n" + 
+        "                      </a:feed>\n" + 
+        "                    </m:inline>\n" + 
+        "                  </a:link>\n" + 
+        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+        "                  <a:content type=\"application/xml\">\n" + 
+        "                    <m:properties>\n" + 
+        "                      <d:id m:type=\"Int32\">2</d:id>\n" + 
+        "                      <d:name>C</d:name>\n" + 
+        "                    </m:properties>\n" + 
+        "                  </a:content>\n" + 
+        "                </a:entry>\n" + 
+        "              </a:feed>\n" + 
+        "            </m:inline>\n" + 
+        "          </a:link>\n" + 
+        "          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+        "          <a:content type=\"application/xml\">\n" + 
+        "            <m:properties>\n" + 
+        "              <d:id m:type=\"Int32\">0</d:id>\n" + 
+        "              <d:name>A</d:name>\n" + 
+        "            </m:properties>\n" + 
+        "          </a:content>\n" + 
+        "        </a:entry>\n" + 
+        "        <a:entry>\n" + 
+        "          <a:id>ESPeople(2)</a:id>\n" + 
+        "          <a:title />\n" + 
+        "          <a:summary />\n" + 
+        "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+        "          <a:author>\n" + 
+        "            <a:name />\n" + 
+        "          </a:author>\n" + 
+        "          <a:link rel=\"edit\" href=\"ESPeople(2)\" />\n" + 
+        "          <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(2)/friends\">\n" + 
+        "            <m:inline>\n" + 
+        "              <a:feed>\n" + 
+        "                <a:entry>\n" + 
+        "                  <a:id>ESPeople(0)</a:id>\n" + 
+        "                  <a:title />\n" + 
+        "                  <a:summary />\n" + 
+        "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+        "                  <a:author>\n" + 
+        "                    <a:name />\n" + 
+        "                  </a:author>\n" + 
+        "                  <a:link rel=\"edit\" href=\"ESPeople(0)\" />\n" + 
+        "                  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(0)/friends\">\n" + 
+        "                    <m:inline>\n" + 
+        "                      <a:feed>\n" + 
+        "                        <m:ref id=\"ESPeople(1)\" />\n" + 
+        "                        <m:ref id=\"ESPeople(2)\" />\n" + 
+        "                      </a:feed>\n" + 
+        "                    </m:inline>\n" + 
+        "                  </a:link>\n" + 
+        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+        "                  <a:content type=\"application/xml\">\n" + 
+        "                    <m:properties>\n" + 
+        "                      <d:id m:type=\"Int32\">0</d:id>\n" + 
+        "                      <d:name>A</d:name>\n" + 
+        "                    </m:properties>\n" + 
+        "                  </a:content>\n" + 
+        "                </a:entry>\n" + 
+        "                <a:entry>\n" + 
+        "                  <a:id>ESPeople(3)</a:id>\n" + 
+        "                  <a:title />\n" + 
+        "                  <a:summary />\n" + 
+        "   <a:updated>"+UPDATED_FORMAT.format(new Date(currentTimeMillis))+"</a:updated>\n" + 
+        "                  <a:author>\n" + 
+        "                    <a:name />\n" + 
+        "                  </a:author>\n" + 
+        "                  <a:link rel=\"edit\" href=\"ESPeople(3)\" />\n" + 
+        "                  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/friends\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"friends\" href=\"ESPeople(3)/friends\">\n" + 
+        "                    <m:inline>\n" + 
+        "                      <a:feed />\n" + 
+        "                    </m:inline>\n" + 
+        "                  </a:link>\n" + 
+        "                  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+        "                  <a:content type=\"application/xml\">\n" + 
+        "                    <m:properties>\n" + 
+        "                      <d:id m:type=\"Int32\">3</d:id>\n" + 
+        "                      <d:name>D</d:name>\n" + 
+        "                    </m:properties>\n" + 
+        "                  </a:content>\n" + 
+        "                </a:entry>\n" + 
+        "              </a:feed>\n" + 
+        "            </m:inline>\n" + 
+        "          </a:link>\n" + 
+        "          <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+        "          <a:content type=\"application/xml\">\n" + 
+        "            <m:properties>\n" + 
+        "              <d:id m:type=\"Int32\">2</d:id>\n" + 
+        "              <d:name>C</d:name>\n" + 
+        "            </m:properties>\n" + 
+        "          </a:content>\n" + 
+        "        </a:entry>\n" + 
+        "      </a:feed>\n" + 
+        "    </m:inline>\n" + 
+        "  </a:link>\n" + 
+        "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETPeople\" />\n" + 
+        "  <a:content type=\"application/xml\">\n" + 
+        "    <m:properties>\n" + 
+        "      <d:id m:type=\"Int32\">1</d:id>\n" + 
+        "      <d:name>B</d:name>\n" + 
+        "    </m:properties>\n" + 
+        "  </a:content>\n" + 
+        "</a:entry>";
+    checkXMLEqual(expected, resultString);
+  }
+  
   private void checkXMLEqual(final String expected, final String resultString) throws SAXException, IOException {
     Diff diff = XMLUnit.compareXML(expected, resultString);
     diff.overrideDifferenceListener(DIFFERENCE_LISTENER);

@@ -166,10 +166,10 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writeOperations(entitySet.getOperations(), json);
       json.writeFieldName(Constants.VALUE);
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, null, false, json);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, false, null, json);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), null, options.getSelect(), options.getWriteOnlyReferences(), json);
+            options.getExpand(), null, options.getSelect(), options.getWriteOnlyReferences(), null, json);
       }
       writeNextLink(entitySet, json);
 
@@ -212,10 +212,10 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       }
       json.writeFieldName(Constants.VALUE);
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, null, false, json);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, false, null, json);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
-            options.getExpand(), null, options.getSelect(), options.getWriteOnlyReferences(), json);
+            options.getExpand(), null, options.getSelect(), options.getWriteOnlyReferences(), null, json);
       }
       // next link not supported by default for streaming results
 //      writeNextLink(entitySet, json);
@@ -243,6 +243,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           null,
           options == null ? null : options.getSelect(),
           options == null ? false : options.getWriteOnlyReferences(),
+          null,
           json);
 
       json.close();
@@ -268,7 +269,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
       final AbstractEntityCollection entitySet, final ExpandOption expand, Integer toDepth, final SelectOption select,
-      final boolean onlyReference, final JsonGenerator json) throws IOException,
+      final boolean onlyReference, final Set<String> ancestors, final JsonGenerator json) throws IOException,
       SerializerException {
     json.writeStartArray();
     for (final Entity entity : entitySet) {
@@ -277,7 +278,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         json.writeStringField(Constants.JSON_ID, getEntityId(entity));
         json.writeEndObject();
       } else {
-        writeEntity(metadata, entityType, entity, null, expand, toDepth, select, false, json);
+        writeEntity(metadata, entityType, entity, null, expand, toDepth, select, false, ancestors, json);
       }
     }
     json.writeEndArray();
@@ -310,59 +311,81 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     return true;
   }
 
-  public void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType, final Entity entity,
+  private boolean cycleDetected(final Set<String> ancestors, String child) {
+      if (ancestors == null) {
+          return false;
+      }
+      return ancestors.contains(child);
+  }
+  
+  protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType, final Entity entity,
       final ContextURL contextURL, final ExpandOption expand, Integer toDepth, 
-      final SelectOption select, final boolean onlyReference, final JsonGenerator json)
+      final SelectOption select, final boolean onlyReference, Set<String> ancestors, final JsonGenerator json)
       throws IOException, SerializerException {
-    json.writeStartObject();
-    if (!isODataMetadataNone) {
-      // top-level entity
-      if (contextURL != null) {
-        writeContextURL(contextURL, json);
-        writeMetadataETag(metadata, json);
-      }
-      if (entity.getETag() != null) {
-        json.writeStringField(Constants.JSON_ETAG, entity.getETag());
-      }
-      if (entityType.hasStream()) {
-        if (entity.getMediaETag() != null) {
-          json.writeStringField(Constants.JSON_MEDIA_ETAG, entity.getMediaETag());
-        }
-        if (entity.getMediaContentType() != null) {
-          json.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entity.getMediaContentType());
-        }
-        if (entity.getMediaContentSource() != null) {
-          json.writeStringField(Constants.JSON_MEDIA_READ_LINK, entity.getMediaContentSource().toString());
-        }
-        if (entity.getMediaEditLinks() != null && !entity.getMediaEditLinks().isEmpty()) {
-          json.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, entity.getMediaEditLinks().get(0).getHref());
-        }
-      }
-    }
-    if (onlyReference) {
-      json.writeStringField(Constants.JSON_ID, getEntityId(entity));
+    boolean cycle = false;
+    if (expand != null && cycleDetected(ancestors, getEntityId(entity))) {
+        cycle = true;
     } else {
-      final EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
-      if ((!isODataMetadataNone && !resolvedType.equals(entityType)) || isODataMetadataFull) {
-        json.writeStringField(Constants.JSON_TYPE, "#" + entity.getType());
+      if (ancestors == null) {
+        ancestors = new HashSet<String>();
       }
-      if ((!isODataMetadataNone && !areKeyPredicateNamesSelected(select, resolvedType)) || isODataMetadataFull) {
+      ancestors.add(getEntityId(entity));
+    }
+    try {
+      json.writeStartObject();
+      if (!isODataMetadataNone) {
+        // top-level entity
+        if (contextURL != null) {
+          writeContextURL(contextURL, json);
+          writeMetadataETag(metadata, json);
+        }
+        if (entity.getETag() != null) {
+          json.writeStringField(Constants.JSON_ETAG, entity.getETag());
+        }
+        if (entityType.hasStream()) {
+          if (entity.getMediaETag() != null) {
+            json.writeStringField(Constants.JSON_MEDIA_ETAG, entity.getMediaETag());
+          }
+          if (entity.getMediaContentType() != null) {
+            json.writeStringField(Constants.JSON_MEDIA_CONTENT_TYPE, entity.getMediaContentType());
+          }
+          if (entity.getMediaContentSource() != null) {
+            json.writeStringField(Constants.JSON_MEDIA_READ_LINK, entity.getMediaContentSource().toString());
+          }
+          if (entity.getMediaEditLinks() != null && !entity.getMediaEditLinks().isEmpty()) {
+            json.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, entity.getMediaEditLinks().get(0).getHref());
+          }
+        }
+      }
+      if (cycle || onlyReference) {
         json.writeStringField(Constants.JSON_ID, getEntityId(entity));
-      }
-      
-      if (isODataMetadataFull) {
-        if (entity.getSelfLink() != null) {
-          json.writeStringField(Constants.JSON_READ_LINK, entity.getSelfLink().getHref());
+      } else {
+        final EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
+        if ((!isODataMetadataNone && !resolvedType.equals(entityType)) || isODataMetadataFull) {
+          json.writeStringField(Constants.JSON_TYPE, "#" + entity.getType());
         }
-        if (entity.getEditLink() != null) {
-          json.writeStringField(Constants.JSON_EDIT_LINK, entity.getEditLink().getHref());
+        if ((!isODataMetadataNone && !areKeyPredicateNamesSelected(select, resolvedType)) || isODataMetadataFull) {
+          json.writeStringField(Constants.JSON_ID, getEntityId(entity));
         }
+        
+        if (isODataMetadataFull) {
+          if (entity.getSelfLink() != null) {
+            json.writeStringField(Constants.JSON_READ_LINK, entity.getSelfLink().getHref());
+          }
+          if (entity.getEditLink() != null) {
+            json.writeStringField(Constants.JSON_EDIT_LINK, entity.getEditLink().getHref());
+          }
+        }
+        
+        writeProperties(metadata, resolvedType, entity.getProperties(), select, json);
+        writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, ancestors, json);
+        writeOperations(entity.getOperations(), json);      
       }
-      
-      writeProperties(metadata, resolvedType, entity.getProperties(), select, json);
-      writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, json);
-      writeOperations(entity.getOperations(), json);
       json.writeEndObject();
+    } finally {
+      if (!cycle && ancestors != null) {
+        ancestors.remove(getEntityId(entity));
+      }
     }
   }
 
@@ -446,7 +469,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   protected void writeNavigationProperties(final ServiceMetadata metadata,
       final EdmStructuredType type, final Linked linked, final ExpandOption expand, final Integer toDepth,
-      final JsonGenerator json) throws SerializerException, IOException {
+      final Set<String> ancestors, final JsonGenerator json) throws SerializerException, IOException {
     if ((toDepth != null && toDepth > 1) || (toDepth == null && ExpandSelectHelper.hasExpand(expand))) {
       final ExpandItem expandAll = ExpandSelectHelper.getExpandAll(expand);
       for (final String propertyName : type.getNavigationPropertyNames()) {
@@ -460,6 +483,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
                 innerOptions == null ? null : innerOptions.getCountOption(),
                 innerOptions == null ? false : innerOptions.hasCountPath(),
                 innerOptions == null ? false : innerOptions.isRef(),
+                ancestors,
                 json);
           continue;
         }
@@ -493,14 +517,15 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
               levels = levelsOption.getValue();
             }
           }
-          
+                             
           writeExpandedNavigationProperty(metadata, property, navigationLink,
-              childExpand, levels,
-              innerOptions == null ? null : innerOptions.getSelectOption(),
-              innerOptions == null ? null : innerOptions.getCountOption(),
-              innerOptions == null ? false : innerOptions.hasCountPath(),
-              innerOptions == null ? false : innerOptions.isRef(),
-              json);
+            childExpand, levels,
+            innerOptions == null ? null : innerOptions.getSelectOption(),
+            innerOptions == null ? null : innerOptions.getCountOption(),
+            innerOptions == null ? false : innerOptions.hasCountPath(),
+            innerOptions == null ? false : innerOptions.isRef(),
+            ancestors,
+            json);
         }
       }
     } else if (isODataMetadataFull) {
@@ -521,7 +546,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final ServiceMetadata metadata, final EdmNavigationProperty property,
       final Link navigationLink, final ExpandOption innerExpand,
       Integer toDepth, final SelectOption innerSelect, final CountOption innerCount,
-      final boolean writeOnlyCount, final boolean writeOnlyRef,
+      final boolean writeOnlyCount, final boolean writeOnlyRef, final Set<String> ancestors,
       final JsonGenerator json) throws IOException, SerializerException {
 
     if (property.isCollection()) {
@@ -545,7 +570,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           }
           json.writeFieldName(property.getName());
           writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand, toDepth,
-              innerSelect, writeOnlyRef, json);
+              innerSelect, writeOnlyRef, ancestors, json);
         }
       }
     } else {
@@ -554,7 +579,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         json.writeNull();
       } else {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
-            innerExpand, toDepth, innerSelect, writeOnlyRef, json);
+            innerExpand, toDepth, innerSelect, writeOnlyRef, ancestors, json);
       }
     }
   }
@@ -883,7 +908,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writeProperties(metadata, type, values, options == null ? null : options.getSelect(), json);
       if (!property.isNull() && property.isComplex()) {
         writeNavigationProperties(metadata, type, property.asComplex(),
-            options == null ? null : options.getExpand(), null, json);
+            options == null ? null : options.getExpand(), null, null, json);
       }
       json.writeEndObject();
 

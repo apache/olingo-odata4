@@ -37,7 +37,6 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.core.edm.primitivetype.EdmDate;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;

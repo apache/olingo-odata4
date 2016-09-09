@@ -84,6 +84,7 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETStream = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETWithStream");
   
+  public static final FullQualifiedName nameETPeople = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETPeople");
 
   public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if(entityTypeName.equals(nameETAllPrimDefaultValues)){        
@@ -372,7 +373,7 @@ public class EntityTypeProvider {
           PropertyProvider.navPropertyETTwoKeyNavContOneCT_ETTwoKeyNav,
           PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_CT_ETTwoKeyNav
           ));
-} else if (entityTypeName.equals(nameETTwoKeyNav)) {
+    } else if (entityTypeName.equals(nameETTwoKeyNav)) {
       return new CsdlEntityType()
           .setName("ETTwoKeyNav")
           .setKey(Arrays.asList(
@@ -472,6 +473,14 @@ public class EntityTypeProvider {
           .setProperties(Arrays.asList(
               PropertyProvider.propertyInt16_NotNullable,
               PropertyProvider.propertyStream));      
+    } else if (entityTypeName.equals(nameETPeople)) {
+        return new CsdlEntityType()
+          .setName(nameETPeople.getName())
+          .setKey(Arrays.asList(new CsdlPropertyRef().setName("id")))
+          .setProperties(Arrays.asList(
+            PropertyProvider.propertyId,
+            PropertyProvider.propertyName))
+          .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyFriends));
     }
     return null;
   }

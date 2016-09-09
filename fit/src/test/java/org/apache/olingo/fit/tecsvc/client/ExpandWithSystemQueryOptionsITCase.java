@@ -419,26 +419,9 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
         .getEntities()
         .get(0);
 
-    assertShortOrInt(1, entityThirdLevel.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals("1", entityThirdLevel.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
-
-    assertNotNull(entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
-    assertEquals(2, entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-        .asInlineEntitySet()
-        .getEntitySet()
-        .getEntities()
-        .size());
-
-    final List<ClientEntity> fourthLevelEntites = entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-        .asInlineEntitySet()
-        .getEntitySet()
-        .getEntities();
-
-    assertShortOrInt(1, fourthLevelEntites.get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals("1", fourthLevelEntites.get(0).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
-
-    assertShortOrInt(1, fourthLevelEntites.get(1).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals("2", fourthLevelEntites.get(1).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
+    // cycle happens here
+    assertEquals("ESTwoKeyNav(PropertyInt16=1,PropertyString='1')", entityThirdLevel.getId().toASCIIString());
+    assertEquals(0, entityThirdLevel.getProperties().size());
   }
 
   @Test
@@ -495,23 +478,9 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
         .getEntities()
         .get(0);
 
-    assertShortOrInt(1, entityThirdLevel.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals("1", entityThirdLevel.getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
-
-    assertNotNull(entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY));
-    assertEquals(1, entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-        .asInlineEntitySet()
-        .getEntitySet()
-        .getEntities()
-        .size());
-
-    final List<ClientEntity> fourthLevelEntites = entityThirdLevel.getNavigationLink(NAV_PROPERTY_ET_TWO_KEY_NAV_MANY)
-        .asInlineEntitySet()
-        .getEntitySet()
-        .getEntities();
-
-    assertShortOrInt(1, fourthLevelEntites.get(0).getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
-    assertEquals("1", fourthLevelEntites.get(0).getProperty(PROPERTY_STRING).getPrimitiveValue().toValue());
+    // cycle happens here
+    assertEquals("ESTwoKeyNav(PropertyInt16=1,PropertyString='1')", entityThirdLevel.getId().toASCIIString());
+    assertEquals(0, entityThirdLevel.getProperties().size());
   }
 
   @Test

@@ -103,6 +103,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyNavCont"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESWithStream"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, ES_STREAM));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESPeople"));
 
     // Singletons
     List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
@@ -631,9 +632,14 @@ public class ContainerProvider {
                     .setValue("Entity set with a stream type")),
             new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                 new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
+      } else if (name.equals("ESPeople")) {
+        return new CsdlEntitySet()
+          .setName("ESPeople")
+          .setType(EntityTypeProvider.nameETPeople)
+          .setNavigationPropertyBindings(Arrays.asList(new CsdlNavigationPropertyBinding().setPath("friends")
+            .setTarget("ESPeople")));
       }
     }
-
     return null;
   }
 

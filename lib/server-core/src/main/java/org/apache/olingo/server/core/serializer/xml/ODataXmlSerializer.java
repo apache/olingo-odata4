@@ -259,11 +259,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       boolean writeOnlyRef = (options != null && options.getWriteOnlyReferences());
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, null, null, writer, writeOnlyRef);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, null, writer, writeOnlyRef, null);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
             options.getExpand(), null, 
-            options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef);
+            options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef, null);
       }
 
       writer.writeEndElement();
@@ -317,11 +317,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
       boolean writeOnlyRef = (options != null && options.getWriteOnlyReferences());
       if (options == null) {
-        writeEntitySet(metadata, entityType, entitySet, null, null, null, null, writer, writeOnlyRef);
+        writeEntitySet(metadata, entityType, entitySet, null, null, null, null, writer, writeOnlyRef,null);
       } else {
         writeEntitySet(metadata, entityType, entitySet,
             options.getExpand(), null, 
-            options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef);
+            options.getSelect(), options.xml10InvalidCharReplacement(), writer, writeOnlyRef,null);
       }
 
       writer.writeEndElement();
@@ -363,7 +363,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           null,
           options == null ? null : options.getSelect(),
           options == null ? null : options.xml10InvalidCharReplacement(),
-          writer, true, false);
+          writer, true, false, null);
       writer.writeEndDocument();
 
       writer.flush();
@@ -404,99 +404,135 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
       final AbstractEntityCollection entitySet, final ExpandOption expand, 
       final Integer toDepth, final SelectOption select,
-      final String xml10InvalidCharReplacement,final XMLStreamWriter writer, final boolean writeOnlyRef) 
+      final String xml10InvalidCharReplacement,final XMLStreamWriter writer, 
+      final boolean writeOnlyRef,final Set<String> ancestors) 
           throws XMLStreamException, SerializerException {
     for (final Entity entity : entitySet) {
       writeEntity(metadata, entityType, entity, null, expand, toDepth, select, 
-          xml10InvalidCharReplacement, writer, false, writeOnlyRef);
+          xml10InvalidCharReplacement, writer, false, writeOnlyRef, ancestors);
     }
   }
+  
+  /**
+   * Get the ascii representation of the entity id
+   * or thrown an {@link SerializerException} if id is <code>null</code>.
+   *
+   * @param entity the entity
+   * @return ascii representation of the entity id
+   */
+  private String getEntityId(Entity entity) throws SerializerException {
+    if(entity.getId() == null) {
+      throw new SerializerException("Entity id is null.", SerializerException.MessageKeys.MISSING_ID);
+    }
+    return entity.getId().toASCIIString();
+  }  
 
+  private boolean cycleDetected(final Set<String> ancestors, String child) {
+      if (ancestors == null) {
+          return false;
+      }
+      return ancestors.contains(child);
+  }
+  
   protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final ContextURL contextURL, final ExpandOption expand, final Integer toDepth,
       final SelectOption select, final String xml10InvalidCharReplacement,
-      final XMLStreamWriter writer, final boolean top, final boolean writeOnlyRef)
+      final XMLStreamWriter writer, final boolean top, final boolean writeOnlyRef, Set<String> ancestors)
       throws XMLStreamException, SerializerException {
+    boolean cycle = false;
+    if (expand != null && cycleDetected(ancestors, getEntityId(entity))) {
+      cycle = true;
+    } else {
+      if (ancestors == null) {
+        ancestors = new HashSet<String>();
+      }
+      ancestors.add(getEntityId(entity));
+    }
 
-    if (writeOnlyRef) {
+    if (cycle || writeOnlyRef) {
       writeReference(entity, contextURL, writer, top);
       return;
     }
-    writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ENTRY, NS_ATOM);
-    if (top) {
-      writer.writeNamespace(ATOM, NS_ATOM);
-      writer.writeNamespace(METADATA, NS_METADATA);
-      writer.writeNamespace(DATA, NS_DATA);
-
-      if (contextURL != null) { // top-level entity
-        writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
-            ContextURLBuilder.create(contextURL).toASCIIString());
-        writeMetadataETag(metadata, writer);
+    try {
+      writer.writeStartElement(ATOM, Constants.ATOM_ELEM_ENTRY, NS_ATOM);
+      if (top) {
+        writer.writeNamespace(ATOM, NS_ATOM);
+        writer.writeNamespace(METADATA, NS_METADATA);
+        writer.writeNamespace(DATA, NS_DATA);
+  
+        if (contextURL != null) { // top-level entity
+          writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
+              ContextURLBuilder.create(contextURL).toASCIIString());
+          writeMetadataETag(metadata, writer);
+        }
       }
-    }
-    if (entity.getETag() != null) {
-      writer.writeAttribute(METADATA, NS_METADATA, Constants.ATOM_ATTR_ETAG, entity.getETag());
-    }
-
-    if (entity.getId() != null) {
-      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_ID);
-      writer.writeCharacters(entity.getId().toASCIIString());
-      writer.writeEndElement();
-    }
-
-    writerAuthorInfo(entity.getTitle(), writer);
-
-    if (entity.getId() != null) {
-      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_LINK);
-      writer.writeAttribute(Constants.ATTR_REL, Constants.EDIT_LINK_REL);
-      writer.writeAttribute(Constants.ATTR_HREF, entity.getId().toASCIIString());
-      writer.writeEndElement();
-    }
-
-    if (entityType.hasStream()) {
-      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
-      writer.writeAttribute(Constants.ATTR_TYPE, entity.getMediaContentType());
-      if (entity.getMediaContentSource() != null) {
-        writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource().toString());
-      } else {
-        String id = entity.getId().toASCIIString();
-        writer.writeAttribute(Constants.ATOM_ATTR_SRC,
-            id + (id.endsWith("/") ? "" : "/") + "$value");
+      if (entity.getETag() != null) {
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATOM_ATTR_ETAG, entity.getETag());
       }
+  
+      if (entity.getId() != null) {
+        writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_ID);
+        writer.writeCharacters(entity.getId().toASCIIString());
+        writer.writeEndElement();
+      }
+  
+      writerAuthorInfo(entity.getTitle(), writer);
+  
+      if (entity.getId() != null) {
+        writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_LINK);
+        writer.writeAttribute(Constants.ATTR_REL, Constants.EDIT_LINK_REL);
+        writer.writeAttribute(Constants.ATTR_HREF, entity.getId().toASCIIString());
+        writer.writeEndElement();
+      }
+  
+      if (entityType.hasStream()) {
+        writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
+        writer.writeAttribute(Constants.ATTR_TYPE, entity.getMediaContentType());
+        if (entity.getMediaContentSource() != null) {
+          writer.writeAttribute(Constants.ATOM_ATTR_SRC, entity.getMediaContentSource().toString());
+        } else {
+          String id = entity.getId().toASCIIString();
+          writer.writeAttribute(Constants.ATOM_ATTR_SRC,
+              id + (id.endsWith("/") ? "" : "/") + "$value");
+        }
+        writer.writeEndElement();
+      }
+  
+      // write media links
+      for (Link link : entity.getMediaEditLinks()) {
+        writeLink(writer, link);
+      }
+  
+      EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
+      writeNavigationProperties(metadata, resolvedType, entity, expand,
+        toDepth, xml10InvalidCharReplacement, ancestors, writer);
+  
+      writer.writeStartElement(ATOM, Constants.ATOM_ELEM_CATEGORY, NS_ATOM);
+      writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, Constants.NS_SCHEME);
+      writer.writeAttribute(Constants.ATOM_ATTR_TERM,
+          "#" + resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
       writer.writeEndElement();
+  
+      // In the case media, content is sibiling
+      if (!entityType.hasStream()) {
+        writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
+        writer.writeAttribute(Constants.ATTR_TYPE, "application/xml");
+      }
+  
+      writer.writeStartElement(METADATA, Constants.PROPERTIES, NS_METADATA);
+      writeProperties(metadata, resolvedType, entity.getProperties(), select, xml10InvalidCharReplacement, writer);
+      writer.writeEndElement(); // properties
+  
+      if (!entityType.hasStream()) { // content
+        writer.writeEndElement();
+      }
+      
+      writeOperations(entity.getOperations(), writer);
+      
+      writer.writeEndElement(); // entry
+    } finally {
+      ancestors.remove(getEntityId(entity));
     }
-
-    // write media links
-    for (Link link : entity.getMediaEditLinks()) {
-      writeLink(writer, link);
-    }
-
-    EdmEntityType resolvedType = resolveEntityType(metadata, entityType, entity.getType());
-    writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, xml10InvalidCharReplacement, writer);
-
-    writer.writeStartElement(ATOM, Constants.ATOM_ELEM_CATEGORY, NS_ATOM);
-    writer.writeAttribute(Constants.ATOM_ATTR_SCHEME, Constants.NS_SCHEME);
-    writer.writeAttribute(Constants.ATOM_ATTR_TERM,
-        "#" + resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
-    writer.writeEndElement();
-
-    // In the case media, content is sibiling
-    if (!entityType.hasStream()) {
-      writer.writeStartElement(NS_ATOM, Constants.ATOM_ELEM_CONTENT);
-      writer.writeAttribute(Constants.ATTR_TYPE, "application/xml");
-    }
-
-    writer.writeStartElement(METADATA, Constants.PROPERTIES, NS_METADATA);
-    writeProperties(metadata, resolvedType, entity.getProperties(), select, xml10InvalidCharReplacement, writer);
-    writer.writeEndElement(); // properties
-
-    if (!entityType.hasStream()) { // content
-      writer.writeEndElement();
-    }
-    
-    writeOperations(entity.getOperations(), writer);
-    
-    writer.writeEndElement(); // entry
   }
 
   private void writeOperations(final List<Operation> operations,
@@ -598,7 +634,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
 
   protected void writeNavigationProperties(final ServiceMetadata metadata,
       final EdmStructuredType type, final Linked linked, final ExpandOption expand, final Integer toDepth,
-      final String xml10InvalidCharReplacement, final XMLStreamWriter writer) 
+      final String xml10InvalidCharReplacement, final Set<String> ancestors, final XMLStreamWriter writer) 
           throws SerializerException, XMLStreamException {
     if ((toDepth != null && toDepth > 1) || (toDepth == null && ExpandSelectHelper.hasExpand(expand))) {
       final ExpandItem expandAll = ExpandSelectHelper.getExpandAll(expand);
@@ -615,7 +651,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
               innerOptions == null ? null : innerOptions.getCountOption(),
               innerOptions == null ? false : innerOptions.hasCountPath(),
               innerOptions == null ? false : innerOptions.isRef(),                                    
-              xml10InvalidCharReplacement, writer);
+              xml10InvalidCharReplacement, ancestors, writer);
           writer.writeEndElement();
           writer.writeEndElement();
           continue;
@@ -654,12 +690,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           writeLink(writer, navigationLink, false);
           writer.writeStartElement(METADATA, Constants.ATOM_ELEM_INLINE, NS_METADATA);
           writeExpandedNavigationProperty(metadata, property, navigationLink,
-              childExpand, levels,
-              innerOptions == null ? null : innerOptions.getSelectOption(),
-              innerOptions == null ? null : innerOptions.getCountOption(),
-              innerOptions == null ? false : innerOptions.hasCountPath(),
-              innerOptions == null ? false : innerOptions.isRef(),                                    
-              xml10InvalidCharReplacement, writer);
+            childExpand, levels,
+            innerOptions == null ? null : innerOptions.getSelectOption(),
+            innerOptions == null ? null : innerOptions.getCountOption(),
+            innerOptions == null ? false : innerOptions.hasCountPath(),
+            innerOptions == null ? false : innerOptions.isRef(),                                    
+            xml10InvalidCharReplacement, ancestors, writer);
           writer.writeEndElement();
           writer.writeEndElement();
         } else {
@@ -720,6 +756,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final ExpandOption innerExpand, final Integer toDepth, 
       final SelectOption innerSelect, final CountOption coutOption, 
       final boolean writeNavigationCount, final boolean writeOnlyRef,final String xml10InvalidCharReplacement,
+      final Set<String> ancestors,
       final XMLStreamWriter writer) throws XMLStreamException, SerializerException {
     if (property.isCollection()) {
       if (navigationLink != null && navigationLink.getInlineEntitySet() != null) {
@@ -731,14 +768,15 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
             writeCount(navigationLink.getInlineEntitySet(), writer);
           }
           writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand, toDepth,
-              innerSelect, xml10InvalidCharReplacement, writer, writeOnlyRef);
+              innerSelect, xml10InvalidCharReplacement, writer, writeOnlyRef, ancestors);
         }
         writer.writeEndElement();
       }
     } else {
       if (navigationLink != null && navigationLink.getInlineEntity() != null) {
         writeEntity(metadata, property.getType(), navigationLink.getInlineEntity(), null,
-            innerExpand, toDepth, innerSelect, xml10InvalidCharReplacement, writer, false, writeOnlyRef);
+            innerExpand, toDepth, innerSelect, xml10InvalidCharReplacement, writer, 
+            false, writeOnlyRef, ancestors);
       }
     }
   }
