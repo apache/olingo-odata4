@@ -440,13 +440,11 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final XMLStreamWriter writer, final boolean top, final boolean writeOnlyRef, Set<String> ancestors)
       throws XMLStreamException, SerializerException {
     boolean cycle = false;
-    if (expand != null && cycleDetected(ancestors, getEntityId(entity))) {
-      cycle = true;
-    } else {
+    if (expand != null) {
       if (ancestors == null) {
         ancestors = new HashSet<String>();
       }
-      ancestors.add(getEntityId(entity));
+      cycle = !ancestors.add(getEntityId(entity));
     }
 
     if (cycle || writeOnlyRef) {
@@ -531,7 +529,9 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       
       writer.writeEndElement(); // entry
     } finally {
-      ancestors.remove(getEntityId(entity));
+      if (!cycle && ancestors != null) {
+        ancestors.remove(getEntityId(entity));
+      }
     }
   }
 
