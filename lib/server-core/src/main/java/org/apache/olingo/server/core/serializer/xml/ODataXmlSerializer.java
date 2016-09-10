@@ -427,13 +427,6 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     return entity.getId().toASCIIString();
   }  
 
-  private boolean cycleDetected(final Set<String> ancestors, String child) {
-      if (ancestors == null) {
-          return false;
-      }
-      return ancestors.contains(child);
-  }
-  
   protected void writeEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final ContextURL contextURL, final ExpandOption expand, final Integer toDepth,
       final SelectOption select, final String xml10InvalidCharReplacement,
