@@ -70,7 +70,6 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
     final String content = IOUtils.toString(connection.getInputStream());
-System.out.println(content);
     assertTrue(content.contains("<m:element>Streamed-Employee1@company.example</m:element>" +
             "<m:element>Streamed-Employee2@company.example</m:element>" +
             "<m:element>Streamed-Employee3@company.example</m:element>"));

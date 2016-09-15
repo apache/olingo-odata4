@@ -1307,7 +1307,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         || invalidCharacterReplacement == null || isUniCode == null || !isUniCode) {
       return value;
     }
-    String s = (String) value;
+    String s = value;
     StringBuilder result = null;
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);

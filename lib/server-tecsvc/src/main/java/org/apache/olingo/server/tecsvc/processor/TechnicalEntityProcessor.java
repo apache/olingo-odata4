@@ -624,22 +624,20 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       private void addTo(String name, Object data, List<Property> properties) {
         int pos = 0;
         for (Property property : properties) {
-          if(property.isComplex()) {
-            final List<ComplexValue> cvs;
-            if(property.isCollection()) {
-              cvs = (List<ComplexValue>) property.asCollection();
-            } else {
-              cvs = Collections.singletonList(property.asComplex());
-            }
+          if (property.isComplex()) {
+            @SuppressWarnings("unchecked")
+            final List<ComplexValue> cvs = property.isCollection() ?
+                (List<ComplexValue>) property.asCollection() :
+                Collections.singletonList(property.asComplex());
             for (ComplexValue cv : cvs) {
               final List<Property> value = cv.getValue();
-              if(value != null) {
+              if (value != null) {
                 addTo(name, data, value);
               }
             }
           }
 
-          if(name.equals(property.getName())) {
+          if (name.equals(property.getName())) {
             properties.remove(pos);
             final String old = property.getValue().toString();
             String newValue = (old == null ? "": old) + data.toString();

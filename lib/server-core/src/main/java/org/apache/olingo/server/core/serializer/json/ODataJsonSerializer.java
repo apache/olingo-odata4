@@ -683,7 +683,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           throws IOException, SerializerException{
         json.writeStartObject();        
         String derivedName = property.getType();
-        final EdmComplexType resolvedType = resolveComplexType(metadata, (EdmComplexType) type, derivedName);
+        final EdmComplexType resolvedType = resolveComplexType(metadata, type, derivedName);
         if (!isODataMetadataNone && !resolvedType.equals(type) || isODataMetadataFull) {
            json.writeStringField(Constants.JSON_TYPE, "#" + property.getType());
         }          

@@ -69,8 +69,6 @@ import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
-import org.apache.olingo.client.api.domain.ClientSingleton;
-import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
@@ -88,7 +86,6 @@ import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Ignore;
 import org.junit.Test;
 

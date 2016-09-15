@@ -35,8 +35,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import static org.apache.olingo.fit.tecsvc.client.AbstractTecSvcITCase.SERVICE_NAMESPACE;
-import static org.apache.olingo.fit.tecsvc.client.AbstractTecSvcITCase.SERVICE_URI;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
