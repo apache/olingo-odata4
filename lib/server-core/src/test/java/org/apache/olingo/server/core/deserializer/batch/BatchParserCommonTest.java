@@ -27,11 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class BatchParserCommonTest {
 
   private static final String CRLF = "\r\n";
+  private static final String MULTIPART_MIXED = "multipart/mixed";
 
   @Test
   public void multipleHeaders() throws Exception {
@@ -161,6 +164,60 @@ public class BatchParserCommonTest {
   }
 
   @Test
+  public void boundaryParameter() throws Exception {
+    final String boundary = "boundary";
+    final String contentType = MULTIPART_MIXED + "; boundary=" + boundary + "  ";
+    Assert.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
+  }
+
+  @Test
+  public void boundaryParameterWithQuotes() throws Exception {
+    final String boundary = "batch_1.2+34:2j)0?";
+    final String contentType = MULTIPART_MIXED + "; boundary=\"" + boundary + "\"";
+    Assert.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
+  }
+
+  @Test
+  public void boundaryParameterWithSpaces() throws Exception {
+    final String boundary = "        boundary";
+    final String contentType = MULTIPART_MIXED + "; boundary=\"" + boundary + "\"  ";
+    Assert.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
+  }
+
+  @Test
+  public void invalidContentType() throws Exception {
+    invalidBoundary("multipart;boundary=BOUNDARY", BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
+  }
+
+  @Test
+  public void contentTypeCharset() throws Exception {
+    final String contentType = MULTIPART_MIXED + "; charset=UTF-8;boundary=" + BatchParserCommon.BOUNDARY;
+    final String boundary = BatchParserCommon.getBoundary(contentType, 0);
+    Assert.assertEquals(BatchParserCommon.BOUNDARY, boundary);
+  }
+
+  @Test
+  public void withoutBoundaryParameter() throws Exception {
+    invalidBoundary(MULTIPART_MIXED, BatchDeserializerException.MessageKeys.MISSING_BOUNDARY_DELIMITER);
+  }
+
+  @Test
+  public void boundaryParameterWithoutQuote() throws Exception {
+    invalidBoundary(MULTIPART_MIXED + ";boundary=batch_1740-bb:84-2f7f",
+        BatchDeserializerException.MessageKeys.INVALID_BOUNDARY);
+  }
+
+  @Test
+  public void boundaryEmpty() throws Exception {
+    invalidBoundary(MULTIPART_MIXED + ";boundary=\"\"", BatchDeserializerException.MessageKeys.INVALID_BOUNDARY);
+  }
+
+  @Test
+  public void boundarySpace() throws Exception {
+    invalidBoundary(MULTIPART_MIXED + ";boundary=\" \"", BatchDeserializerException.MessageKeys.INVALID_BOUNDARY);
+  }
+
+  @Test
   public void removeEndingCRLF() {
     String line = "Test" + CRLF;
     assertEquals("Test", BatchParserCommon.removeEndingCRLF(new Line(line, 1)).toString());
@@ -218,5 +275,14 @@ public class BatchParserCommonTest {
     }
 
     return lineList;
+  }
+
+  private void invalidBoundary(final String contentType, final BatchDeserializerException.MessageKeys messageKey) {
+    try {
+      BatchParserCommon.getBoundary(contentType, 0);
+      Assert.fail("Expected exception not thrown.");
+    } catch (final BatchDeserializerException e) {
+      Assert.assertEquals(messageKey, e.getMessageKey());
+    }
   }
 }

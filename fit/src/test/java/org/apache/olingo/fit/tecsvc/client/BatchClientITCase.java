@@ -23,11 +23,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Iterator;
 
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.batch.BatchManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
@@ -37,6 +38,8 @@ import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateR
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
+import org.apache.olingo.client.api.communication.request.retrieve.ODataPropertyRequest;
+import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityCreateRequest;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
@@ -45,10 +48,8 @@ import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.client.api.uri.URIBuilder;
-import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.format.PreferenceName;
@@ -90,11 +91,9 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     // Try to create entity, with invalid type
     ClientObjectFactory factory = getFactory();
     final ClientEntity entity = factory.newEntity(ES_NOT_AVAILABLE);
-    entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_STRING, factory
-            .newPrimitiveValueBuilder()
-            .buildString("1")));
-    final ODataBatchRequest batchRequest = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    final BatchManager payloadManager = batchRequest.payloadManager();
+    entity.getProperties().add(
+        factory.newPrimitiveProperty(PROPERTY_STRING, factory.newPrimitiveValueBuilder().buildString("1")));
+    BatchManager payloadManager = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI).payloadManager();
     final ODataChangeset changeset = payloadManager.addChangeset();
     final URI targetURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_NOT_AVAILABLE_NAME)
@@ -124,10 +123,10 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
   @Test
   public void emptyBatchRequest() {
     // create your request
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-
-    final BatchManager payload = request.payloadManager();
-    final ODataBatchResponse response = payload.getResponse();
+    ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    setCookieHeader(request);
+    final ODataBatchResponse response = request.payloadManager().getResponse();
+    saveCookieHeader(response);
 
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     assertEquals("Accepted", response.getStatusMessage());
@@ -137,16 +136,15 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void getBatchRequestWithRelativeUris() throws URISyntaxException {
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-
-    final BatchManager payload = request.payloadManager();
-
-    // create new request
-    appendGetRequest(payload, "ESAllPrim", 32767, true);
+  public void getBatchRequestWithRelativeUris() {
+    ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    setCookieHeader(request);
+    BatchManager payload = request.payloadManager();
+    payload.addRequest(createGetRequest("ESAllPrim", 32767, true));
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
+    saveCookieHeader(response);
 
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     assertEquals("Accepted", response.getStatusMessage());
@@ -160,24 +158,25 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     ODataResponse oDataResponse = item.next();
     assertNotNull(oDataResponse);
     assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
-    assertEquals(1, oDataResponse.getHeader("OData-Version").size());
-    assertEquals("4.0", oDataResponse.getHeader("OData-Version").toArray()[0]);
-    assertEquals(1, oDataResponse.getHeader("Content-Length").size());
-    assertEquals("605", oDataResponse.getHeader("Content-Length").toArray()[0]);
-    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
+    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
+    assertEquals(isJson() ? "605" : "2246", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertContentType(oDataResponse.getContentType());
   }
 
   @Test
-  public void getBatchRequest() throws URISyntaxException {
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-
-    final BatchManager payload = request.payloadManager();
+  public void getBatchRequest() {
+    ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    setCookieHeader(request);
+    BatchManager payload = request.payloadManager();
 
     // create new request
-    appendGetRequest(payload, "ESAllPrim", 32767, false);
+    payload.addRequest(createGetRequest("ESAllPrim", 32767, false));
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
+    saveCookieHeader(response);
 
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     assertEquals("Accepted", response.getStatusMessage());
@@ -191,25 +190,93 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     ODataResponse oDataResponse = item.next();
     assertNotNull(oDataResponse);
     assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
-    assertEquals(1, oDataResponse.getHeader("OData-Version").size());
-    assertEquals("4.0", oDataResponse.getHeader("OData-Version").toArray()[0]);
-    assertEquals(1, oDataResponse.getHeader("Content-Length").size());
-    assertEquals("605", oDataResponse.getHeader("Content-Length").toArray()[0]);
-    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
+    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
+    assertEquals(isJson() ? "605" : "2246", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertContentType(oDataResponse.getContentType());
   }
 
   @Test
-  public void errorWithoutContinueOnErrorPreferHeader() throws URISyntaxException {
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+  public void binaryContent() throws Exception {
+    BatchManager payload = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI).payloadManager();
+    ODataMediaEntityCreateRequest<ClientEntity> request = getClient().getCUDRequestFactory()
+        .getMediaEntityCreateRequest(
+            getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESMedia").build(),
+            new ByteArrayInputStream(new byte[] { -42, 0, 1 }));
+    request.setContentType(ContentType.APPLICATION_OCTET_STREAM.toContentTypeString());
+    request.addCustomHeader("Custom-Header-0123456789", "!!!");
+    payload.addRequest(request);
 
-    final BatchManager payload = request.payloadManager();
+    payload.addRequest(getClient().getRetrieveRequestFactory().getMediaRequest(URI.create(
+        "ESMedia(5)/$value")));
 
-    appendGetRequest(payload, "ESAllPrim", 32767, false); // Without error
-    appendGetRequest(payload, "ESAllPrim", 42, false); // Error ( Key does not exist )
-    appendGetRequest(payload, "ESAllPrim", 0, false); // Without error
+    final ODataBatchResponse response = payload.getResponse();
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+
+    Iterator<ODataBatchResponseItem> iter = response.getBody();
+    assertTrue(iter.hasNext());
+    ODataBatchResponseItem item = iter.next();
+    assertFalse(item.isChangeset());
+
+    ODataResponse oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), oDataResponse.getStatusCode());
+    assertFalse(item.hasNext());
+
+    assertTrue(iter.hasNext());
+    oDataResponse = iter.next().next();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
+    assertEquals(ContentType.APPLICATION_OCTET_STREAM.toContentTypeString(), oDataResponse.getContentType());
+    // TODO: Correct the client code so that the following content verification can be enabled.
+//    InputStream rawResponse = oDataResponse.getRawResponse();
+//    assertEquals(-42, (byte) rawResponse.read());
+//    assertEquals(0, rawResponse.read());
+//    assertEquals(1, rawResponse.read());
+//    assertEquals(-1, rawResponse.read());
+    assertFalse(iter.hasNext());
+  }
+
+  @Test
+  public void absolutePath() {
+    BatchManager payload = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI).payloadManager();
+    final URI uri = URI.create(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767).build()
+            .getRawPath());
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(uri);
+    setCookieHeader(request);
+    request.addCustomHeader("Custom-Header-0123456789", "!!!");
+    payload.addRequest(request);
+
+    final ODataBatchResponse response = payload.getResponse();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+
+    Iterator<ODataBatchResponseItem> iter = response.getBody();
+    assertTrue(iter.hasNext());
+    ODataBatchResponseItem item = iter.next();
+    assertFalse(item.isChangeset());
+
+    ODataResponse oDataResponse = item.next();
+    assertNotNull(oDataResponse);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
+    assertFalse(item.hasNext());
+    assertFalse(iter.hasNext());
+  }
+
+  @Test
+  public void errorWithoutContinueOnErrorPreferHeader() {
+    ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    setCookieHeader(request);
+    BatchManager payload = request.payloadManager();
+    payload.addRequest(createGetRequest("ESAllPrim", 32767, false)); // Without error
+    payload.addRequest(createGetRequest("ESAllPrim", 42, false)); // Error ( Key does not exist )
+    payload.addRequest(createGetRequest("ESAllPrim", 0, false)); // Without error
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
@@ -222,11 +289,11 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     ODataResponse oDataResponse = item.next();
     assertNotNull(oDataResponse);
     assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
-    assertEquals(1, oDataResponse.getHeader("OData-Version").size());
-    assertEquals("4.0", oDataResponse.getHeader("OData-Version").toArray()[0]);
-    assertEquals(1, oDataResponse.getHeader("Content-Length").size());
-    assertEquals("605", oDataResponse.getHeader("Content-Length").toArray()[0]);
-    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
+    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
+    assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
+    assertEquals(isJson() ? "605" : "2246", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertContentType(oDataResponse.getContentType());
 
     // Check second get request
     assertTrue(iter.hasNext());
@@ -242,17 +309,18 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void invalidAbsoluteUri() throws URISyntaxException {
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-
-    final BatchManager payload = request.payloadManager();
-    final URI uri = new URI(SERVICE_URI + "../ESAllPrim(32767)");
-    final ODataEntityRequest<ClientEntity> queryReq = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ContentType.JSON);
+  public void invalidAbsoluteUri() {
+    ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    setCookieHeader(request);
+    BatchManager payload = request.payloadManager();
+    ODataEntityRequest<ClientEntity> queryReq = getClient().getRetrieveRequestFactory().getEntityRequest(URI.create(
+        SERVICE_URI + "../ESAllPrim(32767)"));
+    queryReq.setFormat(getContentType());
     payload.addRequest(queryReq);
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
 
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
@@ -265,48 +333,54 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), oDataResponse.getStatusCode());
   }
 
-  @Test(expected = HttpClientException.class)
-  public void invalidHost() throws URISyntaxException {
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+  @Test
+  public void invalidHost() {
+    ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    setCookieHeader(request);
+    BatchManager payload = request.payloadManager();
+    payload.addRequest(getClient().getRetrieveRequestFactory().getEntityRequest(URI.create(
+        "http://otherhost/odata/ESAllPrim(32767)")));
 
-    final BatchManager payload = request.payloadManager();
-    final URI uri = new URI("http://otherhost/odata/ESAllPrim(32767)");
-    final ODataEntityRequest<ClientEntity> queryReq = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ContentType.JSON);
-    payload.addRequest(queryReq);
-
-    // Fetch result
-    payload.getResponse();
-  }
-
-  @Test(expected = HttpClientException.class)
-  public void invalidAbsoluteRequest() throws URISyntaxException {
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-
-    final BatchManager payload = request.payloadManager();
-    final URI uri = new URI("/ESAllPrim(32767)");
-    final ODataEntityRequest<ClientEntity> queryReq = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ContentType.JSON);
-    payload.addRequest(queryReq);
-
-    // Fetch result
-    payload.getResponse();
+    try {
+      payload.getResponse();
+    } catch (final HttpClientException e) {
+      assertTrue(e.getCause().getCause() instanceof ODataClientErrorException);
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(),
+          ((ODataClientErrorException) e.getCause().getCause()).getStatusLine().getStatusCode());
+    }
   }
 
   @Test
-  public void errorWithContinueOnErrorPreferHeader() throws Exception {
+  public void invalidAbsoluteRequest() {
+    ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    setCookieHeader(request);
+    BatchManager payload = request.payloadManager();
+    payload.addRequest(getClient().getRetrieveRequestFactory().getEntityRequest(URI.create(
+        "/ESAllPrim(32767)")));
+
+    try {
+      payload.getResponse();
+    } catch (final HttpClientException e) {
+      assertTrue(e.getCause().getCause() instanceof ODataClientErrorException);
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(),
+          ((ODataClientErrorException) e.getCause().getCause()).getStatusLine().getStatusCode());
+    }
+  }
+
+  @Test
+  public void errorWithContinueOnErrorPreferHeader() {
     ODataClient client = getClient();
     client.getConfiguration().setContinueOnError(true);
-    final ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-
-    final BatchManager payload = request.payloadManager();
-
-    appendGetRequest(payload, "ESAllPrim", 32767, false); // Without error
-    appendGetRequest(payload, "ESAllPrim", 42, false); // Error ( Key does not exist )
-    appendGetRequest(payload, "ESAllPrim", 0, false); // Without error
+    ODataBatchRequest request = client.getBatchRequestFactory().getBatchRequest(SERVICE_URI);
+    setCookieHeader(request);
+    BatchManager payload = request.payloadManager();
+    payload.addRequest(createGetRequest("ESAllPrim", 32767, false)); // Without error
+    payload.addRequest(createGetRequest("ESAllPrim", 42, false)); // Error ( Key does not exist )
+    payload.addRequest(createGetRequest("ESAllPrim", 0, false)); // Without error
 
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
+    saveCookieHeader(response);
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     assertEquals(PreferenceName.CONTINUE_ON_ERROR.getName(),
         response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
@@ -322,10 +396,10 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertNotNull(oDataResponse);
     assertEquals(HttpStatusCode.OK.getStatusCode(), oDataResponse.getStatusCode());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
-    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).toArray()[0]);
+    assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals("605", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).toArray()[0]);
-    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
+    assertEquals(isJson() ? "605" : "2246", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertContentType(oDataResponse.getContentType());
 
     // Check second get request
     assertTrue(bodyIterator.hasNext());
@@ -347,17 +421,15 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
     assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals("517", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
-    assertEquals(ContentType.JSON.toContentTypeString(), oDataResponse.getContentType());
+    assertEquals(isJson() ? "517" : "2138", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertContentType(oDataResponse.getContentType());
   }
 
   @Test
-  public void changesetWithReferences() throws EdmPrimitiveTypeException, URISyntaxException {
-    // create your request
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    final BatchManager streamManager = request.payloadManager();
+  public void changesetWithReferences() {
+    BatchManager payload = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI).payloadManager();
 
-    final ODataChangeset changeset = streamManager.addChangeset();
+    final ODataChangeset changeset = payload.addChangeset();
     final ClientEntity entityESAllPrim = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
 
     entityESAllPrim.getProperties().add(getFactory().newPrimitiveProperty("PropertyDouble",
@@ -369,12 +441,12 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
             .appendKeySegment(-365)
             .build()));
 
-    final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim");
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build();
 
     // add create request
     final ODataEntityCreateRequest<ClientEntity> createReq =
-        getClient().getCUDRequestFactory().getEntityCreateRequest(uriBuilder.build(), entityESAllPrim);
-    createReq.setFormat(ContentType.JSON);
+        getClient().getCUDRequestFactory().getEntityCreateRequest(uri, entityESAllPrim);
+    createReq.setFormat(getContentType());
     changeset.addRequest(createReq);
 
     // retrieve request reference
@@ -387,11 +459,11 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
 
     final ODataEntityUpdateRequest<ClientEntity> updateReq = getClient().getCUDRequestFactory().getEntityUpdateRequest(
         URI.create("$" + createRequestRef), UpdateType.PATCH, entityUpdate);
-    updateReq.setFormat(ContentType.JSON);
+    updateReq.setFormat(getContentType());
 
     changeset.addRequest(updateReq);
 
-    final ODataBatchResponse response = streamManager.getResponse();
+    final ODataBatchResponse response = payload.getResponse();
     assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
@@ -399,25 +471,23 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
     final ODataBatchResponseItem item = bodyIterator.next();
 
-    assertTrue(item instanceof ODataChangesetResponseItem);
-    final ODataChangesetResponseItem chgitem = (ODataChangesetResponseItem) item;
-    assertTrue(chgitem.hasNext());
-    ODataResponse res = chgitem.next();
+    assertTrue(item.hasNext());
+    ODataResponse res = item.next();
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), res.getStatusCode());
     assertTrue(res instanceof ODataEntityCreateResponse);
     final ODataEntityCreateResponse<?> createResponse = ((ODataEntityCreateResponse<?>) res);
 
-    res = chgitem.next();
+    res = item.next();
     assertEquals(HttpStatusCode.OK.getStatusCode(), res.getStatusCode());
     assertTrue(res instanceof ODataEntityUpdateResponse);
 
     final ODataEntitySetRequest<ClientEntitySet> req = getClient().getRetrieveRequestFactory().getEntitySetRequest(
-        new URI(createResponse.getHeader(HttpHeader.LOCATION).iterator().next() + "/NavPropertyETTwoPrimMany"));
-    req.setFormat(ContentType.JSON);
+        URI.create(createResponse.getHeader(HttpHeader.LOCATION).iterator().next() + "/NavPropertyETTwoPrimMany"));
+    req.setFormat(getContentType());
     req.addCustomHeader(HttpHeader.COOKIE, cookie);
     final ODataRetrieveResponse<ClientEntitySet> getResponse = req.execute();
 
-    assertEquals(32767, getResponse.getBody()
+    assertShortOrInt(32767, getResponse.getBody()
         .getEntities()
         .get(0)
         .getProperty("PropertyInt16")
@@ -426,24 +496,22 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void changesetBatchRequest() throws URISyntaxException {
-    final ODataBatchRequest request = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI);
-    final BatchManager payload = request.payloadManager();
+  public void changesetBatchRequest() {
+    BatchManager payload = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI).payloadManager();
     // -----------------------------
     // - Append get request
     // -----------------------------
-    appendGetRequest(payload, "ESAllPrim", 32767, false); // Without error
+    payload.addRequest(createGetRequest("ESAllPrim", 32767, false));
 
     // -----------------------------
     // - Append change set
     // -----------------------------
     final ODataChangeset changeset = payload.addChangeset();
 
-    // ------------------------
+    // -----------------------------
     // POST request (Insert)
-    URIBuilder targetURI =
-        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim");
-    URI editLink = targetURI.build();
+    // -----------------------------
+    URI targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build();
 
     ClientObjectFactory factory = getFactory();
     ClientEntity postEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
@@ -457,34 +525,32 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
             factory.newPrimitiveValueBuilder().buildDouble(3.1415)));
 
     final ODataEntityCreateRequest<ClientEntity> createRequest =
-        getClient().getCUDRequestFactory().getEntityCreateRequest(editLink, postEntity);
-    createRequest.setFormat(ContentType.JSON);
+        getClient().getCUDRequestFactory().getEntityCreateRequest(targetURI, postEntity);
+    createRequest.setFormat(getContentType());
 
     changeset.addRequest(createRequest);
 
-    // ------------------------
+    // -----------------------------
     // Patch request (Update)
-    targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(0);
-    editLink = targetURI.build();
-
+    // -----------------------------
     ClientEntity patchEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
-    patchEntity.setEditLink(editLink);
+    patchEntity.setEditLink(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(0).build());
 
     patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",
             factory.newPrimitiveValueBuilder().buildDouble(3.1415)));
 
     ODataEntityUpdateRequest<ClientEntity> changeReq =
         getClient().getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patchEntity);
-    changeReq.setFormat(ContentType.JSON);
+    changeReq.setFormat(getContentType());
     changeset.addRequest(changeReq);
 
-    // ------------------------
+    // -----------------------------
     // Patch request (Upsert)
-    targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(15);
-    editLink = targetURI.build();
-
+    // -----------------------------
     patchEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
-    patchEntity.setEditLink(editLink);
+    patchEntity.setEditLink(
+        getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").appendKeySegment(15).build());
 
     patchEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",
             factory.newPrimitiveValueBuilder().buildDouble(3.1415)));
@@ -496,13 +562,13 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
             .build()));
 
     changeReq = getClient().getCUDRequestFactory().getEntityUpdateRequest(UpdateType.PATCH, patchEntity);
-    changeReq.setFormat(ContentType.JSON);
+    changeReq.setFormat(getContentType());
     changeset.addRequest(changeReq);
 
     // -----------------------------
     // - Append get request
     // -----------------------------
-    appendGetRequest(payload, "ESAllPrim", 0, false); // Without error
+    payload.addRequest(createGetRequest("ESAllPrim", 0, false));
 
     // -----------------------------
     // - Fetch result
@@ -520,7 +586,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertTrue(response0 instanceof ODataRetrieveResponse);
     @SuppressWarnings("unchecked")
     ODataRetrieveResponse<ClientEntity> retrieveResponse = (ODataRetrieveResponse<ClientEntity>) response0;
-    assertEquals(34, retrieveResponse.getBody()
+    assertShortOrInt(34, retrieveResponse.getBody()
         .getProperty("PropertyDecimal")
         .getPrimitiveValue()
         .toValue());
@@ -568,15 +634,15 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
         .toValue());
   }
 
-  private void appendGetRequest(final BatchManager manager, final String segment, final Object key,
-      final boolean isRelative)
-      throws URISyntaxException {
-    final URIBuilder targetURI = getClient().newURIBuilder(SERVICE_URI);
-    targetURI.appendEntitySetSegment(segment).appendKeySegment(key);
-    final URI uri = (isRelative) ? new URI(SERVICE_URI).relativize(targetURI.build()) : targetURI.build();
+  private ODataEntityRequest<ClientEntity> createGetRequest(final String segment, final Object key,
+      final boolean isRelative) {
+    final URI targetURI = getClient().newURIBuilder(SERVICE_URI)
+        .appendEntitySetSegment(segment).appendKeySegment(key)
+        .build();
+    final URI uri = isRelative ? URI.create(SERVICE_URI).relativize(targetURI) : targetURI;
 
     ODataEntityRequest<ClientEntity> queryReq = getClient().getRetrieveRequestFactory().getEntityRequest(uri);
-    queryReq.setFormat(ContentType.JSON);
-    manager.addRequest(queryReq);
+    queryReq.setAccept(getContentType().toContentTypeString());
+    return queryReq;
   }
 }

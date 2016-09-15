@@ -34,7 +34,6 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
 
 public class BatchRequestTransformator {
-  private static final Charset DEFAULT_CHARSET = Charset.forName("utf-8");
   private final String baseUri;
   private final String rawServiceResolutionUri;
 
@@ -47,7 +46,7 @@ public class BatchRequestTransformator {
     final List<ODataRequest> requests = new LinkedList<ODataRequest>();
     final List<BatchRequestPart> resultList = new ArrayList<BatchRequestPart>();
 
-    validateBodyPartHeader(bodyPart);
+    validateHeaders(bodyPart.getHeaders(), bodyPart.isChangeSet());
 
     for (BatchQueryOperation queryOperation : bodyPart.getRequests()) {
       requests.add(processQueryOperation(bodyPart, baseUri, queryOperation));
@@ -62,7 +61,7 @@ public class BatchRequestTransformator {
     if (bodyPart.isChangeSet()) {
       BatchQueryOperation encapsulatedQueryOperation = ((BatchChangeSetPart) queryOperation).getRequest();
       handleContentId(queryOperation, encapsulatedQueryOperation);
-      validateHeader(queryOperation, true);
+      validateHeaders(queryOperation.getHeaders(), false);
 
       return createRequest(encapsulatedQueryOperation, baseUri, bodyPart.isChangeSet());
     } else {
@@ -99,20 +98,20 @@ public class BatchRequestTransformator {
   }
 
   private ODataRequest createRequest(final BatchQueryOperation operation, final String baseUri,
-      final boolean isChangeSet)
-          throws BatchDeserializerException {
+      final boolean isChangeSet) throws BatchDeserializerException {
     final HttpRequestStatusLine statusLine =
         new HttpRequestStatusLine(operation.getHttpStatusLine(), baseUri, rawServiceResolutionUri);
     statusLine.validateHttpMethod(isChangeSet);
+    BatchTransformatorCommon.validateHost(operation.getHeaders(), baseUri);
 
     validateBody(statusLine, operation);
     Charset charset = getCharset(operation);
-    InputStream bodyStrean = getBodyStream(operation, statusLine, charset);
+    InputStream bodyStream = getBodyStream(operation, statusLine, charset);
 
     validateForbiddenHeader(operation);
 
     final ODataRequest request = new ODataRequest();
-    request.setBody(bodyStrean);
+    request.setBody(bodyStream);
     request.setMethod(statusLine.getMethod());
     request.setRawBaseUri(statusLine.getRawBaseUri());
     request.setRawODataPath(statusLine.getRawODataPath());
@@ -128,24 +127,25 @@ public class BatchRequestTransformator {
   }
 
   private Charset getCharset(final BatchQueryOperation operation) {
-    String ct = operation.getHeaders().getHeader(HttpHeader.CONTENT_TYPE);
-    if (ct != null) {
-      ContentType contentType = ContentType.parse(ct);
-      if (contentType != null) {
-        String charsetValue = contentType.getParameter(ContentType.PARAMETER_CHARSET);
-        if (charsetValue != null) {
-          return Charset.forName(charsetValue);
+    final ContentType contentType = ContentType.parse(operation.getHeaders().getHeader(HttpHeader.CONTENT_TYPE));
+    if (contentType != null) {
+      final String charsetValue = contentType.getParameter(ContentType.PARAMETER_CHARSET);
+      if (charsetValue == null) {
+        if (contentType.isCompatible(ContentType.APPLICATION_JSON) || contentType.getSubtype().contains("xml")) {
+          return Charset.forName("UTF-8");
         }
+      } else {
+        return Charset.forName(charsetValue);
       }
     }
-    return DEFAULT_CHARSET;
+    return Charset.forName("ISO-8859-1");
   }
 
   private void validateForbiddenHeader(final BatchQueryOperation operation) throws BatchDeserializerException {
     final Header header = operation.getHeaders();
 
-    if (header.exists(HttpHeader.AUTHORIZATION) || header.exists(HttpHeader.EXPECT)
-        || header.exists(HttpHeader.FROM) || header.exists(HttpHeader.MAX_FORWARDS)
+    if (header.exists(HttpHeader.WWW_AUTHENTICATE) || header.exists(HttpHeader.AUTHORIZATION)
+        || header.exists(HttpHeader.EXPECT) || header.exists(HttpHeader.FROM) || header.exists(HttpHeader.MAX_FORWARDS)
         || header.exists(HttpHeader.RANGE) || header.exists(HttpHeader.TE)) {
       throw new BatchDeserializerException("Forbidden header", MessageKeys.FORBIDDEN_HEADER,
           Integer.toString(header.getLineNumber()));
@@ -153,8 +153,7 @@ public class BatchRequestTransformator {
   }
 
   private InputStream getBodyStream(final BatchQueryOperation operation, final HttpRequestStatusLine statusLine,
-      final Charset charset)
-          throws BatchDeserializerException {
+      final Charset charset) throws BatchDeserializerException {
     if (statusLine.getMethod().equals(HttpMethod.GET)) {
       return new ByteArrayInputStream(new byte[0]);
     } else {
@@ -170,34 +169,23 @@ public class BatchRequestTransformator {
 
   private void validateBody(final HttpRequestStatusLine statusLine, final BatchQueryOperation operation)
       throws BatchDeserializerException {
-    if (statusLine.getMethod().equals(HttpMethod.GET) && isUnvalidGetRequestBody(operation)) {
+    if (statusLine.getMethod().equals(HttpMethod.GET) && isInvalidGetRequestBody(operation)) {
       throw new BatchDeserializerException("Invalid request line", MessageKeys.INVALID_CONTENT,
           Integer.toString(statusLine.getLineNumber()));
     }
   }
 
-  private boolean isUnvalidGetRequestBody(final BatchQueryOperation operation) {
-    return (operation.getBody().size() > 1)
-        || (operation.getBody().size() == 1 && !"".equals(operation.getBody().get(0).toString().trim()));
+  private boolean isInvalidGetRequestBody(final BatchQueryOperation operation) {
+    return operation.getBody().size() > 1
+        || operation.getBody().size() == 1 && !operation.getBody().get(0).toString().trim().isEmpty();
   }
 
-  private void validateHeader(final BatchPart bodyPart, final boolean isChangeSet) throws BatchDeserializerException {
-    final Header headers = bodyPart.getHeaders();
-
-    BatchTransformatorCommon.validateContentType(headers, ContentType.APPLICATION_HTTP);
+  private void validateHeaders(final Header headers, final boolean isChangeSet) throws BatchDeserializerException {
     if (isChangeSet) {
-      BatchTransformatorCommon.validateContentTransferEncoding(headers);
-    }
-  }
-
-  private void validateBodyPartHeader(final BatchBodyPart bodyPart) throws BatchDeserializerException {
-    final Header header = bodyPart.getHeaders();
-
-    if (bodyPart.isChangeSet()) {
-      BatchTransformatorCommon.validateContentType(header, ContentType.MULTIPART_MIXED);
+      BatchTransformatorCommon.validateContentType(headers, ContentType.MULTIPART_MIXED);
     } else {
-      BatchTransformatorCommon.validateContentTransferEncoding(header);
-      BatchTransformatorCommon.validateContentType(header, ContentType.APPLICATION_HTTP);
+      BatchTransformatorCommon.validateContentTransferEncoding(headers);
+      BatchTransformatorCommon.validateContentType(headers, ContentType.APPLICATION_HTTP);
     }
   }
 }

@@ -33,8 +33,7 @@ public class BatchLineReader {
   private static final byte LF = '\n';
   private static final int EOF = -1;
   private static final int BUFFER_SIZE = 8192;
-  private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-  private static final Charset CS_ISO_8859_1 = Charset.forName("iso-8859-1");
+  private static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
   public static final String BOUNDARY = "boundary";
   public static final String DOUBLE_DASH = "--";
   public static final String CRLF = "\r\n";
@@ -96,18 +95,17 @@ public class BatchLineReader {
   private void updateCurrentCharset(final String currentLine) {
     if (currentLine != null) {
       if (currentLine.startsWith(HttpHeader.CONTENT_TYPE)) {
-        //13 is content-type.length() + 1 for header value
-        String clValue = currentLine.substring(13, currentLine.length() - 2).trim();
-        ContentType ct = ContentType.parse(clValue);
-        if (ct != null) {
-          String charsetString = ct.getParameter(ContentType.PARAMETER_CHARSET);
-          if (charsetString != null) {
-            currentCharset = Charset.forName(charsetString);
-          } else {
-            currentCharset = DEFAULT_CHARSET;
-          }
-          // boundary
-          String boundary = ct.getParameter(BOUNDARY);
+        final ContentType contentType = ContentType.parse(
+            currentLine.substring(HttpHeader.CONTENT_TYPE.length() + 1, currentLine.length() - 2).trim());
+        if (contentType != null) {
+          final String charsetString = contentType.getParameter(ContentType.PARAMETER_CHARSET);
+          currentCharset = charsetString == null ?
+              contentType.isCompatible(ContentType.APPLICATION_JSON) || contentType.getSubtype().contains("xml") ?
+                  Charset.forName("UTF-8") :
+                  DEFAULT_CHARSET :
+              Charset.forName(charsetString);
+
+          final String boundary = contentType.getParameter(BOUNDARY);
           if (boundary != null) {
             currentBoundary = DOUBLE_DASH + boundary;
           }
@@ -121,12 +119,8 @@ public class BatchLineReader {
   }
 
   private boolean isBoundary(final String currentLine) {
-    if ((currentBoundary + CRLF).equals(currentLine)) {
-      return true;
-    } else if ((currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine)) {
-      return true;
-    }
-    return false;
+    return (currentBoundary + CRLF).equals(currentLine)
+        || (currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine);
   }
 
   String readLine() throws IOException {
@@ -177,12 +171,8 @@ public class BatchLineReader {
     if (innerBuffer.position() == 0) {
       return null;
     } else {
-      String currentLine;
-      if (readState.isReadBody()) {
-        currentLine = new String(innerBuffer.array(), 0, innerBuffer.position(), getCurrentCharset());
-      } else {
-        currentLine = new String(innerBuffer.array(), 0, innerBuffer.position(), CS_ISO_8859_1);
-      }
+      final String currentLine = new String(innerBuffer.array(), 0, innerBuffer.position(),
+          readState.isReadBody() ? currentCharset : DEFAULT_CHARSET);
       updateCurrentCharset(currentLine);
       return currentLine;
     }
@@ -193,10 +183,6 @@ public class BatchLineReader {
     offset = 0;
 
     return limit;
-  }
-
-  private Charset getCurrentCharset() {
-    return currentCharset;
   }
 
   /**

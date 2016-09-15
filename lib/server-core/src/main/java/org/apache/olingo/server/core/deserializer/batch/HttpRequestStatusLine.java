@@ -33,8 +33,8 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 public class HttpRequestStatusLine {
   private static final Pattern PATTERN_RELATIVE_URI = Pattern.compile("([^/][^?]*)(?:\\?(.*))?");
 
-  private static final Set<String> HTTP_CHANGE_SET_METHODS = new HashSet<String>(Arrays.asList(new String[] { "POST",
-      "PUT", "DELETE", "PATCH" }));
+  private static final Set<HttpMethod> HTTP_CHANGE_SET_METHODS = new HashSet<HttpMethod>(Arrays.asList(
+      new HttpMethod[] { HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.PATCH }));
   private static final String HTTP_VERSION = "HTTP/1.1";
 
   final private Line statusLine;
@@ -78,7 +78,12 @@ public class HttpRequestStatusLine {
       if (uri.isAbsolute()) {
         parseAbsoluteUri(rawUri, baseUri);
       } else {
-        parseRelativeUri(rawUri);
+        final URI base = URI.create(baseUri);
+        if (rawUri.startsWith(base.getRawPath())) {
+          parseRelativeUri(removeLeadingSlash(rawUri.substring(base.getRawPath().length())));
+        } else {
+          parseRelativeUri(rawUri);
+        }
       }
     } catch (final URISyntaxException e) {
       throw new BatchDeserializerException("Malformed uri", e, MessageKeys.INVALID_URI,
@@ -143,7 +148,7 @@ public class HttpRequestStatusLine {
   }
 
   public void validateHttpMethod(final boolean isChangeSet) throws BatchDeserializerException {
-    if (isChangeSet && !HTTP_CHANGE_SET_METHODS.contains(getMethod().toString())) {
+    if (isChangeSet && !HTTP_CHANGE_SET_METHODS.contains(getMethod())) {
       throw new BatchDeserializerException("Invalid change set method", MessageKeys.INVALID_CHANGESET_METHOD,
           Integer.toString(statusLine.getLineNumber()));
     }

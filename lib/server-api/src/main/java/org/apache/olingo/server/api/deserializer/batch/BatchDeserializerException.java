@@ -39,6 +39,8 @@ public class BatchDeserializerException extends DeserializerException {
     /** parameter: line */
     INVALID_CONTENT_ID,
     /** parameter: line */
+    INVALID_HOST,
+    /** parameter: line */
     INVALID_HTTP_VERSION,
     /** parameter: line */
     INVALID_METHOD,
@@ -54,8 +56,6 @@ public class BatchDeserializerException extends DeserializerException {
     MISSING_CLOSE_DELIMITER,
     /** parameter: line */
     MISSING_CONTENT_ID,
-    /** parameter: line */
-    MISSING_CONTENT_TRANSFER_ENCODING,
     /** parameter: line */
     MISSING_CONTENT_TYPE,
     /** parameter: line */

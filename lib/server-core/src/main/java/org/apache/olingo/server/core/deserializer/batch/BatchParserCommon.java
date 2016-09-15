@@ -64,14 +64,14 @@ public class BatchParserCommon {
 
   public static String getBoundary(final String contentType, final int line) throws BatchDeserializerException {
     final ContentType type = parseContentType(contentType, ContentType.MULTIPART_MIXED, line);
-    String boundary = type.getParameter(BOUNDARY);
+    final String boundary = type.getParameter(BOUNDARY);
     if (boundary == null) {
       throw new BatchDeserializerException("Missing boundary.",
           BatchDeserializerException.MessageKeys.MISSING_BOUNDARY_DELIMITER, Integer.toString(line));
     }
-    boundary = boundary.trim();
-    if (PATTERN_BOUNDARY.matcher(boundary).matches()) {
-      return trimQuotes(boundary);
+    final Matcher matcher = PATTERN_BOUNDARY.matcher(boundary);
+    if (matcher.matches()) {
+      return matcher.group(1) == null ? matcher.group(2) : matcher.group(1);
     } else {
       throw new BatchDeserializerException("Invalid boundary format",
           BatchDeserializerException.MessageKeys.INVALID_BOUNDARY, Integer.toString(line));
@@ -109,13 +109,6 @@ public class BatchParserCommon {
           BatchDeserializerException.MessageKeys.UNEXPECTED_CONTENT_TYPE,
           Integer.toString(line), expected.toContentTypeString(), type.toContentTypeString());
     }
-  }
-
-  private static String trimQuotes(final String boundary) {
-    if (boundary != null && boundary.length() >= 2 && boundary.startsWith("\"") && boundary.endsWith("\"")) {
-      return boundary.substring(1, boundary.length() - 1);
-    }
-    return boundary;
   }
 
   public static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)

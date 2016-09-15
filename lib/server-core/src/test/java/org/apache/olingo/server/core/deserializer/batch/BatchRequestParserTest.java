@@ -18,12 +18,8 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -36,947 +32,857 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.batch.BatchOptions;
 import org.apache.olingo.server.api.deserializer.batch.BatchRequestPart;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class BatchRequestParserTest {
 
   private static final String SERVICE_ROOT = "http://localhost/odata";
+  private static final String PROPERTY_URI = "ESAllPrim(32767)/PropertyString";
+  private static final String HTTP_VERSION = " HTTP/1.1";
   private static final String CRLF = "\r\n";
   private static final String BOUNDARY = "batch_8194-cf13-1f56";
-  private static final String MIME_HEADERS = "Content-Type: application/http" + CRLF
-      + "Content-Transfer-Encoding: binary" + CRLF;
-  private static final String GET_REQUEST = ""
-      + MIME_HEADERS
+  private static final String CHANGESET_BOUNDARY = "changeset_f980-1cb6-94dd";
+  private static final String MULTIPART_MIXED = "multipart/mixed";
+  private static final String APPLICATION_HTTP = "application/http";
+  private static final String APPLICATION_JSON = "application/json";
+  private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
+  private static final String MIME_HEADERS = HttpHeader.CONTENT_TYPE + ": " + APPLICATION_HTTP + CRLF
+      + HttpHeader.ODATA_VERSION + ": 4.0" + CRLF;
+  private static final String ACCEPT_HEADER = HttpHeader.ACCEPT + ": "
+      + APPLICATION_JSON + ";q=0.9, application/xml;q=0.8, application/atom+xml;q=0.8, */*;q=0.1" + CRLF;
+  private static final String GET_REQUEST = MIME_HEADERS
       + CRLF
-      + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
+      + HttpMethod.GET + " " + PROPERTY_URI + HTTP_VERSION + CRLF
       + CRLF
       + CRLF;
 
   @Test
-  public void test() throws Exception {
-    final InputStream in = readFile("/batchWithPost.batch");
-    final List<BatchRequestPart> batchRequestParts = parse(in);
+  public void basic() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + HttpMethod.GET + " " + PROPERTY_URI + "?$format=json" + HTTP_VERSION + CRLF
+        + HttpHeader.ACCEPT_LANGUAGE + ":en-US,en;q=0.7,en-GB;q=0.9" + CRLF
+        + CRLF
+        + CRLF
+        + "--" + BOUNDARY +CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
+        + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": changeRequest1" + CRLF
+        + CRLF
+        + HttpMethod.PUT + " " + PROPERTY_URI + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": 100000" + CRLF
+        + ACCEPT_HEADER
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + CRLF
+        + "{\"value\":\"€ MODIFIED\"}" + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + CRLF
+        + "--" + BOUNDARY + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + HttpMethod.GET + " " + PROPERTY_URI + "?$format=json" + HTTP_VERSION + CRLF
+        + CRLF
+        + CRLF
+        + "--" + BOUNDARY + "--";
+    final List<BatchRequestPart> batchRequestParts = parse(batch);
 
-    assertNotNull(batchRequestParts);
-    assertFalse(batchRequestParts.isEmpty());
+    Assert.assertNotNull(batchRequestParts);
+    Assert.assertFalse(batchRequestParts.isEmpty());
 
-    for (BatchRequestPart object : batchRequestParts) {
+    for (final BatchRequestPart object : batchRequestParts) {
+      Assert.assertEquals(1, object.getRequests().size());
+      final ODataRequest request = object.getRequests().get(0);
+      Assert.assertEquals(SERVICE_ROOT, request.getRawBaseUri());
+      Assert.assertEquals("/" + PROPERTY_URI, request.getRawODataPath());
+
       if (!object.isChangeSet()) {
-        assertEquals(1, object.getRequests().size());
-        ODataRequest retrieveRequest = object.getRequests().get(0);
-        assertEquals(HttpMethod.GET, retrieveRequest.getMethod());
+        Assert.assertEquals(HttpMethod.GET, request.getMethod());
 
-        if (retrieveRequest.getHeaders(HttpHeader.ACCEPT_LANGUAGE) != null) {
-          assertEquals(3, retrieveRequest.getHeaders(HttpHeader.ACCEPT_LANGUAGE).size());
+        if (request.getHeaders(HttpHeader.ACCEPT_LANGUAGE) != null) {
+          Assert.assertEquals(3, request.getHeaders(HttpHeader.ACCEPT_LANGUAGE).size());
         }
 
-        assertEquals(SERVICE_ROOT, retrieveRequest.getRawBaseUri());
-        assertEquals("/Employees('2')/EmployeeName", retrieveRequest.getRawODataPath());
-        assertEquals("http://localhost/odata/Employees('2')/EmployeeName?$format=json", retrieveRequest
-            .getRawRequestUri());
-        assertEquals("$format=json", retrieveRequest.getRawQueryPath());
+        Assert.assertEquals(SERVICE_ROOT + "/" + PROPERTY_URI + "?$format=json", request.getRawRequestUri());
+        Assert.assertEquals("$format=json", request.getRawQueryPath());
+
       } else {
-        List<ODataRequest> requests = object.getRequests();
-        for (ODataRequest request : requests) {
+        Assert.assertEquals(HttpMethod.PUT, request.getMethod());
+        Assert.assertEquals("100000", request.getHeader(HttpHeader.CONTENT_LENGTH));
+        Assert.assertEquals(APPLICATION_JSON, request.getHeader(HttpHeader.CONTENT_TYPE));
 
-          assertEquals(HttpMethod.PUT, request.getMethod());
-          assertEquals("100000", request.getHeader(HttpHeader.CONTENT_LENGTH));
-          assertEquals("application/json;odata=verbose", request.getHeader(HttpHeader.CONTENT_TYPE));
+        final List<String> acceptHeader = request.getHeaders(HttpHeader.ACCEPT);
+        Assert.assertEquals(4, request.getHeaders(HttpHeader.ACCEPT).size());
+        Assert.assertEquals("application/atom+xml;q=0.8", acceptHeader.get(2));
+        Assert.assertEquals("*/*;q=0.1", acceptHeader.get(3));
 
-          List<String> acceptHeader = request.getHeaders(HttpHeader.ACCEPT);
-          assertEquals(3, request.getHeaders(HttpHeader.ACCEPT).size());
-          assertEquals("application/atomsvc+xml;q=0.8", acceptHeader.get(0));
-          assertEquals("*/*;q=0.1", acceptHeader.get(2));
+        Assert.assertEquals(SERVICE_ROOT + "/" + PROPERTY_URI, request.getRawRequestUri());
+        Assert.assertEquals("", request.getRawQueryPath()); // No query parameter
 
-          assertEquals("http://localhost/odata/Employees('2')/EmployeeName", request.getRawRequestUri());
-          assertEquals("http://localhost/odata", request.getRawBaseUri());
-          assertEquals("/Employees('2')/EmployeeName", request.getRawODataPath());
-          assertEquals("", request.getRawQueryPath()); // No query parameter
-        }
+        Assert.assertEquals("{\"value\":\"€ MODIFIED\"}" + CRLF, IOUtils.toString(request.getBody()));
       }
     }
   }
 
   @Test
-  public void testImageInContent() throws Exception {
-    final InputStream contentInputStream = readFile("/batchWithContent.batch");
-    final String content = IOUtils.toString(contentInputStream);
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void imageInContent() throws Exception {
+    final String content = IOUtils.toString(readFile("/batchWithContent.batch"));
+    final String batch = "--" + BOUNDARY + CRLF
+        + GET_REQUEST
+        + "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "GET Employees?$filter=Age%20gt%2040 HTTP/1.1" + CRLF
-        + "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + "content-type:     Application/http" + CRLF
-        + "content-transfer-encoding: Binary" + CRLF
-        + "Content-ID: 1" + CRLF
-        + CRLF
-        + "POST Employees HTTP/1.1" + CRLF
-        + "Content-length: 100000" + CRLF
-        + "Content-type: application/octet-stream" + CRLF
+        + HttpMethod.POST + " ESMedia" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": 100000" + CRLF
+        + HttpHeader.CONTENT_TYPE + ": image/jpeg" + CRLF
+        + "Content-Transfer-Encoding: base64" + CRLF
         + CRLF
         + content
         + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + "--" + BOUNDARY + "--";
     final List<BatchRequestPart> BatchRequestParts = parse(batch);
 
-    for (BatchRequestPart part : BatchRequestParts) {
+    for (final BatchRequestPart part : BatchRequestParts) {
+      Assert.assertEquals(1, part.getRequests().size());
+      final ODataRequest request = part.getRequests().get(0);
       if (!part.isChangeSet()) {
-        assertEquals(1, part.getRequests().size());
-        final ODataRequest retrieveRequest = part.getRequests().get(0);
-
-        assertEquals(HttpMethod.GET, retrieveRequest.getMethod());
-        assertEquals("http://localhost/odata/Employees?$filter=Age%20gt%2040", retrieveRequest.getRawRequestUri());
-        assertEquals("http://localhost/odata", retrieveRequest.getRawBaseUri());
-        assertEquals("/Employees", retrieveRequest.getRawODataPath());
-        assertEquals("$filter=Age%20gt%2040", retrieveRequest.getRawQueryPath());
+        Assert.assertEquals(HttpMethod.GET, request.getMethod());
+        Assert.assertEquals(SERVICE_ROOT + "/" + PROPERTY_URI, request.getRawRequestUri());
+        Assert.assertEquals(SERVICE_ROOT, request.getRawBaseUri());
+        Assert.assertEquals("/" + PROPERTY_URI, request.getRawODataPath());
       } else {
-        final List<ODataRequest> requests = part.getRequests();
-        for (ODataRequest request : requests) {
-          assertEquals(HttpMethod.POST, request.getMethod());
-          assertEquals("100000", request.getHeader(HttpHeader.CONTENT_LENGTH));
-          assertEquals("1", request.getHeader(HttpHeader.CONTENT_ID));
-          assertEquals("application/octet-stream", request.getHeader(HttpHeader.CONTENT_TYPE));
-
-          final InputStream body = request.getBody();
-          assertEquals(content, IOUtils.toString(body));
-        }
+        Assert.assertEquals(HttpMethod.POST, request.getMethod());
+        Assert.assertEquals("100000", request.getHeader(HttpHeader.CONTENT_LENGTH));
+        Assert.assertEquals("1", request.getHeader(HttpHeader.CONTENT_ID));
+        Assert.assertEquals("image/jpeg", request.getHeader(HttpHeader.CONTENT_TYPE));
+        Assert.assertEquals(content, IOUtils.toString(request.getBody()));
       }
     }
   }
 
   @Test
-  public void testPostWithoutBody() throws Exception {
-    final String batch = CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: changeRequest1" + CRLF
-        + CRLF
-        + "POST Employees('2') HTTP/1.1" + CRLF
-        + "Content-Length: 100" + CRLF
-        + "Content-Type: application/octet-stream" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-    final List<BatchRequestPart> batchRequestParts = parse(batch);
-
-    for (BatchRequestPart object : batchRequestParts) {
-      if (object.isChangeSet()) {
-        final List<ODataRequest> requests = object.getRequests();
-
-        for (ODataRequest request : requests) {
-          assertEquals(HttpMethod.POST, request.getMethod());
-          assertEquals("100", request.getHeader(HttpHeader.CONTENT_LENGTH));
-          assertEquals("application/octet-stream", request.getHeader(HttpHeader.CONTENT_TYPE));
-          assertNotNull(request.getBody());
-        }
-      }
+  public void binaryContent() throws Exception {
+    // binary content, not a valid UTF-8 representation of a string
+    byte[] content = new byte[Byte.MAX_VALUE - Byte.MIN_VALUE + 1];
+    for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++) {
+      content[i - Byte.MIN_VALUE] = (byte) i;
     }
+    ByteArrayOutputStream out = new ByteArrayOutputStream(500);
+    out.write(("--" + BOUNDARY + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + HttpMethod.POST + " ESMedia" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_OCTET_STREAM + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": " + (Byte.MAX_VALUE - Byte.MIN_VALUE + 1) + CRLF
+        + CRLF).getBytes());
+    out.write(content);
+    out.write((CRLF
+        + "--" + BOUNDARY + "--").getBytes());
+    final List<BatchRequestPart> parts = parse(new ByteArrayInputStream(out.toByteArray()), true);
+    Assert.assertEquals(1, parts.size());
+    Assert.assertEquals(1, parts.get(0).getRequests().size());
+    InputStream body = parts.get(0).getRequests().get(0).getBody();
+    Assert.assertNotNull(body);
+    Assert.assertArrayEquals(content, IOUtils.toByteArray(body));
   }
 
   @Test
-  public void testAbsoluteUri() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void postWithoutBody() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": changeRequest1" + CRLF
         + CRLF
-        + "GET http://localhost/odata/Employees('1')/EmployeeName?$top=1 HTTP/1.1" + CRLF
+        + HttpMethod.POST + " ESAllPrim" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": 100" + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_OCTET_STREAM + CRLF
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
-
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + CRLF
+        + "--" + BOUNDARY + "--";
     final List<BatchRequestPart> batchRequestParts = parse(batch);
 
-    assertEquals(1, batchRequestParts.size());
-    final BatchRequestPart part = batchRequestParts.get(0);
-
-    assertEquals(1, part.getRequests().size());
-    final ODataRequest request = part.getRequests().get(0);
-
-    assertEquals("/Employees('1')/EmployeeName", request.getRawODataPath());
-    assertEquals("$top=1", request.getRawQueryPath());
-    assertEquals("http://localhost/odata/Employees('1')/EmployeeName?$top=1", request.getRawRequestUri());
-    assertEquals("http://localhost/odata", request.getRawBaseUri());
+    Assert.assertEquals(1, batchRequestParts.size());
+    Assert.assertTrue(batchRequestParts.get(0).isChangeSet());
+    Assert.assertEquals(1, batchRequestParts.get(0).getRequests().size());
+    final ODataRequest request = batchRequestParts.get(0).getRequests().get(0);
+    Assert.assertEquals(HttpMethod.POST, request.getMethod());
+    Assert.assertEquals("100", request.getHeader(HttpHeader.CONTENT_LENGTH));
+    Assert.assertEquals(APPLICATION_OCTET_STREAM, request.getHeader(HttpHeader.CONTENT_TYPE));
+    Assert.assertNotNull(request.getBody());
+    Assert.assertEquals(-1, request.getBody().read());
   }
 
   @Test
   public void boundaryParameterWithQuotes() throws Exception {
-    final String contentType = "multipart/mixed; boundary=\"batch_1.2+34:2j)0?\"";
-    final String boundary = BatchParserCommon.getBoundary(contentType, 0);
-    final String batch = ""
-        + "--batch_1.2+34:2j)0?" + CRLF
+    final String boundary = "batch_1.2+34:2j)0?";
+    final String batch = "--" + boundary + CRLF
         + GET_REQUEST
-        + "--batch_1.2+34:2j)0?--";
-    final BatchParser parser = new BatchParser();
-    final BatchOptions batchOptions = BatchOptions.with().isStrict(true).rawBaseUri(SERVICE_ROOT).build();
-    final List<BatchRequestPart> batchRequestParts =
-        parser.parseBatchRequest(IOUtils.toInputStream(batch), boundary, batchOptions);
+        + "--" + boundary + "--";
+    final List<BatchRequestPart> batchRequestParts = new BatchParser().parseBatchRequest(
+        IOUtils.toInputStream(batch),
+        boundary,
+        BatchOptions.with().isStrict(true).rawBaseUri(SERVICE_ROOT).build());
 
-    assertNotNull(batchRequestParts);
-    assertFalse(batchRequestParts.isEmpty());
+    Assert.assertNotNull(batchRequestParts);
+    Assert.assertFalse(batchRequestParts.isEmpty());
   }
 
   @Test
-  public void testBatchWithInvalidContentType() throws Exception {
-    final String invalidContentType = "multipart;boundary=batch_1740-bb84-2f7f";
-
-    try {
-      BatchParserCommon.getBoundary(invalidContentType, 0);
-      fail();
-    } catch (BatchDeserializerException e) {
-      assertMessageKey(e, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TYPE);
-    }
-  }
-
-  @Test
-  public void testContentTypeCharset() throws Exception {
-    final String contentType = "multipart/mixed; charset=UTF-8;boundary=batch_14d1-b293-b99a";
-    final String boundary = BatchParserCommon.getBoundary(contentType, 0);
-
-    assertEquals("batch_14d1-b293-b99a", boundary);
-  }
-
-  @Test
-  public void batchWithoutBoundaryParameter() throws Exception {
-    final String invalidContentType = "multipart/mixed";
-
-    try {
-      BatchParserCommon.getBoundary(invalidContentType, 0);
-      fail();
-    } catch (BatchDeserializerException e) {
-      assertMessageKey(e, BatchDeserializerException.MessageKeys.MISSING_BOUNDARY_DELIMITER);
-    }
-  }
-
-  @Test
-  public void boundaryParameterWithoutQuote() throws Exception {
-    final String invalidContentType = "multipart/mixed;boundary=batch_1740-bb:84-2f7f";
-
-    try {
-      BatchParserCommon.getBoundary(invalidContentType, 0);
-      fail();
-    } catch (BatchDeserializerException e) {
-      assertMessageKey(e, BatchDeserializerException.MessageKeys.INVALID_BOUNDARY);
-    }
-  }
-
-  @Test
-  public void testWrongBoundaryString() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f5" + CRLF
+  public void wrongBoundaryString() throws Exception {
+    final String batch = "--batch_8194-cf13-1f5" + CRLF
         + GET_REQUEST
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     final List<BatchRequestPart> parts = parse(batch);
-    assertEquals(0, parts.size());
+    Assert.assertEquals(0, parts.size());
   }
 
   @Test
-  public void testMissingHttpVersion() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding:binary" + CRLF
+  public void missingHttpVersion() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + MIME_HEADERS
         + CRLF
-        + "GET Employees?$format=json" + CRLF
-        + "Host: localhost:8080" + CRLF
+        + HttpMethod.GET + " ESAllPrim?$format=json" + CRLF
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_STATUS_LINE);
   }
 
   @Test
-  public void testMissingHttpVersion2() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding:binary" + CRLF
+  public void missingHttpVersion2() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + MIME_HEADERS
         + CRLF
-        + "GET Employees?$format=json " + CRLF
-        + "Host: localhost:8080" + CRLF
+        + HttpMethod.GET + " ESAllPrim?$format=json " + CRLF
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_HTTP_VERSION);
   }
 
   @Test
-  public void testMissingHttpVersion3() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding:binary" + CRLF
+  public void missingHttpVersion3() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + MIME_HEADERS
         + CRLF
-        + "GET Employees?$format=json SMTP:3.1" + CRLF
-        + "Host: localhost:8080" + CRLF
+        + HttpMethod.GET + " ESAllPrim?$format=json SMTP:3.1" + CRLF
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_HTTP_VERSION);
   }
 
   @Test
-  public void testBoundaryWithoutHyphen() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void boundaryWithoutHyphen() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
         + GET_REQUEST
-        + "batch_8194-cf13-1f56" + CRLF
+        + BOUNDARY + CRLF
         + GET_REQUEST
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT);
   }
 
   @Test
-  public void testNoBoundaryString() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void noBoundaryString() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
         + GET_REQUEST
         // + no boundary string
         + GET_REQUEST
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT);
   }
 
   @Test
-  public void testBatchBoundaryEqualsChangeSetBoundary() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed;boundary=batch_8194-cf13-1f56" + CRLF
+  public void batchBoundaryEqualsChangeSetBoundary() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + ";boundary=" + BOUNDARY + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
+        + "--" + BOUNDARY + CRLF
         + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "PUT Employees('2')/EmployeeName HTTP/1.1" + CRLF
-        + "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
+        + HttpMethod.PUT + " " + PROPERTY_URI + HTTP_VERSION + CRLF
+        + ACCEPT_HEADER
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "{\"EmployeeName\":\"Frederic Fall MODIFIED\"}" + CRLF
+        + "{\"value\":\"MODIFIED\"}" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--"
+        + "--" + BOUNDARY + "--"
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_BLANK_LINE);
   }
 
   @Test
-  public void testNoContentType() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
+  public void noContentType() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.ODATA_VERSION + ": 4.0" + CRLF
         + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
+        + HttpMethod.GET + " " + PROPERTY_URI + HTTP_VERSION + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE);
   }
 
   @Test
   public void mimeHeaderContentType() throws Exception {
-    final String batch = "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: text/plain" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": text/plain" + CRLF
         + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
+        + HttpMethod.GET + " " + PROPERTY_URI + HTTP_VERSION + CRLF
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.UNEXPECTED_CONTENT_TYPE);
   }
 
   @Test
-  public void testMimeHeaderEncoding() throws Exception {
-    String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: application/http" + CRLF
+  public void mimeHeaderEncoding() throws Exception {
+    String batch = "--" + BOUNDARY + CRLF
+        + MIME_HEADERS
         + "Content-Transfer-Encoding: 8bit" + CRLF
         + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
+        + HttpMethod.GET + " " + PROPERTY_URI + HTTP_VERSION + CRLF
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING);
   }
 
   @Test
-  public void testGetRequestMissingCRLF() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void getRequestMissingCRLF() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
+        + HttpMethod.GET + " " + PROPERTY_URI + HTTP_VERSION + CRLF
         // + CRLF // Belongs to the GET request
-        + CRLF // Belongs to the
-        + "--batch_8194-cf13-1f56--";
+        + CRLF // Belongs to the boundary
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_BLANK_LINE);
   }
 
   @Test
-  public void testMethodsForIndividualRequests() throws Exception {
-    final String batch = "--batch_8194-cf13-1f56" + CRLF
+  public void methodsForIndividualRequests() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "POST Employees HTTP/1.1" + CRLF
-        + "Content-Type: application/json" + CRLF
+        + HttpMethod.POST + " ESAllPrim" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "{ \"Name\": \"Foo\" }"
+        + "{ \"PropertyString\": \"Foo\" }"
         + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
+        + "--" + BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "DELETE Employees('1') HTTP/1.1" + CRLF
+        + HttpMethod.DELETE + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
+        + "--" + BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "PATCH Employees('1') HTTP/1.1" + CRLF
-        + "Content-Type: application/json" + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "{ \"Name\": \"Foo\" }" + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
+        + "{ \"PropertyString\": \"Foo\" }" + CRLF
+        + "--" + BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "PUT Employees('1') HTTP/1.1" + CRLF
-        + "Content-Type: application/json" + CRLF
+        + HttpMethod.PUT + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "{ \"Name\": \"Foo\" }" + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
+        + "{ \"PropertyString\": \"Foo\" }" + CRLF
+        + "--" + BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "GET Employees('1') HTTP/1.1" + CRLF
-        + "Accept: application/json" + CRLF
+        + HttpMethod.GET + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + ACCEPT_HEADER
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
-    List<BatchRequestPart> requests = parse(batch);
-    assertEquals(HttpMethod.POST, requests.get(0).getRequests().get(0).getMethod());
-    assertEquals("/Employees", requests.get(0).getRequests().get(0).getRawODataPath());
-    assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
+    final List<BatchRequestPart> requests = parse(batch);
 
-    requests = parse(batch);
-    assertEquals(HttpMethod.DELETE, requests.get(1).getRequests().get(0).getMethod());
-    assertEquals("/Employees('1')", requests.get(1).getRequests().get(0).getRawODataPath());
+    Assert.assertEquals(HttpMethod.POST, requests.get(0).getRequests().get(0).getMethod());
+    Assert.assertEquals("/ESAllPrim", requests.get(0).getRequests().get(0).getRawODataPath());
+    Assert.assertEquals("{ \"PropertyString\": \"Foo\" }",
+        IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
 
-    requests = parse(batch);
-    assertEquals(HttpMethod.PATCH, requests.get(2).getRequests().get(0).getMethod());
-    assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
-    assertEquals("/Employees('1')", requests.get(2).getRequests().get(0).getRawODataPath());
+    Assert.assertEquals(HttpMethod.DELETE, requests.get(1).getRequests().get(0).getMethod());
+    Assert.assertEquals("/ESAllPrim(32767)", requests.get(1).getRequests().get(0).getRawODataPath());
 
-    requests = parse(batch);
-    assertEquals(HttpMethod.PUT, requests.get(3).getRequests().get(0).getMethod());
-    assertEquals("{ \"Name\": \"Foo\" }", IOUtils.toString(requests.get(0).getRequests().get(0).getBody()));
-    assertEquals("/Employees('1')", requests.get(3).getRequests().get(0).getRawODataPath());
+    Assert.assertEquals(HttpMethod.PATCH, requests.get(2).getRequests().get(0).getMethod());
+    Assert.assertEquals("/ESAllPrim(32767)", requests.get(2).getRequests().get(0).getRawODataPath());
+    Assert.assertEquals("{ \"PropertyString\": \"Foo\" }",
+        IOUtils.toString(requests.get(2).getRequests().get(0).getBody()));
 
-    requests = parse(batch);
-    assertEquals(HttpMethod.GET, requests.get(4).getRequests().get(0).getMethod());
-    assertEquals("/Employees('1')", requests.get(4).getRequests().get(0).getRawODataPath());
+    Assert.assertEquals(HttpMethod.PUT, requests.get(3).getRequests().get(0).getMethod());
+    Assert.assertEquals("/ESAllPrim(32767)", requests.get(3).getRequests().get(0).getRawODataPath());
+    Assert.assertEquals("{ \"PropertyString\": \"Foo\" }",
+        IOUtils.toString(requests.get(3).getRequests().get(0).getBody()));
 
+    Assert.assertEquals(HttpMethod.GET, requests.get(4).getRequests().get(0).getMethod());
+    Assert.assertEquals("/ESAllPrim(32767)", requests.get(4).getRequests().get(0).getRawODataPath());
   }
 
   @Test
-  public void testNoBoundaryFound() throws Exception {
-    final String batch = "batch_8194-cf13-1f56" + CRLF
+  public void noBoundaryFound() throws Exception {
+    final String batch = BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "POST Employees('1')/EmployeeName HTTP/1.1" + CRLF
+        + HttpMethod.POST + " ESAllPrim" + HTTP_VERSION + CRLF
         + CRLF;
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testEmptyRequest() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56--";
+  public void emptyRequest() throws Exception {
+    final String batch = "--" + BOUNDARY + "--";
 
-    final List<BatchRequestPart> parts = parse(batch);
-    assertEquals(0, parts.size());
+    Assert.assertEquals(0, parse(batch).size());
   }
 
   @Test
-  public void testBadRequest() throws Exception {
+  public void badRequest() throws Exception {
     final String batch = "This is a bad request. There is no syntax and also no semantic";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testNoMethod() throws Exception {
-    final String batch = "--batch_8194-cf13-1f56" + CRLF
+  public void noMethod() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + /* GET */"Employees('1')/EmployeeName HTTP/1.1" + CRLF
+        + /* HttpMethod.GET + " " + */ PROPERTY_URI + HTTP_VERSION + CRLF
         + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_STATUS_LINE);
   }
 
   @Test
-  public void testInvalidMethodForChangeset() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
+  public void invalidMethodForChangeset() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-Id: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "GET Employees('2')/EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
+        + HttpMethod.GET + " " + PROPERTY_URI + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd--"
+        + "--" + CHANGESET_BOUNDARY + "--"
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CHANGESET_METHOD);
   }
 
   @Test
-  public void testInvalidChangeSetBoundary() throws Exception {
-    final String batch = "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
+  public void invalidChangeSetBoundary() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + ";boundary=" + CHANGESET_BOUNDARY + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94d"/* +"d" */+ CRLF
+        + "--" + CHANGESET_BOUNDARY.substring(0, CHANGESET_BOUNDARY.length() - 1) + CRLF
         + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "POST Employees('2') HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
+        + HttpMethod.POST + " ESAllPrim" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     final List<BatchRequestPart> parts = parse(batch);
-    assertEquals(1, parts.size());
+    Assert.assertEquals(1, parts.size());
 
     final BatchRequestPart part = parts.get(0);
-    assertTrue(part.isChangeSet());
-    assertEquals(0, part.getRequests().size());
+    Assert.assertTrue(part.isChangeSet());
+    Assert.assertEquals(0, part.getRequests().size());
   }
 
   @Test
   public void nestedChangeset() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + ";boundary=" + CHANGESET_BOUNDARY + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd2" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + ";boundary=changeset_f980-1cb6-94dd2" + CRLF
         + CRLF
         + "--changeset_f980-1cb6-94dd2" + CRLF
         + MIME_HEADERS
-        + "Content-Id: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "POST Employees('2') HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF + "MaxDataServiceVersion: 2.0" + CRLF
-        + "Content-Id: 2"
+        + HttpMethod.POST + " ESAllPrim" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + HttpHeader.CONTENT_ID + ": 2" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.UNEXPECTED_CONTENT_TYPE);
   }
 
   @Test
-  public void testMissingContentTransferEncoding() throws Exception {
-    final String batch = "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
+  public void missingContentType() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + ";boundary=" + CHANGESET_BOUNDARY + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + "Content-Id: 1" + CRLF
-        + "Content-Type: application/http" + CRLF
-        // + "Content-Transfer-Encoding: binary" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
+        // + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_HTTP + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "POST Employees('2') HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
+        + HttpMethod.POST + " ESAllPrim" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CONTENT_TRANSFER_ENCODING);
-  }
-
-  @Test
-  public void testMissingContentType() throws Exception {
-    final String batch = "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed;boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + "Content-Id: 1"
-        // + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + CRLF
-        + "POST Employees('2') HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CONTENT_TYPE);
   }
 
   @Test
-  public void testNoCloseDelimiter() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void noCloseDelimiter() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
         + GET_REQUEST;
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testNoCloseDelimiter2() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF;
+  public void noCloseDelimiter2() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + GET_REQUEST;
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testUriWithAbsolutePath() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET /odata/Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "Host: http://localhost" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_URI);
-  }
-
-  @Test
-  public void testUriWithAbsolutePathMissingHostHeader() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET /odata/Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.INVALID_URI);
-  }
-
-  @Test
-  public void testUriWithAbsolutePathOtherHost() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET /odata/Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "Host: http://localhost2" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.INVALID_URI);
-  }
-
-  @Test
-  public void testUriWithAbsolutePathWrongPath() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET /myservice/Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "Host: http://localhost" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.INVALID_URI);
-  }
-
-  @Test
-  public void testNoCloseDelimiter3() throws Exception {
-    final String batch = "--batch_8194-cf13-1f56" + CRLF + GET_REQUEST + "--batch_8194-cf13-1f56-"/* no hyphen */;
+  public void noCloseDelimiter3() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + GET_REQUEST
+        + "--" + BOUNDARY + "-"/* no hyphen */;
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER);
   }
 
   @Test
-  public void testNegativeContentLengthChangeSet() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
-        + "Content-Length: -2" + CRLF
-        + CRLF
-        + "PUT EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Id: 1" + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
+  public void absoluteUri() throws Exception {
+    final List<BatchRequestPart> batchRequestParts = parse(
+        createBatchWithGetRequest(SERVICE_ROOT + "/ESAllPrim?$top=1", null));
 
-    parse(batch);
+    Assert.assertEquals(1, batchRequestParts.size());
+    final BatchRequestPart part = batchRequestParts.get(0);
+
+    Assert.assertEquals(1, part.getRequests().size());
+    final ODataRequest request = part.getRequests().get(0);
+
+    Assert.assertEquals("/ESAllPrim", request.getRawODataPath());
+    Assert.assertEquals("$top=1", request.getRawQueryPath());
+    Assert.assertEquals(SERVICE_ROOT + "/ESAllPrim?$top=1", request.getRawRequestUri());
+    Assert.assertEquals(SERVICE_ROOT, request.getRawBaseUri());
   }
 
   @Test
-  public void testNegativeContentLengthRequest() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
-        + CRLF
-        + "PUT EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Id: 1" + CRLF
-        + "Content-Length: 2" + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parse(batch);
+  public void uriWithAbsolutePath() throws Exception {
+    final List<BatchRequestPart> batchRequestParts = parse(
+        createBatchWithGetRequest("/odata/" + PROPERTY_URI, "Host: localhost"));
+    final BatchRequestPart part = batchRequestParts.get(0);
+    Assert.assertEquals(1, part.getRequests().size());
+    final ODataRequest request = part.getRequests().get(0);
+    Assert.assertEquals("/" + PROPERTY_URI, request.getRawODataPath());
+    Assert.assertEquals(SERVICE_ROOT + "/" + PROPERTY_URI, request.getRawRequestUri());
   }
 
   @Test
-  public void testContentLengthGreatherThanBodyLength() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
-        + CRLF
-        + "PUT Employee/Name HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Length: 100000" + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-    final List<BatchRequestPart> batchRequestParts = parse(batch);
-
-    assertNotNull(batchRequestParts);
-
-    for (BatchRequestPart multipart : batchRequestParts) {
-      if (multipart.isChangeSet()) {
-        assertEquals(1, multipart.getRequests().size());
-
-        final ODataRequest request = multipart.getRequests().get(0);
-        assertEquals("{\"EmployeeName\":\"Peter Fall\"}", IOUtils.toString(request.getBody()));
-      }
-    }
+  public void uriWithAbsolutePathMissingHostHeader() throws Exception {
+    final List<BatchRequestPart> batchRequestParts = parse(
+        createBatchWithGetRequest("/odata/" + PROPERTY_URI, null));
+    final BatchRequestPart part = batchRequestParts.get(0);
+    Assert.assertEquals(1, part.getRequests().size());
+    final ODataRequest request = part.getRequests().get(0);
+    Assert.assertEquals("/" + PROPERTY_URI, request.getRawODataPath());
+    Assert.assertEquals(SERVICE_ROOT + "/" + PROPERTY_URI, request.getRawRequestUri());
   }
 
   @Test
-  public void testContentLengthSmallerThanBodyLength() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
-        + CRLF
-        + "PUT EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Length: 10" + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-    final List<BatchRequestPart> batchRequestParts = parse(batch);
-
-    assertNotNull(batchRequestParts);
-
-    for (BatchRequestPart multipart : batchRequestParts) {
-      if (multipart.isChangeSet()) {
-        assertEquals(1, multipart.getRequests().size());
-
-        final ODataRequest request = multipart.getRequests().get(0);
-        assertEquals("{\"Employee", IOUtils.toString(request.getBody()));
-      }
-    }
+  public void uriWithAbsolutePathTwoHostHeaders() throws Exception {
+    parseInvalidBatchBody(createBatchWithGetRequest("/odata/" + PROPERTY_URI,
+        "Host: localhost" + CRLF + "Host: localhost:80"),
+        BatchDeserializerException.MessageKeys.INVALID_HOST);
   }
 
   @Test
-  public void nonNumericContentLength() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
+  public void uriWithAbsolutePathOtherHost() throws Exception {
+    parseInvalidBatchBody(createBatchWithGetRequest("/odata/" + PROPERTY_URI, "Host: localhost2"),
+        BatchDeserializerException.MessageKeys.INVALID_HOST);
+  }
+
+  @Test
+  public void uriWithAbsolutePathOtherPort() throws Exception {
+    parseInvalidBatchBody(createBatchWithGetRequest("/odata/" + PROPERTY_URI, "Host: localhost:90"),
+        BatchDeserializerException.MessageKeys.INVALID_HOST);
+  }
+
+  @Test
+  public void uriWithWrongAbsolutePath() throws Exception {
+    parseInvalidBatchBody(createBatchWithGetRequest("/myservice/" + PROPERTY_URI, "Host: localhost"),
+        BatchDeserializerException.MessageKeys.INVALID_URI);
+  }
+
+  @Test
+  public void negativeContentLengthChangeSet() throws Exception {
+    parse("--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": -2" + CRLF
         + CRLF
-        + "PUT EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Length: 10abc" + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--");
+  }
+
+  @Test
+  public void negativeContentLengthRequest() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
+        + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
+        + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": -2" + CRLF
+        + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + CRLF
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_LENGTH);
   }
 
   @Test
-  public void testNonStrictParser() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed;boundary=changeset_8194-cf13-1f56" + CRLF
-        + "--changeset_8194-cf13-1f56" + CRLF
+  public void contentLengthGreatherThanBodyLength() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-ID: myRequest" + CRLF
-        + "PUT Employees('2')/EmployeeName HTTP/1.1" + CRLF
-        + "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
-        + "{\"EmployeeName\":\"Frederic Fall MODIFIED\"}" + CRLF
-        + "--changeset_8194-cf13-1f56--" + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
+        + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": 100000" + CRLF
+        + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + CRLF
+        + "--" + BOUNDARY + "--";
+    final List<BatchRequestPart> batchRequestParts = parse(batch);
 
-    final List<BatchRequestPart> requests = parse(batch, false);
+    Assert.assertNotNull(batchRequestParts);
+    Assert.assertEquals(1, batchRequestParts.size());
 
-    assertNotNull(requests);
-    assertEquals(1, requests.size());
+    final BatchRequestPart part = batchRequestParts.get(0);
+    Assert.assertTrue(part.isChangeSet());
+    Assert.assertEquals(1, part.getRequests().size());
 
-    final BatchRequestPart part = requests.get(0);
-    assertTrue(part.isChangeSet());
-    assertNotNull(part.getRequests());
-    assertEquals(1, part.getRequests().size());
-
-    final ODataRequest changeRequest = part.getRequests().get(0);
-    assertEquals("{\"EmployeeName\":\"Frederic Fall MODIFIED\"}",
-        IOUtils.toString(changeRequest.getBody()));
-    assertEquals("application/json;odata=verbose", changeRequest.getHeader(HttpHeader.CONTENT_TYPE));
-    assertEquals(HttpMethod.PUT, changeRequest.getMethod());
+    final ODataRequest request = part.getRequests().get(0);
+    Assert.assertEquals("{\"PropertyString\":\"new\"}", IOUtils.toString(request.getBody()));
   }
 
   @Test
-  public void testNonStrictParserMoreCRLF() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed;boundary=changeset_8194-cf13-1f56" + CRLF
-        + "--changeset_8194-cf13-1f56" + CRLF
+  public void contentLengthSmallerThanBodyLength() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
+        + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": 10" + CRLF
+        + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + CRLF
+        + "--" + BOUNDARY + "--";
+    final List<BatchRequestPart> batchRequestParts = parse(batch);
+
+    Assert.assertNotNull(batchRequestParts);
+    Assert.assertEquals(1, batchRequestParts.size());
+
+    final BatchRequestPart part = batchRequestParts.get(0);
+    Assert.assertTrue(part.isChangeSet());
+    Assert.assertEquals(1, part.getRequests().size());
+
+    final ODataRequest request = part.getRequests().get(0);
+    Assert.assertEquals("{\"Property", IOUtils.toString(request.getBody()));
+  }
+
+  @Test
+  public void nonNumericContentLength() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
+        + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
+        + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": 10abc" + CRLF
+        + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + CRLF
+        + "--" + BOUNDARY + "--";
+
+    parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_CONTENT_LENGTH);
+  }
+
+  @Test
+  public void nonStrictParser() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + ";boundary=" + CHANGESET_BOUNDARY + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
+        + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": myRequest" + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + ACCEPT_HEADER
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + "--" + BOUNDARY + "--";
+
+    final List<BatchRequestPart> requests = parse(batch, false);
+
+    Assert.assertNotNull(requests);
+    Assert.assertEquals(1, requests.size());
+
+    final BatchRequestPart part = requests.get(0);
+    Assert.assertTrue(part.isChangeSet());
+    Assert.assertNotNull(part.getRequests());
+    Assert.assertEquals(1, part.getRequests().size());
+
+    final ODataRequest changeRequest = part.getRequests().get(0);
+    Assert.assertEquals("{\"PropertyString\":\"new\"}", IOUtils.toString(changeRequest.getBody()));
+    Assert.assertEquals(APPLICATION_JSON, changeRequest.getHeader(HttpHeader.CONTENT_TYPE));
+    Assert.assertEquals(HttpMethod.PATCH, changeRequest.getMethod());
+  }
+
+  @Test
+  public void nonStrictParserMoreCRLF() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + ";boundary=" + CHANGESET_BOUNDARY + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
+        + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
         + CRLF // Only one CRLF allowed
-        + "PUT Employees('2')/EmployeeName HTTP/1.1" + CRLF
-        + "Accept: application/atomsvc+xml;q=0.8, application/json;odata=verbose;q=0.5, */*;q=0.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "MaxDataServiceVersion: 2.0" + CRLF
-        + "{\"EmployeeName\":\"Frederic Fall MODIFIED\"}" + CRLF
-        + "--changeset_8194-cf13-1f56--" + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + ACCEPT_HEADER
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
+        + "--" + BOUNDARY + "--";
 
     parseInvalidBatchBody(batch, BatchDeserializerException.MessageKeys.INVALID_STATUS_LINE, false);
   }
 
   @Test
-  public void testContentId() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void contentId() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "GET Employees HTTP/1.1" + CRLF
-        + "accept: */*,application/atom+xml,application/atomsvc+xml,application/xml" + CRLF
-        + "Content-Id: BBB" + CRLF
+        + HttpMethod.GET + " ESAllPrim" + HTTP_VERSION + CRLF
+        + ACCEPT_HEADER
+        + HttpHeader.CONTENT_ID + ": BBB" + CRLF
         + CRLF + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
+        + "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-Id: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "POST Employees HTTP/1.1" + CRLF
-        + "Content-type: application/octet-stream" + CRLF
+        + HttpMethod.POST + " ESMedia" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": image/png" + CRLF
+        + "Content-Transfer-Encoding: base64" + CRLF
         + CRLF
-        + "/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAA" + CRLF
+        + "iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAIAAADtbgqsAAAABmJLR0QA/wD/AP+gvaeTAAAAH0lE"
+        + "QVQokWNgGHmA8S4FmpkosXngNDP+PzdANg+cZgBqiQK5mkdWWgAAAABJRU5ErkJggg==" + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "PUT $1/EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + "Content-Id: 2" + CRLF
+        + HttpMethod.PUT + " $1/PropertyInt16" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
+        + HttpHeader.CONTENT_ID + ": 2" + CRLF
         + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + "{\"value\":5}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     final List<BatchRequestPart> batchRequestParts = parse(batch);
-    assertNotNull(batchRequestParts);
+    Assert.assertNotNull(batchRequestParts);
 
     for (BatchRequestPart multipart : batchRequestParts) {
       if (!multipart.isChangeSet()) {
-        assertEquals(1, multipart.getRequests().size());
-        final ODataRequest retrieveRequest = multipart.getRequests().get(0);
-
-        assertEquals("BBB", retrieveRequest.getHeader(HttpHeader.CONTENT_ID));
+        Assert.assertEquals(1, multipart.getRequests().size());
+        Assert.assertEquals("BBB", multipart.getRequests().get(0).getHeader(HttpHeader.CONTENT_ID));
       } else {
         for (ODataRequest request : multipart.getRequests()) {
           if (HttpMethod.POST.equals(request.getMethod())) {
-            assertEquals("1", request.getHeader(HttpHeader.CONTENT_ID));
+            Assert.assertEquals("1", request.getHeader(HttpHeader.CONTENT_ID));
           } else if (HttpMethod.PUT.equals(request.getMethod())) {
-            assertEquals("2", request.getHeader(HttpHeader.CONTENT_ID));
-            assertEquals("/$1/EmployeeName", request.getRawODataPath());
-            assertEquals("http://localhost/odata/$1/EmployeeName", request.getRawRequestUri());
+            Assert.assertEquals("2", request.getHeader(HttpHeader.CONTENT_ID));
+            Assert.assertEquals("/$1/PropertyInt16", request.getRawODataPath());
+            Assert.assertEquals(SERVICE_ROOT + "/$1/PropertyInt16", request.getRawRequestUri());
           }
         }
       }
@@ -984,189 +890,183 @@ public class BatchRequestParserTest {
   }
 
   @Test
-  public void testNoContentId() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void noContentId() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
         + MIME_HEADERS
         + CRLF
-        + "GET Employees HTTP/1.1" + CRLF
-        + "accept: */*,application/atom+xml,application/atomsvc+xml,application/xml" + CRLF
-        + CRLF + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
+        + HttpMethod.GET + " ESMedia" + HTTP_VERSION + CRLF
+        + ACCEPT_HEADER
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + CRLF
+        + "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-Id: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "POST Employees HTTP/1.1" + CRLF
-        + "Content-type: application/octet-stream" + CRLF
+        + HttpMethod.POST + " ESMedia" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": image/png" + CRLF
+        + "Content-Transfer-Encoding: base64" + CRLF
         + CRLF
-        + "/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAA" + CRLF
+        + "iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAIAAADtbgqsAAAABmJLR0QA/wD/AP+gvaeTAAAAH0lE"
+        + "QVQokWNgGHmA8S4FmpkosXngNDP+PzdANg+cZgBqiQK5mkdWWgAAAABJRU5ErkJggg==" + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-Id: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "PUT $1/EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
+        + HttpMethod.PUT + " $1/PropertyInt16" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + "{\"value\":5}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parse(batch);
   }
 
   @Test
-  public void testPreamble() throws Exception {
-    final String batch = ""
+  public void preamble() throws Exception {
+    final String batch = "This is a preamble and must be ignored" + CRLF
+        + CRLF
+        + CRLF
+        + "----1242" + CRLF
+        + "--" + BOUNDARY + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + HttpMethod.GET + " ESAllPrim" + HTTP_VERSION + CRLF
+        + ACCEPT_HEADER
+        + CRLF
+        + CRLF
+        + "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
         + "This is a preamble and must be ignored" + CRLF
         + CRLF
         + CRLF
         + "----1242" + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "GET Employees HTTP/1.1" + CRLF
-        + "accept: */*,application/atom+xml,application/atomsvc+xml,application/xml" + CRLF
-        + "Content-Id: BBB" + CRLF
+        + HttpMethod.POST + " ESMedia" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": image/png" + CRLF
+        + "Content-Transfer-Encoding: base64" + CRLF
         + CRLF
+        + "iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAIAAADtbgqsAAAABmJLR0QA/wD/AP+gvaeTAAAAH0lE"
+        + "QVQokWNgGHmA8S4FmpkosXngNDP+PzdANg+cZgBqiQK5mkdWWgAAAABJRU5ErkJggg==" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "This is a preamble and must be ignored" + CRLF
-        + CRLF
-        + CRLF
-        + "----1242" + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-Id: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 2" + CRLF
         + CRLF
-        + "POST Employees HTTP/1.1" + CRLF
-        + "Content-type: application/octet-stream" + CRLF
+        + HttpMethod.PUT + " $1/PropertyInt16" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAA" + CRLF
+        + "{\"value\":5}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: 2" + CRLF
-        + CRLF
-        + "PUT $1/EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
     final List<BatchRequestPart> batchRequestParts = parse(batch);
 
-    assertNotNull(batchRequestParts);
-    assertEquals(2, batchRequestParts.size());
+    Assert.assertNotNull(batchRequestParts);
+    Assert.assertEquals(2, batchRequestParts.size());
 
     final BatchRequestPart getRequestPart = batchRequestParts.get(0);
-    assertEquals(1, getRequestPart.getRequests().size());
+    Assert.assertEquals(1, getRequestPart.getRequests().size());
 
     final ODataRequest getRequest = getRequestPart.getRequests().get(0);
-    assertEquals(HttpMethod.GET, getRequest.getMethod());
+    Assert.assertEquals(HttpMethod.GET, getRequest.getMethod());
 
     final BatchRequestPart changeSetPart = batchRequestParts.get(1);
-    assertEquals(2, changeSetPart.getRequests().size());
-    assertEquals("/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAA"
-        + CRLF,
+    Assert.assertEquals(2, changeSetPart.getRequests().size());
+    Assert.assertEquals("iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAIAAADtbgqsAAAABmJLR0QA/wD/AP+gvaeTAAAAH0lE"
+        + "QVQokWNgGHmA8S4FmpkosXngNDP+PzdANg+cZgBqiQK5mkdWWgAAAABJRU5ErkJggg==" + CRLF,
         IOUtils.toString(changeSetPart.getRequests().get(0).getBody()));
-    assertEquals("{\"EmployeeName\":\"Peter Fall\"}",
-        IOUtils.toString(changeSetPart.getRequests().get(1).getBody()));
+    Assert.assertEquals("{\"value\":5}", IOUtils.toString(changeSetPart.getRequests().get(1).getBody()));
   }
 
   @Test
-  public void testContentTypeCaseInsensitive() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: muLTiParT/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
+  public void contentTypeCaseInsensitive() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
-        + "Content-Length: 200" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
+        + HttpHeader.CONTENT_LENGTH + ": 200" + CRLF
         + CRLF
-        + "PUT EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
 
     parse(batch);
   }
 
   @Test
-  public void testContentTypeBoundaryCaseInsensitive() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; bOunDaRy=changeset_f980-1cb6-94dd" + CRLF
+  public void contentTypeBoundaryCaseInsensitive() throws Exception {
+    final String batch = "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; bOunDaRy=" + CHANGESET_BOUNDARY + CRLF
         + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-ID: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "PUT EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
+        + HttpMethod.PATCH + " ESAllPrim(32767)" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + "{\"PropertyString\":\"new\"}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56--";
+        + "--" + BOUNDARY + "--";
     final List<BatchRequestPart> batchRequestParts = parse(batch);
 
-    assertNotNull(batchRequestParts);
-    assertEquals(1, batchRequestParts.size());
-    assertTrue(batchRequestParts.get(0).isChangeSet());
-    assertEquals(1, batchRequestParts.get(0).getRequests().size());
+    Assert.assertNotNull(batchRequestParts);
+    Assert.assertEquals(1, batchRequestParts.size());
+    Assert.assertTrue(batchRequestParts.get(0).isChangeSet());
+    Assert.assertEquals(1, batchRequestParts.get(0).getRequests().size());
   }
 
   @Test
-  public void testEpilog() throws Exception {
-    String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
+  public void epilog() throws Exception {
+    String batch = "--" + BOUNDARY + CRLF
+        + GET_REQUEST
+        + "--" + BOUNDARY + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + MULTIPART_MIXED + "; boundary=" + CHANGESET_BOUNDARY + CRLF
+        + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
+        + HttpHeader.CONTENT_ID + ": 1" + CRLF
         + CRLF
-        + "GET Employees HTTP/1.1" + CRLF
-        + "accept: */*,application/atom+xml,application/atomsvc+xml,application/xml" + CRLF
-        + "Content-Id: BBB" + CRLF
+        + HttpMethod.POST + " ESMedia" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": image/png" + CRLF
+        + "Content-Transfer-Encoding: base64" + CRLF
         + CRLF
+        + "iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAIAAADtbgqsAAAABmJLR0QA/wD/AP+gvaeTAAAAH0lE"
+        + "QVQokWNgGHmA8S4FmpkosXngNDP+PzdANg+cZgBqiQK5mkdWWgAAAABJRU5ErkJggg==" + CRLF
         + CRLF
-        + "--batch_8194-cf13-1f56" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
+        + "--" + CHANGESET_BOUNDARY + CRLF
         + MIME_HEADERS
-        + "Content-Id: 1" + CRLF
+        + HttpHeader.CONTENT_ID + ": 2" + CRLF
         + CRLF
-        + "POST Employees HTTP/1.1" + CRLF
-        + "Content-type: application/octet-stream" + CRLF
+        + HttpMethod.PUT + " $1/PropertyInt16" + HTTP_VERSION + CRLF
+        + HttpHeader.CONTENT_TYPE + ": " + APPLICATION_JSON + CRLF
         + CRLF
-        + "/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAA" + CRLF
-        + CRLF
-        + "--changeset_f980-1cb6-94dd" + CRLF
-        + MIME_HEADERS
-        + "Content-ID: 2" + CRLF
-        + CRLF
-        + "PUT $1/EmployeeName HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + "{\"EmployeeName\":\"Peter Fall\"}" + CRLF
-        + "--changeset_f980-1cb6-94dd--" + CRLF
+        + "{\"value\":5}" + CRLF
+        + "--" + CHANGESET_BOUNDARY + "--" + CRLF
         + CRLF
         + "This is an epilog and must be ignored" + CRLF
         + CRLF
         + CRLF
         + "----1242"
         + CRLF
-        + "--batch_8194-cf13-1f56--"
+        + "--" + BOUNDARY + "--"
         + CRLF
         + "This is an epilog and must be ignored" + CRLF
         + CRLF
@@ -1174,163 +1074,110 @@ public class BatchRequestParserTest {
         + "----1242";
     final List<BatchRequestPart> batchRequestParts = parse(batch);
 
-    assertNotNull(batchRequestParts);
-    assertEquals(2, batchRequestParts.size());
+    Assert.assertNotNull(batchRequestParts);
+    Assert.assertEquals(2, batchRequestParts.size());
 
     BatchRequestPart getRequestPart = batchRequestParts.get(0);
-    assertEquals(1, getRequestPart.getRequests().size());
+    Assert.assertEquals(1, getRequestPart.getRequests().size());
     ODataRequest getRequest = getRequestPart.getRequests().get(0);
-    assertEquals(HttpMethod.GET, getRequest.getMethod());
+    Assert.assertEquals(HttpMethod.GET, getRequest.getMethod());
 
     BatchRequestPart changeSetPart = batchRequestParts.get(1);
-    assertEquals(2, changeSetPart.getRequests().size());
-    assertEquals("/9j/4AAQSkZJRgABAQEBLAEsAAD/4RM0RXhpZgAATU0AKgAAAAgABwESAAMAAAABAAEAAAEaAAUAAAABAAAAYgEbAAUAAAA"
-        + CRLF,
+    Assert.assertEquals(2, changeSetPart.getRequests().size());
+    Assert.assertEquals("iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAIAAADtbgqsAAAABmJLR0QA/wD/AP+gvaeTAAAAH0lE"
+        + "QVQokWNgGHmA8S4FmpkosXngNDP+PzdANg+cZgBqiQK5mkdWWgAAAABJRU5ErkJggg==" + CRLF,
         IOUtils.toString(changeSetPart.getRequests().get(0).getBody()));
-    assertEquals("{\"EmployeeName\":\"Peter Fall\"}",
+    Assert.assertEquals("{\"value\":5}",
         IOUtils.toString(changeSetPart.getRequests().get(1).getBody()));
   }
 
   @Test
-  public void testLargeBatch() throws Exception {
-    final InputStream in = readFile("/batchLarge.batch");
-    parse(in);
+  public void largeBatch() throws Exception {
+    parse(readFile("/batchLarge.batch"), true);
+  }
+
+  @Test
+  public void forbiddenHeaderWWWAuthenticate() throws Exception {
+    parseBatchWithForbiddenHeader(HttpHeader.WWW_AUTHENTICATE + ": Basic realm=\"simple\"");
   }
 
   @Test
   public void forbiddenHeaderAuthorization() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "Authorization: Basic QWxhZdsdsddsduIHNlc2FtZQ==" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.FORBIDDEN_HEADER);
+    parseBatchWithForbiddenHeader(HttpHeader.AUTHORIZATION + ": Basic QWxhZdsdsddsduIHNlc2FtZQ==");
   }
 
   @Test
   public void forbiddenHeaderExpect() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "Expect: 100-continue" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.FORBIDDEN_HEADER);
+    parseBatchWithForbiddenHeader(HttpHeader.EXPECT + ": 100-continue");
   }
 
   @Test
   public void forbiddenHeaderFrom() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "From: test@test.com" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.FORBIDDEN_HEADER);
+    parseBatchWithForbiddenHeader(HttpHeader.FROM + ": test@test.com");
   }
 
   @Test
   public void forbiddenHeaderRange() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "Range: 200-256" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.FORBIDDEN_HEADER);
+    parseBatchWithForbiddenHeader(HttpHeader.RANGE + ": 200-256");
   }
 
   @Test
   public void forbiddenHeaderMaxForwards() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "Max-Forwards: 3" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.FORBIDDEN_HEADER);
+    parseBatchWithForbiddenHeader(HttpHeader.MAX_FORWARDS + ": 3");
   }
 
   @Test
   public void forbiddenHeaderTE() throws Exception {
-    final String batch = ""
-        + "--batch_8194-cf13-1f56" + CRLF
-        + MIME_HEADERS
-        + CRLF
-        + "GET Employees('1')/EmployeeName HTTP/1.1" + CRLF
-        + "TE: deflate" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_8194-cf13-1f56--";
-
-    parseInvalidBatchBody(batch, MessageKeys.FORBIDDEN_HEADER);
+    parseBatchWithForbiddenHeader(HttpHeader.TE + ": deflate");
   }
 
-  private List<BatchRequestPart> parse(final InputStream in, final boolean isStrict) throws Exception {
-    final BatchParser parser = new BatchParser();
-    final BatchOptions options = BatchOptions.with().isStrict(isStrict).rawBaseUri(SERVICE_ROOT).build();
+  private void parseBatchWithForbiddenHeader(final String header) {
+    parseInvalidBatchBody(createBatchWithGetRequest(PROPERTY_URI, header), MessageKeys.FORBIDDEN_HEADER);
+  }
+
+  private String createBatchWithGetRequest(final String url, final String additionalHeader) {
+    return "--" + BOUNDARY + CRLF
+        + MIME_HEADERS
+        + CRLF
+        + HttpMethod.GET + " " + url + HTTP_VERSION + CRLF
+        + (additionalHeader == null ? "" : (additionalHeader + CRLF))
+        + CRLF
+        + CRLF
+        + "--" + BOUNDARY + "--";
+  }
+
+  private List<BatchRequestPart> parse(final InputStream in, final boolean isStrict)
+      throws BatchDeserializerException {
     final List<BatchRequestPart> batchRequestParts =
-        parser.parseBatchRequest(in, BOUNDARY, options);
-
-    assertNotNull(batchRequestParts);
-
+        new BatchParser().parseBatchRequest(in, BOUNDARY,
+            BatchOptions.with().isStrict(isStrict).rawBaseUri(SERVICE_ROOT).build());
+    Assert.assertNotNull(batchRequestParts);
     return batchRequestParts;
   }
 
-  private List<BatchRequestPart> parse(final InputStream in) throws Exception {
-    return parse(in, true);
-  }
-
-  private List<BatchRequestPart> parse(final String batch) throws Exception {
+  private List<BatchRequestPart> parse(final String batch) throws BatchDeserializerException {
     return parse(batch, true);
   }
 
-  private List<BatchRequestPart> parse(final String batch, final boolean isStrict) throws Exception {
+  private List<BatchRequestPart> parse(final String batch, final boolean isStrict) throws BatchDeserializerException {
     return parse(IOUtils.toInputStream(batch), isStrict);
   }
 
-  private void parseInvalidBatchBody(final String batch, final MessageKeys key, final boolean isStrict)
-      throws Exception {
-    final BatchParser parser = new BatchParser();
-    final BatchOptions options = BatchOptions.with().isStrict(isStrict).rawBaseUri(SERVICE_ROOT).build();
+  private void parseInvalidBatchBody(final String batch, final MessageKeys key, final boolean isStrict) {
     try {
-      parser.parseBatchRequest(IOUtils.toInputStream(batch), BOUNDARY, options);
-      fail("No exception thrown. Expect: " + key.toString());
+      new BatchParser().parseBatchRequest(IOUtils.toInputStream(batch), BOUNDARY,
+          BatchOptions.with().isStrict(isStrict).rawBaseUri(SERVICE_ROOT).build());
+      Assert.fail("No exception thrown. Expected: " + key);
     } catch (BatchDeserializerException e) {
-      assertMessageKey(e, key);
+      Assert.assertEquals(key, e.getMessageKey());
     }
   }
 
-  private void parseInvalidBatchBody(final String batch, final MessageKeys key) throws Exception {
+  private void parseInvalidBatchBody(final String batch, final MessageKeys key) {
     parseInvalidBatchBody(batch, key, true);
   }
 
-  private void assertMessageKey(final BatchDeserializerException e, final MessageKeys key) {
-    assertEquals(key, e.getMessageKey());
-  }
-
-  private InputStream readFile(final String fileName) throws Exception {
+  private InputStream readFile(final String fileName) throws IOException {
     final InputStream in = ClassLoader.class.getResourceAsStream(fileName);
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
+import java.net.URI;
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.ContentType;
@@ -47,23 +48,11 @@ public class BatchTransformatorCommon {
 
     if (contentTransferField != null) {
       final List<String> contentTransferValues = contentTransferField.getValues();
-      if (contentTransferValues.size() == 1) {
-        String encoding = contentTransferValues.get(0);
-
-        if (!BatchParserCommon.BINARY_ENCODING.equalsIgnoreCase(encoding)) {
-          throw new BatchDeserializerException("Invalid content transfer encoding",
-              MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING,
-              Integer.toString(headers.getLineNumber()));
-        }
-      } else {
+      if (contentTransferValues.size() > 1
+          || !BatchParserCommon.BINARY_ENCODING.equalsIgnoreCase(contentTransferValues.get(0))) {
         throw new BatchDeserializerException("Invalid Content-Transfer-Encoding header",
-            MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING,
-            Integer.toString(headers.getLineNumber()));
+            MessageKeys.INVALID_CONTENT_TRANSFER_ENCODING, Integer.toString(headers.getLineNumber()));
       }
-    } else {
-      throw new BatchDeserializerException("Missing mandatory content transfer encoding",
-          MessageKeys.MISSING_CONTENT_TRANSFER_ENCODING,
-          Integer.toString(headers.getLineNumber()));
     }
   }
 
@@ -71,10 +60,8 @@ public class BatchTransformatorCommon {
     final HeaderField contentLengthField = headers.getHeaderField(HttpHeader.CONTENT_LENGTH);
 
     if (contentLengthField != null && contentLengthField.getValues().size() == 1) {
-      final List<String> contentLengthValues = contentLengthField.getValues();
-
       try {
-        int contentLength = Integer.parseInt(contentLengthValues.get(0));
+        final int contentLength = Integer.parseInt(contentLengthField.getValues().get(0));
 
         if (contentLength < 0) {
           throw new BatchDeserializerException("Invalid content length", MessageKeys.INVALID_CONTENT_LENGTH,
@@ -89,5 +76,17 @@ public class BatchTransformatorCommon {
     }
 
     return -1;
+  }
+
+  public static void validateHost(final Header headers, final String baseUri) throws BatchDeserializerException {
+    final HeaderField hostField = headers.getHeaderField(HttpHeader.HOST);
+
+    if (hostField != null) {
+      if (hostField.getValues().size() > 1
+          || !URI.create(baseUri).getAuthority().equalsIgnoreCase(hostField.getValues().get(0).trim())) {
+        throw new BatchDeserializerException("Invalid Host header",
+            MessageKeys.INVALID_HOST, Integer.toString(headers.getLineNumber()));
+      }
+    }
   }
 }
