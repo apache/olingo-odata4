@@ -20,8 +20,9 @@
 
 -->
 <tomcat-users>
-  <role rolename="manager-gui"/>
-  <user name="admin" password="" roles="manager-gui"/>
+ <role rolename="manager-gui"/>
+ <role rolename="odatajclient"/>
 
-  <user name="odatajclient" password="odatajclient" roles="odatajclient"/>
+ <user name="admin" password="" roles="manager-gui"/>
+ <user name="odatajclient" password="odatajclient" roles="odatajclient"/>
 </tomcat-users>

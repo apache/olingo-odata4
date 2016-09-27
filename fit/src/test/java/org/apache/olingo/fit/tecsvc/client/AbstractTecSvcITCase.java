@@ -26,6 +26,7 @@ import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
@@ -34,7 +35,10 @@ import org.apache.olingo.fit.tecsvc.TecSvcConst;
 public abstract class AbstractTecSvcITCase extends AbstractBaseTestITCase {
 
   protected static final String SERVICE_URI = TecSvcConst.BASE_URI + '/';
+  protected static final String AUTH_URI = TecSvcConst.AUTH_URI + '/';
   protected static final String SERVICE_NAMESPACE = "olingo.odata.test1";
+  protected static final String USERNAME = "odatajclient";
+  protected static final String PASSWORD = "odatajclient";
 
   // Read-only tests can re-use the server session via the session cookie.
   // JUnit constructs a fresh instance for each test method, so we have to
@@ -61,6 +65,14 @@ public abstract class AbstractTecSvcITCase extends AbstractBaseTestITCase {
   @Override
   protected ODataClient getClient() {
     ODataClient odata = ODataClientFactory.getClient();
+    odata.getConfiguration().setDefaultPubFormat(getContentType());
+    return odata;
+  }
+
+  protected ODataClient getBasicAuthClient(String username, String password) {
+    ODataClient odata = getClient();
+    odata.getConfiguration()
+            .setHttpClientFactory(new BasicAuthHttpClientFactory(username, password));
     odata.getConfiguration().setDefaultPubFormat(getContentType());
     return odata;
   }

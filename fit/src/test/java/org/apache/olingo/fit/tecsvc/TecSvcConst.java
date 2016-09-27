@@ -21,5 +21,6 @@ package org.apache.olingo.fit.tecsvc;
 public class TecSvcConst {
 
   public final static String BASE_URI = "http://localhost:9080/odata-server-tecsvc/odata.svc";
+  public final static String AUTH_URI = "http://localhost:9080/odata-server-tecsvc/auth";
 
 }

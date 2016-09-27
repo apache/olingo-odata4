@@ -48,6 +48,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -156,17 +157,23 @@ public class TomcatTestServer {
 
     private final Tomcat tomcat;
     private final File baseDir;
+    private final File resourceDir;
     private TomcatTestServer server;
     private Properties properties;
 
     private TestServerBuilder(final int fixedPort) {
       initializeProperties();
       // baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
-      baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);
+      baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);      
       if (!baseDir.exists() && !baseDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
       }
-      //
+      resourceDir = getFileForDirProperty(PROJECT_RESOURCES_DIR);
+      if(!resourceDir.exists()){
+          throw new RuntimeException("Unable to load resources");
+      }
+
+      final String TOMCAT_USERS_XML = "tomcat-users.xml";    
       tomcat = new Tomcat();
       tomcat.setBaseDir(baseDir.getParentFile().getAbsolutePath());
       tomcat.setPort(fixedPort);
@@ -174,8 +181,12 @@ public class TomcatTestServer {
       tomcat.getHost().setDeployOnStartup(true);
       tomcat.getConnector().setSecure(false);
       tomcat.setSilent(true);
-      tomcat.addUser("odatajclient", "odatajclient");
-      tomcat.addRole("odatajclient", "odatajclient");
+      // tomcat.addUser("odatajclient", "odatajclient");
+      // tomcat.addRole("odatajclient", "odatajclient");
+      String tomcatUserPath = resourceDir.getPath() + File.separator + TOMCAT_USERS_XML;
+      MemoryRealm realm = new MemoryRealm();
+      realm.setPathname(tomcatUserPath);
+      tomcat.getEngine().setRealm(realm);
     }
 
     private void initializeProperties() {
@@ -253,7 +264,7 @@ public class TomcatTestServer {
     }
 
     public TestServerBuilder addServlet(final Class<? extends HttpServlet> factoryClass, final String path)
-        throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
       if (server != null) {
         return this;
       }
@@ -263,8 +274,26 @@ public class TomcatTestServer {
       String randomServletId = UUID.randomUUID().toString();
       Tomcat.addServlet(cxt, randomServletId, httpServlet);
       cxt.addServletMapping(path, randomServletId);
-      //
       LOG.info("Added servlet {} at context {} (mapping id={}).", servletClassname, path, randomServletId);
+      return this;
+    }
+
+    public TestServerBuilder addAuthServlet(final Class<? extends HttpServlet> factoryClass, 
+            final String servletPath, final String contextPath)
+        throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, ServletException {
+      if (server != null) {
+        return this;
+      }
+      final String TOMCAT_WEB_XML = "web.xml";
+      String webxmluri = resourceDir.getPath() + File.separator + TOMCAT_WEB_XML;      
+      String servletClassname = factoryClass.getName();
+      HttpServlet httpServlet = (HttpServlet) Class.forName(servletClassname).newInstance();
+      Context cxt = tomcat.addWebapp(servletPath, baseDir.getAbsolutePath());
+      cxt.setAltDDName(webxmluri);
+      String randomServletId = UUID.randomUUID().toString();
+      Tomcat.addServlet(cxt, randomServletId, httpServlet);
+      cxt.addServletMapping(contextPath, randomServletId); 
+
       return this;
     }
 
