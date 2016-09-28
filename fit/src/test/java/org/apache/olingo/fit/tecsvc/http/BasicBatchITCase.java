@@ -132,7 +132,7 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
   private HttpURLConnection batch(final String content) throws IOException {
     final HttpURLConnection connection = getConnection(content);
 
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), connection.getResponseCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
 
     return connection;
   }

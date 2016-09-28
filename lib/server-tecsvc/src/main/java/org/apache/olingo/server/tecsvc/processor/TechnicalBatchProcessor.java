@@ -94,7 +94,7 @@ public class TechnicalBatchProcessor extends TechnicalProcessor implements Batch
         odata.createFixedFormatSerializer().batchResponse(responseParts, responseBoundary);
     response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED + ";boundary=" + responseBoundary);
     response.setContent(responseContent);
-    response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     if (continueOnError) {
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
           PreferencesApplied.with().continueOnError().build().toValueString());

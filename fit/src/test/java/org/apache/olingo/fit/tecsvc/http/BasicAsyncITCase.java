@@ -95,7 +95,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     String resBody = resultBody.asString();
 
     assertEquals("HTTP/1.1 200 OK", resultHeaderFields.get(null).get(0));
-    assertEquals(1013, resultBody.byteLength());
+    assertEquals(1007, resultBody.byteLength());
     contains(resBody,
         "HTTP/1.1 200 OK",
         "OData-Version: 4.0",
@@ -137,7 +137,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     Map<String, List<String>> resultHeaderFields = result.getHeaderFields();
     String resBody = resultBody.asString();
     assertEquals("HTTP/1.1 200 OK", resultHeaderFields.get(null).get(0));
-    assertEquals(2324, resultBody.byteLength());
+    assertEquals(2318, resultBody.byteLength());
     contains(resBody,
         "HTTP/1.1 200 OK",
         "OData-Version: 4.0",

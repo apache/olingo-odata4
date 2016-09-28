@@ -103,7 +103,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     changeset.addRequest(createRequest);
 
     final ODataBatchResponse response = payloadManager.getResponse();
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     // Check response items
     final Iterator<ODataBatchResponseItem> responseBodyIter = response.getBody();
@@ -128,8 +128,8 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     final ODataBatchResponse response = request.payloadManager().getResponse();
     saveCookieHeader(response);
 
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
-    assertEquals("Accepted", response.getStatusMessage());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals("OK", response.getStatusMessage());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
     assertFalse(iter.hasNext());
@@ -146,8 +146,8 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     final ODataBatchResponse response = payload.getResponse();
     saveCookieHeader(response);
 
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
-    assertEquals("Accepted", response.getStatusMessage());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals("OK", response.getStatusMessage());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
     assertTrue(iter.hasNext());
@@ -178,8 +178,8 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     final ODataBatchResponse response = payload.getResponse();
     saveCookieHeader(response);
 
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
-    assertEquals("Accepted", response.getStatusMessage());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals("OK", response.getStatusMessage());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
     assertTrue(iter.hasNext());
@@ -212,7 +212,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
         "ESMedia(5)/$value")));
 
     final ODataBatchResponse response = payload.getResponse();
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     Iterator<ODataBatchResponseItem> iter = response.getBody();
     assertTrue(iter.hasNext());
@@ -251,7 +251,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
 
     final ODataBatchResponse response = payload.getResponse();
     saveCookieHeader(response);
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     Iterator<ODataBatchResponseItem> iter = response.getBody();
     assertTrue(iter.hasNext());
@@ -277,7 +277,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
     saveCookieHeader(response);
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     final Iterator<ODataBatchResponseItem> iter = response.getBody();
 
@@ -321,7 +321,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
     saveCookieHeader(response);
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
     assertTrue(bodyIterator.hasNext());
@@ -381,7 +381,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     // Fetch result
     final ODataBatchResponse response = payload.getResponse();
     saveCookieHeader(response);
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertEquals(PreferenceName.CONTINUE_ON_ERROR.getName(),
         response.getHeader(HttpHeader.PREFERENCE_APPLIED).iterator().next());
 
@@ -464,7 +464,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     changeset.addRequest(updateReq);
 
     final ODataBatchResponse response = payload.getResponse();
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     final String cookie = response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
 
     // verify response payload ...
@@ -574,7 +574,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     // - Fetch result
     // -----------------------------
     final ODataBatchResponse response = payload.getResponse();
-    assertEquals(HttpStatusCode.ACCEPTED.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     final Iterator<ODataBatchResponseItem> bodyIterator = response.getBody();
 
     // Check first get request

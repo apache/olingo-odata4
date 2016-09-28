@@ -96,8 +96,8 @@ public class AuthBatchTestITCase extends AbstractParamTecSvcITCase{
     // -------------------------------------------
 
     final ODataBatchResponse response = streamManager.getResponse();
-    assertEquals(202, response.getStatusCode());
-    assertEquals("Accepted", response.getStatusMessage());
+    assertEquals(200, response.getStatusCode());
+    assertEquals("OK", response.getStatusMessage());
   }
   
 }
