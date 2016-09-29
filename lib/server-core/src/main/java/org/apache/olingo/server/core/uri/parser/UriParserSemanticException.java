@@ -74,7 +74,8 @@ public class UriParserSemanticException extends UriParserException {
     /** parameter: expression */
     ONLY_FOR_PRIMITIVE_TYPES,
     /** parameter: function name */
-    FUNCTION_MUST_USE_COLLECTIONS;
+    FUNCTION_MUST_USE_COLLECTIONS,
+    COLLECTION_NOT_ALLOWED;
 
     @Override
     public String getKey() {

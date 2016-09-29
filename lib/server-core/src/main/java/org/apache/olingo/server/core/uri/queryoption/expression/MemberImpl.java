@@ -21,6 +21,8 @@ package org.apache.olingo.server.core.uri.queryoption.expression;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
+import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
 import org.apache.olingo.server.api.uri.queryoption.expression.Member;
@@ -85,14 +87,10 @@ public class MemberImpl implements Member {
   @Override
   public boolean isCollection() {
     UriInfoImpl uriInfo = (UriInfoImpl) path;
-    UriResourceImpl lastResourcePart = (UriResourceImpl) uriInfo.getLastResourcePart();
-    if (lastResourcePart instanceof UriResourceTypedImpl) {
-      UriResourceTypedImpl lastTyped = (UriResourceTypedImpl) lastResourcePart;
-      return lastTyped.isCollection();
-    } else if (lastResourcePart instanceof UriResourceActionImpl) {
-      return ((UriResourceActionImpl) lastResourcePart).isCollection();
-    }
-    return false;
+    UriResource lastResourcePart = uriInfo.getLastResourcePart();
+    return lastResourcePart instanceof UriResourcePartTyped ?
+        ((UriResourcePartTyped) lastResourcePart).isCollection() :
+        false;
   }
 
   @Override

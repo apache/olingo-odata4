@@ -180,15 +180,19 @@ public class ExpressionParser {
     this.crossjoinEntitySetNames = crossjoinEntitySetNames;
     this.aliases = aliases;
 
-    return parseExpression();
+    final Expression expression = parseExpression();
+    checkNoCollection(expression);
+    return expression;
   }
 
   private Expression parseExpression() throws UriParserException, UriValidationException {
     Expression left = parseAnd();
     while (tokenizer.next(TokenKind.OrOperator)) {
-      final Expression right = parseAnd();
       checkType(left, EdmPrimitiveTypeKind.Boolean);
+      checkNoCollection(left);
+      final Expression right = parseAnd();
       checkType(right, EdmPrimitiveTypeKind.Boolean);
+      checkNoCollection(right);
       left = new BinaryImpl(left, BinaryOperatorKind.OR, right,
           odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
     }
@@ -198,9 +202,11 @@ public class ExpressionParser {
   private Expression parseAnd() throws UriParserException, UriValidationException {
     Expression left = parseExprEquality();
     while (tokenizer.next(TokenKind.AndOperator)) {
-      final Expression right = parseExprEquality();
       checkType(left, EdmPrimitiveTypeKind.Boolean);
+      checkNoCollection(left);
+      final Expression right = parseExprEquality();
       checkType(right, EdmPrimitiveTypeKind.Boolean);
+      checkNoCollection(right);
       left = new BinaryImpl(left, BinaryOperatorKind.AND, right,
           odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
     }
@@ -285,8 +291,8 @@ public class ExpressionParser {
         TokenKind.MulOperator, TokenKind.DivOperator, TokenKind.ModOperator);
     // Null for everything other than MUL or DIV or MOD
     while (operatorTokenKind != null) {
-      final Expression right = parseExprUnary();
       checkNumericType(left);
+      final Expression right = parseExprUnary();
       checkNumericType(right);
       left = new BinaryImpl(left, tokenToBinaryOperator.get(operatorTokenKind), right,
           odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double));
@@ -306,6 +312,7 @@ public class ExpressionParser {
     } else if (tokenizer.next(TokenKind.NotOperator)) {
       final Expression expression = parseExprPrimary();
       checkType(expression, EdmPrimitiveTypeKind.Boolean);
+      checkNoCollection(expression);
       return new UnaryImpl(UnaryOperatorKind.NOT, expression, getType(expression));
     } else if (tokenizer.next(TokenKind.CastMethod)) {
       return parseIsOfOrCastMethod(MethodKind.CAST);
@@ -443,6 +450,7 @@ public class ExpressionParser {
     case TRIM:
       final Expression stringParameter = parseExpression();
       checkType(stringParameter, EdmPrimitiveTypeKind.String);
+      checkNoCollection(stringParameter);
       parameters.add(stringParameter);
       break;
     case YEAR:
@@ -450,6 +458,7 @@ public class ExpressionParser {
     case DAY:
       final Expression dateParameter = parseExpression();
       checkType(dateParameter, EdmPrimitiveTypeKind.Date, EdmPrimitiveTypeKind.DateTimeOffset);
+      checkNoCollection(dateParameter);
       parameters.add(dateParameter);
       break;
     case HOUR:
@@ -458,6 +467,7 @@ public class ExpressionParser {
     case FRACTIONALSECONDS:
       final Expression timeParameter = parseExpression();
       checkType(timeParameter, EdmPrimitiveTypeKind.TimeOfDay, EdmPrimitiveTypeKind.DateTimeOffset);
+      checkNoCollection(timeParameter);
       parameters.add(timeParameter);
       break;
     case DATE:
@@ -465,11 +475,13 @@ public class ExpressionParser {
     case TOTALOFFSETMINUTES:
       final Expression dateTimeParameter = parseExpression();
       checkType(dateTimeParameter, EdmPrimitiveTypeKind.DateTimeOffset);
+      checkNoCollection(dateTimeParameter);
       parameters.add(dateTimeParameter);
       break;
     case TOTALSECONDS:
       final Expression durationParameter = parseExpression();
       checkType(durationParameter, EdmPrimitiveTypeKind.Duration);
+      checkNoCollection(durationParameter);
       parameters.add(durationParameter);
       break;
     case ROUND:
@@ -478,12 +490,14 @@ public class ExpressionParser {
       final Expression decimalParameter = parseExpression();
       checkType(decimalParameter,
           EdmPrimitiveTypeKind.Decimal, EdmPrimitiveTypeKind.Single, EdmPrimitiveTypeKind.Double);
+      checkNoCollection(decimalParameter);
       parameters.add(decimalParameter);
       break;
     case GEOLENGTH:
       final Expression geoParameter = parseExpression();
       checkType(geoParameter,
           EdmPrimitiveTypeKind.GeographyLineString, EdmPrimitiveTypeKind.GeometryLineString);
+      checkNoCollection(geoParameter);
       parameters.add(geoParameter);
       break;
 
@@ -495,30 +509,36 @@ public class ExpressionParser {
     case CONCAT:
       final Expression stringParameter1 = parseExpression();
       checkType(stringParameter1, EdmPrimitiveTypeKind.String);
+      checkNoCollection(stringParameter1);
       parameters.add(stringParameter1);
       ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
       final Expression stringParameter2 = parseExpression();
       checkType(stringParameter2, EdmPrimitiveTypeKind.String);
+      checkNoCollection(stringParameter2);
       parameters.add(stringParameter2);
       break;
     case GEODISTANCE:
       final Expression geoParameter1 = parseExpression();
       checkType(geoParameter1, EdmPrimitiveTypeKind.GeographyPoint, EdmPrimitiveTypeKind.GeometryPoint);
+      checkNoCollection(geoParameter1);
       parameters.add(geoParameter1);
       ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
       final Expression geoParameter2 = parseExpression();
       checkType(geoParameter2, EdmPrimitiveTypeKind.GeographyPoint, EdmPrimitiveTypeKind.GeometryPoint);
+      checkNoCollection(geoParameter2);
       parameters.add(geoParameter2);
       break;
     case GEOINTERSECTS:
       final Expression geoPointParameter = parseExpression();
       checkType(geoPointParameter,
           EdmPrimitiveTypeKind.GeographyPoint, EdmPrimitiveTypeKind.GeometryPoint);
+      checkNoCollection(geoPointParameter);
       parameters.add(geoPointParameter);
       ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
       final Expression geoPolygonParameter = parseExpression();
       checkType(geoPolygonParameter,
           EdmPrimitiveTypeKind.GeographyPolygon, EdmPrimitiveTypeKind.GeometryPolygon);
+      checkNoCollection(geoPolygonParameter);
       parameters.add(geoPolygonParameter);
       break;
 
@@ -526,6 +546,7 @@ public class ExpressionParser {
     case SUBSTRING:
       final Expression parameterFirst = parseExpression();
       checkType(parameterFirst, EdmPrimitiveTypeKind.String);
+      checkNoCollection(parameterFirst);
       parameters.add(parameterFirst);
       ParserHelper.requireNext(tokenizer, TokenKind.COMMA);
       final Expression parameterSecond = parseExpression();
@@ -905,8 +926,9 @@ public class ExpressionParser {
     } else if (tokenizer.next(TokenKind.ALL)) {
       uriInfo.addResourcePart(parseLambdaRest(TokenKind.ALL, lastResource));
     } else if (tokenizer.next(TokenKind.QualifiedName)) {
-      final FullQualifiedName fullQualifiedName = new FullQualifiedName(tokenizer.getText());
-      parseBoundFunction(fullQualifiedName, uriInfo, lastResource);
+      parseBoundFunction(new FullQualifiedName(tokenizer.getText()), uriInfo, lastResource);
+    } else {
+      throw new UriParserSyntaxException("Unexpected token.", UriParserSyntaxException.MessageKeys.SYNTAX);
     }
   }
 
@@ -1071,13 +1093,22 @@ public class ExpressionParser {
     }
   }
 
+  private void checkNoCollection(final Expression expression) throws UriParserException {
+    if (expression instanceof Member  && ((Member) expression).isCollection()) {
+      throw new UriParserSemanticException("Collection not allowed.",
+          UriParserSemanticException.MessageKeys.COLLECTION_NOT_ALLOWED);
+    }
+  }
+
   protected void checkIntegerType(final Expression expression) throws UriParserException {
+    checkNoCollection(expression);
     checkType(expression,
         EdmPrimitiveTypeKind.Int64, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int16,
         EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte);
   }
 
   protected void checkNumericType(final Expression expression) throws UriParserException {
+    checkNoCollection(expression);
     checkType(expression,
         EdmPrimitiveTypeKind.Int64, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int16,
         EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
@@ -1085,6 +1116,9 @@ public class ExpressionParser {
   }
 
   private void checkEqualityTypes(final Expression left, final Expression right) throws UriParserException {
+    checkNoCollection(left);
+    checkNoCollection(right);
+
     final EdmType leftType = getType(left);
     final EdmType rightType = getType(right);
     if (leftType == null || rightType == null || leftType.equals(rightType)) {
@@ -1141,11 +1175,10 @@ public class ExpressionParser {
   }
 
   private void checkRelationTypes(final Expression left, final Expression right) throws UriParserException {
+    checkNoCollection(left);
+    checkNoCollection(right);
     final EdmType leftType = getType(left);
     final EdmType rightType = getType(right);
-    if (leftType == null || rightType == null) {
-      return;
-    }
     checkType(left,
         EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
         EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
@@ -1160,6 +1193,9 @@ public class ExpressionParser {
         EdmPrimitiveTypeKind.Boolean, EdmPrimitiveTypeKind.Guid, EdmPrimitiveTypeKind.String,
         EdmPrimitiveTypeKind.Date, EdmPrimitiveTypeKind.TimeOfDay,
         EdmPrimitiveTypeKind.DateTimeOffset, EdmPrimitiveTypeKind.Duration);
+    if (leftType == null || rightType == null) {
+      return;
+    }
     if (!(((EdmPrimitiveType) leftType).isCompatible((EdmPrimitiveType) rightType)
         || ((EdmPrimitiveType) rightType).isCompatible((EdmPrimitiveType) leftType))) {
       throw new UriParserSemanticException("Incompatible types.",
@@ -1171,11 +1207,10 @@ public class ExpressionParser {
 
   private EdmType getAddSubTypeAndCheckLeftAndRight(final Expression left, final Expression right, final boolean isSub)
       throws UriParserException {
+    checkNoCollection(left);
+    checkNoCollection(right);
     final EdmType leftType = getType(left);
     final EdmType rightType = getType(right);
-    if (leftType == null || rightType == null) {
-      return null;
-    }
     if (isType(leftType,
             EdmPrimitiveTypeKind.Int16, EdmPrimitiveTypeKind.Int32, EdmPrimitiveTypeKind.Int64,
             EdmPrimitiveTypeKind.Byte, EdmPrimitiveTypeKind.SByte,
