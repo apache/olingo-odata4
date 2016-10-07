@@ -71,13 +71,13 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
       throws ExpressionVisitException {
 
     String text = "<" + methodCall + "(";
-    int i = 0;
-    while (i < parameters.size()) {
-      if (i > 0) {
+    boolean first = true;
+    for (final String parameter : parameters) {
+      if (!first) {
         text += ",";
       }
-      text += parameters.get(i);
-      i++;
+      text += parameter;
+      first = false;
     }
     return text + ")>";
   }
@@ -104,7 +104,7 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
         tmp = typed.toString(true);
       }
 
-      if (ret.length() != 0) {
+      if (ret.length() > 0) {
         ret += "/";
       }
       ret += tmp;

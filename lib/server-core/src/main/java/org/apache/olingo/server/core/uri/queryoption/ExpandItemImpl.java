@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.uri.UriInfoResource;
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -45,6 +46,7 @@ public class ExpandItemImpl implements ExpandItem {
   private CountOption inlineCountOption;
   private SelectOption selectOption;
   private ExpandOption expandOption;
+  private ApplyOption applyOption;
 
   private UriInfoResource resourceInfo;
 
@@ -56,7 +58,10 @@ public class ExpandItemImpl implements ExpandItem {
 
   public ExpandItemImpl setSystemQueryOption(final SystemQueryOption sysItem) {
 
-    if (sysItem instanceof ExpandOption) {
+    if (sysItem instanceof ApplyOption) {
+      validateDoubleSystemQueryOption(applyOption, sysItem);
+      applyOption = (ApplyOption) sysItem;
+    } else if (sysItem instanceof ExpandOption) {
       validateDoubleSystemQueryOption(expandOption, sysItem);
       expandOption = (ExpandOption) sysItem;
     } else if (sysItem instanceof FilterOption) {
@@ -146,6 +151,11 @@ public class ExpandItemImpl implements ExpandItem {
   @Override
   public ExpandOption getExpandOption() {
     return expandOption;
+  }
+
+  @Override
+  public ApplyOption getApplyOption() {
+    return applyOption;
   }
 
   public ExpandItemImpl setResourcePath(final UriInfoResource resourceInfo) {

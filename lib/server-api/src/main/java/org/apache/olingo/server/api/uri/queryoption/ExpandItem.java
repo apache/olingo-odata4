@@ -73,6 +73,11 @@ public interface ExpandItem {
   ExpandOption getExpandOption();
 
   /**
+   * @return Information on the option $apply when used within $expand
+   */
+  ApplyOption getApplyOption();
+
+  /**
    * @return A {@link UriInfoResource} object containing the resource path segments to be expanded
    */
   UriInfoResource getResourcePath();

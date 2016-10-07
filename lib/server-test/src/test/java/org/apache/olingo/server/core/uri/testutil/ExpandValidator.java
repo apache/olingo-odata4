@@ -27,7 +27,6 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
-import org.apache.olingo.server.api.uri.queryoption.QueryOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 
@@ -127,47 +126,43 @@ public class ExpandValidator implements TestValidator {
     return this;
   }
 
-  public ExpandValidator isLevelText(final String text) {
-    final QueryOption option = (QueryOption) expandItem.getLevelsOption();
-    assertEquals(text, option.getText());
+  public ExpandValidator isLevels(final int levels) {
+    assertEquals(levels, expandItem.getLevelsOption().getValue());
     return this;
   }
 
-  public ExpandValidator isSkipText(final String text) {
-    final QueryOption option = expandItem.getSkipOption();
-    assertEquals(text, option.getText());
+  public ExpandValidator isLevelsMax() {
+    assertTrue(expandItem.getLevelsOption().isMax());
     return this;
   }
 
-  public ExpandValidator isTopText(final String text) {
-    final QueryOption option = expandItem.getTopOption();
-    assertEquals(text, option.getText());
+  public ExpandValidator isSkip(final int skip) {
+    assertEquals(skip, expandItem.getSkipOption().getValue());
     return this;
   }
 
-  public ExpandValidator isInlineCountText(final String text) {
-    final QueryOption option = expandItem.getCountOption();
-    assertEquals(text, option.getText());
+  public ExpandValidator isTop(final int top) {
+    assertEquals(top, expandItem.getTopOption().getValue());
+    return this;
+  }
+
+  public ExpandValidator isInlineCount(final boolean value) {
+    assertEquals(value, expandItem.getCountOption().getValue());
     return this;
   }
 
   public ExpandValidator isSelectItemStar(final int index) {
-    SelectOption select = expandItem.getSelectOption();
-    SelectItem item = select.getSelectItems().get(index);
-    assertTrue(item.isStar());
+    assertTrue(expandItem.getSelectOption().getSelectItems().get(index).isStar());
     return this;
   }
 
   public ExpandValidator isSelectItemAllOperations(final int index, final FullQualifiedName fqn) {
-    SelectOption select = expandItem.getSelectOption();
-    SelectItem item = select.getSelectItems().get(index);
-    assertEquals(fqn.toString(), item.getAllOperationsInSchemaNameSpace().toString());
+    assertEquals(fqn, expandItem.getSelectOption().getSelectItems().get(index).getAllOperationsInSchemaNameSpace());
     return this;
   }
 
   public ExpandValidator isSortOrder(final int index, final boolean descending) {
-    OrderByOption orderBy = expandItem.getOrderByOption();
-    assertEquals(descending, orderBy.getOrders().get(index).isDescending());
+    assertEquals(descending, expandItem.getOrderByOption().getOrders().get(index).isDescending());
     return this;
   }
 

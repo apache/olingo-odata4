@@ -32,7 +32,7 @@ public class OrderByItemImpl implements OrderByItem {
     return descending;
   }
 
-  public OrderByItem setDescending(final boolean descending) {
+  public OrderByItemImpl setDescending(final boolean descending) {
     this.descending = descending;
     return this;
   }
@@ -42,7 +42,7 @@ public class OrderByItemImpl implements OrderByItem {
     return expression;
   }
 
-  public OrderByItem setExpression(final Expression expression) {
+  public OrderByItemImpl setExpression(final Expression expression) {
     this.expression = expression;
     return this;
   }

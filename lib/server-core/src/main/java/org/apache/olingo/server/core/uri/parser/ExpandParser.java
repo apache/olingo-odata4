@@ -50,6 +50,7 @@ import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.LevelsOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.apply.DynamicStructuredType;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
 public class ExpandParser {
@@ -275,6 +276,12 @@ public class ExpandParser {
           topOption.setText(tokenizer.getText());
           topOption.setValue(value);
           systemQueryOption = topOption;
+
+        } else if (!forRef && !forCount && tokenizer.next(TokenKind.APPLY)) {
+          ParserHelper.requireNext(tokenizer, TokenKind.EQ);
+          systemQueryOption = new ApplyParser(edm, odata).parse(tokenizer,
+              // Data aggregation may change the structure of the result, so we create a new dynamic type.
+              new DynamicStructuredType(referencedType), null, aliases);
 
         } else {
           throw new UriParserSyntaxException("Allowed query option expected.",

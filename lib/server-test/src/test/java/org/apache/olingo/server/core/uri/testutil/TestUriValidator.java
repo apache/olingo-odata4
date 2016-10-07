@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
@@ -121,7 +120,7 @@ public class TestUriValidator implements TestValidator {
   public ResourceValidator goSelectItemPath(final int index) {
     final SelectOption select = uriInfo.getSelectOption();
     assertNotNull("no select found", select);
-    SelectItem item = select.getSelectItems().get(index);
+    final SelectItem item = select.getSelectItems().get(index);
     return new ResourceValidator()
         .setUpValidator(this)
         .setEdm(edm)
@@ -131,16 +130,15 @@ public class TestUriValidator implements TestValidator {
   public TestUriValidator isSelectStartType(final int index, final FullQualifiedName fullName) {
     final SelectOption select = uriInfo.getSelectOption();
     assertNotNull("no select found", select);
-    SelectItem item = select.getSelectItems().get(index);
-    EdmType actualType = item.getStartTypeFilter();
-    assertEquals(fullName, actualType.getFullQualifiedName());
+    final SelectItem item = select.getSelectItems().get(index);
+    assertEquals(fullName, item.getStartTypeFilter().getFullQualifiedName());
     return this;
   }
 
   public TestUriValidator isSelectItemStar(final int index) {
     final SelectOption select = uriInfo.getSelectOption();
     assertNotNull("no select found", select);
-    SelectItem item = select.getSelectItems().get(index);
+    final SelectItem item = select.getSelectItems().get(index);
     assertTrue(item.isStar());
     return this;
   }
@@ -148,7 +146,7 @@ public class TestUriValidator implements TestValidator {
   public TestUriValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
     final SelectOption select = uriInfo.getSelectOption();
     assertNotNull("no select found", select);
-    SelectItem item = select.getSelectItems().get(index);
+    final SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn, item.getAllOperationsInSchemaNameSpace());
     return this;
   }
@@ -162,27 +160,27 @@ public class TestUriValidator implements TestValidator {
   }
 
   public TestUriValidator isFormatText(final String text) {
-    assertEquals(text, uriInfo.getFormatOption().getText());
+    assertEquals(text, uriInfo.getFormatOption().getFormat());
     return this;
   }
 
-  public TestUriValidator isTopText(final String topText) {
-    assertEquals(topText, uriInfo.getTopOption().getText());
+  public TestUriValidator isSkip(final int skip) {
+    assertEquals(skip, uriInfo.getSkipOption().getValue());
     return this;
   }
 
-  public TestUriValidator isInlineCountText(final String inlineCountText) {
-    assertEquals(inlineCountText, uriInfo.getCountOption().getText());
+  public TestUriValidator isTop(final int top) {
+    assertEquals(top, uriInfo.getTopOption().getValue());
     return this;
   }
 
-  public TestUriValidator isSkipText(final String skipText) {
-    assertEquals(skipText, uriInfo.getSkipOption().getText());
+  public TestUriValidator isInlineCount(final boolean value) {
+    assertEquals(value, uriInfo.getCountOption().getValue());
     return this;
   }
 
   public TestUriValidator isSkipTokenText(final String skipTokenText) {
-    assertEquals(skipTokenText, uriInfo.getSkipTokenOption().getText());
+    assertEquals(skipTokenText, uriInfo.getSkipTokenOption().getValue());
     return this;
   }
 

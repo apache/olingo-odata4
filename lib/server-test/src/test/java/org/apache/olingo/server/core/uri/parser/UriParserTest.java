@@ -439,12 +439,12 @@ public class UriParserTest {
     testUri.run("ESKeyNav", "$top=1")
         .isKind(UriInfoKind.resource)
         .goPath().isEntitySet("ESKeyNav")
-        .goUpUriValidator().isTopText("1");
+        .goUpUriValidator().isTop(1);
 
     testUri.run("ESKeyNav", "$top=0")
         .isKind(UriInfoKind.resource)
         .goPath().isEntitySet("ESKeyNav")
-        .goUpUriValidator().isTopText("0");
+        .goUpUriValidator().isTop(0);
 
     testUri.runEx("ESKeyNav", "$top=undefined")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
@@ -490,10 +490,10 @@ public class UriParserTest {
   public void count() throws Exception {
     testUri.run("ESAllPrim", "$count=true")
         .isKind(UriInfoKind.resource)
-        .isInlineCountText("true");
+        .isInlineCount(true);
     testUri.run("ESAllPrim", "$count=false")
         .isKind(UriInfoKind.resource)
-        .isInlineCountText("false");
+        .isInlineCount(false);
     testUri.runEx("ESAllPrim", "$count=undefined")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
     testUri.runEx("ESAllPrim", "$count=")
@@ -504,10 +504,10 @@ public class UriParserTest {
   public void skip() throws Exception {
     testUri.run("ESAllPrim", "$skip=3")
         .isKind(UriInfoKind.resource)
-        .isSkipText("3");
+        .isSkip(3);
     testUri.run("ESAllPrim", "$skip=0")
         .isKind(UriInfoKind.resource)
-        .isSkipText("0");
+        .isSkip(0);
 
     testUri.runEx("ESAllPrim", "$skip=F")
         .isExSyntax(UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION);
@@ -795,11 +795,11 @@ public class UriParserTest {
   public void allowedSystemQueryOptionsOnAll() throws Exception {
     testUri.run("$all", "$count=true&$format=json&$search=abc&$skip=5&$top=5&$skiptoken=abc")
         .isKind(UriInfoKind.all)
-        .isInlineCountText("true")
+        .isInlineCount(true)
         .isFormatText("json")
         .isSearchSerialized("'abc'")
-        .isSkipText("5")
-        .isTopText("5")
+        .isSkip(5)
+        .isTop(5)
         .isSkipTokenText("abc");
   }
 
@@ -809,7 +809,7 @@ public class UriParserTest {
         + "&$filter=ESAllPrim/PropertyInt16 eq 2&$format=json&$orderby=ESAllPrim/PropertyInt16"
         + "&$search=abc&$skip=5&$top=5&$skiptoken=abc")
         .isKind(UriInfoKind.crossjoin)
-        .isInlineCountText("true")
+        .isInlineCount(true)
         .goExpand().goPath().isEntitySet("ESAllPrim")
         .goUpExpandValidator().goUpToUriValidator()
         .goFilter().left().goPath().first().isEntitySet("ESAllPrim")
@@ -817,8 +817,8 @@ public class UriParserTest {
         .goUpFilterValidator().goUpToUriValidator()
         .isFormatText("json")
         .isSearchSerialized("'abc'")
-        .isSkipText("5")
-        .isTopText("5")
+        .isSkip(5)
+        .isTop(5)
         .isSkipTokenText("abc");
   }
 

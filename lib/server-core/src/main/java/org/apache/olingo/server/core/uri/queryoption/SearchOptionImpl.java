@@ -35,7 +35,8 @@ public class SearchOptionImpl extends SystemQueryOptionImpl implements SearchOpt
     return searchExpression;
   }
 
-  public void setSearchExpression(final SearchExpression searchExpression) {
+  public SearchOptionImpl setSearchExpression(final SearchExpression searchExpression) {
     this.searchExpression = searchExpression;
+    return this;
   }
 }
