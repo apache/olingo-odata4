@@ -90,7 +90,7 @@ public class DebugTabStacktrace implements DebugTab {
     gen.writeStartObject();
     gen.writeStringField("class", element.getClassName());
     gen.writeStringField("method", element.getMethodName());
-    gen.writeStringField("line", Integer.toString(element.getLineNumber()));
+    gen.writeNumberField("line", element.getLineNumber());
     gen.writeEndObject();
   }
 

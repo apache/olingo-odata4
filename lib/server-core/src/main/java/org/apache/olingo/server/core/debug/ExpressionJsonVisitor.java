@@ -18,17 +18,22 @@
  */
 package org.apache.olingo.server.core.debug;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceComplexProperty;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
+import org.apache.olingo.server.api.uri.UriResourceIt;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
@@ -38,7 +43,10 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * A custom expression visitor which converts the tree into a {@link JsonNode} tree.
@@ -76,6 +84,10 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
   private static final String TYPE_NAME = "type";
   private static final String OPERATOR_NAME = "operator";
   private static final String NODE_TYPE_NAME = "nodeType";
+  private static final String KEYS_NAME = "keys";
+  private static final String TYPE_FILTER_NAME = "typeFilter";
+  private static final String TYPE_FILTER_ON_COLLECTION_NAME = "typeFilterOnCollection";
+  private static final String TYPE_FILTER_ON_ENTRY_NAME = "typeFilterOnEntry";
 
   private final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
@@ -140,6 +152,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
     ObjectNode result = nodeFactory.objectNode()
         .put(NODE_TYPE_NAME, MEMBER_NAME)
         .put(TYPE_NAME, getType(lastSegment));
+    putType(result, TYPE_FILTER_NAME, member.getStartTypeFilter());
     ArrayNode segments = result.putArray(RESOURCE_SEGMENTS_NAME);
     for (final UriResource segment : uriResourceParts) {
       if (segment instanceof UriResourceLambdaAll) {
@@ -149,10 +162,32 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
         final UriResourceLambdaAny any = (UriResourceLambdaAny) segment;
         segments.add(visitLambdaExpression(ANY_NAME, any.getLambdaVariable(), any.getExpression()));
       } else if (segment instanceof UriResourcePartTyped) {
-        segments.add(nodeFactory.objectNode()
+        ObjectNode node = nodeFactory.objectNode()
             .put(NODE_TYPE_NAME, segment.getKind().toString())
             .put(NAME_NAME, segment.toString())
-            .put(TYPE_NAME, getType(segment)));
+            .put(TYPE_NAME, getType(segment));
+        if (segment instanceof UriResourceEntitySet) {
+          putParameters(node, KEYS_NAME, ((UriResourceEntitySet) segment).getKeyPredicates());
+          putType(node, TYPE_FILTER_ON_COLLECTION_NAME, ((UriResourceEntitySet) segment).getTypeFilterOnCollection());
+          putType(node, TYPE_FILTER_ON_ENTRY_NAME, ((UriResourceEntitySet) segment).getTypeFilterOnEntry());
+        } else if (segment instanceof UriResourceNavigation) {
+          putParameters(node, KEYS_NAME, ((UriResourceNavigation) segment).getKeyPredicates());
+          putType(node, TYPE_FILTER_ON_COLLECTION_NAME, ((UriResourceNavigation) segment).getTypeFilterOnCollection());
+          putType(node, TYPE_FILTER_ON_ENTRY_NAME, ((UriResourceNavigation) segment).getTypeFilterOnEntry());
+        } else if (segment instanceof UriResourceFunction) {
+          putParameters(node, PARAMETERS_NAME, ((UriResourceFunction) segment).getParameters());
+          putParameters(node, KEYS_NAME, ((UriResourceFunction) segment).getKeyPredicates());
+          putType(node, TYPE_FILTER_ON_COLLECTION_NAME, ((UriResourceFunction) segment).getTypeFilterOnCollection());
+          putType(node, TYPE_FILTER_ON_ENTRY_NAME, ((UriResourceFunction) segment).getTypeFilterOnEntry());
+        } else if (segment instanceof UriResourceIt) {
+          putType(node, TYPE_FILTER_ON_COLLECTION_NAME, ((UriResourceIt) segment).getTypeFilterOnCollection());
+          putType(node, TYPE_FILTER_ON_ENTRY_NAME, ((UriResourceIt) segment).getTypeFilterOnEntry());
+        } else if (segment instanceof UriResourceSingleton) {
+          putType(node, TYPE_FILTER_NAME, ((UriResourceSingleton) segment).getEntityTypeFilter());
+        } else if (segment instanceof UriResourceComplexProperty) {
+          putType(node, TYPE_FILTER_NAME, ((UriResourceComplexProperty) segment).getComplexTypeFilter());
+        }
+        segments.add(node);
       } else {
         segments.add(nodeFactory.objectNode()
             .put(NODE_TYPE_NAME, segment.getKind().toString())
@@ -161,6 +196,22 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
       }
     }
     return result;
+  }
+
+  private void putType(ObjectNode node, final String name, final EdmType type) {
+    if (type != null) {
+      node.put(name, type.getFullQualifiedName().getFullQualifiedNameAsString());
+    }
+  }
+
+  private void putParameters(ObjectNode node, final String name, final List<UriParameter> parameters) {
+    if (!parameters.isEmpty()) {
+      ObjectNode parametersNode = node.putObject(name);
+      for (final UriParameter parameter : parameters) {
+        parametersNode.put(parameter.getName(),
+            parameter.getText() == null ? parameter.getAlias() : parameter.getText());
+      }
+    }
   }
 
   @Override
@@ -186,8 +237,8 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
   }
 
   @Override
-  public JsonNode visitEnum(final EdmEnumType type, final List<String> enumValues) throws ExpressionVisitException,
-  ODataApplicationException {
+  public JsonNode visitEnum(final EdmEnumType type, final List<String> enumValues)
+      throws ExpressionVisitException, ODataApplicationException {
     ObjectNode result = nodeFactory.objectNode()
         .put(NODE_TYPE_NAME, ENUM_NAME)
         .put(TYPE_NAME, getTypeString(type));
@@ -206,9 +257,8 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
       return NUMBER_NAME;
     case NOT:
       return BOOLEAN_NAME;
-    default:
-      return UNKNOWN_NAME;
     }
+    return UNKNOWN_NAME;
   }
 
   private String getType(final MethodKind methodCall) {
@@ -257,9 +307,9 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
       return DATETIMEOFFSET_NAME;
 
     case CAST:
-    default:
       return UNKNOWN_NAME;
     }
+    return UNKNOWN_NAME;
   }
 
   private String getType(final BinaryOperatorKind operator) {
@@ -281,10 +331,8 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
     case AND:
     case OR:
       return BOOLEAN_NAME;
-
-    default:
-      return UNKNOWN_NAME;
     }
+    return UNKNOWN_NAME;
   }
 
   private String getTypeString(final EdmType type) {

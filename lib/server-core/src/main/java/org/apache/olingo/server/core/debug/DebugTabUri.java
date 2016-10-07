@@ -25,15 +25,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceComplexProperty;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.queryoption.ApplyItem;
 import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
@@ -92,6 +95,15 @@ public class DebugTabUri implements DebugTab {
     if (uriInfo.getKind() == UriInfoKind.resource) {
       gen.writeFieldName("uriResourceParts");
       appendURIResourceParts(gen, uriInfo.getUriResourceParts());
+    } else if (uriInfo.getKind() == UriInfoKind.crossjoin) {
+      gen.writeFieldName("entitySetNames");
+      gen.writeStartArray();
+      for (final String name : uriInfo.asUriInfoCrossjoin().getEntitySetNames()) {
+        gen.writeString(name);
+      }
+      gen.writeEndArray();
+    } else if (uriInfo.getKind() == UriInfoKind.entityId) {
+      appendType(gen, "typeCast", uriInfo.asUriInfoEntityId().getEntityTypeCast());
     }
 
     if (uriInfo.getFormatOption() != null) {
@@ -183,21 +195,37 @@ public class DebugTabUri implements DebugTab {
       gen.writeStartObject();
       gen.writeStringField("uriResourceKind", resource.getKind().toString());
       gen.writeStringField("segment", resource.toString());
-      if (resource instanceof UriResourcePartTyped && ((UriResourcePartTyped) resource).getType() != null) {
-        gen.writeStringField("type",
-            ((UriResourcePartTyped) resource).getType().getFullQualifiedName().getFullQualifiedNameAsString());
+      if (resource instanceof UriResourcePartTyped) {
+        appendType(gen, "type", ((UriResourcePartTyped) resource).getType());
+        gen.writeBooleanField("isCollection", ((UriResourcePartTyped) resource).isCollection());
       }
       if (resource instanceof UriResourceEntitySet) {
         appendParameters(gen, "keys", ((UriResourceEntitySet) resource).getKeyPredicates());
+        appendType(gen, "typeFilterOnCollection", ((UriResourceEntitySet) resource).getTypeFilterOnCollection());
+        appendType(gen, "typeFilterOnEntry", ((UriResourceEntitySet) resource).getTypeFilterOnEntry());
       } else if (resource instanceof UriResourceNavigation) {
         appendParameters(gen, "keys", ((UriResourceNavigation) resource).getKeyPredicates());
+        appendType(gen, "typeFilterOnCollection", ((UriResourceNavigation) resource).getTypeFilterOnCollection());
+        appendType(gen, "typeFilterOnEntry", ((UriResourceNavigation) resource).getTypeFilterOnEntry());
       } else if (resource instanceof UriResourceFunction) {
         appendParameters(gen, "parameters", ((UriResourceFunction) resource).getParameters());
         appendParameters(gen, "keys", ((UriResourceFunction) resource).getKeyPredicates());
+        appendType(gen, "typeFilterOnCollection", ((UriResourceFunction) resource).getTypeFilterOnCollection());
+        appendType(gen, "typeFilterOnEntry", ((UriResourceFunction) resource).getTypeFilterOnEntry());
+      } else if (resource instanceof UriResourceSingleton) {
+        appendType(gen, "typeFilter", ((UriResourceSingleton) resource).getEntityTypeFilter());
+      } else if (resource instanceof UriResourceComplexProperty) {
+        appendType(gen, "typeFilter", ((UriResourceComplexProperty) resource).getComplexTypeFilter());
       }
       gen.writeEndObject();
     }
     gen.writeEndArray();
+  }
+
+  private void appendType(JsonGenerator json, final String name, final EdmType type) throws IOException {
+    if (type != null) {
+      json.writeStringField(name, type.getFullQualifiedName().getFullQualifiedNameAsString());
+    }
   }
 
   private void appendParameters(final JsonGenerator gen, final String name, final List<UriParameter> parameters)
@@ -260,7 +288,7 @@ public class DebugTabUri implements DebugTab {
 
     appendCommonJsonObjects(gen, item.getCountOption(), item.getSkipOption(), item.getTopOption(),
         item.getFilterOption(), item.getOrderByOption(), item.getSelectOption(), item.getExpandOption(),
-        item.getSearchOption(), null); // TODO: item.getApplyOption()
+        item.getSearchOption(), item.getApplyOption());
 
     gen.writeEndObject();
   }
@@ -476,8 +504,21 @@ public class DebugTabUri implements DebugTab {
       appendURIResourceParts(json, uriInfo.getUriResourceParts());
       json.close();
       writer.append("\n</li>\n</ul>\n");
+    } else if (uriInfo.getKind() == UriInfoKind.crossjoin) {
+      writer.append("<h2>Crossjoin EntitySet Names</h2>\n")
+          .append("<ul>\n");
+      for (final String name : uriInfo.asUriInfoCrossjoin().getEntitySetNames()) {
+        writer.append("<li>").append(name).append("</li>\n");
+      }
+      writer.append("</ul>\n");
     } else {
       writer.append("<h2>Kind</h2>\n<p>").append(uriInfo.getKind().name()).append("</p>\n");
+      if (uriInfo.getKind() == UriInfoKind.entityId && uriInfo.asUriInfoEntityId().getEntityTypeCast() != null) {
+        writer.append("<h2>Type Cast</h2>\n<p>")
+            .append(uriInfo.asUriInfoEntityId().getEntityTypeCast().getFullQualifiedName()
+                .getFullQualifiedNameAsString())
+            .append("</p>\n");
+      }
     }
 
     if (uriInfo.getSearchOption() != null) {

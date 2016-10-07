@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.Writer;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -70,33 +69,12 @@ public class DebugTabBody implements DebugTab {
     return "Body";
   }
 
-  //
   @Override
-  public void appendJson(final JsonGenerator gen) throws IOException {
+  public void appendJson(final JsonGenerator json) throws IOException {
     if (response == null || response.getContent() == null) {
-      gen.writeNull();
+      json.writeNull();
     } else {
-      gen.writeString(getContentString());
-    }
-  }
-
-  private String getContentString() {
-    try {
-      String contentString;
-      switch (responseContent) {
-      case IMAGE:
-        contentString = Base64.encodeBase64String(streamToBytes(response.getContent()));
-        break;
-      case JSON:
-      case XML:
-      case TEXT:
-      default:
-        contentString = new String(streamToBytes(response.getContent()), "UTF-8");
-        break;
-      }
-      return contentString;
-    } catch (IOException e) {
-      return "Could not parse Body for Debug Output";
+      json.writeString(getContentString());
     }
   }
 
@@ -130,12 +108,23 @@ public class DebugTabBody implements DebugTab {
     }
   }
 
-  private byte[] streamToBytes(final InputStream input) {
+  private String getContentString() {
+    try {
+      final byte[] content = streamToBytes(response.getContent());
+      return responseContent == ResponseContent.IMAGE ?
+          Base64.encodeBase64String(content) :
+          new String(content, "UTF-8");
+    } catch (final IOException e) {
+      return "Could not parse Body for Debug Output";
+    }
+  }
+
+  private byte[] streamToBytes(final InputStream input) throws IOException {
     if (input != null) {
       try {
         return new FixedFormatDeserializerImpl().binary(input);
       } catch (final DeserializerException e) {
-        throw new ODataRuntimeException("Error on reading request content", e);
+        throw new IOException("Error on reading request content", e);
       }
     }
     return null;

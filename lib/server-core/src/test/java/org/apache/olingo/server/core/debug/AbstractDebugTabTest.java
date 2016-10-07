@@ -21,24 +21,30 @@ package org.apache.olingo.server.core.debug;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class AbstractDebugTabTest {
 
-  protected String createHtml(final DebugTab tab) throws IOException {
-    StringWriter writer = new StringWriter();
-    tab.appendHtml(writer);
-    writer.flush();
-    return writer.toString();
+  protected String createHtml(DebugTab tab) throws IOException {
+    return create(tab, true);
   }
 
-  protected String createJson(final DebugTab tab) throws IOException {
+  protected String createJson(DebugTab tab) throws IOException {
+    return create(tab, false);
+  }
+
+  private String create(DebugTab tab, final boolean html) throws IOException {
     StringWriter writer = new StringWriter();
-    JsonGenerator gen = new JsonFactory().createGenerator(writer);
-    tab.appendJson(gen);
-    gen.flush();
-    gen.close();
+    if (html) {
+      tab.appendHtml(writer);
+    } else {
+      // Create JSON generator (the object mapper is necessary to write expression trees).
+      JsonGenerator json = new ObjectMapper().getFactory().createGenerator(writer);
+      tab.appendJson(json);
+      json.flush();
+      json.close();
+    }
     writer.flush();
     return writer.toString();
   }

@@ -65,12 +65,12 @@ public class DebugTabRuntime implements DebugTab {
   private void appendJsonNode(final JsonGenerator gen, final RuntimeNode node) throws IOException {
     gen.writeStartObject();
     gen.writeStringField("class", node.className);
-    gen.writeStringField("method ", node.methodName);
+    gen.writeStringField("method", node.methodName);
 
     if (node.timeStopped == 0) {
       gen.writeNullField("duration");
     } else {
-      gen.writeStringField("duration", Long.toString((node.timeStopped - node.timeStarted) / TO_MILLIS_DIVISOR));
+      gen.writeNumberField("duration", (node.timeStopped - node.timeStarted) / TO_MILLIS_DIVISOR);
       gen.writeStringField("unit", "µs");
     }
 
@@ -140,7 +140,9 @@ public class DebugTabRuntime implements DebugTab {
 
     protected boolean add(final RuntimeMeasurement runtimeMeasurement) {
       if (timeStarted <= runtimeMeasurement.getTimeStarted()
-          && timeStopped != 0 && timeStopped >= runtimeMeasurement.getTimeStopped()) {
+          && timeStopped != 0
+          && timeStopped > runtimeMeasurement.getTimeStarted() // in case the stop time has not been set
+          && timeStopped >= runtimeMeasurement.getTimeStopped()) {
         for (RuntimeNode candidate : children) {
           if (candidate.add(runtimeMeasurement)) {
             return true;
