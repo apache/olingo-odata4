@@ -385,9 +385,7 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
         }
       }
       if (typeName != null) {
-        json.writeStringField(
-            name + Constants.JSON_TYPE,
-            new EdmTypeInfo.Builder().setTypeExpression(typeName).build().external());
+        json.writeStringField(name + Constants.JSON_TYPE, constructTypeExpression(typeName));
       }
     }
 
@@ -397,5 +395,25 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
 
     json.writeFieldName(name);
     value(json, valuable, type, edmProperty);
+  }
+
+  private String constructTypeExpression(String typeName) {
+    EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().setTypeExpression(typeName).build();
+    StringBuilder stringBuilder = new StringBuilder();
+
+    if (typeInfo.isCollection()) {
+      stringBuilder.append("#Collection(");
+    } else {
+      stringBuilder.append('#');
+    }
+
+    stringBuilder.append(typeInfo.isPrimitiveType() ? typeInfo.getFullQualifiedName().getName() : typeInfo
+        .getFullQualifiedName().getFullQualifiedNameAsString());
+
+    if (typeInfo.isCollection()) {
+      stringBuilder.append(')');
+    }
+
+    return stringBuilder.toString();
   }
 }

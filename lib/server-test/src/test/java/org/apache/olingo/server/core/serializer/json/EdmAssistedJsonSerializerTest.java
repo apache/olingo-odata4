@@ -69,7 +69,7 @@ public class EdmAssistedJsonSerializerTest {
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
     Assert.assertEquals("{\"@odata.context\":\"$metadata#EntitySet(Property1)\","
-        + "\"value\":[{\"@odata.id\":null,\"Property1@odata.type\":\"Single\",\"Property1\":1.25}]}",
+        + "\"value\":[{\"@odata.id\":null,\"Property1@odata.type\":\"#Single\",\"Property1\":1.25}]}",
         serialize(serializer, metadata, null, entityCollection, null));
   }
 
@@ -85,7 +85,7 @@ public class EdmAssistedJsonSerializerTest {
     entityCollection.getEntities().add(entity);
     Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim\",\"value\":[{\"@odata.id\":null,"
         + "\"PropertyInt16\":1,\"PropertyString\":\"test\","
-        + "\"AdditionalProperty@odata.type\":\"SByte\",\"AdditionalProperty\":42}]}",
+        + "\"AdditionalProperty@odata.type\":\"#SByte\",\"AdditionalProperty\":42}]}",
         serialize(serializer, metadata, entitySet, entityCollection, null));
   }
 
@@ -111,9 +111,9 @@ public class EdmAssistedJsonSerializerTest {
             + "\"@odata.count\":2,"
             + "\"value\":[{\"@odata.id\":null,"
             + "\"Property0\":null,"
-            + "\"Property1@odata.type\":\"Int32\",\"Property1\":1,"
-            + "\"Property2@odata.type\":\"Date\",\"Property2\":\"2000-02-29\","
-            + "\"Property3@odata.type\":\"DateTimeOffset\",\"Property3\":\"2000-02-29T00:00:00Z\","
+            + "\"Property1@odata.type\":\"#Int32\",\"Property1\":1,"
+            + "\"Property2@odata.type\":\"#Date\",\"Property2\":\"2000-02-29\","
+            + "\"Property3@odata.type\":\"#DateTimeOffset\",\"Property3\":\"2000-02-29T00:00:00Z\","
             + "\"Property4@odata.type\":\"#Collection(Boolean)\",\"Property4\":[true,false,null]}],"
             + "\"@odata.nextLink\":\"nextLink\"}",
         serialize(serializer, metadata, null, entityCollection, null));
@@ -131,9 +131,9 @@ public class EdmAssistedJsonSerializerTest {
         "{\"@odata.context\":\"$metadata#EntitySet(Property1,Property2,Property3)\","
             + "\"@odata.count\":\"3\","
             + "\"value\":[{\"@odata.id\":null,"
-            + "\"Property1@odata.type\":\"Int64\",\"Property1\":\"-9223372036854775808\","
-            + "\"Property2@odata.type\":\"Decimal\",\"Property2\":\"922337203.6854775807\","
-            + "\"Property3@odata.type\":\"Byte\",\"Property3\":20}]}",
+            + "\"Property1@odata.type\":\"#Int64\",\"Property1\":\"-9223372036854775808\","
+            + "\"Property2@odata.type\":\"#Decimal\",\"Property2\":\"922337203.6854775807\","
+            + "\"Property3@odata.type\":\"#Byte\",\"Property3\":20}]}",
         serialize(
             oData.createEdmAssistedSerializer(
                 ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true")),
@@ -159,10 +159,10 @@ public class EdmAssistedJsonSerializerTest {
     entityCollection.getEntities().add(entity);
     Assert.assertEquals("{\"@odata.context\":\"$metadata#EntitySet(Property1,Property2)\","
         + "\"value\":[{\"@odata.id\":null,"
-        + "\"Property1@odata.type\":\"Int64\",\"Property1\":1,"
+        + "\"Property1@odata.type\":\"#Int64\",\"Property1\":1,"
         + "\"Property2\":{\"@odata.type\":\"#Namespace.ComplexType\","
-        + "\"Inner1@odata.type\":\"Decimal\",\"Inner1\":0.00010,"
-        + "\"Inner2@odata.type\":\"TimeOfDay\",\"Inner2\":\"13:00:59.999\"}}]}",
+        + "\"Inner1@odata.type\":\"#Decimal\",\"Inner1\":0.00010,"
+        + "\"Inner2@odata.type\":\"#TimeOfDay\",\"Inner2\":\"13:00:59.999\"}}]}",
         serialize(serializer, metadata, null, entityCollection, null));
   }
 
@@ -222,10 +222,10 @@ public class EdmAssistedJsonSerializerTest {
     entityCollection.getEntities().add(entity);
     Assert.assertEquals("{\"@odata.context\":\"$metadata#EntitySet(Property1,NavigationProperty(Related1))\","
         + "\"value\":[{\"@odata.id\":null,"
-        + "\"Property1@odata.type\":\"Int16\",\"Property1\":1,"
+        + "\"Property1@odata.type\":\"#Int16\",\"Property1\":1,"
         + "\"NavigationProperty\":["
-        + "{\"@odata.id\":null,\"Related1@odata.type\":\"Double\",\"Related1\":1.5},"
-        + "{\"@odata.id\":null,\"Related1@odata.type\":\"Double\",\"Related1\":2.75}]}]}",
+        + "{\"@odata.id\":null,\"Related1@odata.type\":\"#Double\",\"Related1\":1.5},"
+        + "{\"@odata.id\":null,\"Related1@odata.type\":\"#Double\",\"Related1\":2.75}]}]}",
         serialize(serializer, metadata, null, entityCollection, "Property1,NavigationProperty(Related1)"));
   }
 
@@ -271,7 +271,7 @@ public class EdmAssistedJsonSerializerTest {
         + "\"@odata.etag\":\"W/\\\"1000\\\"\","
         + "\"@odata.type\":\"#Namespace.EntityType\","
         + "\"@odata.id\":\"ID\","
-        + "\"Property1@odata.type\":\"Guid\",\"Property1\":\"12345678-abcd-1234-cdef-123456789012\","
+        + "\"Property1@odata.type\":\"#Guid\",\"Property1\":\"12345678-abcd-1234-cdef-123456789012\","
         + "\"@odata.editLink\":\"editLink\","
         + "\"@odata.mediaReadLink\":\"editLink/$value\"}]}",
         serialize(serializer, metadata, null, entityCollection, null));
