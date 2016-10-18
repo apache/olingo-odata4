@@ -39,6 +39,9 @@
     <sonar.skip>true</sonar.skip>
     <!-- exclude proxy tests by default -->
     <exclude.regex>.*proxy.*</exclude.regex>
+    <project-web-app-dir>${project.build.directory}/${project.build.finalName}</project-web-app-dir>
+    <tomcat-base-dir>${project.build.directory}/emb-tom-fit</tomcat-base-dir>
+    <project-resource-dir>${project.build.outputDirectory}</project-resource-dir>
   </properties>
 
   <profiles>
@@ -122,19 +125,6 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jasper</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -194,10 +184,40 @@
           <skip>true</skip>
         </configuration>
       </plugin>
+
+	 <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>properties-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>write-project-properties</goal>
+            </goals>
+            <configuration>
+              <outputFile>
+                ${project.build.outputDirectory}/mavenBuild.properties
+              </outputFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+        <systemPropertyVariables>
+	        <property>
+	            <propertyName>buildDirectory</propertyName>
+	            <buildDirectory>${project.build.directory}</buildDirectory>
+	        </property>
+	         <property>
+	            <propertyName>finalName</propertyName>
+	            <buildDirectory>${project.build.finalName}</buildDirectory>
+	        </property>
+        </systemPropertyVariables>
           <includes>
             <include>**/*ITCase.java</include>
             <include>**/*Test.java</include>
@@ -205,7 +225,7 @@
           <excludes>
             <exclude>%regex[${exclude.regex}]</exclude>
           </excludes>
-        </configuration>
+         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -48,7 +48,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.loader.WebappLoader;
-import org.apache.catalina.realm.MemoryRealm;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -151,9 +150,9 @@ public class TomcatTestServer {
   }
 
   public static class TestServerBuilder {
-    private static final String TOMCAT_BASE_DIR = "TOMCAT_BASE_DIR";
-    private static final String PROJECT_WEB_APP_DIR = "PROJECT_WEB_APP_DIR";
-    private static final String PROJECT_RESOURCES_DIR = "PROJECT_RESOURCES_DIR";
+    private static final String TOMCAT_BASE_DIR = "tomcat-base-dir";
+    private static final String PROJECT_RESOURCES_DIR = "project-resource-dir";
+    private static final String PROJECT_WEB_APP_DIR = "project-web-app-dir";
 
     private final Tomcat tomcat;
     private final File baseDir;
@@ -163,7 +162,6 @@ public class TomcatTestServer {
 
     private TestServerBuilder(final int fixedPort) {
       initializeProperties();
-      // baseDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-test");
       baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);      
       if (!baseDir.exists() && !baseDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
@@ -173,7 +171,6 @@ public class TomcatTestServer {
           throw new RuntimeException("Unable to load resources");
       }
 
-      final String TOMCAT_USERS_XML = "tomcat-users.xml";    
       tomcat = new Tomcat();
       tomcat.setBaseDir(baseDir.getParentFile().getAbsolutePath());
       tomcat.setPort(fixedPort);
@@ -181,17 +178,17 @@ public class TomcatTestServer {
       tomcat.getHost().setDeployOnStartup(true);
       tomcat.getConnector().setSecure(false);
       tomcat.setSilent(true);
-      // tomcat.addUser("odatajclient", "odatajclient");
-      // tomcat.addRole("odatajclient", "odatajclient");
-      String tomcatUserPath = resourceDir.getPath() + File.separator + TOMCAT_USERS_XML;
-      MemoryRealm realm = new MemoryRealm();
-      realm.setPathname(tomcatUserPath);
-      tomcat.getEngine().setRealm(realm);
+      tomcat.addUser("odatajclient", "odatajclient");
+      tomcat.addRole("odatajclient", "odatajclient");
     }
 
     private void initializeProperties() {
+      /*
+       * The property file is build with a maven plugin (properties-maven-plugin) defined in pom.xml of the FIT module. 
+       * Since the property file is build with maven its located inside the resource folder of the project.
+       */
       InputStream propertiesFile =
-          Thread.currentThread().getContextClassLoader().getResourceAsStream("tomcat-fit.properties");
+          Thread.currentThread().getContextClassLoader().getResourceAsStream("mavenBuild.properties");
       try {
         properties = new Properties();
         properties.load(propertiesFile);
@@ -222,6 +219,7 @@ public class TomcatTestServer {
     }
 
     public TestServerBuilder addWebApp(final boolean copy) throws IOException {
+
       if (server != null) {
         return this;
       }
@@ -240,6 +238,7 @@ public class TomcatTestServer {
       }
 
       String contextPath = "/stub";
+
       Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
       context.setLoader(new WebappLoader(Thread.currentThread().getContextClassLoader()));
       LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
@@ -285,11 +284,11 @@ public class TomcatTestServer {
         return this;
       }
       final String TOMCAT_WEB_XML = "web.xml";
-      String webxmluri = resourceDir.getPath() + File.separator + TOMCAT_WEB_XML;      
+      String webXMLPath = Thread.currentThread().getContextClassLoader().getResource(TOMCAT_WEB_XML).getPath();      
       String servletClassname = factoryClass.getName();
       HttpServlet httpServlet = (HttpServlet) Class.forName(servletClassname).newInstance();
       Context cxt = tomcat.addWebapp(servletPath, baseDir.getAbsolutePath());
-      cxt.setAltDDName(webxmluri);
+      cxt.setAltDDName(webXMLPath);
       String randomServletId = UUID.randomUUID().toString();
       Tomcat.addServlet(cxt, randomServletId, httpServlet);
       cxt.addServletMapping(contextPath, randomServletId); 
@@ -298,8 +297,7 @@ public class TomcatTestServer {
     }
 
     public TestServerBuilder addStaticContent(final String uri, final String resourceName) throws IOException {
-      File targetResourcesDir = getFileForDirProperty(PROJECT_RESOURCES_DIR);
-      String resource = new File(targetResourcesDir, resourceName).getAbsolutePath();
+      String resource = new File(resourceDir, resourceName).getAbsolutePath();
       LOG.info("Added static content from '{}' at uri '{}'.", resource, uri);
       StaticContent staticContent = new StaticContent(uri, resource);
       return addServlet(staticContent, String.valueOf(uri.hashCode()), uri);
