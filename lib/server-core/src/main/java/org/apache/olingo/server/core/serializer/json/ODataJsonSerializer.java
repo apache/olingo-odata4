@@ -21,8 +21,10 @@ package org.apache.olingo.server.core.serializer.json;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.olingo.commons.api.Constants;
@@ -47,6 +49,15 @@ import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.geo.ComposedGeospatial;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ODataServerError;
@@ -80,6 +91,19 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 public class ODataJsonSerializer extends AbstractODataSerializer {
+
+  private static final Map<Geospatial.Type, String> geoValueTypeToJsonName;
+  static {
+    Map<Geospatial.Type, String> temp = new EnumMap<Geospatial.Type, String>(Geospatial.Type.class);
+    temp.put(Geospatial.Type.POINT, Constants.ELEM_POINT);
+    temp.put(Geospatial.Type.MULTIPOINT, Constants.ELEM_MULTIPOINT);
+    temp.put(Geospatial.Type.LINESTRING, Constants.ELEM_LINESTRING);
+    temp.put(Geospatial.Type.MULTILINESTRING, "MultiLineString");
+    temp.put(Geospatial.Type.POLYGON, Constants.ELEM_POLYGON);
+    temp.put(Geospatial.Type.MULTIPOLYGON, "MultiPolygon");
+    temp.put(Geospatial.Type.GEOSPATIALCOLLECTION, "GeometryCollection");
+    geoValueTypeToJsonName = Collections.unmodifiableMap(temp);
+  }
 
   private final boolean isIEEE754Compatible;
   private final boolean isODataMetadataNone;
@@ -701,6 +725,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       switch (property.getValueType()) {
       case COLLECTION_PRIMITIVE:
       case COLLECTION_ENUM:
+      case COLLECTION_GEOSPATIAL:
         try {
           writePrimitiveValue(property.getName(), type, value, isNullable,
               maxLength, precision, scale, isUnicode, json);
@@ -710,9 +735,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
               property.getName(), property.getValue().toString());
         }
         break;
-      case COLLECTION_GEOSPATIAL:
-        throw new SerializerException("Property type not yet supported!",
-            SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, property.getName());
       default:
         throw new SerializerException("Property type not yet supported!",
             SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, property.getName());
@@ -753,8 +775,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writePrimitiveValue(property.getName(), type, property.asPrimitive(),
           isNullable, maxLength, precision, scale, isUnicode, json);
     } else if (property.isGeospatial()) {
-      throw new SerializerException("Property type not yet supported!",
-          SerializerException.MessageKeys.UNSUPPORTED_PROPERTY_TYPE, property.getName());
+      writeGeoValue(property.getName(), type, property.asGeospatial(), isNullable, json);
     } else if (property.isEnum()) {
       writePrimitiveValue(property.getName(), type, property.asEnum(),
           isNullable, maxLength, precision, scale, isUnicode, json);
@@ -808,12 +829,105 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
+  /** Writes a geospatial value following the GeoJSON specification defined in RFC 7946. */
+  protected void writeGeoValue(final String name, final EdmPrimitiveType type, final Geospatial geoValue,
+      final Boolean isNullable, JsonGenerator json)
+      throws EdmPrimitiveTypeException, IOException, SerializerException {
+    if (geoValue == null) {
+      if (isNullable == null || isNullable) {
+        json.writeNull();
+      } else {
+        throw new EdmPrimitiveTypeException("The literal 'null' is not allowed.");
+      }
+    } else {
+      if (!type.getDefaultType().isAssignableFrom(geoValue.getClass())) {
+        throw new EdmPrimitiveTypeException("The value type " + geoValue.getClass() + " is not supported.");
+      }
+      if (geoValue.getSrid() != null && geoValue.getSrid().isNotDefault()) {
+        throw new SerializerException("Non-standard SRID not supported!",
+            SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, name, geoValue.toString());
+      }
+      json.writeStartObject();
+      json.writeStringField(Constants.ATTR_TYPE, geoValueTypeToJsonName.get(geoValue.getGeoType()));
+      json.writeFieldName(geoValue.getGeoType() == Geospatial.Type.GEOSPATIALCOLLECTION ?
+          Constants.JSON_GEOMETRIES :
+          Constants.JSON_COORDINATES);
+      json.writeStartArray();
+      switch (geoValue.getGeoType()) {
+      case POINT:
+        writeGeoPoint(json, (Point) geoValue);
+        break;
+      case MULTIPOINT:
+        writeGeoPoints(json, (MultiPoint) geoValue);
+        break;
+      case LINESTRING:
+        writeGeoPoints(json, (LineString) geoValue);
+        break;
+      case MULTILINESTRING:
+        for (final LineString lineString : (MultiLineString) geoValue) {
+          json.writeStartArray();
+          writeGeoPoints(json, lineString);
+          json.writeEndArray();
+        }
+        break;
+      case POLYGON:
+        writeGeoPolygon(json, (Polygon) geoValue);
+        break;
+      case MULTIPOLYGON:
+        for (final Polygon polygon : (MultiPolygon) geoValue) {
+          json.writeStartArray();
+          writeGeoPolygon(json, polygon);
+          json.writeEndArray();
+        }
+        break;
+      case GEOSPATIALCOLLECTION:
+        for (final Geospatial element : (GeospatialCollection) geoValue) {
+          writeGeoValue(name, EdmPrimitiveTypeFactory.getInstance(element.getEdmPrimitiveTypeKind()),
+              element, isNullable, json);
+        }
+        break;
+      }
+      json.writeEndArray();
+      json.writeEndObject();
+    }
+  }
+
+  private void writeGeoPoint(JsonGenerator json, final Point point) throws IOException {
+    json.writeNumber(point.getX());
+    json.writeNumber(point.getY());
+    if (point.getZ() != 0) {
+      json.writeNumber(point.getZ());
+    }
+  }
+
+  private void writeGeoPoints(JsonGenerator json, final ComposedGeospatial<Point> points) throws IOException {
+    for (final Point point : points) {
+      json.writeStartArray();
+      writeGeoPoint(json, point);
+      json.writeEndArray();
+    }
+  }
+
+  // TODO: There could be a more strict verification that the lines describe boundaries
+  //       and have the correct winding order.
+  //       But arguably the better place for this is the constructor of the Polygon object.
+  private void writeGeoPolygon(JsonGenerator json, final Polygon polygon) throws IOException {
+    json.writeStartArray();
+    writeGeoPoints(json, polygon.getExterior());
+    json.writeEndArray();
+    if (!polygon.getInterior().isEmpty()) {
+      json.writeStartArray();
+      writeGeoPoints(json, polygon.getInterior());
+      json.writeEndArray();
+    }
+  }
+
   protected void writeComplexValue(final ServiceMetadata metadata,
       final EdmComplexType type, final List<Property> properties,
       final Set<List<String>> selectedPaths, final JsonGenerator json)
       throws IOException, SerializerException {
 
-      for (final String propertyName : type.getPropertyNames()) {
+    for (final String propertyName : type.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);
       if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
         writeProperty(metadata, (EdmProperty) type.getProperty(propertyName), property,

@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -44,7 +47,17 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.edm.geo.SRID;
+import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
@@ -647,13 +660,13 @@ public class ODataJsonSerializerTest {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     InputStream result = serializer
-          .entity(metadata, edmEntitySet.getEntityType(), entity, EntitySerializerOptions.with()
-                   .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-                        .build()).getContent();
+        .entity(metadata, edmEntitySet.getEntityType(), entity, EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\"," +
-            "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," +
-            "\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
         Assert.assertEquals(expectedResult, resultString);
   }
 
@@ -673,67 +686,67 @@ public class ODataJsonSerializerTest {
         + "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\",\"@odata.id\":\"ESTwoPrim(32766)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32766,"
         + "\"PropertyString\":\"Test String1\","
-        +"\"#olingo.odata.test1.BAETTwoPrimRTString\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
-            +"\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTString\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCollString\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\","
-            +"\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCollString\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\","
-            +"\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
-            +"\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTString\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
+        + "\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTString\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCollString\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\","
+        + "\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCollString\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\","
+        + "\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
+        + "\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}"
         + "},"
         + "{\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\",\"@odata.id\":\"ESTwoPrim(-365)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":-365,"
         + "\"PropertyString\":\"Test String2\","
         + "\"NavPropertyETAllPrimMany@odata.navigationLink\":\"ESTwoPrim(-365)/NavPropertyETAllPrimMany\","
-        +"\"#olingo.odata.test1.BAETTwoPrimRTString\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
-            +"\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTString\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCollString\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\","
-            +"\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollString\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\","
-            +"\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
-            +"\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTString\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
+        + "\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTString\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCollString\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\","
+        + "\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollString\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\","
+        + "\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
+        + "\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}},"
         + "{\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\",\"@odata.id\":\"ESTwoPrim(-32766)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":-32766,"
         + "\"PropertyString\":null,"
-            +"\"#olingo.odata.test1.BAETTwoPrimRTString\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
-            +"\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTString\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCollString\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\","
-            +"\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCollString\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\","
-            +"\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
-            +"\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTString\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
+        + "\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTString\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCollString\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\","
+        + "\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCollString\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\","
+        + "\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
+        + "\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}},"
         + "{\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\",\"@odata.id\":\"ESTwoPrim(32767)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32767,"
         + "\"PropertyString\":\"Test String4\","
-        +"\"NavPropertyETAllPrimOne@odata.navigationLink\":\"ESAllPrim(32767)\","
-            +"\"#olingo.odata.test1.BAETTwoPrimRTString\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
-            +"\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCollString\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\","
-            +"\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollString\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\","
-            +"\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"},"
-        +"\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
-            +"{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
-            +"\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}"       
-            +"}]}";
+        + "\"NavPropertyETAllPrimOne@odata.navigationLink\":\"ESAllPrim(32767)\","
+        + "\"#olingo.odata.test1.BAETTwoPrimRTString\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
+        + "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCollString\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\","
+        + "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollString\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\","
+        + "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"},"
+        + "\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
+        + "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}"       
+        + "}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
   
@@ -972,20 +985,20 @@ public class ODataJsonSerializerTest {
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expected = "{"
-           +     "\"@odata.context\":\"$metadata#ESFourKeyAlias"
-           +        "(PropertyInt16,PropertyCompComp/PropertyComp/PropertyString)\"," 
-           +     "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-           +     "\"value\":[" 
-           +     "{" 
-           +         "\"@odata.id\":\""
-           +         "ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\"," 
-           +         "\"PropertyInt16\":1," 
-           +         "\"PropertyCompComp\":{" 
-           +             "\"PropertyComp\":{" 
-           +             "\"@odata.type\":\"#olingo.odata.test1.CTBase\"," 
-           +             "\"PropertyString\":\"Num111\"" 
-           +     "}}}]}";
-    
+        +     "\"@odata.context\":\"$metadata#ESFourKeyAlias"
+        +        "(PropertyInt16,PropertyCompComp/PropertyComp/PropertyString)\"," 
+        +     "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        +     "\"value\":[" 
+        +     "{" 
+        +         "\"@odata.id\":\""
+        +         "ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\"," 
+        +         "\"PropertyInt16\":1," 
+        +         "\"PropertyCompComp\":{" 
+        +             "\"PropertyComp\":{" 
+        +             "\"@odata.type\":\"#olingo.odata.test1.CTBase\"," 
+        +             "\"PropertyString\":\"Num111\"" 
+        +     "}}}]}";
+
    Assert.assertEquals(expected, resultString);
   }
   
@@ -1000,24 +1013,24 @@ public class ODataJsonSerializerTest {
                 .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    
-    String expected = "{"
-            + "\"@odata.context\":\"$metadata#ESFourKeyAlias\","
-            + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-            + "\"value\":[{"
-                + "\"PropertyInt16\":1,"
-                + "\"PropertyComp\":{"
-                    + "\"PropertyInt16\":11,"
-                    + "\"PropertyString\":\"Num11\""
-                + "},"
-                + "\"PropertyCompComp\":{"
-                    + "\"PropertyComp\":{"
-                        + "\"@odata.type\":\"#olingo.odata.test1.CTBase\","
-                        + "\"PropertyInt16\":111,"
-                        + "\"PropertyString\":\"Num111\","
-                        + "\"AdditionalPropString\":\"Test123\""
-            + "}}}]}";
-    
+
+    final String expected = "{"
+        + "\"@odata.context\":\"$metadata#ESFourKeyAlias\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"value\":[{"
+        + "\"PropertyInt16\":1,"
+        + "\"PropertyComp\":{"
+        + "\"PropertyInt16\":11,"
+        + "\"PropertyString\":\"Num11\""
+        + "},"
+        + "\"PropertyCompComp\":{"
+        + "\"PropertyComp\":{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTBase\","
+        + "\"PropertyInt16\":111,"
+        + "\"PropertyString\":\"Num111\","
+        + "\"AdditionalPropString\":\"Test123\""
+        + "}}}]}";
+
     Assert.assertEquals(expected, resultString);
   }  
 
@@ -1058,127 +1071,127 @@ public class ODataJsonSerializerTest {
     Assert.assertEquals(expected, resultString);
   }
 
-    @Test
-    public void selectComplexNestedCollectionOfComplexWithMetadataFull() throws Exception{
-         final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
-         final EntityCollection entitySet = data.readAll(edmEntitySet);
-         InputStream result = serializerFullMetadata
-             .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
+  @Test
+  public void selectComplexNestedCollectionOfComplexWithMetadataFull() throws Exception{
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
+    InputStream result = serializerFullMetadata
+        .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
              EntityCollectionSerializerOptions.with()
                  .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
                  .build())
-         .getContent();
-         final String resultString = IOUtils.toString(result);
-         final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompCollComp\","
-             + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-             + "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.ETCompCollComp\","
-             + "\"@odata.id\":\"ESCompCollComp(32767)\","
-             + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32767,"
-             + "\"PropertyComp\":{"
-             + "\"@odata.type\":\"#olingo.odata.test1.CTCompCollComp\","
-             + "\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
-             + "\"CollPropertyComp\":["
-             + "{" 
-             + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-             + "\"PropertyInt16@odata.type\":\"#Int16\","
-             +"\"PropertyInt16\":555,"
-             +"\"PropertyString\":\"1 Test Complex in Complex Property\""
-             +"},{"
-             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-             +"\"PropertyInt16@odata.type\":\"#Int16\","
-             +"\"PropertyInt16\":666,"
-             +"\"PropertyString\":\"2 Test Complex in Complex Property\""
-             +"},{"
-             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-             +"\"PropertyInt16@odata.type\":\"#Int16\","
-             +"\"PropertyInt16\":777,"
-             +"\"PropertyString\":\"3 Test Complex in Complex Property\""
-             +"}]}},{"
-             +"\"@odata.type\":\"#olingo.odata.test1.ETCompCollComp\","
-             +"\"@odata.id\":\"ESCompCollComp(12345)\","
-             +"\"PropertyInt16@odata.type\":\"#Int16\","
-             +"\"PropertyInt16\":12345,"
-             +"\"PropertyComp\":{"
-             +"\"@odata.type\":\"#olingo.odata.test1.CTCompCollComp\","
-             +"\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
-             +"\"CollPropertyComp\":["
-             +"{"
-             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-             +"\"PropertyInt16@odata.type\":\"#Int16\","
-             +"\"PropertyInt16\":888,"
-             +"\"PropertyString\":\"11 Test Complex in Complex Property\""
-             +"},{"
-             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-             +"\"PropertyInt16@odata.type\":\"#Int16\","
-             +"\"PropertyInt16\":999,"
-             +"\"PropertyString\":\"12 Test Complex in Complex Property\""
-             +"},{"
-             +"\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-             +"\"PropertyInt16@odata.type\":\"#Int16\","
-             +"\"PropertyInt16\":0,"
-             +"\"PropertyString\":\"13 Test Complex in Complex Property\""
-             +"}]}}]}";
-         Assert.assertEquals(expectedResult, resultString);
-    }
-    
-    @Test
-    public void selectComplexNestedCollectionOfComplexWithMetadataMinimal() throws Exception{
-         final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
-         final EntityCollection entitySet = data.readAll(edmEntitySet);
-         InputStream result = serializer
-             .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
+        .getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompCollComp\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.ETCompCollComp\","
+        + "\"@odata.id\":\"ESCompCollComp(32767)\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32767,"
+        + "\"PropertyComp\":{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTCompCollComp\","
+        + "\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
+        + "\"CollPropertyComp\":["
+        + "{" 
+        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"PropertyInt16\":555,"
+        + "\"PropertyString\":\"1 Test Complex in Complex Property\""
+        + "},{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"PropertyInt16\":666,"
+        + "\"PropertyString\":\"2 Test Complex in Complex Property\""
+        + "},{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"PropertyInt16\":777,"
+        + "\"PropertyString\":\"3 Test Complex in Complex Property\""
+        + "}]}},{"
+        + "\"@odata.type\":\"#olingo.odata.test1.ETCompCollComp\","
+        + "\"@odata.id\":\"ESCompCollComp(12345)\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"PropertyInt16\":12345,"
+        + "\"PropertyComp\":{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTCompCollComp\","
+        + "\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
+        + "\"CollPropertyComp\":["
+        + "{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"PropertyInt16\":888,"
+        + "\"PropertyString\":\"11 Test Complex in Complex Property\""
+        + "},{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"PropertyInt16\":999,"
+        + "\"PropertyString\":\"12 Test Complex in Complex Property\""
+        + "},{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"PropertyInt16\":0,"
+        + "\"PropertyString\":\"13 Test Complex in Complex Property\""
+        + "}]}}]}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void selectComplexNestedCollectionOfComplexWithMetadataMinimal() throws Exception{
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
+    InputStream result = serializer
+        .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
              EntityCollectionSerializerOptions.with()
                  .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
                  .build())
-         .getContent();
-         final String resultString = IOUtils.toString(result);
-         final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompCollComp\","
-             + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-             + "\"value\":[{"
-             + "\"PropertyInt16\":32767,"
-             + "\"PropertyComp\":{"
-             + "\"CollPropertyComp\":["
-             + "{" 
-             +"\"PropertyInt16\":555,"
-             +"\"PropertyString\":\"1 Test Complex in Complex Property\""
-             +"},{"
-             +"\"PropertyInt16\":666,"
-             +"\"PropertyString\":\"2 Test Complex in Complex Property\""
-             +"},{"
-             +"\"PropertyInt16\":777,"
-             +"\"PropertyString\":\"3 Test Complex in Complex Property\""
-             +"}]}},{"
-             +"\"PropertyInt16\":12345,"
-             +"\"PropertyComp\":{"
-             +"\"CollPropertyComp\":["
-             +"{"
-             +"\"PropertyInt16\":888,"
-             +"\"PropertyString\":\"11 Test Complex in Complex Property\""
-             +"},{"
-             +"\"PropertyInt16\":999,"
-             +"\"PropertyString\":\"12 Test Complex in Complex Property\""
-             +"},{"
-             +"\"PropertyInt16\":0,"
-             +"\"PropertyString\":\"13 Test Complex in Complex Property\""
-             +"}]}}]}";
-         Assert.assertEquals(expectedResult, resultString);
-    }
-   
-    @Test
-    public void selectComplexNestedCollectionOfComplexWithMetadataNone() throws Exception{
-        final String METADATA_TEXT = "@odata.";
-        final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
-        final EntityCollection entitySet = data.readAll(edmEntitySet);
-          InputStream result = serializerNoMetadata
-             .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
-             EntityCollectionSerializerOptions.with()
-                 .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
-                 .build())
-         .getContent();
-        final String resultString = IOUtils.toString(result);
-       Assert.assertEquals(false, resultString.contains(METADATA_TEXT));
-    }
-  
+        .getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompCollComp\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"value\":[{"
+        + "\"PropertyInt16\":32767,"
+        + "\"PropertyComp\":{"
+        + "\"CollPropertyComp\":["
+        + "{" 
+        + "\"PropertyInt16\":555,"
+        + "\"PropertyString\":\"1 Test Complex in Complex Property\""
+        + "},{"
+        + "\"PropertyInt16\":666,"
+        + "\"PropertyString\":\"2 Test Complex in Complex Property\""
+        + "},{"
+        + "\"PropertyInt16\":777,"
+        + "\"PropertyString\":\"3 Test Complex in Complex Property\""
+        + "}]}},{"
+        + "\"PropertyInt16\":12345,"
+        + "\"PropertyComp\":{"
+        + "\"CollPropertyComp\":["
+        + "{"
+        + "\"PropertyInt16\":888,"
+        + "\"PropertyString\":\"11 Test Complex in Complex Property\""
+        + "},{"
+        + "\"PropertyInt16\":999,"
+        + "\"PropertyString\":\"12 Test Complex in Complex Property\""
+        + "},{"
+        + "\"PropertyInt16\":0,"
+        + "\"PropertyString\":\"13 Test Complex in Complex Property\""
+        + "}]}}]}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void selectComplexNestedCollectionOfComplexWithMetadataNone() throws Exception{
+    final String METADATA_TEXT = "@odata.";
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
+    final EntityCollection entitySet = data.readAll(edmEntitySet);
+    InputStream result = serializerNoMetadata
+        .entityCollection(metadata, edmEntitySet.getEntityType(), entitySet,
+            EntityCollectionSerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+            .build())
+        .getContent();
+    final String resultString = IOUtils.toString(result);
+    Assert.assertEquals(false, resultString.contains(METADATA_TEXT));
+  }
+
   @Test(expected = SerializerException.class)
   public void selectMissingId() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
@@ -1386,27 +1399,27 @@ public class ODataJsonSerializerTest {
                 .expand(expand)
                 .build()).getContent());
     Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
-            + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-            + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
-            + "\"NavPropertyETAllPrimOne\":null,"
-            + "\"NavPropertyETAllPrimMany\":["
-            + "{\"PropertyInt16\":-32768,\"PropertyString\":\"Second Resource - negative values\","
-            + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":-128,\"PropertyInt32\":-2147483648,"
-            + "\"PropertyInt64\":-9223372036854775808,\"PropertySingle\":-1.79E8,\"PropertyDouble\":-179000.0,"
-            + "\"PropertyDecimal\":-34,\"PropertyBinary\":\"ASNFZ4mrze8=\",\"PropertyDate\":\"2015-11-05\","
-            + "\"PropertyDateTimeOffset\":\"2005-12-03T07:17:08Z\",\"PropertyDuration\":\"PT9S\","
-            + "\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789dddfff\",\"PropertyTimeOfDay\":\"23:49:14\","
-            + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]},"
-            + "{\"PropertyInt16\":0,\"PropertyString\":\"\",\"PropertyBoolean\":false,\"PropertyByte\":0,"
-            + "\"PropertySByte\":0,\"PropertyInt32\":0,\"PropertyInt64\":0,\"PropertySingle\":0.0,"
-            + "\"PropertyDouble\":0.0,\"PropertyDecimal\":0,\"PropertyBinary\":\"\","
-            + "\"PropertyDate\":\"1970-01-01\",\"PropertyDateTimeOffset\":\"2005-12-03T00:00:00Z\","
-            + "\"PropertyDuration\":\"PT0S\",\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789cccddd\","
-            + "\"PropertyTimeOfDay\":\"00:01:01\",\"NavPropertyETTwoPrimOne\":null,"
-            + "\"NavPropertyETTwoPrimMany\":["
-            + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
-            + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"
-            + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}]}",
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
+        + "\"NavPropertyETAllPrimOne\":null,"
+        + "\"NavPropertyETAllPrimMany\":["
+        + "{\"PropertyInt16\":-32768,\"PropertyString\":\"Second Resource - negative values\","
+        + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":-128,\"PropertyInt32\":-2147483648,"
+        + "\"PropertyInt64\":-9223372036854775808,\"PropertySingle\":-1.79E8,\"PropertyDouble\":-179000.0,"
+        + "\"PropertyDecimal\":-34,\"PropertyBinary\":\"ASNFZ4mrze8=\",\"PropertyDate\":\"2015-11-05\","
+        + "\"PropertyDateTimeOffset\":\"2005-12-03T07:17:08Z\",\"PropertyDuration\":\"PT9S\","
+        + "\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789dddfff\",\"PropertyTimeOfDay\":\"23:49:14\","
+        + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]},"
+        + "{\"PropertyInt16\":0,\"PropertyString\":\"\",\"PropertyBoolean\":false,\"PropertyByte\":0,"
+        + "\"PropertySByte\":0,\"PropertyInt32\":0,\"PropertyInt64\":0,\"PropertySingle\":0.0,"
+        + "\"PropertyDouble\":0.0,\"PropertyDecimal\":0,\"PropertyBinary\":\"\","
+        + "\"PropertyDate\":\"1970-01-01\",\"PropertyDateTimeOffset\":\"2005-12-03T00:00:00Z\","
+        + "\"PropertyDuration\":\"PT0S\",\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789cccddd\","
+        + "\"PropertyTimeOfDay\":\"00:01:01\",\"NavPropertyETTwoPrimOne\":null,"
+        + "\"NavPropertyETTwoPrimMany\":["
+        + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
+        + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"
+        + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}]}",
         resultString);
   }
 
@@ -1908,24 +1921,182 @@ public class ODataJsonSerializerTest {
     }
     Assert.assertEquals(3, count);
   }
-  
-   @Test
-   public void expandCycle() throws Exception {
-     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESPeople");
-     final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
-     ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "friends");
-     LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
-     Mockito.when(levels.isMax()).thenReturn(Boolean.TRUE);
-     Mockito.when(mockExpandItem.getLevelsOption()).thenReturn(levels);
-     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
-         mockExpandItem));
-     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
-         EntitySerializerOptions.with()
-             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-             .expand(expand)
-             .build()).getContent();
-     final String resultString = IOUtils.toString(result);
-     String expected = "{" + 
+
+  @Test
+  public void geoPoint() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryPoint);
+    Entity entity = new Entity()
+        .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+            createPoint(1.5, 4.25)));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Point\",\"coordinates\":[1.5,4.25]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+
+    Point point = new Point(Dimension.GEOMETRY, null);
+    point.setZ(42);
+    entity = new Entity().addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+        point));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Point\",\"coordinates\":[0.0,0.0,42.0]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+  }
+
+  @Test
+  public void geoMultiPoint() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryMultiPoint);
+    final Entity entity = new Entity()
+        .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+            new MultiPoint(Dimension.GEOMETRY, null, Arrays.asList(
+                createPoint(2.5, 3.125), createPoint(3.5, 4.125), createPoint(4.5, 5.125)))));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"MultiPoint\",\"coordinates\":[[2.5,3.125],[3.5,4.125],[4.5,5.125]]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+  }
+
+  @Test
+  public void geoLineString() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryLineString);
+    final Entity entity = new Entity()
+        .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+            new LineString(Dimension.GEOMETRY, null, Arrays.asList(
+                createPoint(1, 1), createPoint(2, 2), createPoint(3, 3), createPoint(4, 4), createPoint(5, 5)))));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"LineString\",\"coordinates\":[[1.0,1.0],[2.0,2.0],[3.0,3.0],[4.0,4.0],[5.0,5.0]]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+  }
+
+  @Test
+  public void geoMultiLineString() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryMultiLineString);
+    final Entity entity = new Entity()
+        .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+            new MultiLineString(Dimension.GEOMETRY, null, Arrays.asList(
+                new LineString(Dimension.GEOMETRY, null, Arrays.asList(
+                    createPoint(1, 1), createPoint(2, 2), createPoint(3, 3), createPoint(4, 4), createPoint(5, 5))),
+                new LineString(Dimension.GEOMETRY, null, Arrays.asList(
+                    createPoint(99.5, 101.5), createPoint(150, 151.25)))))));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"MultiLineString\",\"coordinates\":["
+        + "[[1.0,1.0],[2.0,2.0],[3.0,3.0],[4.0,4.0],[5.0,5.0]],"
+        + "[[99.5,101.5],[150.0,151.25]]]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+  }
+
+  @Test
+  public void geoPolygon() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryPolygon);
+    Entity entity = new Entity()
+        .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+            new Polygon(Dimension.GEOMETRY, null,
+                Arrays.asList(
+                    createPoint(1, 1), createPoint(1, 2), createPoint(2, 2), createPoint(2, 1), createPoint(1, 1)),
+                Arrays.asList(
+                    createPoint(0, 0), createPoint(3, 0), createPoint(3, 3), createPoint(0, 3), createPoint(0, 0)))));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":[[[0.0,0.0],[3.0,0.0],[3.0,3.0],[0.0,3.0],[0.0,0.0]],"
+        + "[[1.0,1.0],[1.0,2.0],[2.0,2.0],[2.0,1.0],[1.0,1.0]]]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+
+    entity = new Entity().addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+        new Polygon(Dimension.GEOMETRY, null, null, Arrays.asList(
+            createPoint(10, 10), createPoint(30, 10), createPoint(30, 30), createPoint(10, 30),
+            createPoint(10, 10)))));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":[[[10.0,10.0],[30.0,10.0],[30.0,30.0],[10.0,30.0],[10.0,10.0]]]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+  }
+
+  @Test
+  public void geoMultiPolygon() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryMultiPolygon);
+    final Entity entity = new Entity()
+        .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+            new MultiPolygon(Dimension.GEOMETRY, null, Arrays.asList(
+                new Polygon(Dimension.GEOMETRY, null,
+                    Arrays.asList(
+                        createPoint(1, 1), createPoint(1, 2), createPoint(2, 2), createPoint(2, 1), createPoint(1, 1)),
+                    Arrays.asList(
+                        createPoint(0, 0), createPoint(3, 0), createPoint(3, 3), createPoint(0, 3),
+                        createPoint(0, 0))),
+                new Polygon(Dimension.GEOMETRY, null,
+                    Arrays.asList(
+                        createPoint(10, 10), createPoint(10, 20), createPoint(20, 10), createPoint(10, 10)),
+                    Arrays.asList(
+                        createPoint(0, 0), createPoint(30, 0), createPoint(0, 30), createPoint(0, 0)))))));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"MultiPolygon\",\"coordinates\":["
+        + "[[[0.0,0.0],[3.0,0.0],[3.0,3.0],[0.0,3.0],[0.0,0.0]],"
+        + "[[1.0,1.0],[1.0,2.0],[2.0,2.0],[2.0,1.0],[1.0,1.0]]],"
+        + "[[[0.0,0.0],[30.0,0.0],[0.0,30.0],[0.0,0.0]],"
+        + "[[10.0,10.0],[10.0,20.0],[20.0,10.0],[10.0,10.0]]]]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+  }
+
+  @Test
+  public void geoCollection() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryCollection);
+    final Entity entity = new Entity()
+        .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+            new GeospatialCollection(Dimension.GEOMETRY, null, Arrays.asList(
+                createPoint(100, 0),
+                new LineString(Dimension.GEOMETRY, null, Arrays.asList(createPoint(101, 0), createPoint(102, 1)))))));
+    Assert.assertEquals("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"GeometryCollection\",\"geometries\":["
+        + "{\"type\":\"Point\",\"coordinates\":[100.0,0.0]},"
+        + "{\"type\":\"LineString\",\"coordinates\":[[101.0,0.0],[102.0,1.0]]}]}}",
+        IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
+  }
+
+  private EdmEntityType mockEntityType(final EdmPrimitiveTypeKind type) {
+    EdmProperty property = Mockito.mock(EdmProperty.class);
+    final String name = "Property" + type.name();
+    Mockito.when(property.getName()).thenReturn(name);
+    Mockito.when(property.getType()).thenReturn(odata.createPrimitiveTypeInstance(type));
+    Mockito.when(property.isPrimitive()).thenReturn(true);
+    EdmEntityType entityType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(entityType.getPropertyNames()).thenReturn(Arrays.asList(name));
+    Mockito.when(entityType.getStructuralProperty(name)).thenReturn(property);
+    return entityType;
+  }
+
+  @Test
+  public void geoNonstandardSRID() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryPoint);
+    final Entity entity = new Entity()
+        .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
+            new Point(Dimension.GEOMETRY, SRID.valueOf("42"))));
+    try {
+      serializerNoMetadata.entity(metadata, entityType, entity, null);
+      fail("Expected exception not thrown.");
+    } catch (final SerializerException e) {
+      assertNotNull(e);
+    }
+  }
+
+  private Point createPoint(final double x, final double y) {
+    Point point = new Point(Dimension.GEOMETRY, null);
+    point.setX(x);
+    point.setY(y);
+    return point;
+  }
+
+  @Test
+  public void expandCycle() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESPeople");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "friends");
+    LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
+    Mockito.when(levels.isMax()).thenReturn(Boolean.TRUE);
+    Mockito.when(mockExpandItem.getLevelsOption()).thenReturn(levels);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(mockExpandItem));
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build())
+        .getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expected = "{" + 
          "\"@odata.context\":\"$metadata#ESPeople/$entity\"," + 
          "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
          "\"id\":1," + 
@@ -1981,27 +2152,27 @@ public class ODataJsonSerializerTest {
                "}" + 
             "]" + 
          "}";
-     Assert.assertEquals(expected, resultString);
-   }
-   
-   @Test
-   public void expandCycleWith3Level() throws Exception {
-     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESPeople");
-     final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
-     ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "friends");
-     LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
-     Mockito.when(levels.isMax()).thenReturn(Boolean.FALSE);
-     Mockito.when(levels.getValue()).thenReturn(3);
-     Mockito.when(mockExpandItem.getLevelsOption()).thenReturn(levels);
-     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
-         mockExpandItem));
-     InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
-         EntitySerializerOptions.with()
-             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-             .expand(expand)
-             .build()).getContent();
-     final String resultString = IOUtils.toString(result);
-     String expected = "{" + 
+    Assert.assertEquals(expected, resultString);
+  }
+
+  @Test
+  public void expandCycleWith3Level() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESPeople");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    ExpandItem mockExpandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "friends");
+    LevelsExpandOption levels = Mockito.mock(LevelsExpandOption.class);
+    Mockito.when(levels.isMax()).thenReturn(Boolean.FALSE);
+    Mockito.when(levels.getValue()).thenReturn(3);
+    Mockito.when(mockExpandItem.getLevelsOption()).thenReturn(levels);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(mockExpandItem));
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build())
+        .getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expected = "{" +
        "\"@odata.context\":\"$metadata#ESPeople/$entity\"," + 
        "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
        "\"id\":1," + 
@@ -2055,6 +2226,6 @@ public class ODataJsonSerializerTest {
          "}" + 
        "]" + 
        "}"; 
-     Assert.assertEquals(expected, resultString);
-   }   
+    Assert.assertEquals(expected, resultString);
+  }
 }

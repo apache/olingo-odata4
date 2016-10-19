@@ -20,9 +20,12 @@ package org.apache.olingo.server.core.deserializer.json;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,6 +56,14 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -75,6 +86,19 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ODataJsonDeserializer implements ODataDeserializer {
+
+  private static final Map<String, Class<? extends Geospatial>> jsonNameToGeoDataType;
+  static {
+    Map<String, Class<? extends Geospatial>> temp = new HashMap<String, Class<? extends Geospatial>>();
+    temp.put(Constants.ELEM_POINT, Point.class);
+    temp.put(Constants.ELEM_MULTIPOINT, MultiPoint.class);
+    temp.put(Constants.ELEM_LINESTRING, LineString.class);
+    temp.put("MultiLineString", MultiLineString.class);
+    temp.put(Constants.ELEM_POLYGON, Polygon.class);
+    temp.put("MultiPolygon", MultiPolygon.class);
+    temp.put("GeometryCollection", GeospatialCollection.class);
+    jsonNameToGeoDataType = Collections.unmodifiableMap(temp);
+  }
 
   private static final String ODATA_ANNOTATION_MARKER = "@";
   private static final String ODATA_CONTROL_INFORMATION_PREFIX = "@odata.";
@@ -594,16 +618,21 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private Object readPrimitiveValue(final String name, final EdmPrimitiveType type,
       final boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
       final boolean isUnicode, final EdmMapping mapping, final JsonNode jsonNode) throws DeserializerException {
-    checkForValueNode(name, jsonNode);
     if (isValidNull(name, isNullable, jsonNode)) {
       return null;
     }
+    final boolean isGeoType = type.getName().startsWith("Geo");
+    if (!isGeoType) {
+      checkForValueNode(name, jsonNode);
+    }
     checkJsonTypeBasedOnPrimitiveType(name, type, jsonNode);
-    Class<?> javaClass = getJavaClassForPrimitiveType(mapping, type);
     try {
+      if (isGeoType) {
+        return readPrimitiveGeoValue(name, type, (ObjectNode) jsonNode);
+      }
       return type.valueOfString(jsonNode.asText(),
           isNullable, maxLength, precision, scale, isUnicode,
-          javaClass);
+          getJavaClassForPrimitiveType(mapping, type));
     } catch (final EdmPrimitiveTypeException e) {
       throw new DeserializerException(
           "Invalid value: " + jsonNode.asText() + " for property: " + name, e,
@@ -622,6 +651,132 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       }
     }
     return false;
+  }
+
+  /**
+   * Reads a geospatial JSON value following the GeoJSON specification defined in RFC 7946.
+   * @param name property name
+   * @param type EDM type of the value
+   *             (can be <code>null</code> for recursive calls while parsing a GeometryCollection)
+   */
+  private Geospatial readPrimitiveGeoValue(final String name, final EdmPrimitiveType type, ObjectNode jsonNode)
+      throws DeserializerException, EdmPrimitiveTypeException {
+    JsonNode typeNode = jsonNode.remove(Constants.ATTR_TYPE);
+    if (typeNode != null && typeNode.isTextual()) {
+      final Class<? extends Geospatial> geoDataType = jsonNameToGeoDataType.get(typeNode.asText());
+      if (geoDataType != null && (type == null || geoDataType.equals(type.getDefaultType()))) {
+        final JsonNode topNode = jsonNode.remove(
+            geoDataType.equals(GeospatialCollection.class) ? Constants.JSON_GEOMETRIES : Constants.JSON_COORDINATES);
+
+        // The "crs" member mentioned in some versions of the OData specification is not part of GeoJSON.
+        // It used to be used to specify the coordinate reference system.
+        // TODO: Is it OK to follow RFC 7946 strictly and not allow this element from its obsolete predecessor?
+        assertJsonNodeIsEmpty(jsonNode);
+
+        if (topNode != null && topNode.isArray()) {
+          final Geospatial.Dimension dimension = type == null || type.getName().startsWith("Geometry") ?
+              Geospatial.Dimension.GEOMETRY :
+              Geospatial.Dimension.GEOGRAPHY;
+          if (geoDataType.equals(Point.class)) {
+            return readGeoPointValue(name, dimension, topNode);
+          } else if (geoDataType.equals(MultiPoint.class)) {
+            return new MultiPoint(dimension, null, readGeoPointValues(name, dimension, 0, false, topNode));
+          } else if (geoDataType.equals(LineString.class)) {
+            // Although a line string with less than two points is not really one, the OData specification says:
+            // "The coordinates member of a LineString can have zero or more positions".
+            // Therefore the required minimal size of the points array currently is zero.
+            return new LineString(dimension, null, readGeoPointValues(name, dimension, 0, false, topNode));
+          } else if (geoDataType.equals(MultiLineString.class)) {
+            List<LineString> lines = new ArrayList<LineString>();
+            for (final JsonNode element : topNode) {
+              // Line strings can be empty (see above).
+              lines.add(new LineString(dimension, null, readGeoPointValues(name, dimension, 0, false, element)));
+            }
+            return new MultiLineString(dimension, null, lines);
+          } else if (geoDataType.equals(Polygon.class)) {
+            return readGeoPolygon(name, dimension, topNode);
+          } else if (geoDataType.equals(MultiPolygon.class)) {
+            List<Polygon> polygons = new ArrayList<Polygon>();
+            for (final JsonNode element : topNode) {
+              polygons.add(readGeoPolygon(name, dimension, element));
+            }
+            return new MultiPolygon(dimension, null, polygons);
+          } else if (geoDataType.equals(GeospatialCollection.class)) {
+            List<Geospatial> elements = new ArrayList<Geospatial>();
+            for (final JsonNode element : topNode) {
+              if (element.isObject()) {
+                elements.add(readPrimitiveGeoValue(name, null, (ObjectNode) element));
+              } else {
+                throw new DeserializerException("Invalid value '" + element + "' in property: " + name,
+                    DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);
+              }
+            }
+            return new GeospatialCollection(dimension, null, elements);
+          }
+        }
+      }
+    }
+    throw new DeserializerException("Invalid value '" + jsonNode + "' for property: " + name,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);
+  }
+
+  private Point readGeoPointValue(final String name, final Geospatial.Dimension dimension, JsonNode node)
+      throws DeserializerException, EdmPrimitiveTypeException {
+    if (node.isArray() && (node.size() ==2 || node.size() == 3)
+        && node.get(0).isNumber() && node.get(1).isNumber() && (node.get(2) == null || node.get(2).isNumber())) {
+      Point point = new Point(dimension, null);
+      point.setX(getDoubleValue(node.get(0).asText()));
+      point.setY(getDoubleValue(node.get(1).asText()));
+      if (node.get(2) != null) {
+        point.setZ(getDoubleValue(node.get(2).asText()));
+      }
+      return point;
+    }
+    throw new DeserializerException("Invalid point value '" + node + "' in property: " + name,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);
+  }
+
+  private double getDoubleValue(final String value) throws EdmPrimitiveTypeException {
+    final BigDecimal bigDecimalValue = new BigDecimal(value);
+    final Double result = bigDecimalValue.doubleValue();
+    // "Real" infinite values cannot occur, so we can throw an exception
+    // if the conversion to a double results in an infinite value.
+    // An exception is also thrown if the number cannot be stored in a double without loss.
+    if (result.isInfinite() || BigDecimal.valueOf(result).compareTo(bigDecimalValue) != 0) {
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
+    }
+    return result;
+  }
+
+  private List<Point> readGeoPointValues(final String name, final Geospatial.Dimension dimension,
+      final int minimalSize, final boolean closed, JsonNode node)
+      throws DeserializerException, EdmPrimitiveTypeException {
+    if (node.isArray()) {
+      List<Point> points = new ArrayList<Point>();
+      for (final JsonNode element : node) {
+        points.add(readGeoPointValue(name, dimension, element));
+      }
+      if (points.size() >= minimalSize
+          && (!closed || points.get(points.size() - 1).equals(points.get(0)))) {
+          return points;
+      }
+    }
+    throw new DeserializerException("Invalid point values '" + node + "' in property: " + name,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);
+  }
+
+  private Polygon readGeoPolygon(final String name, final Geospatial.Dimension dimension, JsonNode node)
+      throws DeserializerException, EdmPrimitiveTypeException {
+    // GeoJSON would allow for more than one interior polygon (hole).
+    // But there is no place in the data object to store this information so for now we throw an error.
+    // There could be a more strict verification that the lines describe boundaries and have the correct winding order.
+    if (node.isArray() && (node.size() == 1 || node.size() == 2)) {
+      return new Polygon(dimension, null,
+          node.size() > 1 ? readGeoPointValues(name, dimension, 4, true, node.get(1)) : null,
+          readGeoPointValues(name, dimension, 4, true, node.get(0)));
+    }
+    throw new DeserializerException("Invalid polygon values '" + node + "' in property: " + name,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);
   }
 
   /**
@@ -704,7 +859,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       valid = matchTextualCase(jsonNode, primKind)
           || matchNumberCase(jsonNode, primKind)
           || matchBooleanCase(jsonNode, primKind)
-          || matchIEEENumberCase(jsonNode, primKind);
+          || matchIEEENumberCase(jsonNode, primKind)
+          || jsonNode.isObject() && name.startsWith("Geo");
     }
     if (!valid) {
       throw new DeserializerException(
@@ -837,17 +993,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
               DeserializerException.MessageKeys.UNKNOWN_CONTENT);
         }
 
-        EdmStructuredType currentEdmType = null;
-        if (edmType instanceof EdmEntityType) {
-          currentEdmType = serviceMetadata.getEdm()
-              .getEntityType(new FullQualifiedName(odataType));
-        } else {
-          currentEdmType = serviceMetadata.getEdm()
-              .getComplexType(new FullQualifiedName(odataType));
-        }
+        final EdmStructuredType currentEdmType = edmType.getKind() == EdmTypeKind.ENTITY ?
+            serviceMetadata.getEdm().getEntityType(new FullQualifiedName(odataType)) :
+            serviceMetadata.getEdm().getComplexType(new FullQualifiedName(odataType));
         if (!isAssignable(edmType, currentEdmType)) {
-          throw new DeserializerException(
-              "Odata type " + odataType + " not allowed here",
+          throw new DeserializerException("Odata type " + odataType + " not allowed here",
               DeserializerException.MessageKeys.UNKNOWN_CONTENT);
         }
 
@@ -859,14 +1009,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private boolean isAssignable(final EdmStructuredType edmStructuredType,
       final EdmStructuredType edmStructuredTypeToAssign) {
-    if (edmStructuredTypeToAssign == null) {
-      return false;
-    } else if (edmStructuredType.getFullQualifiedName()
-        .equals(edmStructuredTypeToAssign.getFullQualifiedName())) {
-      return true;
-    } else {
-      return isAssignable(edmStructuredType,
-          edmStructuredTypeToAssign.getBaseType());
-    }
+    return edmStructuredTypeToAssign != null
+        && (edmStructuredType.getFullQualifiedName().equals(edmStructuredTypeToAssign.getFullQualifiedName())
+            || isAssignable(edmStructuredType, edmStructuredTypeToAssign.getBaseType()));
   }
 }

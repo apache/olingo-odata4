@@ -31,7 +31,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.olingo.commons.api.Constants;
@@ -44,6 +46,14 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.geo.Geospatial;
+import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
+import org.apache.olingo.commons.api.edm.geo.LineString;
+import org.apache.olingo.commons.api.edm.geo.MultiLineString;
+import org.apache.olingo.commons.api.edm.geo.MultiPoint;
+import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
@@ -53,11 +63,13 @@ import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTest {
 
   private static final ContentType CONTENT_TYPE_JSON_IEEE754Compatible =
       ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true");
+  private static final OData odata = OData.newInstance();
 
   @Test
   public void emptyEntity() throws Exception {
@@ -658,6 +670,231 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   }
 
   @Test
+  public void geoPoint() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryPoint);
+    final String preamble = "{\"" + entityType.getPropertyNames().get(0) + "\":{";
+    final Entity entity = deserialize(preamble + "\"type\":\"Point\",\"coordinates\":[1.25,2.75]}}",
+        entityType);
+    assertEquals(1, entity.getProperties().size());
+    assertTrue(entity.getProperties().get(0).getValue() instanceof Point);
+    final Point point = (Point) entity.getProperties().get(0).getValue();
+    assertEquals(Geospatial.Dimension.GEOMETRY, point.getDimension());
+    assertEquals(1.25, point.getX(), 0);
+    assertEquals(2.75, point.getY(), 0);
+
+    expectException(preamble + "}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":1}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"point\",\"coordinates\":null}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"LineString\"}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\"}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coord\":[]}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.UNKNOWN_CONTENT);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":\"1 2\"}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":{\"x\":1,\"y\":2}}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":[]}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":[1]}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":[\"1\",2]}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":[1,\"2\"]}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":[1,2,\"3\"]}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":[1,2,3,4]}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":[12345678901234567,2]}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException(preamble + "\"type\":\"Point\",\"coordinates\":[1,2],\"extra\":\"extra\"}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.UNKNOWN_CONTENT);
+  }
+
+  @Test
+  public void geoMultiPoint() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeographyMultiPoint);
+    final Entity entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"MultiPoint\",\"coordinates\":[[2.5,3.125,99],[3.5,4.125],[4.5,5.125]]}}",
+        entityType);
+    assertTrue(entity.getProperties().get(0).getValue() instanceof MultiPoint);
+    final MultiPoint multiPoint = (MultiPoint) entity.getProperties().get(0).getValue();
+    assertEquals(Geospatial.Dimension.GEOGRAPHY, multiPoint.getDimension());
+    Iterator<Point> iterator = multiPoint.iterator();
+    final Point point1 = iterator.next();
+    assertEquals(Geospatial.Dimension.GEOGRAPHY, point1.getDimension());
+    assertEquals(2.5, point1.getX(), 0);
+    assertEquals(3.125, point1.getY(), 0);
+    assertEquals(99, point1.getZ(), 0);
+    final Point point2 = iterator.next();
+    assertEquals(Geospatial.Dimension.GEOGRAPHY, point2.getDimension());
+    assertEquals(3.5, point2.getX(), 0);
+    assertEquals(4.125, point2.getY(), 0);
+    final Point point3 = iterator.next();
+    assertEquals(Geospatial.Dimension.GEOGRAPHY, point3.getDimension());
+    assertEquals(4.5, point3.getX(), 0);
+    assertEquals(5.125, point3.getY(), 0);
+    assertFalse(iterator.hasNext());
+
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"MultiPoint\",\"coordinates\":[{\"x\":1,\"y\":2}]}}",
+        entityType, ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  }
+
+  @Test
+  public void geoLineString() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryLineString);
+    final Entity entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"LineString\",\"coordinates\":[[1.0,1.0],[2.0,2.0]]}}",
+        entityType);
+    assertTrue(entity.getProperties().get(0).getValue() instanceof LineString);
+    final LineString lineString = (LineString) entity.getProperties().get(0).getValue();
+    assertEquals(Geospatial.Dimension.GEOMETRY, lineString.getDimension());
+    Iterator<Point> iterator = lineString.iterator();
+    final Point point1 = iterator.next();
+    assertEquals(Geospatial.Dimension.GEOMETRY, point1.getDimension());
+    assertEquals(1, point1.getX(), 0);
+    assertEquals(1, point1.getY(), 0);
+    final Point point2 = iterator.next();
+    assertEquals(Geospatial.Dimension.GEOMETRY, point2.getDimension());
+    assertEquals(2, point2.getX(), 0);
+    assertEquals(2, point2.getY(), 0);
+    assertFalse(iterator.hasNext());
+
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{\"type\":\"LineString\"}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    // A proper line string has at least two points but the OData specification has another opinion
+    // so the following negative test would fail.
+    //    expectException("{\"" + entityType.getPropertyNames().get(0)
+    //        + "\":{\"type\":\"LineString\",\"coordinates\":[[1,2]]}}", entityType, ContentType.JSON,
+    //        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException("{\"" + entityType.getPropertyNames().get(0)
+        + "\":{\"type\":\"LineString\",\"coordinates\":null}}", entityType, ContentType.JSON,
+        DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  }
+
+  @Test
+  public void geoMultiLineString() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryMultiLineString);
+    final Entity entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"MultiLineString\",\"coordinates\":["
+        + "[[1.0,1.0],[2.0,2.0],[3.0,3.0],[4.0,4.0],[5.0,5.0]],"
+        + "[[99.5,101.5],[150.0,151.25]]]}}",
+        entityType);
+    assertTrue(entity.getProperties().get(0).getValue() instanceof MultiLineString);
+    final MultiLineString multiLineString = (MultiLineString) entity.getProperties().get(0).getValue();
+    assertEquals(Geospatial.Dimension.GEOMETRY, multiLineString.getDimension());
+    assertEquals(1, multiLineString.iterator().next().iterator().next().getY(), 0);
+
+    expectException("{\"" + entityType.getPropertyNames().get(0)
+        + "\":{\"type\":\"MultiLineString\",\"coordinates\":null}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException("{\"" + entityType.getPropertyNames().get(0)
+        + "\":{\"type\":\"MultiLineString\",\"coordinates\":\"1 2 3 4\"}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException("{\"" + entityType.getPropertyNames().get(0)
+        + "\":{\"type\":\"MultiLineString\",\"coordinates\":[{\"first\":[[1,2],[3,4]]}]}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  }
+
+  @Test
+  public void geoPolygon() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryPolygon);
+    Entity entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":[[[0.0,0.0],[3.0,0.0],[3.0,3.0],[0.0,3.0],[0.0,0.0]],"
+        + "[[1.0,1.0],[1.0,2.0],[2.0,2.0],[2.0,1.0],[1.0,1.0]]]}}",
+        entityType);
+    assertTrue(entity.getProperties().get(0).getValue() instanceof Polygon);
+    Polygon polygon = (Polygon) entity.getProperties().get(0).getValue();
+    assertEquals(Geospatial.Dimension.GEOMETRY, polygon.getDimension());
+    assertEquals(0, polygon.getExterior().iterator().next().getX(), 0);
+    assertEquals(1, polygon.getInterior().iterator().next().getY(), 0);
+
+    entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":[[[0,0],[3,0],[3,3],[0,3],[0,0]]]}}",
+        entityType);
+    polygon = (Polygon) entity.getProperties().get(0).getValue();
+    assertTrue(polygon.getInterior().isEmpty());
+
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":{\"ext\":[[0,0],[3,0],[0,3],[0,0]]}}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":[[[0,0],[3,0],[3,3],[0,3]]]}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":[[[0,0],[3,0],[3,3],[0,3],[42,87]]]}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":[[[0,0],[3,0],[3,3],[0,3],[0,0]],"
+        + "[[1,1],[1,2],[2,2],[2,1],[1,1]],"
+        + "[[1,1],[1,2],[2,2],[2,1],[1,1]]]}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  }
+
+  @Test
+  public void geoMultiPolygon() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryMultiPolygon);
+    final Entity entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"MultiPolygon\",\"coordinates\":["
+        + "[[[0.0,0.0],[3.0,0.0],[3.0,3.0],[0.0,3.0],[0.0,0.0]],"
+        + "[[1.0,1.0],[1.0,2.0],[2.0,2.0],[2.0,1.0],[1.0,1.0]]],"
+        + "[[[0.0,0.0],[30.0,0.0],[0.0,30.0],[0.0,0.0]]]]}}",
+        entityType);
+    final MultiPolygon multiPolygon = (MultiPolygon) entity.getProperties().get(0).getValue();
+    assertEquals(1, multiPolygon.iterator().next().getInterior().iterator().next().getX(), 0);
+
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"MultiPolygon\",\"coordinates\":[{\"first\":[[[0,0],[3,0],[3,3],[0,3],[0,0]]]}]}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  }
+
+  @Test
+  public void geoCollection() throws Exception {
+    final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryCollection);
+    final Entity entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"GeometryCollection\",\"geometries\":["
+        + "{\"type\":\"Point\",\"coordinates\":[100.0,0.0]},"
+        + "{\"type\":\"LineString\",\"coordinates\":[[101.0,0.0],[102.0,1.0]]}]}}",
+        entityType);
+    assertTrue(entity.getProperties().get(0).getValue() instanceof GeospatialCollection);
+    GeospatialCollection collection = (GeospatialCollection) entity.getProperties().get(0).getValue();
+    assertEquals(Geospatial.Dimension.GEOMETRY, collection.getDimension());
+    Iterator<Geospatial> iterator = collection.iterator();
+    final Geospatial point = iterator.next();
+    assertEquals(Geospatial.Dimension.GEOMETRY, point.getDimension());
+    assertEquals(Geospatial.Type.POINT, point.getGeoType());
+    assertEquals(100, ((Point) point).getX(), 0);
+    final Geospatial line = iterator.next();
+    assertEquals(Geospatial.Dimension.GEOMETRY, line.getDimension());
+    assertEquals(Geospatial.Type.LINESTRING, line.getGeoType());
+    assertEquals(101, ((LineString) line).iterator().next().getX(), 0);
+
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"GeometryCollection\",\"coordinates\":[0,0]}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.UNKNOWN_CONTENT);
+    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"GeometryCollection\",\"geometries\":[[0,0]]}}", entityType,
+        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  }
+
+  private EdmEntityType mockEntityType(final EdmPrimitiveTypeKind typeKind) {
+    EdmProperty property = Mockito.mock(EdmProperty.class);
+    final String name = "Property" + typeKind.name();
+    Mockito.when(property.getType()).thenReturn(odata.createPrimitiveTypeInstance(typeKind));
+    EdmEntityType entityType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName(NAMESPACE, "entityType"));
+    Mockito.when(entityType.getPropertyNames()).thenReturn(Arrays.asList(name));
+    Mockito.when(entityType.getProperty(name)).thenReturn(property);
+    return entityType;
+  }
+
+  @Test
   public void mappingTest() throws Exception {
     EdmEntityType entityType = mock(EdmEntityType.class);
     when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("namespace", "name"));
@@ -670,22 +907,21 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     EdmProperty propertyDate = mock(EdmProperty.class);
     when(propertyDate.getName()).thenReturn("PropertyDate");
     when(propertyDate.getMapping()).thenReturn(mapping);
-    when(propertyDate.getType()).thenReturn(
-        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date));
+    when(propertyDate.getType()).thenReturn(odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Date));
     when(entityType.getProperty("PropertyDate")).thenReturn(propertyDate);
 
     EdmProperty propertyDateTimeOffset = mock(EdmProperty.class);
     when(propertyDateTimeOffset.getName()).thenReturn("PropertyDateTimeOffset");
     when(propertyDateTimeOffset.getMapping()).thenReturn(mapping);
     when(propertyDateTimeOffset.getType()).thenReturn(
-        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset));
+        odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.DateTimeOffset));
     when(entityType.getProperty("PropertyDateTimeOffset")).thenReturn(propertyDateTimeOffset);
 
     String entityString =
         "{\"PropertyDate\":\"2012-12-03\","
             + "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"}";
     InputStream stream = new ByteArrayInputStream(entityString.getBytes());
-    ODataDeserializer deserializer = OData.newInstance().createDeserializer(ContentType.JSON, metadata);
+    ODataDeserializer deserializer = odata.createDeserializer(ContentType.JSON, metadata);
     Entity entity = deserializer.entity(stream, entityType).getEntity();
     assertNotNull(entity);
     List<Property> properties = entity.getProperties();
@@ -844,7 +1080,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   }
 
   @Test
-  public void unkownContentInEntity() throws Exception {
+  public void unknownContentInEntity() throws Exception {
     final String entityString = "{"
         + "\"PropertyInt16\":32767,"
         + "\"unknown\": 12,"
@@ -860,7 +1096,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   }
 
   @Test
-  public void unkownContentInComplexProperty() throws Exception {
+  public void unknownContentInComplexProperty() throws Exception {
     final String entityString = "{"
         + "\"PropertyInt16\":32767,"
         + "\"CollPropertyString\":"
@@ -875,7 +1111,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   }
 
   @Test
-  public void unkownContentInComplexCollectionProperty() throws Exception {
+  public void unknownContentInComplexCollectionProperty() throws Exception {
     final String entityString = "{"
         + "\"PropertyInt16\":32767,"
         + "\"CollPropertyString\":"
@@ -1363,15 +1599,18 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
 
   protected static Entity deserialize(final InputStream stream, final String entityTypeName,
       final ContentType contentType) throws DeserializerException {
-    return OData.newInstance().createDeserializer(contentType, metadata)
-        .entity(stream, edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName)))
-        .getEntity();
+    return deserializeWithResult(stream, entityTypeName, contentType).getEntity();
   }
-  
+
   protected static DeserializerResult deserializeWithResult(final InputStream stream, final String entityTypeName,
       final ContentType contentType) throws DeserializerException {
-    return OData.newInstance().createDeserializer(contentType, metadata)
-        .entity(stream, edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName)));
+    final EdmEntityType entityType = edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName));
+    return deserializeWithResult(stream, entityType, contentType);
+  }
+
+  protected static DeserializerResult deserializeWithResult(final InputStream stream, final EdmEntityType entityType,
+      final ContentType contentType) throws DeserializerException {
+    return odata.createDeserializer(contentType, metadata).entity(stream, entityType);
   }
 
   private static Entity deserialize(final String entityString, final String entityTypeName,
@@ -1384,8 +1623,20 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     return deserialize(entityString, entityTypeName, ContentType.JSON);
   }
 
+  private Entity deserialize(final String entityString, final EdmEntityType entityType)
+      throws DeserializerException {
+    return deserializeWithResult(new ByteArrayInputStream(entityString.getBytes()), entityType, ContentType.JSON)
+        .getEntity();
+  }
+
   private static void checkPropertyJsonType(final String entityString) throws DeserializerException {
     expectException(entityString, "ETAllPrim", DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  }
+
+  protected static void expectException(final String entityString, final String entityTypeName,
+      final ContentType contentType, final DeserializerException.MessageKeys messageKey) {
+    expectException(entityString,
+        edm.getEntityType(new FullQualifiedName(NAMESPACE, entityTypeName)), contentType, messageKey);
   }
 
   protected static void expectException(final String entityString, final String entityTypeName,
@@ -1393,13 +1644,13 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     expectException(entityString, entityTypeName, ContentType.JSON, messageKey);
   }
 
-  private static void expectException(final String entityString, final String entityTypeName,
+  private static void expectException(final String entityString, final EdmEntityType entityType,
       final ContentType contentType, final DeserializerException.MessageKeys messageKey) {
     try {
-      deserialize(entityString, entityTypeName, contentType);
+      deserializeWithResult(new ByteArrayInputStream(entityString.getBytes()), entityType, contentType);
       fail("Expected exception not thrown.");
     } catch (final DeserializerException e) {
       assertEquals(messageKey, e.getMessageKey());
     }
-  } 
+  }
 }
