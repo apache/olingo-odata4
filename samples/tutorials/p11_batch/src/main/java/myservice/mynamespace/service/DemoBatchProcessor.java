@@ -122,11 +122,11 @@ public class DemoBatchProcessor implements BatchProcessor {
       responseParts.add(facade.handleBatchRequest(part));
     }
 
-    // 5. Serialize the response content
-    final InputStream responseContent = odata.createFixedFormatSerializer().batchResponse(responseParts, boundary);
-    
-    // 6. Create a new boundary for the response
+    // 5. Create a new boundary for the response
     final String responseBoundary = "batch_" + UUID.randomUUID().toString();
+
+    // 6. Serialize the response content
+    final InputStream responseContent = odata.createFixedFormatSerializer().batchResponse(responseParts, responseBoundary);
 
     // 7. Setup response
     response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED + ";boundary=" + responseBoundary);

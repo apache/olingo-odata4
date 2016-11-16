@@ -29,15 +29,29 @@
 
 	<name>${project.artifactId}-Webapp</name>
 
-	<build>
-		<finalName>DemoService</finalName>
-	</build>
+  <properties>
+    <javax.version>2.5</javax.version>
+    <odata.version>4.4.0-SNAPSHOT</odata.version>
+    <slf4j.version>1.7.7</slf4j.version>
+    <project.source>1.6</project.source>
+    <compiler.plugin.version>3.2</compiler.plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-	<properties>
-		<javax.version>2.5</javax.version>
-		<odata.version>4.4.0-SNAPSHOT</odata.version>
-		<slf4j.version>1.7.7</slf4j.version>
-	</properties>
+  <build>
+		<finalName>DemoService</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler.plugin.version}</version>
+				<configuration>
+					<source>${project.source}</source>
+					<target>${project.source}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>
