@@ -64,6 +64,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.IdOption;
@@ -421,10 +422,11 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     //
 
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo);
-    final EdmEntityType edmEntityType = edmEntitySet == null ?
-        (EdmEntityType) ((UriResourcePartTyped) uriInfo.getUriResourceParts()
-            .get(uriInfo.getUriResourceParts().size() - 1)).getType() :
-        edmEntitySet.getEntityType();
+    
+    //for Singleton/$ref edmEntityset will be null throw error
+    validateSingletonRef(isReference,edmEntitySet);
+   
+    final EdmEntityType edmEntityType = getEdmType(uriInfo, edmEntitySet);
 
     final Entity entity = readEntity(uriInfo);
 
@@ -454,6 +456,35 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     response.setContent(serializerResult.getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, requestedFormat.toContentTypeString());
+  }
+
+  /*This method validates if the $ref is called directly on Singleton
+   * Error is thrown when $ref is called on a Singleton as it is not implemented*/
+  private void validateSingletonRef(boolean isReference, EdmEntitySet edmEntitySet) throws
+  ODataApplicationException {
+   if(isReference && edmEntitySet==null){
+         throw new ODataApplicationException("$ref not implemented on singleton",
+                    HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+        
+      }
+  
+  }
+  
+  /*This method returns edmType of the entityset or Singleton*/  
+  private EdmEntityType getEdmType(UriInfo uriInfo, EdmEntitySet edmEntitySet) {
+    if(edmEntitySet!=null){
+      return edmEntitySet.getEntityType();
+    }else if(edmEntitySet==null && uriInfo.getUriResourceParts()
+              .get(uriInfo.getUriResourceParts().size() - 1) instanceof UriResourcePartTyped){
+      return  (EdmEntityType) ((UriResourcePartTyped) uriInfo.getUriResourceParts()
+                .get(uriInfo.getUriResourceParts().size() - 1)).getType();
+    }else if((UriResourceSingleton) uriInfo.getUriResourceParts()
+              .get(0) instanceof UriResourceSingleton){
+      return (EdmEntityType)((UriResourceSingleton) uriInfo.getUriResourceParts()
+                .get(0)).getType();
+    }
+
+  return null;
   }
 
   private void readEntityCollection(final ODataRequest request, final ODataResponse response,

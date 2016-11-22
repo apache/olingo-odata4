@@ -88,13 +88,27 @@ public class DataCreator {
     data.put("ESStream", createESStream(edm, odata));
     data.put("ESWithStream", createESWithStream(edm, odata));
     data.put("ESPeople", createESPeople(edm, odata));
+    data.put("SINav", createSINav(edm, odata));
+    data.put("SI", createESTwoPrim(edm, odata));
 
+    linkSINav(data);
     linkESTwoPrim(data);
     linkESAllPrim(data);
     linkESKeyNav(data);
     linkESTwoKeyNav(data);
     linkESPeople(data);
   }
+  
+  private EntityCollection createSINav(Edm edm, OData odata) {
+    final EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(createESTwoKeyNavEntity((short) 1, "1"));
+
+  setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETTwoKeyNav));
+  createEntityId(edm, odata, "ESTwoKeyNav", entityCollection);
+  createOperations("ESTwoKeyNav", entityCollection, EntityTypeProvider.nameETTwoKeyNav);
+  return entityCollection;
+}
 
   private EntityCollection createESMixEnumDefCollComp(Edm edm, OData odata) {
     final EntityCollection entityCollection = new EntityCollection();
@@ -1362,7 +1376,8 @@ public class DataCreator {
     final EntityCollection entityCollection = data.get("ESTwoKeyNav");
     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
-
+    final  List<Entity> SINav = data.get("SINav").getEntities();
+    
     // NavPropertyETKeyNavOne
     setLink(entityCollection.getEntities().get(0), "NavPropertyETKeyNavOne", esKeyNavTargets.get(0));
     setLink(entityCollection.getEntities().get(1), "NavPropertyETKeyNavOne", esKeyNavTargets.get(0));
@@ -1387,6 +1402,27 @@ public class DataCreator {
         esTwoKeyNavTargets.get(1));
     setLinks(entityCollection.getEntities().get(1), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0));
     setLinks(entityCollection.getEntities().get(2), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(1));
+    // NavPropertySINav
+    setLink(entityCollection.getEntities().get(0), "NavPropertySINav", SINav.get(0));
+       setLink(entityCollection.getEntities().get(1), "NavPropertySINav", SINav.get(0));
+       setLink(entityCollection.getEntities().get(2), "NavPropertySINav", SINav.get(0));
+
+  }
+
+   private void linkSINav(final Map<String, EntityCollection> data) {
+     final EntityCollection entityCollection = data.get("SINav");
+     final List<Entity> esKeyNavTargets = data.get("ESKeyNav").getEntities();
+     final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
+
+     // NavPropertyETKeyNavOne
+     setLink(entityCollection.getEntities().get(0), "NavPropertyETKeyNavOne", esKeyNavTargets.get(0));
+   
+     // NavPropertyETTwoKeyNavOne
+     setLink(entityCollection.getEntities().get(0), "NavPropertyETTwoKeyNavOne", esTwoKeyNavTargets.get(0));
+
+     // NavPropertyETTwoKeyNavMany
+     setLinks(entityCollection.getEntities().get(0), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0),
+         esTwoKeyNavTargets.get(1));
   }
 
   protected static Property createPrimitive(final String name, final Object value) {

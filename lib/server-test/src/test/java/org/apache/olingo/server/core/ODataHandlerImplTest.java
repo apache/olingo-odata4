@@ -624,6 +624,112 @@ public class ODataHandlerImplTest {
     dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
+
+  @Test
+  public void dispatchSingleton() throws Exception {
+    final String uri = "SI";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+    
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, uri, processor);
+    verify(processor).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor, times(2)).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+  }
+  
+  @Test
+  public void dispatchSingletonMedia() throws Exception {
+    final String uri = "SIMedia/$value";
+    final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
+    
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor).readMediaEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor).updateMediaEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, uri, processor);
+  }
+  
+  @Test
+  public void dispatchSingletonNavigation() throws Exception {
+    final String uri = "SINav/NavPropertyETTwoKeyNavOne";
+    final String sigletonNavUri = "ESTwoKeyNav(PropertyInt16=1,PropertyString='1')/NavPropertySINav";
+    final String sigletonManyNavUri = "SINav/NavPropertyETTwoKeyNavMany";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+    final EntityCollectionProcessor collectionProcessor = mock(EntityCollectionProcessor.class);
+    
+    dispatch(HttpMethod.GET, sigletonNavUri, processor);
+    verify(processor).readEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, sigletonNavUri, processor);
+    verify(processor).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, sigletonNavUri, processor);
+    verify(processor, times(2)).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, sigletonNavUri, processor);
+    dispatchMethodNotAllowed(HttpMethod.DELETE, sigletonNavUri, processor);
+    
+    dispatch(HttpMethod.GET, uri, processor);
+    verify(processor, times(2)).readEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, uri, processor);
+    verify(processor,  times(3)).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, uri, processor);
+    verify(processor, times(4)).updateEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+    
+    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
+
+    dispatch(HttpMethod.DELETE, uri, processor);
+    verify(processor).deleteEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    
+    
+    dispatch(HttpMethod.GET, sigletonManyNavUri, collectionProcessor);
+    verify(collectionProcessor).readEntityCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
+    
+    dispatchMethodNotAllowed(HttpMethod.PATCH, sigletonManyNavUri, processor);
+    
+    dispatchMethodNotAllowed(HttpMethod.PUT, sigletonManyNavUri, processor);
+    
+    dispatch(HttpMethod.POST, sigletonManyNavUri, processor);
+    verify(processor).createEntity(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+
+    dispatchMethodNotAllowed(HttpMethod.DELETE, sigletonManyNavUri, processor);
+  }
+  
   @Test
   public void dispatchMedia() throws Exception {
     final String uri = "ESMedia(1)/$value";
@@ -859,6 +965,9 @@ public class ODataHandlerImplTest {
   public void dispatchReference() throws Exception {
     final String uri = "ESAllPrim(0)/NavPropertyETTwoPrimOne/$ref";
     final String uriMany = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$ref";
+    final String singletonUri = "SINav/NavPropertyETKeyNavOne/$ref";
+    final String singletonUriMany = "SINav/NavPropertyETTwoKeyNavMany/$ref";
+    final String singleUri = "SINav/$ref";
     final ReferenceProcessor processor = mock(ReferenceProcessor.class);
 
     dispatch(HttpMethod.GET, uri, processor);
@@ -882,12 +991,52 @@ public class ODataHandlerImplTest {
     dispatch(HttpMethod.DELETE, uriMany, "$id=ESTwoPrim(1)", null, null, processor);
     verify(processor).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
     
-    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);    
+    
+    //singleton URIs
+    
+    dispatch(HttpMethod.GET, singletonUri, processor);
+    verify(processor, times(2)).readReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, singletonUri, processor);
+    verify(processor, times(3)).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, singletonUri, processor);
+    verify(processor, times(4)).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, singletonUri, processor); 
+    
+    dispatch(HttpMethod.GET, singleUri, processor);
+    verify(processor, times(3)).readReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PATCH, singleUri, processor);
+    verify(processor, times(5)).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.PUT, singleUri, processor);
+    verify(processor, times(6)).updateReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.POST, singleUri, processor); 
+    
+    dispatch(HttpMethod.POST, singletonUriMany, processor);
+    verify(processor, times(2)).createReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.DELETE, singletonUriMany, "$id=ESTwoPrim(1)", null, null, processor);
+    verify(processor, times(2)).deleteReference(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
+    
+    dispatchMethodNotAllowed(HttpMethod.HEAD, singletonUriMany, processor);
   }
 
   @Test
   public void dispatchReferenceCollection() throws Exception {
     final String uri = "ESAllPrim(0)/NavPropertyETTwoPrimMany/$ref";
+    final String singletonUri = "SINav/NavPropertyETTwoKeyNavMany/$ref";
     final ReferenceCollectionProcessor processor = mock(ReferenceCollectionProcessor.class);
 
     dispatch(HttpMethod.GET, uri, processor);
@@ -896,7 +1045,17 @@ public class ODataHandlerImplTest {
 
     dispatchMethodNotAllowed(HttpMethod.PATCH, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.PUT, uri, processor);
-    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor); 
+    
+    //singleton ref
+    dispatch(HttpMethod.GET, singletonUri, processor);
+    verify(processor, times(2)).readReferenceCollection(any(ODataRequest.class), 
+        any(ODataResponse.class), any(UriInfo.class),
+        any(ContentType.class));
+
+    dispatchMethodNotAllowed(HttpMethod.PATCH, singletonUri, processor);
+    dispatchMethodNotAllowed(HttpMethod.PUT, singletonUri, processor);
+    dispatchMethodNotAllowed(HttpMethod.HEAD, singletonUri, processor);
   }
 
   @Test
