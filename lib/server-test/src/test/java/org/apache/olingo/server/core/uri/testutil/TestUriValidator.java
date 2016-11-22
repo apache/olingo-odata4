@@ -59,17 +59,28 @@ public class TestUriValidator implements TestValidator {
 
   // Execution
   public TestUriValidator run(final String path) throws UriParserException, UriValidationException {
-    return run(path, null, null);
+    return run(path, null, null, null);
   }
 
   public TestUriValidator run(final String path, final String query)
       throws UriParserException, UriValidationException {
-    return run(path, query, null);
+    return run(path, query, null, null);
   }
-
+  public TestUriValidator run(final String path, final String query, final String fragment, final String baseUri)
+      throws UriParserException, UriValidationException {
+    try {
+      uriInfo = new Parser(edm, odata).parseUri(path, query, fragment, baseUri);
+      new UriValidator().validate(uriInfo, HttpMethod.GET);
+      return this;
+    } catch (UriParserException e) {
+      exception = e;
+      throw e;
+    } 
+  }
+  
   public TestUriValidator run(final String path, final String query, final String fragment)
       throws UriParserException, UriValidationException {
-    uriInfo = new Parser(edm, odata).parseUri(path, query, fragment);
+    uriInfo = new Parser(edm, odata).parseUri(path, query, fragment, null);
     new UriValidator().validate(uriInfo, HttpMethod.GET);
     return this;
   }
@@ -81,7 +92,7 @@ public class TestUriValidator implements TestValidator {
   public TestUriValidator runEx(final String path, final String query) {
     uriInfo = null;
     try {
-      run(path, query, null);
+      run(path, query, null, null);
       fail("Exception expected");
     } catch (UriParserException e) {
       exception = e;

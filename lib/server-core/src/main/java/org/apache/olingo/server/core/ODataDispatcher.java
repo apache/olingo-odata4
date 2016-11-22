@@ -109,6 +109,7 @@ public class ODataDispatcher {
       break;
 
     case resource:
+    case entityId:
       handleResourceDispatching(request, response);
       break;
 

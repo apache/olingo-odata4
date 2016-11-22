@@ -168,7 +168,7 @@ public class FilterValidator implements TestValidator {
 
   public FilterValidator runUri(final String path, final String query)
       throws UriParserException, UriValidationException {
-    final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, query, null);
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, query, null, null);
     assertTrue("Filtervalidator can only be used on resourcePaths", uriInfo.getKind() == UriInfoKind.resource);
     setFilter(uriInfo.getFilterOption());
     curExpression = filter.getExpression();
@@ -181,7 +181,7 @@ public class FilterValidator implements TestValidator {
 
   public FilterValidator runUriOrderBy(final String path, final String query)
       throws UriParserException, UriValidationException {
-    final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, query, null);
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, query, null, null);
     assertTrue("Filtervalidator can only be used on resourcePaths", uriInfo.getKind() == UriInfoKind.resource);
     orderBy = uriInfo.getOrderByOption();
     return this;

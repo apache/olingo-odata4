@@ -90,7 +90,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
         executeIdOption(query, odRequest, odResponse);
       } else {
         UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
-          .parseUri(path, query, null);
+          .parseUri(path, query, null, odRequest.getRawBaseUri());
         
         contentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
             odRequest, this.customContentSupport, RepresentationType.ERROR);      

@@ -498,7 +498,7 @@ public class ApplyParserTest {
 
   private ApplyValidator parse(final String path, final String apply)
       throws UriParserException, UriValidationException {
-    final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, "$apply=" + apply, null);
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, "$apply=" + apply, null, null);
     return new ApplyValidator(uriInfo.getApplyOption());
   }
 

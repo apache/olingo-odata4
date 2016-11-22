@@ -252,7 +252,7 @@ public class ExpandParserTest {
   @Test
   public void expandNavigationApplyOption() throws Exception {
     UriInfo uriInfo = new Parser(edm, oData).parseUri("ESTwoKeyNav",
-        "$expand=NavPropertyETKeyNavMany($apply=identity),NavPropertyETKeyNavOne", null);
+        "$expand=NavPropertyETKeyNavMany($apply=identity),NavPropertyETKeyNavOne", null, null);
     Assert.assertEquals(ApplyItem.Kind.IDENTITY,
         uriInfo.getExpandOption().getExpandItems().get(0).getApplyOption().getApplyItems().get(0).getKind());
     Assert.assertEquals("NavPropertyETKeyNavOne",
@@ -260,7 +260,7 @@ public class ExpandParserTest {
             .getResourcePath().getUriResourceParts().get(0).getSegmentValue());
 
     uriInfo = new Parser(edm, oData).parseUri("ESTwoKeyNav",
-        "$expand=NavPropertyETKeyNavMany($apply=aggregate(PropertyInt16 with sum as s))", null);
+        "$expand=NavPropertyETKeyNavMany($apply=aggregate(PropertyInt16 with sum as s))", null, null);
     final ApplyItem applyItem =
         uriInfo.getExpandOption().getExpandItems().get(0).getApplyOption().getApplyItems().get(0);
     Assert.assertEquals(ApplyItem.Kind.AGGREGATE, applyItem.getKind());

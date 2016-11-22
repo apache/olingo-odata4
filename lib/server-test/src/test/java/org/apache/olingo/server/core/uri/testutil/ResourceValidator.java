@@ -83,7 +83,7 @@ public class ResourceValidator implements TestValidator {
   public ResourceValidator run(final String path) {
     UriInfo uriInfoTmp = null;
     try {
-      uriInfoTmp = new Parser(edm, odata).parseUri(path, null, null);
+      uriInfoTmp = new Parser(edm, odata).parseUri(path, null, null, null);
     } catch (final ODataLibraryException e) {
       fail("Exception occurred while parsing the URI: " + path + "\n"
           + " Message: " + e.getMessage());

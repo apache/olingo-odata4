@@ -37,7 +37,9 @@ public class UriParserSyntaxException extends UriParserException {
     SYSTEM_QUERY_OPTION_LEVELS_NOT_ALLOWED_HERE,
     SYNTAX,
     /** parameter: alias name */
-    DUPLICATED_ALIAS;
+    DUPLICATED_ALIAS,
+    /**Entity id must be followed by system query option id */
+    ENTITYID_MISSING_SYSTEM_QUERY_OPTION_ID;
 
     @Override
     public String getKey() {

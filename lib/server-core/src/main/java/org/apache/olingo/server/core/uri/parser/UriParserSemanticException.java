@@ -75,7 +75,9 @@ public class UriParserSemanticException extends UriParserException {
     ONLY_FOR_PRIMITIVE_TYPES,
     /** parameter: function name */
     FUNCTION_MUST_USE_COLLECTIONS,
-    COLLECTION_NOT_ALLOWED;
+    COLLECTION_NOT_ALLOWED,
+    /** parameter: not implemented part for system query option $id */
+    NOT_IMPLEMENTED_SYSTEM_QUERY_OPTION;
 
     @Override
     public String getKey() {

@@ -71,7 +71,9 @@ public class UriParserTest {
     testUri.runEx("$all/$ref").isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
     testUri.runEx("$entity/olingo.odata.test1.ETKeyNav/$ref")
         .isExSyntax(UriParserSyntaxException.MessageKeys.MUST_BE_LAST_SEGMENT);
-
+    testUri.runEx("$entity/olingo.odata.test1.ETKeyNav")
+        .isExSyntax(UriParserSyntaxException.MessageKeys.ENTITYID_MISSING_SYSTEM_QUERY_OPTION_ID);
+    
     testUri.runEx("$wrong").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
     testUri.runEx("", "$wrong").isExSyntax(UriParserSyntaxException.MessageKeys.UNKNOWN_SYSTEM_QUERY_OPTION);
 
@@ -252,6 +254,78 @@ public class UriParserTest {
         .isEntityType(EntityTypeProvider.nameETBase)
         .isIdText("ESTwoPrim(1)")
         .goExpand().first().isSegmentStar();
+    
+    try {
+      testUri.run("$entity/olingo.odata.test1.ETAllNullable")
+      .isKind(UriInfoKind.entityId)
+      .isEntityType(EntityTypeProvider.nameETAllNullable);
+    } catch (UriParserSyntaxException e) {
+      testUri.isExSyntax(UriParserSyntaxException.MessageKeys.ENTITYID_MISSING_SYSTEM_QUERY_OPTION_ID);
+    }
+    testUri.run("$entity/Namespace1_Alias.ETAllPrim", "$id=ESAllPrim(32767)")
+    .isKind(UriInfoKind.entityId)
+    .isEntityType(EntityTypeProvider.nameETAllPrim)
+    .isIdText("ESAllPrim(32767)");
+    try {
+      testUri.run("ESAllPrim/$entity")
+    .isKind(UriInfoKind.resource);
+    } catch (UriParserSyntaxException e) {
+      testUri.isExSyntax(UriParserSyntaxException.MessageKeys.ENTITYID_MISSING_SYSTEM_QUERY_OPTION_ID);
+    }
+    try {
+      testUri.run("ESAllPrim(32767)/NavPropertyETTwoPrimOne/$entity")
+    .isKind(UriInfoKind.resource);
+    } catch(UriParserSyntaxException e) {
+      testUri.isExSyntax(UriParserSyntaxException.MessageKeys.ENTITYID_MISSING_SYSTEM_QUERY_OPTION_ID);
+    }
+    testUri.run("$entity", "$id=ESAllPrim(32767)/NavPropertyETTwoPrimOne")
+      .isKind(UriInfoKind.entityId)
+      .isEntityType(EntityTypeProvider.nameETTwoPrim)
+    .isIdText("ESAllPrim(32767)/NavPropertyETTwoPrimOne");
+    testUri.run("$entity", "$id=ESAllPrim(32767)", "$select=PropertyString", null)
+    .isKind(UriInfoKind.entityId)
+    .isEntityType(EntityTypeProvider.nameETAllPrim)
+      .isIdText("ESAllPrim(32767)");
+    testUri.run("$entity", "$id=ESAllPrim(32767)", "$expand=NavPropertyETTwoPrimOne", null)
+    .isKind(UriInfoKind.entityId)
+    .isEntityType(EntityTypeProvider.nameETAllPrim)
+      .isIdText("ESAllPrim(32767)");  
+    testUri.run("$entity", "$id=http://localhost:8080/odata-server-tecsvc/odata.svc/"
+        + "ESAllPrim(32767)/NavPropertyETTwoPrimOne", null, 
+        "http://localhost:8080/odata-server-tecsvc/odata.svc")
+    .isKind(UriInfoKind.entityId)
+    .isEntityType(EntityTypeProvider.nameETTwoPrim)
+    .isIdText("http://localhost:8080/odata-server-tecsvc/odata.svc/"
+        + "ESAllPrim(32767)/NavPropertyETTwoPrimOne");
+    try {
+      testUri.run("$entity/olingo.odata.test1.ETKeyNav", "$id=http://localhost:90/tecsvc/ESKeyNav(1)",
+            null, "http://localhost:80/tecsvc")
+          .isKind(UriInfoKind.entityId)
+          .isEntityType(EntityTypeProvider.nameETKeyNav)
+          .isIdText("http://localhost:90/tecsvc/ESKeyNav(1)");
+    } catch (UriParserSemanticException e) {
+      testUri.isExSemantic(UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED_SYSTEM_QUERY_OPTION);
+    }
+    try {
+      testUri.run("$entity/olingo.odata.test1.ETKeyNav", "$id=http://localhost:90/tecs%27v; c/ESKeyNav(1)",
+            null, "http://localhost:80/tecs%27v; c")
+          .isKind(UriInfoKind.entityId)
+          .isEntityType(EntityTypeProvider.nameETKeyNav)
+          .isIdText("http://localhost:90/tecs%27v; c/ESKeyNav(1)");
+    } catch (UriParserSemanticException e) {
+      testUri.isExSemantic(UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED_SYSTEM_QUERY_OPTION);
+    }
+    testUri.run("$entity/olingo.odata.test1.ETKeyNav", "$id=http://localhost:90/tecs%27v%20c/ESKeyNav(1)",
+        null, "http://localhost:90/tecs%27v%20c")
+      .isKind(UriInfoKind.entityId)
+      .isEntityType(EntityTypeProvider.nameETKeyNav);
+    String idOption = UriDecoder.decode("http://localhost:90/tecs%27v%20c/ESKeyNav(1)");
+    testUri.isIdText(idOption);
+    testUri.run("$entity/olingo.odata.test1.ETKeyNav", "$id=http://localhost:90/tecs'v c/ESKeyNav(1)",
+        null, "http://localhost:90/tecs'v c")
+      .isKind(UriInfoKind.entityId)
+      .isEntityType(EntityTypeProvider.nameETKeyNav)
+      .isIdText("http://localhost:90/tecs'v c/ESKeyNav(1)");
   }
 
   @Test

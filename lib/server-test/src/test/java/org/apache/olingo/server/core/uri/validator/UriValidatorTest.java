@@ -467,7 +467,7 @@ public class UriValidatorTest {
 
   private void validate(final String path, final String query, final HttpMethod method) {
     try {
-      new UriValidator().validate(new Parser(edm, odata).parseUri(path, query, null), method);
+      new UriValidator().validate(new Parser(edm, odata).parseUri(path, query, null, null), method);
     } catch (final UriParserException e) {
       fail("Failed for " + method + " on URI: " + path + '?' + query);
     } catch (final UriValidationException e) {
@@ -478,7 +478,7 @@ public class UriValidatorTest {
   private void validateWrong(final String path, final String query, final HttpMethod method,
       final UriValidationException.MessageKeys expectedMessageKey) {
     try {
-      new UriValidator().validate(new Parser(edm, odata).parseUri(path, query, null), method);
+      new UriValidator().validate(new Parser(edm, odata).parseUri(path, query, null, null), method);
       fail("Validation Exception not thrown: " + method + ' ' + path + '?' + query);
     } catch (final UriParserException e) {
       fail("Wrong Exception thrown: " + method + ' ' + path + '?' + query);

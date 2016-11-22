@@ -78,7 +78,7 @@ public class UriDecoder {
     return list;
   }
 
-  private static String decode(final String encoded) throws UriParserSyntaxException {
+  public static String decode(final String encoded) throws UriParserSyntaxException {
     try {
       return Decoder.decode(encoded);
     } catch (final IllegalArgumentException e) {

@@ -78,6 +78,8 @@ public class Parser {
   private static final String DOLLAR = "$";
   private static final String AT = "@";
   private static final String NULL = "null";
+  private static final String ENTITY = "$entity";
+  private static final String HTTP = "http";
 
   private final Edm edm;
   private final OData odata;
@@ -87,7 +89,7 @@ public class Parser {
     this.odata = odata;
   }
 
-  public UriInfo parseUri(final String path, final String query, final String fragment)
+  public UriInfo parseUri(final String path, final String query, final String fragment, String baseUri)
       throws UriParserException, UriValidationException {
 
     UriInfoImpl contextUriInfo = new UriInfoImpl();
@@ -149,16 +151,55 @@ public class Parser {
       contextIsCollection = true;
 
     } else if (firstSegment.equals("$entity")) {
-      contextUriInfo.setKind(UriInfoKind.entityId);
-      if (numberOfSegments > 1) {
-        final String typeCastSegment = pathSegmentsDecoded.get(1);
-        ensureLastSegment(typeCastSegment, 2, numberOfSegments);
-        contextType = new ResourcePathParser(edm, contextUriInfo.getAliasMap())
-            .parseDollarEntityTypeCast(typeCastSegment);
-        contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
+      if (null != contextUriInfo.getIdOption()) {
+        String idOptionText = contextUriInfo.getIdOption().getText();
+        if (idOptionText.startsWith(HTTP)) {
+          baseUri = UriDecoder.decode(baseUri);
+          if (idOptionText.contains(baseUri)) {
+            idOptionText = idOptionText.substring(baseUri.length() + 1);
+          } else {
+            throw new UriParserSemanticException("$id cannot have an absolute path",
+                UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED_SYSTEM_QUERY_OPTION);
+          }
+        }
+        if (numberOfSegments > 1) {
+          /**
+           * If url is of the form 
+           * http://localhost:8080/odata-server-tecsvc/odata.svc/$entity/
+           * olingo.odata.test1.ETAllPrim?$id=ESAllPrim(32767)
+           */
+          final ResourcePathParser resourcePathParser = new ResourcePathParser
+            (edm, contextUriInfo.getAliasMap());
+          String typeCastSegment = pathSegmentsDecoded.get(1);
+          ensureLastSegment(typeCastSegment, 2, numberOfSegments);
+          contextType = resourcePathParser.parseDollarEntityTypeCast(typeCastSegment);
+          contextUriInfo = (UriInfoImpl) new Parser(edm, odata).
+              parseUri("/" + idOptionText, query, fragment, baseUri);
+          contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
+        } else if (numberOfSegments == 1) {
+          /**
+           * If url is of the form 
+           * http://localhost:8080/odata-server-tecsvc/odata.svc/$entity?$id=ESAllPrim(32527)
+           */
+          contextUriInfo = (UriInfoImpl) new Parser(edm, odata).
+                  parseUri("/" + idOptionText, query, fragment, baseUri);
+        }
+        contextType = contextUriInfo.getEntityTypeCast();
+        contextUriInfo.setKind(UriInfoKind.entityId);
+        contextIsCollection = false;
+      } else {
+        /**
+         * If url is of the form 
+         * http://localhost:8080/odata-server-tecsvc/odata.svc/$entity/olingo.odata.test1.ETKeyNav/$ref
+         */
+        ensureLastSegment(firstSegment, 2, numberOfSegments);
+        /**
+         * If url is of the form 
+         * http://localhost:8080/odata-server-tecsvc/odata.svc/$entity/olingo.odata.test1.ETKeyNav
+         */
+        throw new UriParserSyntaxException("The entity-id MUST be specified using the system query option $id",
+                  UriParserSyntaxException.MessageKeys.ENTITYID_MISSING_SYSTEM_QUERY_OPTION_ID);
       }
-      contextIsCollection = false;
-
     } else if (firstSegment.startsWith("$crossjoin")) {
       ensureLastSegment(firstSegment, 1, numberOfSegments);
       contextUriInfo.setKind(UriInfoKind.crossjoin);
@@ -176,35 +217,49 @@ public class Parser {
       UriResource lastSegment = null;
       for (final String pathSegment : pathSegmentsDecoded) {
         count++;
-        final UriResource segment = resourcePathParser.parsePathSegment(pathSegment, lastSegment);
-        if (segment != null) {
-          if (segment instanceof UriResourceCount
-              || segment instanceof UriResourceRef
-              || segment instanceof UriResourceValue) {
-            ensureLastSegment(pathSegment, count, numberOfSegments);
-          } else if (segment instanceof UriResourceAction
-              || segment instanceof UriResourceFunction
-              && !((UriResourceFunction) segment).getFunction().isComposable()) {
-            if (count < numberOfSegments) {
-              throw new UriValidationException(
-                  "The segment of an action or of a non-composable function must be the last resource-path segment.",
-                  UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH,
-                  pathSegmentsDecoded.get(count));
+        if (pathSegment.startsWith(ENTITY)) {
+          /**
+           * If url is of the form 
+           * http://localhost:8080/odata-server-tecsvc/odata.svc/ESAllPrim/$entity
+           */
+          throw new UriParserSyntaxException("The entity-id MUST be specified using the system query option $id",
+                    UriParserSyntaxException.MessageKeys.ENTITYID_MISSING_SYSTEM_QUERY_OPTION_ID);
+        } else {
+          final UriResource segment = resourcePathParser.parsePathSegment(pathSegment, lastSegment);
+          if (segment != null) {
+            if (segment instanceof UriResourceCount
+                || segment instanceof UriResourceRef
+                || segment instanceof UriResourceValue) {
+              ensureLastSegment(pathSegment, count, numberOfSegments);
+            } else if (segment instanceof UriResourceAction
+                || segment instanceof UriResourceFunction
+                && !((UriResourceFunction) segment).getFunction().isComposable()) {
+              if (count < numberOfSegments) {
+                throw new UriValidationException(
+                    "The segment of an action or of a non-composable function must be the last resource-path segment.",
+                    UriValidationException.MessageKeys.UNALLOWED_RESOURCE_PATH,
+                    pathSegmentsDecoded.get(count));
+              }
+              lastSegment = segment;
+            } else if (segment instanceof UriResourceStartingTypeFilterImpl) {
+              throw new UriParserSemanticException("First resource-path segment must not be namespace-qualified.",
+                  UriParserSemanticException.MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
+            } else {
+              lastSegment = segment;
             }
-            lastSegment = segment;
-          } else if (segment instanceof UriResourceStartingTypeFilterImpl) {
-            throw new UriParserSemanticException("First resource-path segment must not be namespace-qualified.",
-                UriParserSemanticException.MessageKeys.NAMESPACE_NOT_ALLOWED_AT_FIRST_ELEMENT);
-          } else {
-            lastSegment = segment;
+            contextUriInfo.addResourcePart(segment);
           }
-          contextUriInfo.addResourcePart(segment);
         }
       }
 
       if (lastSegment instanceof UriResourcePartTyped) {
         final UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
         contextType = ParserHelper.getTypeInformation(typed);
+        if (contextUriInfo.getIdOption() != null && contextType != null) {
+          if (contextType instanceof EdmEntityType) {
+            contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
+          }
+        }
         contextIsCollection = typed.isCollection();
       }
     }

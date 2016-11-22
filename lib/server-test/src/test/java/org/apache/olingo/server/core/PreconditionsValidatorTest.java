@@ -141,7 +141,7 @@ public class PreconditionsValidatorTest {
 
   @Test
   public void simpleEntityValueValidationNotActiveForMedia() throws Exception {
-    final UriInfo uriInfo = new Parser(edm, odata).parseUri("ESMedia(1)/$value", null, null);
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri("ESMedia(1)/$value", null, null, null);
 
     CustomETagSupport support = mock(CustomETagSupport.class);
     when(support.hasETag(any(EdmBindingTarget.class))).thenReturn(true);
@@ -193,7 +193,7 @@ public class PreconditionsValidatorTest {
 
   private boolean mustValidate(final String uri, final String entitySetName)
       throws UriParserException, UriValidationException, PreconditionException {
-    final UriInfo uriInfo = new Parser(edm, odata).parseUri(uri, null, null);
+    final UriInfo uriInfo = new Parser(edm, odata).parseUri(uri, null, null, null);
     final List<UriResource> parts = uriInfo.getUriResourceParts();
     final boolean isMedia = parts.size() >= 2
         && parts.get(parts.size() - 1) instanceof UriResourceValue
