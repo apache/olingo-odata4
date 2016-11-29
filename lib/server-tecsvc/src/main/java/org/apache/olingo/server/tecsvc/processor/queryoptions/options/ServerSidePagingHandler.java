@@ -32,6 +32,7 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 public class ServerSidePagingHandler {
   private static final int MAX_PAGE_SIZE = 10;
   private static final String ES_SERVER_SIDE_PAGING = "ESServerSidePaging";
+  private static final String ES_STREAM_SERVER_SIDE_PAGING = "ESStreamServerSidePaging";
 
   /**
    * <p>Applies server-side paging to the given entity collection.</p>
@@ -97,7 +98,8 @@ public class ServerSidePagingHandler {
   }
 
   private static boolean shouldApplyServerSidePaging(final EdmEntitySet edmEntitySet) {
-    return ES_SERVER_SIDE_PAGING.equals(edmEntitySet.getName());
+    return (ES_SERVER_SIDE_PAGING.equals(edmEntitySet.getName())||
+        ES_STREAM_SERVER_SIDE_PAGING.equals(edmEntitySet.getName()));
   }
 
   private static int getPageSize(final int skipTokenPageSize, final Integer preferredPageSize) {

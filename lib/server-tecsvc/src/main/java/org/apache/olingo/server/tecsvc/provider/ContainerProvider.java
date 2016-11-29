@@ -53,6 +53,7 @@ public class ContainerProvider {
   public static final String AIRT_TWO_PARAM = "AIRTTwoParam";
   public static final String AIRT_BYTE_NINE_PARAM = "AIRTByteNineParam";
   public static final String ES_STREAM = "ESStream";
+  public static final String ES_STREAM_SERVER_PAGINATION = "ESStreamServerSidePaging";
 
   private final CsdlEdmProvider prov;
 
@@ -91,6 +92,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESMedia"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESInvisible"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESServerSidePaging"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, ES_STREAM_SERVER_PAGINATION));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllNullable"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyNav"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyNav"));
@@ -359,8 +361,21 @@ public class ContainerProvider {
                         .setValue("Divides the response to several pages using $skiptoken and providing a nextLink")),
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
-
-      } else if (name.equals("ESAllNullable")) {
+        
+      } else if (name.equals(ES_STREAM_SERVER_PAGINATION)) {  
+        return new CsdlEntitySet()
+          .setName(ES_STREAM_SERVER_PAGINATION)
+          .setType(EntityTypeProvider.nameETStreamServerSidePaging)
+          .setAnnotations(Arrays.asList(
+              new CsdlAnnotation().setTerm("Core.Description")
+                  .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                      .setValue("Divides the stream response to several pages using $skiptoken and providing a nextLink"
+                          + "Entity set will be streamed and it contains entities with various properties of " +
+                          "type primitive, collection of primitive, complex and collection of complex")),
+              new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                  new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
+        
+        } else if (name.equals("ESAllNullable")) {
         return new CsdlEntitySet()
             .setName("ESAllNullable")
             .setType(EntityTypeProvider.nameETAllNullable)

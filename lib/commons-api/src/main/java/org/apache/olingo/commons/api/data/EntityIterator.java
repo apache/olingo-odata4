@@ -28,7 +28,8 @@ import java.util.List;
  * Data representation as an Iterator for a collection of single entities.
  */
 public abstract class EntityIterator extends AbstractEntityCollection implements Iterator<Entity> {
-
+  
+  private URI next;
   /**
    * {@inheritDoc}
    */
@@ -80,12 +81,12 @@ public abstract class EntityIterator extends AbstractEntityCollection implements
   }
 
   /**
-   * {@inheritDoc}
-   * <p/>
-   * <b>ATTENTION:</b> <code>getNext</code> is not supported by default.
+   * Gets next link.
+   *
+   * @param next next link.
    */
   public URI getNext() {
-    throw new ODataNotSupportedException("Entity Iterator does not support getNext()");
+    return next;
   }
 
   /**
@@ -95,5 +96,14 @@ public abstract class EntityIterator extends AbstractEntityCollection implements
    */
   public URI getDeltaLink() {
     throw new ODataNotSupportedException("Entity Iterator does not support getDeltaLink()");
+  }
+  
+  /**
+   * Sets next link.
+   *
+   * @param next next link.
+   */
+  public void setNext(final URI next) {
+    this.next = next;
   }
 }

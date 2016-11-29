@@ -22,6 +22,7 @@ import org.apache.olingo.commons.api.edm.EdmType;
 
 /**
  * Represents a literal expression node in the expression tree
+ * Literal is not validated by default
  */
 public interface Literal extends Expression {
 
@@ -39,5 +40,5 @@ public interface Literal extends Expression {
    * @return Type of the literal if detected. The type of the literal is guessed by the parser.
    */
   public EdmType getType();
-
+  
 }

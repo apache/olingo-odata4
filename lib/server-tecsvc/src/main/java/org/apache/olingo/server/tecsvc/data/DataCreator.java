@@ -76,6 +76,7 @@ public class DataCreator {
     data.put("ESTwoKeyNav", createESTwoKeyNav(edm, odata));
     data.put("ESCompCollComp", createESCompCollComp(edm, odata));
     data.put("ESServerSidePaging", createESServerSidePaging(edm, odata));
+    data.put("ESStreamServerSidePaging", createESStreamServerSidePaging(edm, odata));
     data.put("ESTwoKeyTwoPrim", createESTwoKeyTwoPrim(edm, odata));
     data.put("ESAllNullable", createESAllNullable(edm, odata));
     data.put("ESTwoBase", createESTwoBase(edm, odata));
@@ -496,6 +497,37 @@ public class DataCreator {
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETServerSidePaging));
     createEntityId(edm, odata, "ESServerSidePaging", entityCollection);
     createOperations("ESServerSidePaging", entityCollection, EntityTypeProvider.nameETServerSidePaging);
+    return entityCollection;
+  }
+  
+  private EntityCollection createESStreamServerSidePaging(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    for (short i = 1; i <= 503; i++) {
+
+      Link readLink = new Link();
+      readLink.setRel(Constants.NS_MEDIA_READ_LINK_REL);
+      readLink.setHref("readLink");
+      
+      entityCollection.getEntities().add(new Entity()
+          .addProperty(createPrimitive("PropertyInt16", i))
+          .addProperty(new Property(null, "PropertyStream", ValueType.PRIMITIVE, readLink)));
+
+      Link editLink = new Link();
+      editLink.setRel(Constants.NS_MEDIA_EDIT_LINK_REL);
+      editLink.setHref("http://mediaserver:1234/editLink");
+      editLink.setMediaETag("eTag");
+      editLink.setType("image/jpeg");
+
+      entityCollection.getEntities().add(new Entity()
+          .addProperty(createPrimitive("PropertyInt16", ++i))
+          .addProperty(new Property(null, "PropertyStream", ValueType.PRIMITIVE, editLink)));   
+    }
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETStreamServerSidePaging));
+    
+    createEntityId(edm, odata, "ESStreamServerSidePaging", entityCollection);
+    createOperations("ESStreamServerSidePaging", entityCollection, EntityTypeProvider.nameETStreamServerSidePaging);
     return entityCollection;
   }
 

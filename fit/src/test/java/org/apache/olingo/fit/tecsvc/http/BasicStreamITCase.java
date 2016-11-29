@@ -77,6 +77,83 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertTrue(content.contains("<d:PropertyString>TEST 2->streamed</d:PropertyString>"));
   }
 
+  @Test
+  public void streamESStreamServerSidePagingXml() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamServerSidePaging?$format=xml");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+    assertTrue(content.contains("<a:link rel=\"next\" href="));
+    assertTrue(content.contains("ESStreamServerSidePaging?$format=xml&amp;%24skiptoken=1%2A10\"/>"));
+    assertTrue(content.contains("<a:id>ESStreamServerSidePaging(1)</a:id>"));
+    assertTrue(content.contains("<d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>"));
+    assertTrue(content.contains("<d:PropertyStream m:type=\"Stream\">readLink</d:PropertyStream>"));
+  }
+  
+  @Test
+  public void streamESStreamServerSidePagingNextXml() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamServerSidePaging?$format=xml&$skiptoken=1%2A10");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+    assertTrue(content.contains("<a:link rel=\"next\" href="));
+    assertTrue(content.contains("ESStreamServerSidePaging?$format=xml&amp;%24skiptoken=2%2A10\"/>"));
+    assertTrue(content.contains("<a:id>ESStreamServerSidePaging(11)</a:id>"));
+    assertTrue(content.contains("<d:PropertyInt16 m:type=\"Int16\">11</d:PropertyInt16>"));
+    assertTrue(content.contains("<d:PropertyStream m:type=\"Stream\">readLink</d:PropertyStream>"));
+  }
+  
+  @Test
+  public void streamESStreamServerSidePagingJson() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamServerSidePaging?$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("{\"PropertyInt16\":2,"+
+    "\"PropertyStream@odata.mediaEtag\":\"eTag\",\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}"));
+    assertTrue(content.contains("\"@odata.nextLink\""));
+    assertTrue(content.contains("ESStreamServerSidePaging?$format=json&%24skiptoken=1%2A10"));
+  }
+  
+  
+  @Test
+  public void streamESStreamServerSidePagingJsonNext() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamServerSidePaging?$format=json&$skiptoken=1%2A10");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("{\"PropertyInt16\":12,"+
+    "\"PropertyStream@odata.mediaEtag\":\"eTag\",\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}"));
+    assertTrue(content.contains("\"@odata.nextLink\""));
+    assertTrue(content.contains("ESStreamServerSidePaging?$format=json&%24skiptoken=2%2A10"));
+  }
+  
   @Override
   protected ODataClient getClient() {
     return null;

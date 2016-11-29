@@ -75,6 +75,7 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETMedia));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETFourKeyAlias));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETServerSidePaging));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETStreamServerSidePaging));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAllNullable));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETTwoKeyNav));

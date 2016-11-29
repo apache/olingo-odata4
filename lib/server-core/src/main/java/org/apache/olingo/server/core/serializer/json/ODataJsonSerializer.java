@@ -241,8 +241,8 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         writeEntitySet(metadata, entityType, entitySet,
             options.getExpand(), null, options.getSelect(), options.getWriteOnlyReferences(), null, json);
       }
-      // next link not supported by default for streaming results
-//      writeNextLink(entitySet, json);
+      // next link support for streaming results
+      writeNextLink(entitySet, json);
 
       json.close();
     } catch (final IOException e) {

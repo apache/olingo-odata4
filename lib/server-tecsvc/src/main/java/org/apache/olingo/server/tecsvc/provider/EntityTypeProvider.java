@@ -68,6 +68,8 @@ public class EntityTypeProvider {
       "ETMixPrimCollComp");
   public static final FullQualifiedName nameETServerSidePaging =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "ETServerSidePaging");
+  public static final FullQualifiedName nameETStreamServerSidePaging =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETStreamServerSidePaging");
   public static final FullQualifiedName nameETTwoBase = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoBase");
   public static final FullQualifiedName nameETTwoBaseTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoBaseTwoKeyNav");
@@ -277,6 +279,15 @@ public class EntityTypeProvider {
           .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
               PropertyProvider.propertyString_NotNullable));
 
+    }else if (entityTypeName.equals(nameETStreamServerSidePaging)) {
+      return new CsdlEntityType()
+          .setName(nameETStreamServerSidePaging.getName())
+          .setKey(Arrays.asList(
+              new CsdlPropertyRef()
+                  .setName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable,
+              PropertyProvider.propertyStream));     
     } else if (entityTypeName.equals(nameETAllNullable)) {
       return new CsdlEntityType()
           .setName("ETAllNullable")

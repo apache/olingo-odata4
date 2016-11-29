@@ -314,7 +314,9 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
           && entitySet.getCount() != null) {
         writeCount(entitySet, writer);
       }
-
+      if (entitySet!=null && entitySet.getNext() != null) {
+        writeNextLink(entitySet, writer);
+      }
       boolean writeOnlyRef = (options != null && options.getWriteOnlyReferences());
       if (options == null) {
         writeEntitySet(metadata, entityType, entitySet, null, null, null, null, writer, writeOnlyRef,null);
