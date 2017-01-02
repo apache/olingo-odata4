@@ -21,20 +21,26 @@ package org.apache.olingo.server.core.serializer.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ComplexIterator;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.PrimitiveIterator;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -45,6 +51,8 @@ import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.ODataContentWriteErrorCallback;
+import org.apache.olingo.server.api.ODataContentWriteErrorContext;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ComplexSerializerOptions;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
@@ -55,6 +63,7 @@ import org.apache.olingo.server.api.serializer.ReferenceCollectionSerializerOpti
 import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
@@ -2189,6 +2198,106 @@ public class ODataXmlSerializerTest {
   }
 
   @Test
+  public void primitiveCollectionStreamed() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCollAllPrim");
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("CollPropertyString");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
+
+    final Iterator<?> primitiveIterator = property.asCollection().iterator();
+
+    final PrimitiveIterator valueProvider = new PrimitiveIterator(property.getName()) {
+      @Override
+      public boolean hasNext() {
+        return primitiveIterator.hasNext();
+      }
+
+      @Override
+      public Object next() {
+        return primitiveIterator.next();
+      }
+    };
+
+    final SerializerStreamResult serializerStreamResult = serializer.primitiveCollectionStreamed(
+            metadata,
+            (EdmPrimitiveType) edmProperty.getType(),
+            valueProvider,
+            PrimitiveSerializerOptions.with()
+                    .contextURL(ContextURL.with()
+                         .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName())
+                         .build())
+                    .build());
+
+    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    serializerStreamResult.getODataContent().write(bout);
+
+    final String resultString = new String(bout.toByteArray(), "UTF-8");
+
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>"
+            + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+            + "m:context=\"$metadata#ESCollAllPrim(1)/CollPropertyString\" "
+            + "m:metadata-etag=\"metadataETag\"  m:type=\"#Collection(String)\">"
+            + "<m:element>Employee1@company.example</m:element>"
+            + "<m:element>Employee2@company.example</m:element>"
+            + "<m:element>Employee3@company.example</m:element>"
+            + "</m:value>";
+    checkXMLEqual(expected, resultString);
+  }
+
+  @Test
+  public void primitiveCollectionStreamedWithError() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCollAllPrim");
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("CollPropertyString");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
+
+    final Iterator<?> primitiveIterator = property.asCollection().iterator();
+
+    // Note - We combine returning null value with serialization option of nullable to throw the error
+    final PrimitiveIterator valueProvider = new PrimitiveIterator(property.getName()) {
+      @Override
+      public boolean hasNext() {
+        return primitiveIterator.hasNext();
+      }
+
+      @Override
+      public Object next() {
+        return null;
+      }
+    };
+
+    final ODataContentWriteErrorCallback errorCallback = new ODataContentWriteErrorCallback() {
+      @Override
+      public void handleError(ODataContentWriteErrorContext context, WritableByteChannel channel) {
+        try {
+          final String msgKey = context.getODataLibraryException().getMessageKey().getKey();
+          final String toChannel = "ERROR : " + msgKey;
+          channel.write(ByteBuffer.wrap(toChannel.getBytes()));
+        } catch (IOException e) {
+          throw new RuntimeException("Error in error.");
+        }
+      }
+    };
+
+    final SerializerStreamResult serializerStreamResult =
+            serializer.primitiveCollectionStreamed(
+                    metadata,
+                    (EdmPrimitiveType) edmProperty.getType(),
+                    valueProvider,
+                    PrimitiveSerializerOptions.with()
+                            .contextURL(ContextURL.with()
+                                  .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName())
+                                  .build())
+                            .writeContentErrorCallback(errorCallback)
+                            .nullable(false)
+                            .build());
+
+    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    serializerStreamResult.getODataContent().write(bout);
+
+    final String resultString = new String(bout.toByteArray(), "UTF-8");
+    Assert.assertEquals("ERROR : WRONG_PROPERTY_VALUE", resultString);
+  }
+
+  @Test
   public void complexProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyComp");
@@ -2246,6 +2355,116 @@ public class ODataXmlSerializerTest {
         "  </m:element>\n" +
         "</m:value>";
     checkXMLEqual(expected, resultString);
+  }
+
+  @Test
+  public void complexCollectionStreamed() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("CollPropertyComp");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
+
+    final Iterator<?> complexIterator = property.asCollection().iterator();
+
+    final ComplexIterator valueProvider = new ComplexIterator() {
+      @Override
+      public boolean hasNext() {
+        return complexIterator.hasNext();
+      }
+
+      @Override
+      public ComplexValue next() {
+        return (ComplexValue) complexIterator.next();
+      }
+    };
+
+    final SerializerStreamResult serializerStreamResult = serializer.complexCollectionStreamed(
+            metadata,
+            (EdmComplexType) edmProperty.getType(),
+            valueProvider,
+            ComplexSerializerOptions.with()
+                .contextURL(ContextURL.with()
+                    .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
+                    .build())
+                .build()
+    );
+
+    final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    serializerStreamResult.getODataContent().write(byteArrayOutputStream);
+
+    final String resultString = new String(byteArrayOutputStream.toByteArray(), "UTF-8");
+
+    String expected = "<?xml version='1.0' encoding='UTF-8'?>\n"
+        + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+        + "m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\"\n" +
+        "  m:context=\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\"\n" +
+        "  m:metadata-etag=\"metadataETag\">\n" +
+        "  <m:element>\n" +
+        "    <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
+        "    <d:PropertyString>TEST 1</d:PropertyString>\n" +
+        "  </m:element>\n" +
+        "  <m:element>\n" +
+        "    <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" +
+        "    <d:PropertyString>TEST 2</d:PropertyString>\n" +
+        "  </m:element>\n" +
+        "  <m:element>\n" +
+        "    <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" +
+        "    <d:PropertyString>TEST 3</d:PropertyString>\n" +
+        "  </m:element>\n" +
+        "</m:value>";
+    checkXMLEqual(expected, resultString);
+  }
+
+  @Test
+  public void complexCollectionStreamedWithError() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("CollPropertyComp");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
+
+    final Iterator<?> complexIterator = property.asCollection().iterator();
+
+    final ComplexIterator valueProvider = new ComplexIterator() {
+      @Override
+      public boolean hasNext() {
+        return complexIterator.hasNext();
+      }
+
+      @Override
+      public ComplexValue next() {
+        return new ComplexValue();
+      }
+    };
+
+    final ODataContentWriteErrorCallback errorCallback = new ODataContentWriteErrorCallback() {
+      @Override
+      public void handleError(ODataContentWriteErrorContext context, WritableByteChannel channel) {
+        try {
+          String msgKey = context.getODataLibraryException().getMessageKey().getKey();
+          String toChannel = "ERROR : " + msgKey;
+          channel.write(ByteBuffer.wrap(toChannel.getBytes("UTF-8")));
+        } catch (IOException e) {
+          throw new RuntimeException("Error in error.");
+        }
+      }
+    };
+
+    final SerializerStreamResult serializerStreamResult =
+        serializer.complexCollectionStreamed(
+            metadata,
+            (EdmComplexType) edmProperty.getType(),
+            valueProvider,
+            ComplexSerializerOptions.with()
+                .contextURL(ContextURL.with()
+                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
+                     .build())
+                .writeContentErrorCallback(errorCallback)
+                .build());
+
+    final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    serializerStreamResult.getODataContent().write(byteArrayOutputStream);
+
+    final String resultString = new String(byteArrayOutputStream.toByteArray(), "UTF-8");
+    Assert.assertEquals("ERROR : MISSING_PROPERTY", resultString);
   }
 
   @Test

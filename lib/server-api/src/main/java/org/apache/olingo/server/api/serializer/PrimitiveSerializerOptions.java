@@ -20,6 +20,7 @@ package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.server.api.ODataContentWriteErrorCallback;
 
 /** Options for the OData serializer. */
 public final class PrimitiveSerializerOptions {
@@ -31,6 +32,7 @@ public final class PrimitiveSerializerOptions {
   private Integer scale;
   private Boolean isUnicode;
   private String xml10InvalidCharReplacement;
+  private ODataContentWriteErrorCallback odataContentWriteErrorCallback;
 
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -67,6 +69,18 @@ public final class PrimitiveSerializerOptions {
     return xml10InvalidCharReplacement;
   }  
   
+
+  /**
+   * Gets the callback which is used in case of an exception during
+   * write of the content (in case the content will be written/streamed
+   * in the future)
+   * @return callback which is used in case of an exception during
+   * write of the content
+   *
+   */
+  public ODataContentWriteErrorCallback getODataContentWriteErrorCallback() {
+    return odataContentWriteErrorCallback;
+  }
 
   private PrimitiveSerializerOptions() {}
 
@@ -135,7 +149,12 @@ public final class PrimitiveSerializerOptions {
       options.xml10InvalidCharReplacement = replacement;
       return this;
     } 
-    
+
+    public Builder writeContentErrorCallback(ODataContentWriteErrorCallback ODataContentWriteErrorCallback) {
+      options.odataContentWriteErrorCallback = ODataContentWriteErrorCallback;
+      return this;
+    }
+
     /** Builds the OData serializer options. */
     public PrimitiveSerializerOptions build() {
       return options;

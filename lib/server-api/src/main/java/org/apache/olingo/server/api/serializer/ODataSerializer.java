@@ -19,10 +19,12 @@
 package org.apache.olingo.server.api.serializer;
 
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.ComplexIterator;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.PrimitiveIterator;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -116,6 +118,16 @@ public interface ODataSerializer {
       PrimitiveSerializerOptions options) throws SerializerException;
 
   /**
+   * Writes streamed primitive-collection data into OutputStream.
+   * @param metadata metadata for the service
+   * @param type     the {@link EdmEntityType}
+   * @param iterator the data of the complex collection
+   * @param options  options for the serializer
+   */
+  SerializerStreamResult primitiveCollectionStreamed(ServiceMetadata metadata, EdmPrimitiveType type,
+      PrimitiveIterator iterator, PrimitiveSerializerOptions options) throws SerializerException;
+
+  /**
    * Writes data of a collection of complex-type instances into an InputStream.
    * @param metadata metadata for the service
    * @param type complex type
@@ -124,6 +136,15 @@ public interface ODataSerializer {
    */
   SerializerResult complexCollection(ServiceMetadata metadata, EdmComplexType type, Property property,
       ComplexSerializerOptions options) throws SerializerException;
+   /**
+    * Writes streamed complex-collection data into OutputStream.
+    * @param metadata metadata for the service
+    * @param type     the {@link EdmEntityType}
+    * @param iterator the data of the complex collection
+    * @param options  options for the serializer
+    */
+   SerializerStreamResult complexCollectionStreamed(ServiceMetadata metadata, EdmComplexType type,
+       ComplexIterator iterator, ComplexSerializerOptions options) throws SerializerException;
 
   /**
    * Writes a single entity reference into an InputStream.

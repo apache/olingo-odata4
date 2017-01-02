@@ -27,10 +27,8 @@ import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.ODataContent;
-import org.apache.olingo.server.api.ODataLibraryException;
-import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.ODataContentWriteErrorCallback;
-import org.apache.olingo.server.api.ODataContentWriteErrorContext;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -139,24 +137,6 @@ public class ODataWritableContent implements ODataContent {
       ODataSerializer serializer, ServiceMetadata metadata,
       EntityCollectionSerializerOptions options) {
     return new ODataWritableContentBuilder(iterator, entityType, serializer, metadata, options);
-  }
-
-  public static class WriteErrorContext implements ODataContentWriteErrorContext {
-    private ODataLibraryException exception;
-
-    public WriteErrorContext(ODataLibraryException exception) {
-      this.exception = exception;
-    }
-
-    @Override
-    public Exception getException() {
-      return exception;
-    }
-
-    @Override
-    public ODataLibraryException getODataLibraryException() {
-      return exception;
-    }
   }
 
   public static class ODataWritableContentBuilder {
