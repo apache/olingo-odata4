@@ -83,7 +83,7 @@
     <maven.bundle.plugin.version>2.5.3</maven.bundle.plugin.version>
     <hc.client.version>4.2.6</hc.client.version>
     <hc.core.version>4.2.5</hc.core.version>
-    <jackson.version>2.4.2</jackson.version>
+    <jackson.version>2.7.8</jackson.version>
     <aalto-xml.version>0.9.10</aalto-xml.version>
 
     <android.platform.version>4.1.1.4</android.platform.version>
