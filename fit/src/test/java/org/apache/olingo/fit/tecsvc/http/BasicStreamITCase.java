@@ -20,6 +20,7 @@ package org.apache.olingo.fit.tecsvc.http;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -153,6 +154,89 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertTrue(content.contains("\"@odata.nextLink\""));
     assertTrue(content.contains("ESStreamServerSidePaging?$format=json&%24skiptoken=2%2A10"));
   }
+  
+  
+  @Test
+  public void streamCountXml() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamServerSidePaging?$count=true&$format=xml");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+    assertTrue(content.contains("<a:link rel=\"next\" href="));
+    assertTrue(content.contains("ESStreamServerSidePaging?$count=true&amp;$format=xml&amp;%24skiptoken=1%2A10\"/>"));
+    assertTrue(content.contains("<a:id>ESStreamServerSidePaging(1)</a:id>"));
+    assertTrue(content.contains("<m:count>504</m:count>"));
+    assertTrue(content.contains("<d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>"));
+    assertTrue(content.contains("<d:PropertyStream m:type=\"Stream\">readLink</d:PropertyStream>"));
+  }
+  
+   
+  @Test
+  public void streamCountJson() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamServerSidePaging?$count=true&$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("{\"PropertyInt16\":2,"+
+    "\"PropertyStream@odata.mediaEtag\":\"eTag\",\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}"));
+    assertTrue(content.contains("\"@odata.nextLink\""));
+    assertTrue(content.contains("ESStreamServerSidePaging?$count=true&$format=json&%24skiptoken=1%2A10"));
+    assertTrue(content.contains("\"@odata.count\":504"));
+  }
+  
+  @Test
+  public void streamCountFalsetXml() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamServerSidePaging?$count=false&$format=xml");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+    assertTrue(content.contains("<a:link rel=\"next\" href="));
+    assertTrue(content.contains("ESStreamServerSidePaging?$count=false&amp;$format=xml&amp;%24skiptoken=1%2A10\"/>"));
+    assertTrue(content.contains("<a:id>ESStreamServerSidePaging(1)</a:id>"));
+    assertTrue(content.contains("<d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>"));
+    assertTrue(content.contains("<d:PropertyStream m:type=\"Stream\">readLink</d:PropertyStream>"));
+    assertFalse(content.contains("<m:count>504</m:count>"));
+    }
+  
+   
+  @Test
+  public void streamCountFalseJson() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamServerSidePaging?$count=false&$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("{\"PropertyInt16\":2,"+
+    "\"PropertyStream@odata.mediaEtag\":\"eTag\",\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}"));
+    assertTrue(content.contains("\"@odata.nextLink\""));
+    assertTrue(content.contains("ESStreamServerSidePaging?$count=false&$format=json&%24skiptoken=1%2A10"));
+    assertFalse(content.contains("\"@odata.count\":504"));
+    }
   
   @Override
   protected ODataClient getClient() {

@@ -30,6 +30,8 @@ import java.util.List;
 public abstract class EntityIterator extends AbstractEntityCollection implements Iterator<Entity> {
   
   private URI next;
+  
+  private Integer count;
   /**
    * {@inheritDoc}
    */
@@ -72,18 +74,16 @@ public abstract class EntityIterator extends AbstractEntityCollection implements
   }
 
   /**
-   * {@inheritDoc}
-   * <p/>
-   * <b>ATTENTION:</b> <code>getCount</code> is not supported by default.
+   * Gets count
+   * 
    */
   public Integer getCount() {
-    throw new ODataNotSupportedException("Entity Iterator does not support getCount()");
+    return count;
   }
 
   /**
    * Gets next link.
    *
-   * @param next next link.
    */
   public URI getNext() {
     return next;
@@ -105,5 +105,14 @@ public abstract class EntityIterator extends AbstractEntityCollection implements
    */
   public void setNext(final URI next) {
     this.next = next;
+  }
+  
+  /**
+   * Sets count.
+   *
+   * @param count count value.
+   */
+  public void setCount(final Integer count) {
+    this.count = count;
   }
 }

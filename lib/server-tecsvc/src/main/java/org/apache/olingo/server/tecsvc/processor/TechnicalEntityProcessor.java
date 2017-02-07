@@ -633,6 +633,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     EntityIterator streamCollection = new EntityIterator() {
       Iterator<Entity> entityIterator = entityCollection.iterator();
       private URI next = entityCollection.getNext();
+      private Integer count = entityCollection.getCount();
       @Override
       public List<Operation> getOperations() {
         return entityCollection.getOperations();
@@ -640,6 +641,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       
       public URI getNext() {
         return next;
+      }
+      
+      public Integer getCount() {
+        return count;
       }
       
       @Override
