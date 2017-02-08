@@ -22,6 +22,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,11 +35,19 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.data.ContextURL;
+import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntityIterator;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataResponse;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
+import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.core.deserializer.batch.BatchLineReader;
 import org.junit.Test;
 
@@ -489,5 +498,184 @@ public class BatchResponseSerializerTest {
       b.append(c);
     }
     return b.toString();
+  }
+  
+  @Test
+  public void testODataContentResponse() throws Exception {
+    List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
+    final EdmEntityType edmEntityType = mock(EdmEntityType.class);
+    EntityIterator entityCollection = new EntityIterator() {
+      
+      @Override
+      public Entity next() {
+        return null;
+      }
+      
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+    };  
+
+    SerializerStreamResult serializerResult = OData.newInstance().
+        createSerializer(ContentType.APPLICATION_JSON).entityCollectionStreamed(
+        serviceMetadata,
+        edmEntityType,
+        entityCollection,
+        EntityCollectionSerializerOptions.with().contextURL
+        (ContextURL.with().oDataPath("http://host/svc").build()).build());
+    ODataResponse response = new ODataResponse();
+    response.setODataContent(serializerResult.getODataContent());
+    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    parts.add(new ODataResponsePart(response, false));
+
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+
+    assertNotNull(content);
+
+    final BatchLineReader reader = new BatchLineReader(content);
+    final List<String> body = reader.toList();
+    reader.close();
+
+    int line = 0;
+    assertEquals(9, body.size());
+    assertEquals("--" + BOUNDARY + CRLF, body.get(line++));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 47" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("{\"@odata.context\":\"../../$metadata\",\"value\":[]}" + CRLF, body.get(line++));
+    assertEquals("--" + BOUNDARY + "--" + CRLF, body.get(line++));
+  }
+  
+  @Test
+  public void changeSetODataContentResponse() throws Exception {
+    List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
+    final EdmEntityType edmEntityType = mock(EdmEntityType.class);
+    EntityIterator entityCollection = new EntityIterator() {
+      
+      @Override
+      public Entity next() {
+        return null;
+      }
+      
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+    };  
+
+    SerializerStreamResult serializerResult = OData.newInstance().
+        createSerializer(ContentType.APPLICATION_JSON).entityCollectionStreamed(
+        serviceMetadata,
+        edmEntityType,
+        entityCollection,
+        EntityCollectionSerializerOptions.with().contextURL
+        (ContextURL.with().oDataPath("http://host/svc").build()).build());
+    ODataResponse response = new ODataResponse();
+    response.setODataContent(serializerResult.getODataContent());
+    response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_ID, "1");
+    parts.add(new ODataResponsePart(response, true));
+
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+
+    assertNotNull(content);
+
+    final BatchLineReader reader = new BatchLineReader(content);
+    final List<String> body = reader.toList();
+    reader.close();
+
+    int line = 0;
+    assertEquals(14, body.size());
+    assertEquals("--" + BOUNDARY + CRLF, body.get(line++));
+    assertTrue(body.get(line++).startsWith("Content-Type: multipart/mixed; boundary=changeset_"));
+    assertEquals(CRLF, body.get(line++));
+    assertTrue(body.get(line++).startsWith("--changeset_"));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals("Content-ID: 1" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 204 No Content" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 47" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("{\"@odata.context\":\"../../$metadata\",\"value\":[]}" + CRLF, body.get(line++));
+    assertTrue(body.get(line++).startsWith("--changeset_"));
+    assertEquals("--" + BOUNDARY + "--" + CRLF, body.get(line++));
+  }
+  
+  @Test
+  public void testODataContentWithODataResponse() throws Exception {
+    List<ODataResponsePart> parts = new ArrayList<ODataResponsePart>();
+    
+    ODataResponse response = new ODataResponse();
+    response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.TEXT_PLAIN.toContentTypeString());
+    String bigData = generateData(10000);
+    response.setContent(IOUtils.toInputStream(bigData));
+    parts.add(new ODataResponsePart(response, false));
+    
+    ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
+    final EdmEntityType edmEntityType = mock(EdmEntityType.class);
+    EntityIterator entityCollection = new EntityIterator() {
+      
+      @Override
+      public Entity next() {
+        return null;
+      }
+      
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+    };  
+
+    SerializerStreamResult serializerResult = OData.newInstance().
+        createSerializer(ContentType.APPLICATION_JSON).entityCollectionStreamed(
+        serviceMetadata,
+        edmEntityType,
+        entityCollection,
+        EntityCollectionSerializerOptions.with().contextURL
+        (ContextURL.with().oDataPath("http://host/svc").build()).build());
+    ODataResponse response1 = new ODataResponse();
+    response1.setODataContent(serializerResult.getODataContent());
+    response1.setStatusCode(HttpStatusCode.OK.getStatusCode());
+    parts.add(new ODataResponsePart(response1, false));
+
+    BatchResponseSerializer serializer = new BatchResponseSerializer();
+    final InputStream content = serializer.serialize(parts, BOUNDARY);
+
+    assertNotNull(content);
+
+    final BatchLineReader reader = new BatchLineReader(content);
+    final List<String> body = reader.toList();
+    reader.close();
+
+    int line = 0;
+    assertEquals(18, body.size());
+    assertEquals("--" + BOUNDARY + CRLF, body.get(line++));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 200 OK" + CRLF, body.get(line++));
+    assertEquals("Content-Type: text/plain" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 10000" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals(bigData + CRLF, body.get(line++));
+    assertEquals("--" + BOUNDARY + CRLF, body.get(line++));
+    assertEquals("Content-Type: application/http" + CRLF, body.get(line++));
+    assertEquals("Content-Transfer-Encoding: binary" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("HTTP/1.1 200 OK" + CRLF, body.get(line++));
+    assertEquals("Content-Length: 47" + CRLF, body.get(line++));
+    assertEquals(CRLF, body.get(line++));
+    assertEquals("{\"@odata.context\":\"../../$metadata\",\"value\":[]}" + CRLF, body.get(line++));
+    assertEquals("--" + BOUNDARY + "--" + CRLF, body.get(line++));
   }
 }

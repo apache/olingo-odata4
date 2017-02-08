@@ -35,6 +35,7 @@ import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.server.api.ODataContent;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
 import org.apache.olingo.server.api.serializer.BatchSerializerException;
@@ -243,19 +244,27 @@ public class BatchResponseSerializer {
     }
 
     private byte[] getBody(final ODataResponse response) {
-      if (response == null || response.getContent() == null) {
+      if (response == null || (response.getContent() == null && 
+          response.getODataContent() == null)) {
         return new byte[0];
       }
 
       try {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ByteBuffer inBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-        ReadableByteChannel ic = Channels.newChannel(response.getContent());
-        WritableByteChannel oc = Channels.newChannel(output);
-        while (ic.read(inBuffer) > 0) {
-          inBuffer.flip();
-          oc.write(inBuffer);
-          inBuffer.rewind();
+        if (response.getContent() == null) {
+          if (response.getODataContent() != null) {
+            ODataContent res = response.getODataContent();
+            res.write(Channels.newChannel(output));
+            }
+        } else {
+          ReadableByteChannel ic = Channels.newChannel(response.getContent());
+          WritableByteChannel oc = Channels.newChannel(output);
+          while (ic.read(inBuffer) > 0) {
+            inBuffer.flip();
+            oc.write(inBuffer);
+            inBuffer.rewind();
+          }
         }
         return output.toByteArray();
       } catch (IOException e) {
