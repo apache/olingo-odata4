@@ -63,7 +63,7 @@ public class Util {
       String keyName = key.getName();
       String keyText = key.getText();
 
-      // note: below line doesn't consider: keyProp can be part of a complexType in V4
+      // note: below line doesn't consider: keyProp can be part of a type in V4
       // in such case, it would be required to access it via getKeyPropertyRef()
       // but since this isn't the case in our model, we ignore it in our implementation
       EdmProperty edmKeyProperty = (EdmProperty) edmEntityType.getProperty(keyName);

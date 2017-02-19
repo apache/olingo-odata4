@@ -74,11 +74,10 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.core.ComplexStreamContent;
 import org.apache.olingo.server.core.ODataWritableContent;
-import org.apache.olingo.server.core.PrimitiveStreamContent;
 import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
+import org.apache.olingo.server.core.serializer.SerializerStreamResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
 import org.apache.olingo.server.core.serializer.utils.ExpandSelectHelper;
@@ -1181,7 +1180,9 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   @Override
   public SerializerStreamResult primitiveCollectionStreamed(ServiceMetadata metadata, EdmPrimitiveType type,
           PrimitiveIterator iterator, PrimitiveSerializerOptions options) throws SerializerException {
-    return PrimitiveStreamContent.PrimitiveStreamContentForXml(iterator, type, this, metadata, options);
+    return SerializerStreamResultImpl.with()
+        .content(new ODataWritableContent.PrimitiveStreamContentForXml(iterator,
+            type, this, metadata, options)).build();
   }
 
   public void primitiveCollectionIntoStream(final ServiceMetadata metadata, final EdmPrimitiveType type,
@@ -1276,7 +1277,12 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
   @Override
   public SerializerStreamResult complexCollectionStreamed(ServiceMetadata metadata, EdmComplexType type,
           ComplexIterator iterator, ComplexSerializerOptions options) throws SerializerException {
-    return ComplexStreamContent.ComplexWritableForXml(iterator, type, this, metadata, options);
+    return SerializerStreamResultImpl.with()
+        .content(new ODataWritableContent.ComplexStreamContentForXml(iterator,
+            type,
+            this,
+            metadata,
+            options)).build();
   }
 
   public void complexCollectionIntoStream(final ServiceMetadata metadata, final EdmComplexType type,

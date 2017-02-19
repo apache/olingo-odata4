@@ -79,11 +79,10 @@ import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
-import org.apache.olingo.server.core.ComplexStreamContent;
 import org.apache.olingo.server.core.ODataWritableContent;
-import org.apache.olingo.server.core.PrimitiveStreamContent;
 import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
+import org.apache.olingo.server.core.serializer.SerializerStreamResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContentTypeHelper;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
@@ -662,7 +661,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         }
       }
     } else if (type.getKind() == EdmTypeKind.COMPLEX) {
-      // non-collection case written in writeComplex method directly.
+      // non-collection case written in writeInternal method directly.
       if (edmProperty.isCollection()) {
         json.writeStringField(typeName, 
             "#Collection(" + type.getFullQualifiedName().getFullQualifiedNameAsString() + ")");
@@ -1125,7 +1124,9 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           PrimitiveSerializerOptions options)
           throws SerializerException {
 
-    return PrimitiveStreamContent.PrimitiveStreamContentForJson(iterator, type, this, metadata, options);
+    return SerializerStreamResultImpl.with()
+        .content(new ODataWritableContent.PrimitiveStreamContentForJson(iterator,
+            type, this, metadata, options)).build();
   }
 
   public void primitiveCollectionIntoStream(
@@ -1210,7 +1211,9 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           ComplexSerializerOptions options)
           throws SerializerException {
 
-    return ComplexStreamContent.ComplexWritableForJson(iterator, type, this, metadata, options);
+    return SerializerStreamResultImpl.with()
+        .content(new ODataWritableContent.ComplexStreamContentForJson(iterator,
+            type, this, metadata, options)).build();
   }
 
   public void complexCollectionIntoStream(
