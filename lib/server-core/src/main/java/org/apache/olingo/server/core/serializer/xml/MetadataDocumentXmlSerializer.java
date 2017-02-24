@@ -113,6 +113,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_IS_COMPOSABLE = "IsComposable";
   private static final String XML_IS_BOUND = "IsBound";
   private static final String XML_ENTITY_TYPE = "EntityType";
+  private static final String XML_SINGLETON_TYPE = XML_TYPE;
   private static final String XML_SINGLETON = "Singleton";
   private static final String XML_ACTION = "Action";
   private static final String XML_ACTION_IMPORT = "ActionImport";
@@ -607,7 +608,7 @@ public class MetadataDocumentXmlSerializer {
     for (EdmSingleton singleton : singletons) {
       writer.writeStartElement(XML_SINGLETON);
       writer.writeAttribute(XML_NAME, singleton.getName());
-      writer.writeAttribute(XML_ENTITY_TYPE, getAliasedFullQualifiedName(singleton.getEntityType(), false));
+      writer.writeAttribute(XML_SINGLETON_TYPE, getAliasedFullQualifiedName(singleton.getEntityType(), false));
 
       appendNavigationPropertyBindings(writer, singleton);
       appendAnnotations(writer, singleton);

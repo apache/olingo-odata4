@@ -116,7 +116,7 @@ public class MetadataDocumentTest {
         containsString("<EntitySet Name=\"ESTwoPrim\" EntityType=\"Namespace1_Alias.ETTwoPrim\">"));
 
     assertThat(metadata,
-        containsString("<Singleton Name=\"SINav\" EntityType=\"Namespace1_Alias.ETTwoKeyNav\">"
+        containsString("<Singleton Name=\"SINav\" Type=\"Namespace1_Alias.ETTwoKeyNav\">"
             + "<NavigationPropertyBinding Path=\"NavPropertyETTwoKeyNavMany\" Target=\"ESTwoKeyNav\"/>"
             + "<NavigationPropertyBinding Path=\"NavPropertyETTwoKeyNavOne\" Target=\"ESTwoKeyNav\"/>"
             + "<NavigationPropertyBinding Path=\"NavPropertyETKeyNavOne\" Target=\"ESKeyNav\"/>"

@@ -247,7 +247,7 @@ public class MetadataDocumentXmlSerializerTest {
     assertTrue(metadata.contains("<ComplexType Name=\"CTTwoPrimBase\" BaseType=\"Alias.CTTwoPrim\"/>"));
     assertTrue(metadata.contains("<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"));
     assertTrue(metadata.contains("<EntitySet Name=\"ESAllPrim\" EntityType=\"Alias.ETAbstractBase\"/>"));
-    assertTrue(metadata.contains("<Singleton Name=\"SI\" EntityType=\"Alias.ETAbstractBase\"/>"));
+    assertTrue(metadata.contains("<Singleton Name=\"SI\" Type=\"Alias.ETAbstractBase\"/>"));
     assertTrue(metadata.contains("<ActionImport Name=\"AIRTPrimParam\" Action=\"Alias.UARTPrimParam\"/>"));
     assertTrue(metadata.contains("<FunctionImport Name=\"FINRTInt16\" " +
         "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"/>"));
