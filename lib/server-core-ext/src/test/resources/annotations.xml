@@ -52,6 +52,7 @@
 					</String>
 					<Path>Available/Unit</Path>
 					<String> available)</String>
+					<Annotation Term="OData.Description" String="concat apply"/>
 				</Apply>
 			</Annotation>
 
@@ -79,6 +80,7 @@
 			<Annotation Term="Self.IsPreferredCustomer">
 				<IsOf Type="Self.PreferredCustomer">
 					<Path>Customer</Path>
+					<Annotation Term="OData.Description" String="preferred customer"/>
 				</IsOf>
 			</Annotation>
 
@@ -105,6 +107,7 @@
 							<NavigationPropertyPath>Category</NavigationPropertyPath>
 						</Collection>
 					</PropertyValue>
+                   <Annotation Term="OData.Description" String="descripiton test"/>					
 				</Record>
 			</Annotation>
 

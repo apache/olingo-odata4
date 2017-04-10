@@ -100,6 +100,7 @@ public class MetadataParser {
   private ReferenceResolver referenceResolver = new DefaultReferenceResolver();
   private boolean useLocalCoreVocabularies = true;
   private boolean implicitlyLoadCoreVocabularies = false;
+  private boolean recusivelyLoadReferences = false;
   
   /**
    * Avoid reading the annotations in the $metadata 
@@ -132,6 +133,16 @@ public class MetadataParser {
   }
   
   /**
+   * Load the core libraries from local classpath
+   * @param load true for yes; false otherwise
+   * @return
+   */
+  public MetadataParser recursivelyLoadReferences(boolean load) {
+    this.recusivelyLoadReferences = load;
+    return this;
+  }  
+  
+  /**
    * Load the core vocabularies, irrespective of if they are defined in the $metadata
    * @param load
    * @return
@@ -143,7 +154,7 @@ public class MetadataParser {
   
   public ServiceMetadata buildServiceMetadata(Reader csdl) throws XMLStreamException {
     SchemaBasedEdmProvider provider = buildEdmProvider(csdl, this.referenceResolver,
-        this.implicitlyLoadCoreVocabularies, this.useLocalCoreVocabularies);
+        this.implicitlyLoadCoreVocabularies, this.useLocalCoreVocabularies, true);
     return new ServiceMetadataImpl(provider, provider.getReferences(), null);
   }
 
@@ -151,27 +162,27 @@ public class MetadataParser {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);    
     return buildEdmProvider(reader, this.referenceResolver,
-        this.implicitlyLoadCoreVocabularies, this.useLocalCoreVocabularies);
+        this.implicitlyLoadCoreVocabularies, this.useLocalCoreVocabularies, true);
   }
   
   protected SchemaBasedEdmProvider buildEdmProvider(Reader csdl,
-      ReferenceResolver resolver, boolean loadCore, boolean useLocal)
+      ReferenceResolver resolver, boolean loadCore, boolean useLocal, boolean loadReferenceSchemas)
       throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);    
-    return buildEdmProvider(reader, resolver, loadCore, useLocal);
+    return buildEdmProvider(reader, resolver, loadCore, useLocal, loadReferenceSchemas);
   }
     
   protected SchemaBasedEdmProvider buildEdmProvider(InputStream csdl,
-      ReferenceResolver resolver, boolean loadCore, boolean useLocal)
+      ReferenceResolver resolver, boolean loadCore, boolean useLocal, boolean loadReferenceSchemas)
       throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
-    return buildEdmProvider(reader, resolver, loadCore, useLocal);
+    return buildEdmProvider(reader, resolver, loadCore, useLocal, loadReferenceSchemas);
   } 
   
   protected SchemaBasedEdmProvider buildEdmProvider(XMLEventReader reader,
-      ReferenceResolver resolver, boolean loadCore, boolean useLocal)
+      ReferenceResolver resolver, boolean loadCore, boolean useLocal, boolean loadReferenceSchemas)
       throws XMLStreamException {
     SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider();
     
@@ -211,7 +222,7 @@ public class MetadataParser {
     }
     
     // load all the reference schemas
-    if (resolver != null) {
+    if (resolver != null && loadReferenceSchemas) {
       loadReferencesSchemas(provider, xmlBase.length() == 0 ? null
           : fixXmlBase(xmlBase.toString()), resolver, loadCore, useLocal);
     }
@@ -245,15 +256,17 @@ public class MetadataParser {
             } else {
               // do not implicitly load core vocabularies any more. But if the
               // references loading the core vocabularies try to use local if we can 
-              refProvider = buildEdmProvider(is, resolver, false, useLocal);
+              refProvider = buildEdmProvider(is, resolver, false, useLocal, this.recusivelyLoadReferences);
             }
           }
           
-          CsdlSchema refSchema = refProvider.getSchema(include.getNamespace(), false);
-          provider.addReferenceSchema(include.getNamespace(), refProvider);
-          if (include.getAlias() != null) {
-            refSchema.setAlias(include.getAlias());
-            provider.addReferenceSchema(include.getAlias(), refProvider);
+          if (refProvider != null) {
+            CsdlSchema refSchema = refProvider.getSchema(include.getNamespace(), false);
+            provider.addReferenceSchema(include.getNamespace(), refProvider);
+            if (include.getAlias() != null) {
+              refSchema.setAlias(include.getAlias());
+              provider.addReferenceSchema(include.getAlias(), refProvider);
+            }
           }
         }
       } catch (XMLStreamException e) {
@@ -295,7 +308,7 @@ public class MetadataParser {
     if (schema == null) {
       InputStream is = this.getClass().getClassLoader().getResourceAsStream(resource);
       if (is != null) {
-        SchemaBasedEdmProvider childProvider = buildEdmProvider(is, null, false, false);
+        SchemaBasedEdmProvider childProvider = buildEdmProvider(is, null, false, false, true);
         provider.addVocabularySchema(namespace, childProvider);
       } else {
         throw new XMLStreamException("failed to load "+resource+" core vocabulary");
@@ -654,17 +667,19 @@ public class MetadataParser {
       void build(XMLEventReader reader, StartElement element, T target, String name)
           throws XMLStreamException {
         
-        // attribute based expressions.
-        readAttributeExpressions(element, target);        
-
         // element based expressions
-        for (ConstantExpressionType type:ConstantExpressionType.values()) {
-          if (name.equals(type.name())) {
-            if (reader.peek().isCharacters()) {
-              CsdlExpression expr = new CsdlConstantExpression(type, elementValue(reader, element));
-              write(target, expr);
-            }
-          }        
+        if (!name.equals("Annotation")) {
+          // attribute based expressions.
+          readAttributeExpressions(element, target);        
+          
+          for (ConstantExpressionType type:ConstantExpressionType.values()) {
+            if (name.equals(type.name())) {
+              if (reader.peek().isCharacters()) {
+                CsdlExpression expr = new CsdlConstantExpression(type, elementValue(reader, element));
+                write(target, expr);
+              }
+            }        
+          }
         }
         
         if (name.equals("Collection")) {
@@ -719,6 +734,8 @@ public class MetadataParser {
           expr.setType(attr(element, "Type"));          
           readPropertyValues(reader, element, expr);
           write(target, expr);          
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, (CsdlAnnotatable)target);
         }
       }
     }.read(reader, element, target, "Collection", "AnnotationPath",
@@ -726,7 +743,7 @@ public class MetadataParser {
         "Apply", "Function", "Cast", "If", "IsOf", "LabeledElement",
         "LabeledElementReference", "Null", "Record","Binary", "Bool", "Date",
         "DateTimeOffset", "Decimal", "Duration", "EnumMember", "Float", "Guid",
-        "Int", "String", "TimeOfDay");
+        "Int", "String", "TimeOfDay", "Annotation");
   }
   
   private <T> void readAttributeExpressions(StartElement element, T target)
@@ -781,13 +798,17 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlRecord record, String name)
           throws XMLStreamException {
-        CsdlPropertyValue value = new CsdlPropertyValue();
-        value.setProperty(attr(element, "Property"));
-        readAttributeExpressions(element, value);
-        readExpressions(reader, element, value);
-        record.getPropertyValues().add(value);
+        if (name.equals("PropertyValue")) {
+          CsdlPropertyValue value = new CsdlPropertyValue();
+          value.setProperty(attr(element, "Property"));
+          readAttributeExpressions(element, value);
+          readExpressions(reader, element, value);
+          record.getPropertyValues().add(value);
+        } else if (name.equals("Annotation")) {
+          readAnnotations(reader, element, record);
+        }
       }
-    }.read(reader, element, record, "PropertyValue");    
+    }.read(reader, element, record, "PropertyValue", "Annotation");    
   }  
   
   private void readFunction(XMLEventReader reader, StartElement element, CsdlSchema schema)
@@ -1134,7 +1155,7 @@ public class MetadataParser {
   }
 
   abstract class ElementReader<T> {
-    void read(XMLEventReader reader, StartElement element, T t, String... names)
+    void read(XMLEventReader reader, StartElement parentElement, T t, String... names)
         throws XMLStreamException {
       while (reader.hasNext()) {
         XMLEvent event = reader.peek();
@@ -1153,11 +1174,17 @@ public class MetadataParser {
           continue;
         }
 
+        if (parentElement != null && event.isEndElement()
+            && ((EndElement) event).getName().equals(parentElement.getName())) {
+          // end reached
+          break;
+        }
+
         boolean hit = false;
 
         for (String name : names) {
           if (event.isStartElement()) {
-            element = event.asStartElement();
+            StartElement element = event.asStartElement();
             if (element.getName().getLocalPart().equals(name)) {              
               reader.nextEvent(); // advance cursor start which is current
               build(reader, element, t, name);

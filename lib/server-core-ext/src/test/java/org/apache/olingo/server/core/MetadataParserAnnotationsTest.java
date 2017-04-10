@@ -110,6 +110,9 @@ public class MetadataParserAnnotationsTest {
     assertEquals(7, apply.getParameters().size());
     assertTrue(apply.getParameters().get(1) instanceof CsdlPath);
     assertTrue(apply.getParameters().get(4) instanceof CsdlConstantExpression);
+    
+    assertEquals("OData.Description", apply.getAnnotations().get(0).getTerm());
+    assertEquals("concat apply", apply.getAnnotations().get(0).getExpression().asConstant().getValue());
   }  
   
   @Test
@@ -148,6 +151,10 @@ public class MetadataParserAnnotationsTest {
     CsdlIsOf isOf = (CsdlIsOf)a.getExpression();
     assertEquals("Self.PreferredCustomer", isOf.getType());
     assertTrue(isOf.getValue() instanceof CsdlPath);
+    
+    assertEquals("OData.Description", isOf.getAnnotations().get(0).getTerm());
+    assertEquals("preferred customer", isOf.getAnnotations().get(0).getExpression().asConstant().getValue());
+    
   }
   
   @Test
@@ -186,6 +193,8 @@ public class MetadataParserAnnotationsTest {
     CsdlPropertyValue value = expr.getPropertyValues().get(0);
     assertEquals("NonUpdatableNavigationProperties", value.getProperty());
     assertTrue(value.getValue() instanceof CsdlCollection);
+    assertEquals("OData.Description", expr.getAnnotations().get(0).getTerm());
+    assertEquals("descripiton test", expr.getAnnotations().get(0).getExpression().asConstant().getValue());
     
     CsdlCollection collection = (CsdlCollection)value.getValue(); 
     assertEquals(2, collection.getItems().size());

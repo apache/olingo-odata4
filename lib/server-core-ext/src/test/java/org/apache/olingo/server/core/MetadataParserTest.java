@@ -24,7 +24,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 
 import org.apache.olingo.commons.api.ex.ODataException;
@@ -187,5 +191,26 @@ public class MetadataParserTest {
   public void testParsingWithNoFormat() throws Exception {
     MetadataParser parser = new MetadataParser();
     provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/skip-annotation.xml"));
-  }  
+  } 
+  
+  @Test
+  public void testReferenceLoad() throws Exception {
+    MetadataParser parser = new MetadataParser();
+    parser.recursivelyLoadReferences(false);
+    parser.referenceResolver(new ReferenceResolver() {
+      @Override
+      public InputStream resolveReference(URI uri, String xmlBase) {
+        String str = uri.toASCIIString();
+        if (str.startsWith("http://localhost/")) {
+          try {
+            return new FileInputStream("src/test/resources/"+str.substring(17));
+          } catch (FileNotFoundException e) {
+            return null;
+          }
+        }
+        return null;
+      }
+    });
+    provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/test.xml"));
+  }   
 }
