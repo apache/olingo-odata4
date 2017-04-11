@@ -70,6 +70,55 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
 
     reader.close();
   }
+  
+  /* Tests for custom query options. Services may support additional custom query options
+   * not defined in the OData specification, but they MUST NOT begin with the "$" .*/
+  
+  @Test
+  public void testCustomQuery1() throws IOException {
+    final String content = getRequest("ESAllPrim(32767)");
+    final HttpURLConnection connection = batchWithCustomQuery(content, "#");
+    final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+    assertTrue(reader.readLine().contains("batch_"));
+    checkMimeHeader(reader);
+    blankLine(reader);
+
+    assertEquals("HTTP/1.1 200 OK", reader.readLine());
+    assertEquals("OData-Version: 4.0", reader.readLine());
+    assertEquals("Content-Type: application/json;odata.metadata=minimal", reader.readLine());
+    assertEquals("Content-Length: 605", reader.readLine());
+    blankLine(reader);
+
+    reader.close();
+  }
+  
+  @Test
+  public void testCustomQuery2() throws IOException {
+    final String content = getRequest("ESAllPrim(32767)");
+    final HttpURLConnection connection = batchWithCustomQuery(content, "");
+    final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+    assertTrue(reader.readLine().contains("batch_"));
+    checkMimeHeader(reader);
+    blankLine(reader);
+
+    assertEquals("HTTP/1.1 200 OK", reader.readLine());
+    assertEquals("OData-Version: 4.0", reader.readLine());
+    assertEquals("Content-Type: application/json;odata.metadata=minimal", reader.readLine());
+    assertEquals("Content-Length: 605", reader.readLine());
+    blankLine(reader);
+
+    reader.close();
+  }
+  
+  @Test
+  public void testCustomQuery3() throws IOException {
+    final String content = getRequest("ESAllPrim(32767)");
+    batchFailWithCustomQuery(content, "$");
+  }
+  
+
 
   @Test
   public void testInvalidRelativeURI() throws IOException {
@@ -144,10 +193,26 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
 
     return connection;
   }
+  
+  private HttpURLConnection batchWithCustomQuery(final String content, final String query) 
+      throws IOException {
+    HttpURLConnection connection = getConnectionForCustomQuery(content, query);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    return connection;
+  }
+
+  private HttpURLConnection batchFailWithCustomQuery(final String content, final String query) 
+      throws IOException {
+    final HttpURLConnection connection = getConnectionForCustomQuery(content, query);
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    return connection;
+  }
 
   private HttpURLConnection getConnection(final String content) throws MalformedURLException, IOException,
       ProtocolException {
-    final URL url = new URL(SERVICE_URI + "$batch");
+    final URL url = getUrl();
     final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod(HttpMethod.POST.toString());
     connection.setRequestProperty(HttpHeader.CONTENT_TYPE, CONTENT_TYPE_HEADER_VALUE);
@@ -158,6 +223,44 @@ public class BasicBatchITCase extends AbstractBaseTestITCase {
     writer.close();
     connection.connect();
     return connection;
+  }
+
+  private HttpURLConnection getConnectionForCustomQuery(final String content, final String query) 
+      throws MalformedURLException, IOException, ProtocolException {
+    URL url = null;
+    if(query.equals("$")){
+      url = getUrlForCustomQueryWith$();
+    }else if(query.equals("#")){
+      url = getUrlWithSpecialCharacters();
+    }else{
+      url = getUrlForCustomQuery();
+    }
+    final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.POST.toString());
+    connection.setRequestProperty(HttpHeader.CONTENT_TYPE, CONTENT_TYPE_HEADER_VALUE);
+    connection.setRequestProperty(HttpHeader.ACCEPT, ACCEPT_HEADER_VALUE);
+    connection.setDoOutput(true);
+    final OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+    writer.append(content);
+    writer.close();
+    connection.connect();
+    return connection;
+  }
+  
+  private URL getUrlWithSpecialCharacters() throws MalformedURLException {
+    return new URL(SERVICE_URI + "$batch" + "?#language=de");
+  }
+  
+  private URL getUrlForCustomQuery() throws MalformedURLException {
+    return new URL(SERVICE_URI + "$batch" + "?language=de");
+  }
+  
+  private URL getUrlForCustomQueryWith$() throws MalformedURLException {
+    return new URL(SERVICE_URI + "$batch" + "?$language=de");
+  }
+  
+  private URL getUrl() throws MalformedURLException {
+    return new URL(SERVICE_URI + "$batch");
   }
 
   @Override
