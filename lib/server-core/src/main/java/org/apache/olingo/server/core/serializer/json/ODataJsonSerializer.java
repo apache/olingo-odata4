@@ -485,6 +485,18 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   protected void writeNavigationProperties(final ServiceMetadata metadata,
       final EdmStructuredType type, final Linked linked, final ExpandOption expand, final Integer toDepth,
       final Set<String> ancestors, final JsonGenerator json) throws SerializerException, IOException {
+    if (isODataMetadataFull) {
+      for (final String propertyName : type.getNavigationPropertyNames()) {
+        final Link navigationLink = linked.getNavigationLink(propertyName);
+        if (navigationLink != null) {
+          json.writeStringField(propertyName + Constants.JSON_NAVIGATION_LINK, navigationLink.getHref());  
+        }
+        final Link associationLink = linked.getAssociationLink(propertyName);
+        if (associationLink != null) {
+          json.writeStringField(propertyName + Constants.JSON_ASSOCIATION_LINK, associationLink.getHref());  
+        }
+      }
+    }
     if ((toDepth != null && toDepth > 1) || (toDepth == null && ExpandSelectHelper.hasExpand(expand))) {
       final ExpandItem expandAll = ExpandSelectHelper.getExpandAll(expand);
       for (final String propertyName : type.getNavigationPropertyNames()) {
@@ -541,17 +553,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
             innerOptions == null ? false : innerOptions.isRef(),
             ancestors,
             json);
-        }
-      }
-    } else if (isODataMetadataFull) {
-      for (final String propertyName : type.getNavigationPropertyNames()) {
-        final Link navigationLink = linked.getNavigationLink(propertyName);
-        if (navigationLink != null) {
-          json.writeStringField(propertyName + Constants.JSON_NAVIGATION_LINK, navigationLink.getHref());  
-        }
-        final Link associationLink = linked.getAssociationLink(propertyName);
-        if (associationLink != null) {
-          json.writeStringField(propertyName + Constants.JSON_ASSOCIATION_LINK, associationLink.getHref());  
         }
       }
     }

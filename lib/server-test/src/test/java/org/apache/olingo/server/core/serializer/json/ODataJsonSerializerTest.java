@@ -255,6 +255,100 @@ public class ODataJsonSerializerTest {
   }  
   
   @Test
+  public void entitySetMetadataFullWithExpand() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final EntityCollection entityCol = data.readAll(edmEntitySet);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETTwoPrimOne")));
+    InputStream result = serializerFullMetadata.entityCollection(metadata, edmEntitySet.getEntityType(), entityCol,
+        EntityCollectionSerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expected = "{" + 
+        "\"@odata.context\":\"$metadata#ESAllPrim\"," + 
+        "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+        "\"#olingo.odata.test1.BAESAllPrimRTETAllPrim\":{" + 
+          "\"title\":\"olingo.odata.test1.BAESAllPrimRTETAllPrim\"," + 
+          "\"target\":\"ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim\"" + 
+        "}," + 
+        "\"#olingo.odata.test1.BAESAllPrimRT\":{" + 
+          "\"title\":\"olingo.odata.test1.BAESAllPrimRT\"," + 
+          "\"target\":\"ESAllPrim/olingo.odata.test1.BAESAllPrimRT\"" + 
+        "}," + 
+        "\"#olingo.odata.test1.BFNESAllPrimRTCTAllPrim\":{" + 
+          "\"title\":\"olingo.odata.test1.BFNESAllPrimRTCTAllPrim\"," + 
+          "\"target\":\"ESAllPrim/olingo.odata.test1.BFNESAllPrimRTCTAllPrim\"" + 
+        "}," + 
+        "\"value\":[" + 
+          "{" + 
+            "\"@odata.type\":\"#olingo.odata.test1.ETAllPrim\"," + 
+            "\"@odata.id\":\"ESAllPrim(32767)\"," + 
+            "\"PropertyInt16@odata.type\":\"#Int16\"," + 
+            "\"PropertyInt16\":32767," + 
+            "\"PropertyString\":\"First Resource - positive values\"," + 
+            "\"PropertyBoolean\":true," + 
+            "\"PropertyByte@odata.type\":\"#Byte\"," + 
+            "\"PropertyByte\":255," + 
+            "\"PropertySByte@odata.type\":\"#SByte\"," + 
+            "\"PropertySByte\":127," + 
+            "\"PropertyInt32@odata.type\":\"#Int32\"," + 
+            "\"PropertyInt32\":2147483647," + 
+            "\"PropertyInt64@odata.type\":\"#Int64\"," + 
+            "\"PropertyInt64\":9223372036854775807," + 
+            "\"PropertySingle@odata.type\":\"#Single\"," + 
+            "\"PropertySingle\":1.79E20," + 
+            "\"PropertyDouble\":-1.79E19," + 
+            "\"PropertyDecimal@odata.type\":\"#Decimal\"," + 
+            "\"PropertyDecimal\":34," + 
+            "\"PropertyBinary@odata.type\":\"#Binary\"," + 
+            "\"PropertyBinary\":\"ASNFZ4mrze8=\"," + 
+            "\"PropertyDate@odata.type\":\"#Date\"," + 
+            "\"PropertyDate\":\"2012-12-03\"," + 
+            "\"PropertyDateTimeOffset@odata.type\":\"#DateTimeOffset\"," + 
+            "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," + 
+            "\"PropertyDuration@odata.type\":\"#Duration\"," + 
+            "\"PropertyDuration\":\"PT6S\"," + 
+            "\"PropertyGuid@odata.type\":\"#Guid\"," + 
+            "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," + 
+            "\"PropertyTimeOfDay@odata.type\":\"#TimeOfDay\"," + 
+            "\"PropertyTimeOfDay\":\"03:26:05\"," + 
+            "\"NavPropertyETTwoPrimOne@odata.navigationLink\":\"ESTwoPrim(32767)\"," + 
+            "\"NavPropertyETTwoPrimMany@odata.navigationLink\":\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\"," +
+            "\"NavPropertyETTwoPrimOne\":{" + 
+            "\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\"," + 
+            "\"@odata.id\":\"ESTwoPrim(32767)\"," + 
+            "\"PropertyInt16@odata.type\":\"#Int16\"," + 
+            "\"PropertyInt16\":32767," + 
+            "\"PropertyString\":\"Test String4\"," + 
+            "\"NavPropertyETAllPrimOne@odata.navigationLink\":\"ESAllPrim(32767)\"," + 
+            "\"#olingo.odata.test1.BAETTwoPrimRTString\":{" + 
+            "\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\"," + 
+            "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"" + 
+            "}," + 
+            "\"#olingo.odata.test1.BAETTwoPrimRTCollString\":{" + 
+            "\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollString\"," + 
+            "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollString\"" + 
+            "}," + 
+            "\"#olingo.odata.test1.BAETTwoPrimRTCTAllPrim\":{" + 
+            "\"title\":\"olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"," + 
+            "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCTAllPrim\"" + 
+            "}," + 
+            "\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":{" + 
+            "\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"," + 
+            "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"" + 
+            "}" + 
+            "}," +
+          "\"#olingo.odata.test1.BAETAllPrimRT\":{" + 
+          "\"title\":\"olingo.odata.test1.BAETAllPrimRT\"," + 
+          "\"target\":\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\"" + 
+        "}},";
+
+    Assert.assertTrue(resultString.startsWith(expected));
+  }  
+  
+  @Test
   public void entityAllPrimAllNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
