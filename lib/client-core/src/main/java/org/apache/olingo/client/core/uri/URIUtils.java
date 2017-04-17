@@ -24,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
@@ -36,6 +35,7 @@ import java.util.regex.Pattern;
 import javax.xml.datatype.Duration;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.olingo.commons.core.Encoder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -144,25 +144,23 @@ public final class URIUtils {
   private static String timestamp(final Timestamp timestamp)
       throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
-    return URLEncoder.encode(EdmDateTimeOffset.getInstance().
-        valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-        Constants.UTF8);
+    return Encoder.encode(EdmDateTimeOffset.getInstance().
+        valueToString(timestamp, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
   }
 
   private static String calendar(final Calendar calendar)
       throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
-    return URLEncoder.encode(EdmDateTimeOffset.getInstance().
-        valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null),
-        Constants.UTF8);
+    return Encoder.encode(EdmDateTimeOffset.getInstance().
+        valueToString(calendar, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null));
   }
 
   private static String duration(final Duration duration)
       throws UnsupportedEncodingException, EdmPrimitiveTypeException {
 
-    return EdmDuration.getInstance().toUriLiteral(URLEncoder.encode(EdmDuration.getInstance().
+    return EdmDuration.getInstance().toUriLiteral(Encoder.encode(EdmDuration.getInstance().
         valueToString(duration, null, null,
-            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null), Constants.UTF8));
+            Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)));
   }
 
   private static String quoteString(final String string, final boolean singleQuoteEscape)
@@ -250,12 +248,11 @@ public final class URIUtils {
                                                         ? EdmInt64.getInstance().valueToString(obj, null, null,
                                                             Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null)
                                                         : (obj instanceof Geospatial)
-                                                            ? URLEncoder.encode(EdmPrimitiveTypeFactory.getInstance(
+                                                            ? Encoder.encode(EdmPrimitiveTypeFactory.getInstance(
                                                                 ((Geospatial) obj).getEdmPrimitiveTypeKind()).
                                                                 valueToString(obj, null, null,
                                                                     Constants.DEFAULT_PRECISION,
-                                                                    Constants.DEFAULT_SCALE, null),
-                                                                Constants.UTF8)
+                                                                    Constants.DEFAULT_SCALE, null))
                                                             : (obj instanceof String)
                                                                 ? quoteString((String) obj, singleQuoteEscape)
                                                                 : obj.toString();
@@ -355,12 +352,7 @@ public final class URIUtils {
       inlineParams.deleteCharAt(inlineParams.length() - 1);
     }
 
-    try {
-      return URI.create(baseURI + "(" + URLEncoder.encode(inlineParams.toString(), Constants.UTF8) + ")"
-          + (StringUtils.isNotBlank(rawQuery) ? "?" + rawQuery : StringUtils.EMPTY));
-    } catch (UnsupportedEncodingException e) {
-      throw new IllegalArgumentException("While adding GET parameters", e);
-    }
-
+    return URI.create(baseURI + "(" + Encoder.encode(inlineParams.toString()) + ")"
+        + (StringUtils.isNotBlank(rawQuery) ? "?" + rawQuery : StringUtils.EMPTY));
   }
 }

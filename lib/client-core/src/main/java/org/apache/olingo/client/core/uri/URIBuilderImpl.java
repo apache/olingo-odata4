@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.client.core.uri;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -37,8 +35,8 @@ import org.apache.olingo.client.api.uri.SegmentType;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.api.uri.URISearch;
-import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.core.Decoder;
 import org.apache.olingo.commons.core.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,12 +228,8 @@ public class URIBuilderImpl implements URIBuilder {
   @Override
   public URIBuilder filter(final URIFilter filter) {
     URIBuilder result;
-    try {
-      // decode in order to support @ in parameter aliases
-      result = filter(URLDecoder.decode(filter.build(), Constants.UTF8));
-    } catch (UnsupportedEncodingException e) {
-      result = filter(filter.build());
-    }
+    // decode in order to support @ in parameter aliases
+    result = filter(Decoder.decode(filter.build()));
     return result;
   }
 

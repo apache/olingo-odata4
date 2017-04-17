@@ -33,6 +33,7 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.EdmEnumTypeImpl;
 import org.junit.Test;
 
@@ -88,7 +89,7 @@ public class FilterFactoryTest extends AbstractTest {
     calendar.set(2011, 2, 8, 14, 21, 12);
 
     final URIFilter filter = getFilterFactory().ge("OrderDate", calendar);
-    assertEquals("(OrderDate ge " + URLEncoder.encode("2011-03-08T14:21:12-08:00", Constants.UTF8) + ")",
+    assertEquals("(OrderDate ge " + Encoder.encode("2011-03-08T14:21:12-08:00") + ")",
         filter.build());
   }
 
