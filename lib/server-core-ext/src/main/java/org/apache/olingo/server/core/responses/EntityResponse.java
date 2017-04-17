@@ -215,6 +215,10 @@ public class EntityResponse extends ServiceResponse {
       String propertyType = entity.getProperty(key).getType();
       Object propertyValue = entity.getProperty(key).getValue();
       
+      if (propertyValue == null) {
+        throw new EdmPrimitiveTypeException("The key value for property "+key+" is invalid; Key value cannot be null");
+      }
+      
       if(propertyType.startsWith("Edm.")) {
         propertyType = propertyType.substring(4);
       }
