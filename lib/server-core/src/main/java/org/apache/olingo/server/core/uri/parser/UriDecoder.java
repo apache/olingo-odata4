@@ -48,11 +48,11 @@ public class UriDecoder {
     for (final String option : split(queryOptionString, '&')) {
       final int pos = option.indexOf('=');
       final String name = pos >= 0 ? option.substring(0, pos)  : option;
+      final String text = pos >= 0 ? option.substring(pos + 1) : "";
       //OLINGO-846 We trim the query option text to be more lenient to wrong uri constructors
-      final String text = pos >= 0 ? option.substring(pos + 1).trim() : "";
       queryOptions.add(new CustomQueryOptionImpl()
-          .setName(decode(name))
-          .setText(decode(text)));
+          .setName(decode(name).trim())
+          .setText(decode(text).trim()));
     }
     return queryOptions;
   }
