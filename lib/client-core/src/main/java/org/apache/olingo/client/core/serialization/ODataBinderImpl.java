@@ -470,7 +470,7 @@ public class ODataBinderImpl implements ODataBinder {
             URIUtils.getURI(base, href), title, metadataETag));
       }
     }
-
+    
     for (ClientLink link : odataLinked.getNavigationLinks()) {
       if (!(link instanceof ClientInlineEntity) && !(link instanceof ClientInlineEntitySet)) {
         odataAnnotations(linked.getNavigationLink(link.getName()), link);
@@ -858,10 +858,10 @@ public class ODataBinderImpl implements ODataBinder {
         }
         lcValue.add(getODataProperty(edmPropertyType, property));
       }
-
+      
       odataNavigationLinks(edmType, valuable.asComplex(), lcValue, metadataETag, contextURL);
       odataAnnotations(valuable.asComplex(), lcValue);
-
+      
       value = lcValue;
     } else {
       if (valuable.isGeospatial()) {
@@ -874,31 +874,40 @@ public class ODataBinderImpl implements ODataBinder {
                 : EdmPrimitiveTypeKind.valueOfFQN(type.toString())).
             build();
       } else if (valuable.isPrimitive() || valuable.getValueType() == null) {
-        // fixes non-string values treated as string when no type information is available at de-serialization level
-        if (type != null && !EdmPrimitiveTypeKind.String.getFullQualifiedName().equals(type)
-            && EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
-            && valuable.asPrimitive() instanceof String) {
-
-          final EdmPrimitiveType primitiveType =
-              EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(type.getName()));
-          final Class<?> returnType = primitiveType.getDefaultType().isAssignableFrom(Calendar.class)
-              ? Timestamp.class : primitiveType.getDefaultType();
-          try {
-            valuable.setValue(valuable.getValueType(),
-                primitiveType.valueOfString(valuable.asPrimitive().toString(),
-                    null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
-                    returnType));
-          } catch (EdmPrimitiveTypeException e) {
-            throw new IllegalArgumentException(e);
-          }
+     // fixes non-string values treated as string when no type information is available at de-serialization level
+        Edm edm = null;
+        if (client instanceof EdmEnabledODataClient && type != null) {
+          edm = ((EdmEnabledODataClient) client).getEdm(metadataETag);
         }
-
-        value = client.getObjectFactory().newPrimitiveValueBuilder().
-            setValue(valuable.asPrimitive()).
-            setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
-                ? null
-                : EdmPrimitiveTypeKind.valueOfFQN(type.toString())).
-            build();
+        if (edm != null && edm.getComplexType(type) != null) {
+          ClientComplexValue cValue = client.getObjectFactory().newComplexValue(type.toString());
+          cValue.add(new ClientPropertyImpl(((Property)valuable).getName(), null));
+          value = cValue;
+          } else {
+            if (type != null && !EdmPrimitiveTypeKind.String.getFullQualifiedName().equals(type)
+              && EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
+              && valuable.asPrimitive() instanceof String) {
+  
+            final EdmPrimitiveType primitiveType =
+                EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(type.getName()));
+            final Class<?> returnType = primitiveType.getDefaultType().isAssignableFrom(Calendar.class)
+                ? Timestamp.class : primitiveType.getDefaultType();
+            try {
+              valuable.setValue(valuable.getValueType(),
+                  primitiveType.valueOfString(valuable.asPrimitive().toString(),
+                      null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null,
+                      returnType));
+            } catch (EdmPrimitiveTypeException e) {
+              throw new IllegalArgumentException(e);
+            }
+          }
+          value = client.getObjectFactory().newPrimitiveValueBuilder().
+              setValue(valuable.asPrimitive()).
+              setType(type == null || !EdmPrimitiveType.EDM_NAMESPACE.equals(type.getNamespace())
+                  ? null
+                  : EdmPrimitiveTypeKind.valueOfFQN(type.toString())).
+              build();
+          }
       } else if (valuable.isComplex()) {
         final ClientComplexValue cValue =
             client.getObjectFactory().newComplexValue(type == null ? null : type.toString());

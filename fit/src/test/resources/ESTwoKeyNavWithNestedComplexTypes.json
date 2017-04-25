@@ -1,0 +1,38 @@
+{
+  "@odata.context": "../$metadata#ESTwoKeyNav",
+  "@odata.metadataEtag": "W/\"e5db7a43-370a-44d7-9600-9f0443e6e351\"",
+  "PropertyInt16": 1,
+  "PropertyString": "2",
+  "PropertyComp": {
+	"PropertyInt16": 11,
+	"PropertyComp": {
+	  "PropertyString": "StringValue",
+	  "PropertyBinary": "ASNFZ4mrze8=",
+	  "PropertyBoolean": true,
+	  "PropertyByte": 255,
+	  "PropertyDate": "2012-12-03",
+	  "PropertyDateTimeOffset": null,
+	  "PropertyDecimal": 34,
+	  "PropertySingle": 17900000,
+	  "PropertyDouble": -17900000,
+	  "PropertyDuration": "PT6S",
+	  "PropertyGuid": "01234567-89ab-cdef-0123-456789abcdef",
+	  "PropertyInt16": 32767,
+	  "PropertyInt32": 2147483647,
+	  "PropertyInt64": 9223372036854775807,
+	  "PropertySByte": 127,
+	  "PropertyTimeOfDay": "21:05:59"
+	}
+  },
+  "PropertyCompNav": {
+	"PropertyInt16": 1,
+	"PropertyComp": null
+  },
+  "CollPropertyComp": [],
+  "CollPropertyCompNav": null,
+  "CollPropertyString": [
+	"1",
+	"2"
+  ],
+  "PropertyCompTwoPrim": null
+}
