@@ -69,7 +69,8 @@ public final class ODataErrorResponseChecker {
             statusLine.getReasonPhrase());
       }
 
-      if (statusLine.getStatusCode() >= 500) {
+      if (statusLine.getStatusCode() >= 500 && (error.getDetails() == null || error.getDetails().size() == 0) && 
+          (error.getInnerError() == null || error.getInnerError().size() == 0)) {
         result = new ODataServerErrorException(statusLine);
       } else {
         result = new ODataClientErrorException(statusLine, error);
