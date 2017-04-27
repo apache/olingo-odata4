@@ -1574,4 +1574,34 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertNull(entity.getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().
         get(PROPERTY_COMP_TWO_PRIM).getComplexValue());
   }
+  
+  @Test
+  public void testOLINGO975() throws ODataDeserializerException {
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    assertNotNull(request);
+    setCookieHeader(request);    
+    
+    ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    Edm edm = response.getBody();
+    
+    EdmEnabledODataClient odataClient = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, edm, null);
+    final InputStream input = Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("OdataTypesInBaseAndDerivedTypes.json");
+    ClientEntity entity = odataClient.getReader().readEntity(input, ContentType.JSON);
+    assertEquals("NavPropertyETTwoPrimMany", entity.getNavigationLinks().get(0).getName());
+    assertNotNull(entity.getNavigationLinks().get(0).asInlineEntitySet());
+    assertEquals(2, entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().getEntities().size());
+    assertEquals(3, entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().getEntities().get(0).
+        getProperties().size());
+    assertEquals(1, entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().getEntities().get(1).
+        getProperties().size());
+    assertEquals("olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
+        getEntities().get(0).getTypeName().toString());
+    assertEquals("olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
+        getEntities().get(1).getTypeName().toString());
+    assertEquals("olingo.odata.test1.ETAllPrim", entity.getTypeName().toString());
+  }
 }

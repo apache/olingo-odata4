@@ -333,9 +333,6 @@ public class JsonDeserializer implements ODataDeserializer {
           values.add(child.asText());
         }
       } else if (child.isContainerNode()) {
-        if (child.has(Constants.JSON_TYPE)) {
-          ((ObjectNode) child).remove(Constants.JSON_TYPE);
-        }
         final Object value = fromComplex((ObjectNode) child, codec);
         valueType = ValueType.COLLECTION_COMPLEX;
         values.add(value);
