@@ -1286,7 +1286,7 @@ public class ODataJsonSerializerTest {
     Assert.assertEquals(false, resultString.contains(METADATA_TEXT));
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void selectMissingId() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final EdmEntityType entityType = edmEntitySet.getEntityType();
@@ -1296,20 +1296,19 @@ public class ODataJsonSerializerTest {
     final SelectItem selectItem2 = ExpandSelectMock.mockSelectItem(edmEntitySet, "PropertyBoolean");
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
         selectItem1, selectItem2, selectItem2));
-
-    try {
-    serializer.entity(metadata, entityType, entity,
+      InputStream result = serializer.entity(metadata, entityType, entity,
             EntitySerializerOptions.with()
                 .contextURL(ContextURL.with().entitySet(edmEntitySet)
                     .selectList(helper.buildContextURLSelectList(entityType, null, select))
                     .suffix(Suffix.ENTITY).build())
                 .select(select)
                 .build()).getContent();
-      Assert.fail("Expected exception not thrown!");
-    } catch (final SerializerException e) {
-      Assert.assertEquals(SerializerException.MessageKeys.MISSING_ID, e.getMessageKey());
-      throw e;
-    }
+          Assert.assertNotNull(result);   
+          final String resultString = IOUtils.toString(result);
+           Assert.assertEquals(  "{\"@odata.context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","+
+           "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"@odata.id\":\"ESAllPrim(32767)\","+
+            "\"PropertyBoolean\":true,\"PropertyDate\":\"2012-12-03\"}",
+          resultString);   
   }
 
   @Test

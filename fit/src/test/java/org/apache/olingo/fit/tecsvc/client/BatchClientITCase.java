@@ -161,7 +161,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
     assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals(isJson() ? "605" : "2246", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertEquals(isJson() ? "605" : "2223", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
     assertContentType(oDataResponse.getContentType());
   }
 
@@ -193,7 +193,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
     assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals(isJson() ? "605" : "2246", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertEquals(isJson() ? "605" : "2223", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
     assertContentType(oDataResponse.getContentType());
   }
 
@@ -292,7 +292,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
     assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals(isJson() ? "605" : "2246", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertEquals(isJson() ? "605" : "2223", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
     assertContentType(oDataResponse.getContentType());
 
     // Check second get request
@@ -398,7 +398,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
     assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals(isJson() ? "605" : "2246", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertEquals(isJson() ? "605" : "2223", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
     assertContentType(oDataResponse.getContentType());
 
     // Check second get request

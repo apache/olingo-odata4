@@ -113,15 +113,6 @@ public abstract class ExpandSelectHelper {
     return expand != null && expand.getExpandItems() != null && !expand.getExpandItems().isEmpty();
   }
 
-  public static boolean isExpandAll(final ExpandOption expand) {
-    for (final ExpandItem item : expand.getExpandItems()) {
-      if (item.isStar()) {
-        return true;
-      }
-    }
-    return false;
-  }
-  
   public static ExpandItem getExpandAll(final ExpandOption expand) {
       for (final ExpandItem item : expand.getExpandItems()) {
         if (item.isStar()) {

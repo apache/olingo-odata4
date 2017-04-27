@@ -217,7 +217,7 @@ public class ExpandSystemQueryOptionHandler {
     newEntity.getAssociationLinks().addAll(entity.getAssociationLinks());
     newEntity.getNavigationBindings().addAll(entity.getNavigationBindings());
     newEntity.getOperations().addAll(entity.getOperations());
-
+    newEntity.getNavigationLinks().addAll(entity.getNavigationLinks());
     return newEntity;
   }
 
