@@ -149,6 +149,10 @@ public class ExpressionParserTest {
 
     expression = parseExpression("-(5 add 5)");
     assertEquals("{MINUS {5 ADD 5}}", expression.toString());
+    
+    expression = parseExpression("-( 5 add 5\t)");
+    assertEquals("{MINUS {5 ADD 5}}", expression.toString());
+    
   }
 
   @Test
@@ -191,6 +195,8 @@ public class ExpressionParserTest {
     wrongExpression("trim()");
     wrongExpression("trim(1)");
     wrongExpression("ceiling('1.2')");
+    
+    assertEquals("{trim ['abc']}", parseExpression("trim( 'abc' )").toString());
   }
 
   @Test
@@ -209,6 +215,8 @@ public class ExpressionParserTest {
 
     wrongExpression("concat('a')");
     wrongExpression("endswith('a',1)");
+    
+    assertEquals("{concat ['a', 'b']}", parseExpression("concat( 'a' ,\t'b' )").toString());
 }
 
   @Test
@@ -227,6 +235,8 @@ public class ExpressionParserTest {
     wrongExpression("substring(1,2)");
     wrongExpression("cast(1,2)");
     wrongExpression("isof(Edm.Int16,2)");
+    
+    assertEquals("{cast [42, Edm.SByte]}", parseExpression("cast( 42\t, Edm.SByte        )").toString());
   }
 
   private void parseMethod(TokenKind kind, String... parameters) throws UriParserException, UriValidationException {

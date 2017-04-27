@@ -251,6 +251,7 @@ public class ExpandParser {
 
         } else if (tokenizer.next(TokenKind.SEARCH)) {
           ParserHelper.requireNext(tokenizer, TokenKind.EQ);
+          ParserHelper.bws(tokenizer);
           systemQueryOption = new SearchParser().parse(tokenizer);
 
         } else if (!forRef && !forCount && tokenizer.next(TokenKind.SELECT)) {
