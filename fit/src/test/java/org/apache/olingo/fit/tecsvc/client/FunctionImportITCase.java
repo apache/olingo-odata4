@@ -41,6 +41,7 @@ import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.uri.ParameterAlias;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.apache.olingo.fit.util.StringHelper;
 import org.junit.Test;
 
 public class FunctionImportITCase extends AbstractParamTecSvcITCase {
@@ -387,5 +388,137 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
     parameters.put("ParameterInt16", getFactory().newPrimitiveValueBuilder().buildInt32(parameterInt16));
     parameters.put("ParameterString", getFactory().newPrimitiveValueBuilder().buildString(parameterString));
     return parameters;
+  }
+  
+  @Test
+  public void test1OLINGO753() throws Exception {
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    String parameterString = "1";
+    final ClientPrimitiveValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+        buildString(parameterString);
+    parameters.put("ParameterString", value);
+    
+    ODataInvokeRequest<ClientEntitySet> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESKeyNav").
+            appendOperationCallSegment("olingo.odata.test1.BFCESKeyNavRTETKeyNavParam").
+            appendNavigationSegment("NavPropertyETTwoKeyNavMany").build(),
+            ClientEntitySet.class, parameters);
+    assertNotNull(request);
+    setCookieHeader(request);
+
+    final ODataInvokeResponse<ClientEntitySet> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    final ClientEntitySet entity = response.getBody();
+    assertNotNull(entity);
+    assertEquals(3, entity.getEntities().size());
+  }
+  
+  @Test
+  public void test2OLINGO753() throws Exception {
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    Short parameterInt = 1;
+    final ClientPrimitiveValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+        buildInt16(parameterInt);
+    parameters.put("ParameterInt16", value);
+    
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).
+            appendOperationCallSegment("FICRTETTwoKeyNavParam").appendPropertySegment("PropertyString").
+            appendValueSegment().build(),
+            ClientProperty.class, parameters);
+    assertNotNull(request);
+    request.setAccept("text/plain");
+    setCookieHeader(request);
+
+    final ODataInvokeResponse<ClientProperty> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    String result = StringHelper.asString(response.getRawResponse());
+    assertNotNull(result);
+    assertEquals(2, Integer.parseInt(result));
+  }
+  
+  @Test
+  public void test3OLINGO753() throws Exception {
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    String parameterString = "1";
+    final ClientPrimitiveValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+        buildString(parameterString);
+    parameters.put("ParameterString", value);
+    
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESKeyNav").
+            appendOperationCallSegment("olingo.odata.test1.BFCESKeyNavRTETKeyNavParam").
+            appendNavigationSegment("NavPropertyETTwoKeyNavMany").count().build(),
+            ClientProperty.class, parameters);
+    assertNotNull(request);
+    request.setAccept("text/plain");
+    setCookieHeader(request);
+
+    final ODataInvokeResponse<ClientProperty> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    String result = StringHelper.asString(response.getRawResponse());
+    assertNotNull(result);
+    assertEquals(3, Integer.parseInt(result));    
+  }
+  
+  @Test
+  public void test4OLINGO753() throws Exception {
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    String parameterString = "1";
+    final ClientPrimitiveValue value = getClient().getObjectFactory().newPrimitiveValueBuilder().
+        buildString(parameterString);
+    parameters.put("ParameterString", value);
+    
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESKeyNav").
+            appendOperationCallSegment("olingo.odata.test1.BFCESKeyNavRTETKeyNavParam").
+            appendNavigationSegment("NavPropertyETTwoKeyNavMany").count().
+            filter("substring(PropertyString,2) eq 'am String Property 1'").build(),
+            ClientProperty.class, parameters);
+    assertNotNull(request);
+    request.setAccept("text/plain");
+    setCookieHeader(request);
+
+    final ODataInvokeResponse<ClientProperty> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    String result = StringHelper.asString(response.getRawResponse());
+    assertNotNull(result);
+    assertEquals(1, Integer.parseInt(result));    
+  }
+  
+  @Test
+  public void test5OLINGO753() throws Exception {
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    String parameterString = "'1'";
+    parameters.put("ParameterString", getFactory().newPrimitiveValueBuilder().setValue(
+        new ParameterAlias("first")).build());
+    
+    ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
+        .getFunctionInvokeRequest(
+            getClient().newURIBuilder(TecSvcConst.BASE_URI).appendEntitySetSegment("ESKeyNav").
+            appendOperationCallSegment("olingo.odata.test1.BFCESKeyNavRTETKeyNavParam").
+            appendNavigationSegment("NavPropertyETTwoKeyNavMany").count().
+            addParameterAlias("first", parameterString).
+            filter("substring(PropertyString,2) eq 'am String Property 1'").build(),
+            ClientProperty.class, parameters);
+    assertNotNull(request);
+    request.setAccept("text/plain");
+    setCookieHeader(request);
+
+    final ODataInvokeResponse<ClientProperty> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    String result = StringHelper.asString(response.getRawResponse());
+    assertNotNull(result);
+    assertEquals(1, Integer.parseInt(result));    
   }
 }

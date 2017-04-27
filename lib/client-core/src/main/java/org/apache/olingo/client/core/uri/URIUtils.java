@@ -74,6 +74,7 @@ public final class URIUtils {
 //  private static final Logger LOG = LoggerFactory.getLogger(URIUtils.class);
 
   private static final Pattern ENUM_VALUE = Pattern.compile("(.+\\.)?.+'.+'");
+  private static final String URI_OPTIONS = "/$";
 
   private URIUtils() {
     // Empty private constructor for static utility classes
@@ -325,11 +326,34 @@ public final class URIUtils {
 
   public static URI buildFunctionInvokeURI(final URI uri, final Map<String, ClientValue> parameters) {
     final String rawQuery = uri.getRawQuery();
-    String baseURI = StringUtils.substringBefore(uri.toASCIIString(), "?" + rawQuery);
+    String baseURI = null;
+    String uriOption = "";
+    String pathSegments = null;
+    // Check if Query contains /$ and extract options like /$count, /$value and /$ref
+    if (uri.toASCIIString().indexOf(URI_OPTIONS) != -1) {
+      uriOption = uri.toASCIIString().substring(uri.toASCIIString().indexOf(URI_OPTIONS), 
+          (rawQuery == null ? uri.toASCIIString().length() : uri.toASCIIString().indexOf(rawQuery) - 1));
+    }
+    if (rawQuery != null) {
+      baseURI = StringUtils.substringBefore(uri.toASCIIString(), uriOption + "?" + rawQuery);
+    } else if (uriOption.length() > 0) {
+      baseURI = StringUtils.substringBefore(uri.toASCIIString(), uriOption);
+    } else {
+      baseURI = StringUtils.substringBefore(uri.toASCIIString(), null);
+    }
     if (baseURI.endsWith("()")) {
       baseURI = baseURI.substring(0, baseURI.length() - 2);
+    } else {
+      /**
+       * If FunctionName is followed by a Navigation segment or Actions, 
+       * then get the substring till function name so that parameters can be appended to it.
+       */
+      int bracIndex = baseURI.indexOf("()");
+      if (bracIndex != -1) {
+        pathSegments = baseURI.substring(bracIndex + 2);
+        baseURI = baseURI.substring(0, bracIndex);
+      }
     }
-
     final StringBuilder inlineParams = new StringBuilder();
     for (Map.Entry<String, ClientValue> param : parameters.entrySet()) {
       inlineParams.append(param.getKey()).append("=");
@@ -353,6 +377,8 @@ public final class URIUtils {
     }
 
     return URI.create(baseURI + "(" + Encoder.encode(inlineParams.toString()) + ")"
+        + (pathSegments == null ? StringUtils.EMPTY : pathSegments)
+        + (!uriOption.equals(StringUtils.EMPTY) ? "/" + Encoder.encode(uriOption.substring(1)) : StringUtils.EMPTY)
         + (StringUtils.isNotBlank(rawQuery) ? "?" + rawQuery : StringUtils.EMPTY));
   }
 }

@@ -19,16 +19,23 @@
 package org.apache.olingo.client.core.uri;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.AbstractTest;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.junit.Test;
 
 public class URIBuilderTest extends AbstractTest {
@@ -259,5 +266,172 @@ public class URIBuilderTest extends AbstractTest {
         appendEntitySetSegment("Products").search("blue OR green");
 
     assertEquals(new URI("http://host/service/Products?%24search=blue%20OR%20green"), uriBuilder.build());
+  }
+  
+  @Test
+  public void test1OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).
+        appendOperationCallSegment("functionName").count().build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/functionName(parameterName%3D'parameterValue')"
+        + "/%24count", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test2OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendOperationCallSegment("functionName").
+        filter("paramName eq 1").format("json").count().build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/functionName(parameterName%3D'parameterValue')"
+        + "/%24count?%24filter=paramName%20eq%201&%24format=json", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test3OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendOperationCallSegment("functionName").
+        filter("paramName eq 1").format("json").build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/functionName(parameterName%3D'parameterValue')"
+        + "?%24filter=paramName%20eq%201&%24format=json", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test4OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        appendOperationCallSegment("functionName").count().build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/EntitySet/functionName(parameterName%3D'parameterValue')"
+        + "/%24count", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test5OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        appendOperationCallSegment("functionName").count().filter("PropertyString eq '1'").build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/EntitySet/functionName(parameterName%3D'parameterValue')"
+        + "/%24count?%24filter=PropertyString%20eq%20'1'", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test6OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).
+        appendOperationCallSegment("functionName").count().filter("PropertyString eq '1'").build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/functionName()"
+        + "/%24count?%24filter=PropertyString%20eq%20'1'", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test7OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        appendOperationCallSegment("functionName").filter("PropertyString eq '1'").
+        appendNavigationSegment("NavSeg").count().build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/EntitySet/functionName(parameterName%3D'parameterValue')/NavSeg"
+        + "/%24count?%24filter=PropertyString%20eq%20'1'", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test8OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        appendOperationCallSegment("functionName").filter("PropertyString eq '1'").
+        appendNavigationSegment("NavSeg").appendActionCallSegment("ActionName").count().build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/EntitySet/functionName(parameterName%3D'parameterValue')/NavSeg/ActionName"
+        + "/%24count?%24filter=PropertyString%20eq%20'1'", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test9OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        appendOperationCallSegment("functionName").
+        appendNavigationSegment("NavSeg").appendActionCallSegment("ActionName").appendValueSegment().build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/EntitySet/functionName(parameterName%3D'parameterValue')"
+        + "/NavSeg/ActionName/%24value", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test10OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        appendOperationCallSegment("functionName").
+        appendNavigationSegment("NavSeg").appendRefSegment().build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/EntitySet/functionName(parameterName%3D'parameterValue')"
+        + "/NavSeg/%24ref", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void test11OLINGO753() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        appendOperationCallSegment("functionName").
+        appendNavigationSegment("NavSeg").count().addParameterAlias("first", "'1'").build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().setValue(new ParameterAlias("first")).build();
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/EntitySet/functionName(parameterName%3D%40first)/"
+        + "NavSeg/%24count?%40first='1'", newUri.toASCIIString());
   }
 }
