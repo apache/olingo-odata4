@@ -94,7 +94,7 @@ public class AtomDeserializer implements ODataDeserializer {
   protected static final XMLInputFactory FACTORY = new InputFactoryImpl();
 
   private final AtomGeoValueDeserializer geoDeserializer;
-
+  
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
     FACTORY.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
     FACTORY.setProperty("javax.xml.stream.isReplacingEntityReferences", false);
@@ -219,6 +219,13 @@ public class AtomDeserializer implements ODataDeserializer {
         case COMPLEX:
           final Object complexValue = fromComplexOrEnum(reader, event.asStartElement());
           valueType = ValueType.COLLECTION_COMPLEX;
+          final Attribute typeAttr = event.asStartElement().getAttributeByName(typeQName);
+          final String typeAttrValue = typeAttr == null ? null : typeAttr.getValue();
+          final EdmTypeInfo typeInfoEle = StringUtils.isBlank(typeAttrValue) ? null :
+            new EdmTypeInfo.Builder().setTypeExpression(typeAttrValue).build();
+          if (typeInfoEle != null) {
+            ((ComplexValue)complexValue).setTypeName(typeInfoEle.external());
+          }
           values.add(complexValue);
           break;
 
@@ -287,7 +294,7 @@ public class AtomDeserializer implements ODataDeserializer {
       throws XMLStreamException, EdmPrimitiveTypeException {
 
     final Property property = new Property();
-
+    
     if (propertyValueQName.equals(start.getName())) {
       // retrieve name from context
       final Attribute context = start.getAttributeByName(contextQName);
@@ -297,9 +304,8 @@ public class AtomDeserializer implements ODataDeserializer {
     } else {
       property.setName(start.getName().getLocalPart());
     }
-
     valuable(property, reader, start);
-
+    
     return property;
   }
 
@@ -330,6 +336,10 @@ public class AtomDeserializer implements ODataDeserializer {
 
       case COMPLEX:
         final Object complexValue = fromComplexOrEnum(reader, start);
+        if (typeInfo != null && complexValue instanceof ComplexValue && 
+            start.getAttributeByName(QName.valueOf(Constants.ATOM_ATTR_TERM)) == null) {
+          ((ComplexValue)complexValue).setTypeName(typeInfo.external());
+        }
         valuable.setValue(complexValue instanceof ComplexValue ? ValueType.COMPLEX : ValueType.ENUM,
             complexValue);
         break;

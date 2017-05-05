@@ -350,6 +350,7 @@ public class ODataBinderImpl implements ODataBinder {
       lcValueResource.getValue().addAll(complexProperties);
       annotations(value.asComplex(), lcValueResource);
       links(value.asComplex(), lcValueResource);
+      lcValueResource.setTypeName(value.asComplex().getTypeName());
       valueResource = lcValueResource;
 
     } else if (value.isCollection()) {
@@ -581,7 +582,11 @@ public class ODataBinderImpl implements ODataBinder {
       EntityCollection inlineEntitySet = new EntityCollection();
       for (final Object inlined : property.asCollection()) {
         Entity inlineEntity = new Entity();
-        inlineEntity.setType(propertyTypeName);
+        if (inlined instanceof ComplexValue && ((ComplexValue) inlined).getTypeName() != null) {
+          inlineEntity.setType(((ComplexValue) inlined).getTypeName());
+        } else {
+          inlineEntity.setType(propertyTypeName);
+        }
         inlineEntity.getProperties().addAll(((ComplexValue) inlined).getValue());
         copyAnnotations(inlineEntity, (ComplexValue) inlined);
         inlineEntitySet.getEntities().add(inlineEntity);
@@ -815,7 +820,7 @@ public class ODataBinderImpl implements ODataBinder {
     return property;
   }
 
-  protected ClientValue getODataValue(final FullQualifiedName type,
+  protected ClientValue getODataValue(FullQualifiedName type,
       final Valuable valuable, final URI contextURL, final String metadataETag) {
 
     // fixes enum values treated as primitive when no type information is available
@@ -834,6 +839,11 @@ public class ODataBinderImpl implements ODataBinder {
       for (Object _value : valuable.asCollection()) {
         final Property fake = new Property();
         fake.setValue(valuable.getValueType().getBaseType(), _value);
+        String typeName = null;
+        if (_value instanceof ComplexValue) {
+          typeName = ((ComplexValue) _value).getTypeName();
+          type = typeName == null? type : new FullQualifiedName(typeName);
+        }
         value.asCollection().add(getODataValue(type, fake, contextURL, metadataETag));
       }
     } else if (valuable.isEnum()) {

@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata" xmlns:d="http://docs.oasis-open.org/odata/ns/data" xmlns:gml="http://www.opengis.net/gml" xmlns:georss="http://www.georss.org/georss">
+	<id>http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/TripPinServiceRW/People('russellwhyte')</id>
+	<category scheme="http://docs.oasis-open.org/odata/ns/scheme" term="#Microsoft.OData.SampleService.Models.TripPin.Person"/>
+	<content type="application/xml">
+		<m:properties>
+			<d:UserName>russellwhyte</d:UserName>
+			<d:FirstName>Russell</d:FirstName>
+			<d:LastName>Whyte</d:LastName>
+			<m:annotation term="com.contoso.display.style" target="LastName" m:type="#com.contoso.display.styleType">
+		        <d:title m:type="Boolean">true</d:title>
+		        <d:order m:type="Int32">1</d:order>
+		    </m:annotation>
+      		<d:Emails m:type="#Collection(String)">
+				<m:element>Russell@example.com</m:element>
+				<m:element>Russell@contoso.com</m:element>
+			</d:Emails>
+			<d:AddressInfo m:type="#Collection(Microsoft.OData.SampleService.Models.TripPin.Location)">
+				<m:element m:type="#Microsoft.OData.SampleService.Models.TripPin.Location">
+					<d:Address>187 Suffolk Ln.</d:Address>
+					<d:City m:type="#Microsoft.OData.SampleService.Models.TripPin.City">
+						<d:CountryRegion>United States</d:CountryRegion>
+						<d:Name>Boise</d:Name>
+						<d:Region>ID</d:Region>
+					</d:City>
+				</m:element>
+				<m:element m:type="#Microsoft.OData.SampleService.Models.TripPin.EventLocation">
+					<d:BuildingInfo>187 Suffolk Ln12.</d:BuildingInfo>
+					<d:Address>187 Suffolk Ln12.</d:Address>
+					<d:City m:type="#Microsoft.OData.SampleService.Models.TripPin.City">
+						<d:CountryRegion>United States</d:CountryRegion>
+						<d:Name>Boise</d:Name>
+						<d:Region>ID</d:Region>
+					</d:City>
+				</m:element>
+				<m:element m:type="#Microsoft.OData.SampleService.Models.TripPin.AirportLocation">
+					<d:Address>187 Suffolk Ln123.</d:Address>
+					<d:City m:type="#Microsoft.OData.SampleService.Models.TripPin.City">
+						<d:CountryRegion>United States</d:CountryRegion>
+						<d:Name>Boise</d:Name>
+						<d:Region>ID</d:Region>
+					</d:City>
+					<d:Home m:type="GeographyPoint">
+				        <gml:Point gml:srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+				          <gml:pos>32.1 23.1</gml:pos>
+				        </gml:Point>
+				    </d:Home>
+				</m:element>
+			</d:AddressInfo>
+			<d:Gender m:type="#Microsoft.OData.SampleService.Models.TripPin.PersonGender">Male</d:Gender>
+			<d:Concurrency m:type="Int64">636293755917400747</d:Concurrency>
+		</m:properties>
+	</content>
+	<m:annotation term="com.contoso.PersonalInfo.PhoneNumbers" m:type="#Collection(String)">
+	    <m:element>(203)555-1718</m:element>
+	    <m:element>(203)555-1719</m:element>
+  </m:annotation> 
+</entry>

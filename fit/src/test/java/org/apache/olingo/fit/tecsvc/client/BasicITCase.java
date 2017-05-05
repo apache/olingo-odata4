@@ -1598,9 +1598,9 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         getProperties().size());
     assertEquals(1, entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().getEntities().get(1).
         getProperties().size());
-    assertEquals("olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
+    assertEquals("#olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
         getEntities().get(0).getTypeName().toString());
-    assertEquals("olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
+    assertEquals("#olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
         getEntities().get(1).getTypeName().toString());
     assertEquals("olingo.odata.test1.ETAllPrim", entity.getTypeName().toString());
   }

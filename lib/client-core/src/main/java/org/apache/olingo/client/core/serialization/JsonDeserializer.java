@@ -333,7 +333,17 @@ public class JsonDeserializer implements ODataDeserializer {
           values.add(child.asText());
         }
       } else if (child.isContainerNode()) {
+        EdmTypeInfo childType = null;
+        if (child.has(Constants.JSON_TYPE)) {
+          String typeName = child.get(Constants.JSON_TYPE).asText();
+          childType = typeName == null ? null
+              : new EdmTypeInfo.Builder().setTypeExpression(typeName).build();
+          ((ObjectNode) child).remove(Constants.JSON_TYPE);
+        }
         final Object value = fromComplex((ObjectNode) child, codec);
+        if (childType != null) {
+          ((ComplexValue)value).setTypeName(childType.external());
+        }
         valueType = ValueType.COLLECTION_COMPLEX;
         values.add(value);
       }
@@ -368,6 +378,9 @@ public class JsonDeserializer implements ODataDeserializer {
         ((ObjectNode) node).remove(Constants.JSON_TYPE);
       }
       final Object value = fromComplex((ObjectNode) node, codec);
+      if (value instanceof ComplexValue) {
+        ((ComplexValue)value).setTypeName(valuable.getType());
+      }
       valuable.setValue(ValueType.COMPLEX, value);
       break;
 

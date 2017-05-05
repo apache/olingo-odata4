@@ -1,0 +1,17 @@
+{
+	"@odata.type": "#Microsoft.Exchange.Services.OData.Model.Entity",
+	"ToRecipients@odata.type": "#Collection(Microsoft.Exchange.Services.OData.Model.Recipient)",
+	"ToRecipients": [{
+		"@odata.type": "#Microsoft.Exchange.Services.OData.Model.ComplexType1",
+		"Name1@odata.type": "String",
+		"Name1": "challen_olingo_client",
+		"Address1@odata.type": "String",
+		"Address1": "challenh@microsoft.com"
+	}, {
+		"@odata.type": "#Microsoft.Exchange.Services.OData.Model.ComplexType2",
+		"Name2@odata.type": "String",
+		"Name2": "challen_olingo_client",
+		"Address2@odata.type": "String",
+		"Address2": "challenh@microsoft.com"
+	}]
+}

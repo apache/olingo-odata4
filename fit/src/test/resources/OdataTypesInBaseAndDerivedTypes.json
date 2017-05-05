@@ -20,13 +20,13 @@
   "NavPropertyETTwoPrimMany@odata.type": "#Collection(olingo.odata.test1.ETTwoPrim)",
   "NavPropertyETTwoPrimMany": [
     {
-      "@odata.type": "olingo.odata.test1.ETBase",
+      "@odata.type": "#olingo.odata.test1.ETBase",
       "PropertyInt16": -365,
       "PropertyString": "Test String2",
       "AdditionalPropertyString_5": "ABC"
     },
     {
-      "@odata.type": "olingo.odata.test1.ETBase",
+      "@odata.type": "#olingo.odata.test1.ETBase",
       "AdditionalPropertyString_5": "ABC"
     }
   ]

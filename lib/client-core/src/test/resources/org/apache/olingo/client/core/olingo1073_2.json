@@ -1,0 +1,87 @@
+{
+  "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.Person",
+  "@odata.id": "http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/TripPinServiceRW/People('russellwhyte')",
+  "@com.contoso.PersonalInfo.PhoneNumbers": ["(203)555-1718", "(203)555-1719"],
+  "UserName@odata.type": "String",
+  "UserName": "russellwhyte",
+  "FirstName@odata.type": "String",
+  "FirstName": "Russell",
+  "LastName@com.contoso.display.style": {
+    "@odata.type": "#com.contoso.display.styleType",
+    "title": true,
+    "order": 1
+  },
+  "LastName@odata.type": "String",
+  "LastName": "Whyte",
+  "Emails@odata.type": "#Collection(String)",
+  "Emails": [
+    "Russell@example.com",
+    "Russell@contoso.com"
+  ],
+  "AddressInfo@odata.type": "#Collection(Microsoft.OData.SampleService.Models.TripPin.Location)",
+  "AddressInfo": [
+    {
+      "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.Location",
+      "Address@odata.type": "String",
+      "Address": "187 Suffolk Ln.",
+      "City": {
+        "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.City",
+        "CountryRegion@odata.type": "String",
+        "CountryRegion": "United States",
+        "Name@odata.type": "String",
+        "Name": "Boise",
+        "Region@odata.type": "String",
+        "Region": "ID"
+      }
+    },
+    {
+      "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.EventLocation",
+      "BuildingInfo@odata.type": "String",
+      "BuildingInfo": "187 Suffolk Ln12.",
+      "Address@com.contoso.display.style": {
+	    "@odata.type": "#com.contoso.display.styleType",
+	    "Addrtitle": true,
+	    "Addrorder": 1
+	  },
+      "Address": "187 Suffolk Ln12.",
+      "City": {
+        "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.City",
+        "CountryRegion@odata.type": "String",
+        "CountryRegion": "United States",
+        "Name@odata.type": "String",
+        "Name": "Boise",
+        "Region@odata.type": "String",
+        "Region": "ID"
+      }
+    },
+    {
+      "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.AirportLocation",
+	  "Address@odata.type": "String",
+      "Address": "187 Suffolk Ln123.",
+      "City": {
+        "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.City",
+        "CountryRegion@odata.type": "String",
+        "CountryRegion": "United States",
+        "Name@odata.type": "String",
+        "Name": "Boise",
+        "Region@odata.type": "String",
+        "Region": "ID"
+      },
+      "Home@odata.type": "#GeographyPoint",
+	  "Home": {
+	    "type": "Point",
+	    "coordinates": [23.1, 32.1],
+	    "crs": {
+	      "type": "name",
+	      "properties": {
+	        "name": "EPSG:4326"
+	      }
+	    }
+	  }
+    }
+  ],
+  "Gender@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.PersonGender",
+  "Gender": "Male",
+  "Concurrency@odata.type": "Int64",
+  "Concurrency": 636293755917400747
+}

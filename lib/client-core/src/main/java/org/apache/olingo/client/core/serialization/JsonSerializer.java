@@ -241,7 +241,7 @@ public class JsonSerializer implements ODataSerializer {
       final ValueType valueType, final List<?> value)
           throws IOException, EdmPrimitiveTypeException {
 
-    final EdmTypeInfo itemTypeInfo = typeInfo == null ?
+    EdmTypeInfo itemTypeInfo = typeInfo == null ?
         null :
         new EdmTypeInfo.Builder().setTypeExpression(typeInfo.getFullQualifiedName().toString()).build();
 
@@ -265,6 +265,8 @@ public class JsonSerializer implements ODataSerializer {
 
       case COLLECTION_COMPLEX:
         final ComplexValue complexItem2 = (ComplexValue) item;
+        itemTypeInfo = complexItem2.getTypeName() == null ? 
+            itemTypeInfo : new EdmTypeInfo.Builder().setTypeExpression(complexItem2.getTypeName()).build();
         complexValue(jgen, itemTypeInfo, complexItem2.getValue(), complexItem2);
         break;
 
