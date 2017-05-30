@@ -20,13 +20,11 @@ package org.apache.olingo.client.core.http;
 
 import java.net.URI;
 
-import org.apache.http.annotation.NotThreadSafe;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 /**
  * Class identifying MERGE HTTP method.
  */
-@NotThreadSafe
 public class HttpMerge extends HttpEntityEnclosingRequestBase {
 
   public final static String METHOD_NAME = "MERGE";

@@ -20,13 +20,11 @@ package org.apache.olingo.client.core.http;
 
 import java.net.URI;
 
-import org.apache.http.annotation.NotThreadSafe;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 /**
  * Class identifying PATCH HTTP method.
  */
-@NotThreadSafe
 public class HttpPatch extends HttpEntityEnclosingRequestBase {
 
   public final static String METHOD_NAME = "PATCH";
