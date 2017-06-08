@@ -164,4 +164,64 @@ public class ODataHttpHandlerImplTest {
       assertEquals(rawServiceResolutionUri, odr.getRawServiceResolutionUri());
     }
   }
+  
+  @Test
+  public void extractUriForController() {
+
+    //@formatter:off (Eclipse formatter)
+    //CHECKSTYLE:OFF (Maven checkstyle)
+    String [][] uris = {
+        /* 0: host                    1: cp         2: sp       3: sr          4: od       5: qp        6: spl  */
+        
+        {  "http://localhost",          "",           "/sp",      "",          "",          "",         "0"},
+        {  "http://localhost",          "",           "/sp",      "",          "/",         "",         "0"},
+        {  "http://localhost",          "",           "/sp",      "",          "/od",       "",         "0"},
+       
+        {  "http://localhost",          "/cp",        "/sp",      "",          "",          "",         "0"},
+        {  "http://localhost",          "/cp",        "/sp",      "",          "/",         "",         "0"},
+        {  "http://localhost",          "/cp",        "/sp",      "",          "/od",       "",         "0"},
+       
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "",          "",         "1"},
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/",         "",         "1"},
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/od",       "",         "1"},
+
+     
+        {  "http://localhost",          "/cp",        "/sp",      "/sr",       "/od",       "qp",       "1"},
+
+        {  "http://localhost:8080",     "/c%20p",     "/s%20p",   "/s%20r",    "/o%20d",    "p+q",      "1"},
+    };
+    //@formatter:on
+    // CHECKSTYLE:on
+
+    for (String[] p : uris) {
+      HttpServletRequest hr = mock(HttpServletRequest.class);
+
+      String requestUrl = p[0] + p[1] + p[2] + p[3] + p[4];
+      String requestUri = p[1] + p[2] + p[3] + p[4];
+      String queryString = p[5].isEmpty() ? null : p[5];
+
+      when(hr.getRequestURL()).thenReturn(new StringBuffer(requestUrl));
+      when(hr.getRequestURI()).thenReturn(requestUri);
+      when(hr.getQueryString()).thenReturn(queryString);
+      when(hr.getContextPath()).thenReturn(p[1]);
+      when(hr.getServletPath()).thenReturn(p[2]);
+
+      ODataRequest odr = new ODataRequest();
+
+      String rawBaseUri = p[0] + p[1] + p[2] + p[3];
+      String rawODataPath = p[4];
+      String rawQueryPath = "".equals(p[5]) ? null : p[5];
+      String rawRequestUri = requestUrl + (queryString == null ? "" : "?" + queryString);
+      String rawServiceResolutionUri = "".equals(p[3]) ? null : p[3];
+
+      when(hr.getAttribute("requestMapping")).thenReturn(p[2]);
+      ODataHttpHandlerImpl.fillUriInformation(odr, hr, Integer.parseInt(p[6]));
+      assertEquals(rawBaseUri, odr.getRawBaseUri());
+      assertEquals(rawODataPath, odr.getRawODataPath());
+      assertEquals(rawQueryPath, odr.getRawQueryPath());
+      assertEquals(rawRequestUri, odr.getRawRequestUri());
+      assertEquals(rawServiceResolutionUri, odr.getRawServiceResolutionUri());
+    
+    }
+  }
 }
