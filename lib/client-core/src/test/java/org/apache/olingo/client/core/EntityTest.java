@@ -21,6 +21,7 @@ package org.apache.olingo.client.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -40,6 +41,8 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -380,5 +383,22 @@ public class EntityTest extends AbstractTest {
   @Test
   public void derivedFromFullJSON() throws Exception {
     derived(client, ContentType.JSON_FULL_METADATA);
+  }
+  
+  @Test
+  public void testNullValuesForPrimitiveTypes() throws Exception {
+    final InputStream input = getClass().getResourceAsStream("ESTwoKeyNav.json");
+    final ClientEntity entity = client.getBinder().getODataEntity(
+        client.getDeserializer(ContentType.APPLICATION_JSON).toEntity(input));
+    assertNotNull(entity);
+
+    Entity entity1 = client.getBinder().getEntity(entity);
+    assertNotNull(entity1);
+    Property property = entity1.getProperty("PropertyComp").asComplex().getValue().
+        get(1).asComplex().getValue().get(2);
+    assertEquals(property.getType(), "Edm.Boolean");
+    assertNull(property.getValue());
+    assertTrue(property.isPrimitive());
+    assertEquals(property.getValueType(), ValueType.PRIMITIVE);
   }
 }

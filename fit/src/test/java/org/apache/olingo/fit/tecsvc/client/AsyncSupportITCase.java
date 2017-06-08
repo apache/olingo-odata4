@@ -211,7 +211,7 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
     assertShortOrInt(42, property1.getPrimitiveValue().toValue());
     final ClientProperty property2 = createdEntity.getProperty("PropertyDecimal");
     assertNotNull(property2);
-    assertNull(property2.getPrimitiveValue());
+    assertNull(property2.getPrimitiveValue().toValue());
   }
 
   @Test

@@ -45,7 +45,7 @@ public class ClientValuableImpl implements ClientValuable {
 
   @Override
   public boolean hasPrimitiveValue() {
-    return !hasNullValue() && value.isPrimitive();
+    return value != null && value.isPrimitive();
   }
 
   @Override

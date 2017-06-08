@@ -412,7 +412,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         property2.getPrimitiveValue().toValue());
     final ClientProperty property3 = entity.getProperty(PROPERTY_INT64);
     assertNotNull(property3);
-    assertNull(property3.getPrimitiveValue());
+    assertNull(property3.getPrimitiveValue().toValue());
     final ClientProperty property4 = entity.getProperty("PropertyDuration");
     assertNotNull(property4);
     assertEquals(isJson() ? "PT6S" : BigDecimal.valueOf(6), property4.getPrimitiveValue().toValue());
@@ -439,7 +439,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertShortOrInt(42, property1.getPrimitiveValue().toValue());
     final ClientProperty property2 = entity.getProperty(PROPERTY_DECIMAL);
     assertNotNull(property2);
-    assertNull(property2.getPrimitiveValue());
+    assertNull(property2.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -504,7 +504,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertNotNull(complex);
     final ClientProperty property = complex.get(PROPERTY_INT16);
     assertNotNull(property);
-    assertNull(property.getPrimitiveValue());
+    assertNull(property.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -534,7 +534,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertShortOrInt(42, property1.getPrimitiveValue().toValue());
     final ClientProperty property2 = createdEntity.getProperty(PROPERTY_DECIMAL);
     assertNotNull(property2);
-    assertNull(property2.getPrimitiveValue());
+    assertNull(property2.getPrimitiveValue().toValue());
   }
 
   @Test
