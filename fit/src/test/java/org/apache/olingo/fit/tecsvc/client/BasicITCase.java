@@ -1493,8 +1493,10 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertNotNull(entity.getProperty(PROPERTY_COMP).getComplexValue());
     assertEquals("olingo.odata.test1.CTAllPrim", entity.getProperty(PROPERTY_COMP).getComplexValue().getTypeName());
     assertEquals(PROPERTY_COMP, entity.getProperty(PROPERTY_COMP).getName());
-    assertNull(entity.getProperty(PROPERTY_COMP).getComplexValue().get("PropertyString").getPrimitiveValue());
-    assertNull(entity.getProperty(PROPERTY_COMP).getComplexValue().get("PropertyBoolean").getPrimitiveValue());
+    assertNull(entity.getProperty(PROPERTY_COMP).getComplexValue().get("PropertyString").
+        getPrimitiveValue().toValue());
+    assertNull(entity.getProperty(PROPERTY_COMP).getComplexValue().get("PropertyBoolean").
+        getPrimitiveValue().toValue());
   }
   
   @Test
