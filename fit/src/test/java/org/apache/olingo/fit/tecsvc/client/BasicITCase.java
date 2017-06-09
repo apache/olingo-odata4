@@ -1519,7 +1519,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertNotNull(entity.getProperty(PROPERTY_COMP).getComplexValue());
     assertEquals("olingo.odata.test1.CTAllPrim", entity.getProperty(PROPERTY_COMP).getComplexValue().getTypeName());
     assertEquals(PROPERTY_COMP, entity.getProperty(PROPERTY_COMP).getName());
-    assertNull(entity.getProperty(PROPERTY_COMP).getComplexValue().get(PROPERTY_COMP).getComplexValue());
+    assertTrue(entity.getProperty(PROPERTY_COMP).hasNullValue());
   }
   
   @Test
@@ -1540,7 +1540,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     ClientEntity entity = odataClient.getReader().readEntity(input, ContentType.JSON);
     assertEquals("olingo.odata.test1.CTAllPrim", entity.getProperty(PROPERTY_COMP).getComplexValue().getTypeName());
     assertEquals(PROPERTY_COMP, entity.getProperty(PROPERTY_COMP).getName());
-    assertTrue(entity.getProperty(PROPERTY_COMP).getComplexValue().asJavaMap().size() == 0);
+    assertTrue(entity.getProperty(PROPERTY_COMP).hasNullValue());
   }
   
   @SuppressWarnings("unchecked")
@@ -1565,7 +1565,6 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     Map<String, Object> map = entity.getProperty(PROPERTY_COMP).getComplexValue().asJavaMap();
     assertEquals(map.size(), 2);
     assertEquals(((Map<String, Object>)map.get(PROPERTY_COMP)).size(), 16);
-    assertNull(entity.getProperty(PROPERTY_COMP_NAV).getComplexValue().get(PROPERTY_COMP_NAV).getComplexValue());
     assertEquals("Collection(olingo.odata.test1.CTPrimComp)", entity.getProperty(COL_PROPERTY_COMP).
         getCollectionValue().getTypeName());
     assertEquals(0, entity.getProperty(COL_PROPERTY_COMP).getCollectionValue().size());
@@ -1573,8 +1572,6 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         getComplexValue().getTypeName());
     assertEquals("olingo.odata.test1.CTTwoPrim", entity.getProperty(PROPERTY_COMP_TWO_PRIM).
         getComplexValue().getTypeName());
-    assertNull(entity.getProperty(PROPERTY_COMP_TWO_PRIM).getComplexValue().
-        get(PROPERTY_COMP_TWO_PRIM).getComplexValue());
   }
   
   @Test

@@ -65,7 +65,7 @@ public class ClientValuableImpl implements ClientValuable {
 
   @Override
   public boolean hasComplexValue() {
-    return !hasNullValue() && value.isComplex();
+    return value != null && value.isComplex();
   }
 
   @Override

@@ -891,7 +891,6 @@ public class ODataBinderImpl implements ODataBinder {
         }
         if (edm != null && edm.getComplexType(type) != null) {
           ClientComplexValue cValue = client.getObjectFactory().newComplexValue(type.toString());
-          cValue.add(new ClientPropertyImpl(((Property)valuable).getName(), null));
           value = cValue;
           } else {
             if (type != null && !EdmPrimitiveTypeKind.String.getFullQualifiedName().equals(type)

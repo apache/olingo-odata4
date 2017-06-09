@@ -77,7 +77,8 @@ public final class ClientPropertyImpl extends ClientValuableImpl implements Clie
    */
   @Override
   public boolean hasNullValue() {
-    return value == null || value.isPrimitive() && value.asPrimitive().toValue() == null;
+    return value == null || value.isPrimitive() && value.asPrimitive().toValue() == null
+        || value.isComplex() && value.asComplex().asJavaMap().size() == 0;
   }
 
   @Override
