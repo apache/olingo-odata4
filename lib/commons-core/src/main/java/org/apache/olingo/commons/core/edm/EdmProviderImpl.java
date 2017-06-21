@@ -59,9 +59,15 @@ public class EdmProviderImpl extends AbstractEdm {
       Collections.synchronizedMap(new HashMap<FullQualifiedName, List<CsdlAction>>());
   private final Map<FullQualifiedName, List<CsdlFunction>> functionsMap =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, List<CsdlFunction>>());
+  private List<CsdlSchema> termSchemaDefinition = null;
 
   public EdmProviderImpl(final CsdlEdmProvider provider) {
     this.provider = provider;
+  }
+  
+  public EdmProviderImpl(final CsdlEdmProvider provider, final List<CsdlSchema> termSchemaDefinition) {
+    this.provider = provider;
+    this.termSchemaDefinition = termSchemaDefinition;
   }
 
   @Override
@@ -334,7 +340,18 @@ public class EdmProviderImpl extends AbstractEdm {
       CsdlTerm providerTerm = provider.getTerm(termName);
       if (providerTerm != null) {
         return new EdmTermImpl(this, termName.getNamespace(), providerTerm);
-      }
+      } else if (termSchemaDefinition != null && termSchemaDefinition.size() > 0) {
+          for (CsdlSchema schema : termSchemaDefinition) {
+              if (schema.getNamespace().equalsIgnoreCase(termName.getNamespace())) {
+                List<CsdlTerm> terms = schema.getTerms();
+                for (CsdlTerm term : terms) {
+                  if (term.getName().equals(termName.getName())) {
+                    return new EdmTermImpl(this, termName.getNamespace(), term);
+                  }
+                }
+              }
+            }
+        }
       return null;
     } catch (ODataException e) {
       throw new EdmException(e);

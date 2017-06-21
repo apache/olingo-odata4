@@ -20,6 +20,8 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -38,6 +40,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 
@@ -136,6 +139,20 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
       throw new ODataDeserializerException(e);
     } catch (final EdmPrimitiveTypeException e) {
       throw new ODataDeserializerException(e);
+    }
+  }
+
+  @Override
+  public List<CsdlSchema> fetchTermDefinitionSchema(List<InputStream> input) {
+    List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
+    try {
+      for (InputStream stream : input) {
+        ClientCsdlEdmx edmx = getXmlMapper().readValue(stream, ClientCsdlEdmx.class);
+        schemas.addAll(edmx.getDataServices().getSchemas());
+      }
+      return schemas;
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Could not parse Term definition", e);
     }
   }
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+<edmx:DataServices m:DataServiceVersion="4.0" m:MaxDataServiceVersion="4.0" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata">
+  <Schema Namespace="Microsoft.Exchange.Services.OData.Model" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	 <EntityType Name="Person" OpenType="true">
+			   <Key>
+			   <PropertyRef Name="UserName"/>
+			   </Key>
+			   <Property Name="UserName" Type="Edm.String" Nullable="false">
+					   <Annotation Term="Org.OData.Core.V1.Permissions">
+							   <EnumMember>Org.OData.Core.V1.Permission/Read</EnumMember>
+					   </Annotation>
+			   </Property>
+			   <Property Name="FirstName" Type="Edm.String" Nullable="false"/>
+			   <Property Name="LastName" Type="Edm.String" Nullable="false"/>
+			   <Property Name="Emails" Type="Collection(Edm.String)"/>
+			   <Property Name="AddressInfo" Type="Collection(Microsoft.OData.SampleService.Models.TripPin.Location)"/>
+			   <Property Name="Gender" Type="Microsoft.OData.SampleService.Models.TripPin.PersonGender"/>
+			   <Property Name="Concurrency" Type="Edm.Int64" Nullable="false">
+					   <Annotation Term="Org.OData.Core.V1.Computed" Bool="true"/>
+			   </Property>
+			   </EntityType>
+	 <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+	   <EntitySet Name="People" EntityType="Microsoft.Exchange.Services.OData.Model.Person"/>
+	 </EntityContainer>
+   </Schema>
+ </edmx:DataServices>
+</edmx:Edmx>
