@@ -33,6 +33,7 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceCount;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceRef;
@@ -255,11 +256,17 @@ public class Parser {
       if (lastSegment instanceof UriResourcePartTyped) {
         final UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
         contextType = ParserHelper.getTypeInformation(typed);
-        if (contextUriInfo.getIdOption() != null && contextType != null) {
-          if (contextType instanceof EdmEntityType) {
-            contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
+        if (contextType != null) {
+          if ((lastSegment instanceof UriResourceEntitySet && 
+              (((UriResourceEntitySet) lastSegment).getTypeFilterOnCollection() != null 
+              || ((UriResourceEntitySet) lastSegment).getTypeFilterOnEntry() != null)) 
+          || contextUriInfo.getIdOption() != null) {
+            if (contextType instanceof EdmEntityType) {
+              contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
+            }
           }
         }
+        
         contextIsCollection = typed.isCollection();
       }
     }

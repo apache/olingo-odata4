@@ -29,9 +29,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -83,9 +86,12 @@ import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -115,6 +121,8 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   private static final String PROPERTY_COMP_NAV = "CollPropertyCompNav";
   private static final String COL_PROPERTY_COMP = "CollPropertyComp";
   private static final String PROPERTY_COMP_TWO_PRIM = "PropertyCompTwoPrim";
+  
+  private static final String SERVICE_ROOT_URL = "http://localhost:9080/odata-server-tecsvc/";
 
   @Test
   public void readServiceDocument() {
@@ -1602,5 +1610,58 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertEquals("#olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
         getEntities().get(1).getTypeName().toString());
     assertEquals("olingo.odata.test1.ETAllPrim", entity.getTypeName().toString());
+  }
+  
+  @Test
+  public void readViaXmlMetadataAnnotation() throws URISyntaxException, IOException {
+    InputStream input = Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("edmxWithCoreAnnotation.xml");
+    final XMLMetadata metadata = getClient().getDeserializer(ContentType.APPLICATION_XML).toMetadata(input);
+    String vocabUrl = metadata.getReferences().get(0).getUri().toString();
+    vocabUrl = vocabUrl.substring(vocabUrl.indexOf("../") + 3);
+    vocabUrl = SERVICE_ROOT_URL + vocabUrl;
+    URI uri = new URI(vocabUrl);
+    input.close();
+    ODataRawRequest request = getClient().getRetrieveRequestFactory().getRawRequest(uri);
+    assertNotNull(request);
+    setCookieHeader(request);
+
+    ODataRawResponse response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    List<InputStream> streams = new ArrayList<InputStream>();
+    streams.add(response.getRawResponse());
+    Edm edm = getClient().getReader().readMetadata(Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("edmxWithCoreAnnotation.xml"), streams);
+    assertNotNull(edm);
+    final EdmEntityType person = edm.getEntityType(
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Person"));
+    assertNotNull(person);
+    EdmProperty concurrency = (EdmProperty) person.getProperty("Concurrency");
+    List<EdmAnnotation> annotations = concurrency.getAnnotations();
+    for (EdmAnnotation annotation : annotations) {
+      annotation.getExpression();
+      EdmTerm term = annotation.getTerm();
+      assertNotNull(term);
+      assertEquals("Computed", term.getName());
+      assertEquals("Org.OData.Core.V1.Computed",
+          term.getFullQualifiedName().getFullQualifiedNameAsString());
+      assertEquals(1, term.getAnnotations().size());
+    }
+    EdmProperty userName = (EdmProperty) person.getProperty("UserName");
+    List<EdmAnnotation> userNameAnnotations = userName.getAnnotations();
+    for (EdmAnnotation annotation : userNameAnnotations) {
+      EdmTerm term = annotation.getTerm();
+      assertNotNull(term);
+      assertEquals("Permissions", term.getName());
+      assertEquals("Org.OData.Core.V1.Permissions",
+          term.getFullQualifiedName().getFullQualifiedNameAsString());
+      EdmExpression expression = annotation.getExpression();
+      assertNotNull(expression);
+      assertTrue(expression.isConstant());
+      assertEquals("Org.OData.Core.V1.Permission/Read", expression.asConstant().getValueAsString());
+      assertEquals("EnumMember", expression.getExpressionName());
+  }
   }
 }

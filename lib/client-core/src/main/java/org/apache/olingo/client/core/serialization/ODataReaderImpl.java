@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -67,11 +68,23 @@ public class ODataReaderImpl implements ODataReader {
   }
 
   @Override
+  public Edm readMetadata(final InputStream input, List<InputStream> termDefinition) {
+    return readMetadata(client.getDeserializer(ContentType.APPLICATION_XML).toMetadata(input).getSchemaByNsOrAlias(),
+        client.getDeserializer(ContentType.APPLICATION_XML).fetchTermDefinitionSchema(termDefinition));
+  }
+  
+  @Override
   public Edm readMetadata(final Map<String, CsdlSchema> xmlSchemas) {
     ClientCsdlEdmProvider prov = new ClientCsdlEdmProvider(xmlSchemas);
     return new EdmProviderImpl(prov);
   }
 
+  @Override
+  public Edm readMetadata(final Map<String, CsdlSchema> xmlSchemas, List<CsdlSchema> termDefinitionSchema) {
+    ClientCsdlEdmProvider prov = new ClientCsdlEdmProvider(xmlSchemas);
+    return new EdmProviderImpl(prov, termDefinitionSchema);
+  }
+  
   @Override
   public ClientServiceDocument readServiceDocument(final InputStream input, final ContentType contentType)
       throws ODataDeserializerException {

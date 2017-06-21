@@ -68,6 +68,7 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceComplexProperty;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
@@ -246,9 +247,18 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
         } else {
           final EdmProperty edmProperty = path.isEmpty() ? null :
               ((UriResourceProperty) resourceParts.get(resourceParts.size() - trailing - 1)).getProperty();
+          if (resourceParts.get(resourceParts.size() - trailing - 1) 
+              instanceof UriResourceComplexProperty &&
+              ((UriResourceComplexProperty)resourceParts.get(resourceParts.size() - trailing - 1)).
+              getComplexTypeFilter() != null) {
+            EdmType type1 = ((UriResourceComplexProperty)resourceParts.get(resourceParts.size() - trailing - 1)).
+                getComplexTypeFilter();
+            property.setType(type1.getFullQualifiedName().getFullQualifiedNameAsString());
+          } 
           final EdmType type = edmProperty == null ?
-              ((UriResourceFunction) resourceParts.get(0)).getType() :
-              edmProperty.getType();
+            ((UriResourceFunction) resourceParts.get(0)).getType() :
+            edmProperty.getType();
+          
           final EdmReturnType returnType = resourceParts.get(0) instanceof UriResourceFunction ?
               ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : null;
 

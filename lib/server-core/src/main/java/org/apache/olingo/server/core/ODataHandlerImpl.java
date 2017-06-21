@@ -211,7 +211,10 @@ public class ODataHandlerImpl implements ODataHandler {
       if(endIndex == -1) {
         endIndex = query.length();
       }
-      final String format = query.substring(index + formatOption.length(), endIndex);
+      String format = "";
+      if (index + formatOption.length() < endIndex) {
+        format = query.substring(index + formatOption.length(), endIndex);
+      }
       return new FormatOptionImpl().setFormat(format);
     }
     return uriInfo.getFormatOption();
