@@ -181,30 +181,5 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
   protected ODataClient getClient() {
     return null;
   }
-  
-  @Test
-  public void testInvalidTopUrl() throws Exception {
-    URL url = new URL(SERVICE_URI + "?$top");
 
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod(HttpMethod.GET.name());
-    connection.connect();
-
-    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    assertTrue(IOUtils.toString(connection.getErrorStream()).
-        contains("The system query option '$top' has the not-allowed value ''."));
-  }
-
-  @Test
-  public void testInvalidSkipUrl() throws Exception {
-    URL url = new URL(SERVICE_URI + "?$skip=");
-
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod(HttpMethod.GET.name());
-    connection.connect();
-
-    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    assertTrue(IOUtils.toString(connection.getErrorStream()).
-        contains("The system query option '$skip' has the not-allowed value ''."));
-  }
 }

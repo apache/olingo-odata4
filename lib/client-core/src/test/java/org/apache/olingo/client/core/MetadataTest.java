@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
@@ -41,12 +40,9 @@ import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
-import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmUrlRef;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
@@ -417,42 +413,5 @@ public class MetadataTest extends AbstractTest {
     final CsdlTerm deleteRestrictions = schema.getTerm("DeleteRestrictions");
     assertNotNull(deleteRestrictions);
     assertEquals("Capabilities.DeleteRestrictionsType", deleteRestrictions.getType());
-  }
-  
-  @Test
-  public void readPropertyAnnotations() {
-    List<InputStream> streams = new ArrayList<InputStream>();
-    streams.add(getClass().getResourceAsStream("VOC_Core.xml"));
-    final Edm edm = client.getReader().readMetadata(getClass().getResourceAsStream("edmxWithCoreAnnotation.xml"),
-        streams);
-    assertNotNull(edm);
-    
-    final EdmEntityType person = edm.getEntityType(
-        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Person"));
-    assertNotNull(person);
-    EdmProperty concurrency = (EdmProperty) person.getProperty("Concurrency");
-    List<EdmAnnotation> annotations = concurrency.getAnnotations();
-    for (EdmAnnotation annotation : annotations) {
-      EdmTerm term = annotation.getTerm();
-      assertNotNull(term);
-      assertEquals("Computed", term.getName());
-      assertEquals("Org.OData.Core.V1.Computed",
-          term.getFullQualifiedName().getFullQualifiedNameAsString());
-      assertEquals(1, term.getAnnotations().size());
-    }
-    EdmProperty userName = (EdmProperty) person.getProperty("UserName");
-    List<EdmAnnotation> userNameAnnotations = userName.getAnnotations();
-    for (EdmAnnotation annotation : userNameAnnotations) {
-      EdmTerm term = annotation.getTerm();
-      assertNotNull(term);
-      assertEquals("Permissions", term.getName());
-      assertEquals("Org.OData.Core.V1.Permissions",
-          term.getFullQualifiedName().getFullQualifiedNameAsString());
-      EdmExpression expression = annotation.getExpression();
-      assertNotNull(expression);
-      assertTrue(expression.isConstant());
-      assertEquals("Org.OData.Core.V1.Permission/Read", expression.asConstant().getValueAsString());
-      assertEquals("EnumMember", expression.getExpressionName());
-    }
   }
 }

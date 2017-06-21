@@ -25,7 +25,6 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
@@ -76,36 +75,11 @@ public abstract class TechnicalProcessor implements Processor {
     EdmEntitySet entitySet = null;
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     EdmSingleton singleton = null;
+    
     // First must be an entity, an entity collection, a function import, or an action import.
-    //blockTypeFilters(resourcePaths.get(0));
+    blockTypeFilters(resourcePaths.get(0));
     if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
-      entitySet = getEntitySetBasedOnTypeCast(((UriResourceEntitySet)resourcePaths.get(0)));
-      //entitySet = ((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet();
-    } else if (resourcePaths.get(0) instanceof UriResourceFunction) {
-      entitySet = ((UriResourceFunction) resourcePaths.get(0)).getFunctionImport().getReturnedEntitySet();
-    } else if (resourcePaths.get(0) instanceof UriResourceAction) {
-      entitySet = ((UriResourceAction) resourcePaths.get(0)).getActionImport().getReturnedEntitySet();
-    }else if (resourcePaths.get(0) instanceof UriResourceSingleton ) {      
-      singleton =((UriResourceSingleton) resourcePaths.get(0)).getSingleton();
-    } else {
-      throw new ODataApplicationException("Invalid resource type.",
-          HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-    }
-
-    entitySet = (EdmEntitySet) getEntitySetForNavigation(entitySet, singleton, resourcePaths);
-
-    return entitySet;
-  }
-  
-  protected EdmEntitySet getEdmEntitySetTypeCast(final UriInfoResource uriInfo) throws ODataApplicationException {
-    EdmEntitySet entitySet = null;
-    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
-    EdmSingleton singleton = null;
-    // First must be an entity, an entity collection, a function import, or an action import.
-    //blockTypeFilters(resourcePaths.get(0));
-    if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
-      entitySet = getEntitySetBasedOnTypeCast(((UriResourceEntitySet)resourcePaths.get(0)));
-      //entitySet = ((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet();
+      entitySet = ((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet();
     } else if (resourcePaths.get(0) instanceof UriResourceFunction) {
       entitySet = ((UriResourceFunction) resourcePaths.get(0)).getFunctionImport().getReturnedEntitySet();
     } else if (resourcePaths.get(0) instanceof UriResourceAction) {
@@ -126,24 +100,24 @@ public abstract class TechnicalProcessor implements Processor {
       List<UriResource> resourcePaths) throws ODataApplicationException {
     int navigationCount = 0;
       while ((entitySet != null || singleton!=null)
-          && ++navigationCount < resourcePaths.size() 
+          && ++navigationCount < resourcePaths.size()
           && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
-          final UriResourceNavigation uriResourceNavigation = 
-              (UriResourceNavigation) resourcePaths.get(navigationCount);
-          blockTypeFilters(uriResourceNavigation);
-          if (uriResourceNavigation.getProperty().containsTarget()) {
-            throw new ODataApplicationException("Containment navigation is not supported.",
-                HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
-          }
-          EdmBindingTarget target = null ;
-          if(entitySet!=null){
-            target = entitySet.getRelatedBindingTarget(uriResourceNavigation.getProperty().getName());
-          }else if(singleton != null){
-            target = singleton.getRelatedBindingTarget(uriResourceNavigation.getProperty().getName());
-          }
-          if (target instanceof EdmEntitySet) {
-            entitySet = (EdmEntitySet) target;
-          }
+        final UriResourceNavigation uriResourceNavigation = 
+            (UriResourceNavigation) resourcePaths.get(navigationCount);
+        blockTypeFilters(uriResourceNavigation);
+        if (uriResourceNavigation.getProperty().containsTarget()) {
+          throw new ODataApplicationException("Containment navigation is not supported.",
+              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+        }
+        EdmBindingTarget target = null ;
+        if(entitySet!=null){
+          target = entitySet.getRelatedBindingTarget(uriResourceNavigation.getProperty().getName());
+        }else if(singleton != null){
+          target = singleton.getRelatedBindingTarget(uriResourceNavigation.getProperty().getName());
+        }
+        if (target instanceof EdmEntitySet) {
+          entitySet = (EdmEntitySet) target;
+        }
       }
     return entitySet;
   }
@@ -165,10 +139,11 @@ public abstract class TechnicalProcessor implements Processor {
   protected Entity readEntity(final UriInfoResource uriInfo, final boolean ignoreLastNavigation)
       throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+
     Entity entity = null;
     if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
-      EdmEntitySet entitySet = getEntitySetBasedOnTypeCast(((UriResourceEntitySet)resourcePaths.get(0)));
-      entity = dataProvider.read(entitySet, ((UriResourceEntitySet)resourcePaths.get(0)).getKeyPredicates());
+      final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
+      entity = dataProvider.read(uriResource.getEntitySet(), uriResource.getKeyPredicates());
     }else if (resourcePaths.get(0) instanceof UriResourceSingleton) {
       final UriResourceSingleton uriResource = (UriResourceSingleton) resourcePaths.get(0);
       entity = dataProvider.read( uriResource.getSingleton());
@@ -230,27 +205,6 @@ public abstract class TechnicalProcessor implements Processor {
     return entity;
   }
 
-  protected EdmEntitySet getEntitySetBasedOnTypeCast(UriResourceEntitySet uriResource) {
-    EdmEntitySet entitySet = null;
-    EdmEntityContainer container = this.serviceMetadata.getEdm().getEntityContainer();
-    if (uriResource.getTypeFilterOnEntry() != null ||
-        uriResource.getTypeFilterOnCollection() != null) {
-      List<EdmEntitySet> entitySets = container.getEntitySets();
-      for (EdmEntitySet entitySet1 : entitySets) {
-        EdmEntityType entityType = entitySet1.getEntityType();
-        if ((uriResource.getTypeFilterOnEntry() != null && 
-            entityType.getName().equalsIgnoreCase(uriResource.getTypeFilterOnEntry().getName())) ||
-            (uriResource.getTypeFilterOnCollection() != null && 
-            entityType.getName().equalsIgnoreCase(uriResource.getTypeFilterOnCollection().getName()))) {
-          entitySet = entitySet1;
-          break;
-        }
-      }
-    } else {
-      entitySet = uriResource.getEntitySet();
-    }
-    return entitySet;
-  }
   protected EntityCollection readEntityCollection(final UriInfoResource uriInfo) throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     if (resourcePaths.size() > 1 && resourcePaths.get(1) instanceof UriResourceNavigation) {
@@ -263,8 +217,7 @@ public abstract class TechnicalProcessor implements Processor {
         return dataProvider.readFunctionEntityCollection(uriResource.getFunction(), uriResource.getParameters(),
             uriInfo);
       } else {
-        EdmEntitySet entitySet = getEntitySetBasedOnTypeCast(((UriResourceEntitySet)resourcePaths.get(0)));
-        return dataProvider.readAll(entitySet);
+        return dataProvider.readAll(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
       }
     }
   }

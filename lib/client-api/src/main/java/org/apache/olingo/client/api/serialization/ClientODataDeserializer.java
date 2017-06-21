@@ -19,19 +19,15 @@
 package org.apache.olingo.client.api.serialization;
 
 import java.io.InputStream;
-import java.util.List;
 
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.data.ServiceDocument;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.data.Delta;
-import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 
 public interface ClientODataDeserializer extends ODataDeserializer {
 
   XMLMetadata toMetadata(InputStream input);
-  
-  List<CsdlSchema> fetchTermDefinitionSchema(List<InputStream> input);
 
   /**
    * Gets the ServiceDocument object represented by the given InputStream.

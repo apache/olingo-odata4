@@ -19,7 +19,6 @@
 package org.apache.olingo.client.api.serialization;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.client.api.data.ResWrap;
@@ -48,15 +47,6 @@ public interface ODataReader {
    * @return metadata representation.
    */
   Edm readMetadata(InputStream input);
-  
-  /**
-   * Parses a stream into metadata representation. 
-   * Also parses a term definition stream into Term representation.
-   * @param input
-   * @param termDefinitions
-   * @return
-   */
-  Edm readMetadata(InputStream input, List<InputStream> termDefinitions);
 
   /**
    * Parses a stream into metadata representation, including referenced metadata documents.
@@ -66,8 +56,6 @@ public interface ODataReader {
    * @return metadata representation.
    */
   Edm readMetadata(Map<String, CsdlSchema> xmlSchemas);
-  
-  Edm readMetadata(Map<String, CsdlSchema> xmlSchemas, List<CsdlSchema> termDefinitionSchema);
 
   /**
    * Parses an OData service document.
