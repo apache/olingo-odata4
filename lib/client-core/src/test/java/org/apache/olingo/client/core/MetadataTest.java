@@ -21,6 +21,7 @@ package org.apache.olingo.client.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -454,5 +455,31 @@ public class MetadataTest extends AbstractTest {
       assertEquals("Org.OData.Core.V1.Permission/Read", expression.asConstant().getValueAsString());
       assertEquals("EnumMember", expression.getExpressionName());
     }
+  }
+  @Test
+  public void testOLINGO1100() {
+    final Edm edm = client.getReader().readMetadata(getClass().getResourceAsStream("olingo1100.xml"));
+    assertNotNull(edm);
+    final EdmEntityContainer container = edm.getEntityContainer(
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "EntityContainer"));
+    assertNotNull(container);
+    final EdmEntitySet providers = container.getEntitySet("Provider");
+    assertNotNull(providers);
+    assertEquals(edm.getEntityType(new FullQualifiedName(container.getNamespace(), "Provider")),
+        providers.getEntityType());
+    assertEquals(container.getEntitySet("ProviderLicense"), providers.getRelatedBindingTarget("ProviderLicense"));
+    assertNull(providers.getRelatedBindingTarget("ProviderLicensePractice"));
+    assertNull(providers.getRelatedBindingTarget("Provider"));
+    final EdmEntitySet providerLicenses = container.getEntitySet("ProviderLicense");
+    assertEquals(edm.getEntityType(new FullQualifiedName(container.getNamespace(), "ProviderLicense")),
+        providerLicenses.getEntityType());
+    assertEquals(container.getEntitySet("ProviderLicensePractice"), 
+        providerLicenses.getRelatedBindingTarget("ProviderLicensePractice"));
+    assertNull(providerLicenses.getRelatedBindingTarget("ProviderLicense"));
+    assertNull(providerLicenses.getRelatedBindingTarget("Provider"));
+    final EdmEntitySet providerLicensePractices = container.getEntitySet("ProviderLicensePractice");
+    assertNull(providerLicensePractices.getRelatedBindingTarget("ProviderLicensePractice"));
+    assertNull(providerLicensePractices.getRelatedBindingTarget("Provider"));
+    assertNull(providerLicenses.getRelatedBindingTarget("ProviderLicense"));
   }
 }
