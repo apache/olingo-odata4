@@ -206,4 +206,86 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
     assertTrue(IOUtils.toString(connection.getErrorStream()).
         contains("The system query option '$skip' has the not-allowed value ''."));
   }
+  
+  @Test
+  public void testBaseTypeDerivedTypeCasting1() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESTwoPrim(111)/olingo.odata.test1.ETBase");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("\"PropertyInt16\":111"));
+    assertTrue(content.contains("\"PropertyString\":\"TEST A\""));
+    assertTrue(content.contains("\"AdditionalPropertyString_5\":\"TEST A 0815\""));
+    assertTrue(content.contains("\"@odata.type\":\"#olingo.odata.test1.ETBase\""));
+  }
+  
+  @Test
+  public void testBaseTypeDerivedTypeCasting2() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESTwoPrim(111)/olingo.odata.test1.ETBase/AdditionalPropertyString_5");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getInputStream());
+    assertTrue(content.contains("\"TEST A 0815\""));
+  }
+  
+  @Test
+  public void testBaseTypeDerivedTypeCasting3() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESTwoPrim(32766)/olingo.odata.test1.ETTwoPrim");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("\"PropertyInt16\":32766"));
+    assertTrue(content.contains("\"PropertyString\":\"Test String1\""));
+    assertTrue(content.contains("\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\""));
+  }
+  
+  @Test
+  public void testBaseTypeDerivedTypeCastingException() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESBase(111)/olingo.odata.test1.ETTwoPrim");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getErrorStream());
+
+    assertTrue(content.contains("The type filter 'olingo.odata.test1.ETTwoPrim' is incompatible."));
+  }
+  
+  @Test
+  public void testBaseTypeDerivedComplexTypeCasting1() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESMixPrimCollComp(32767)/PropertyComp/olingo.odata.test1.CTBase");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("\"PropertyInt16\":111"));
+    assertTrue(content.contains("\"PropertyString\":\"TEST A\""));
+    assertTrue(content.contains("\"AdditionalPropString\":null"));
+    assertTrue(content.contains("\"@odata.type\":\"#olingo.odata.test1.CTBase\""));
+  }
 }

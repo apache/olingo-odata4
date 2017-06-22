@@ -49,6 +49,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.edm.geo.SRID;
@@ -2321,4 +2322,67 @@ public class ODataJsonSerializerTest {
        "}"; 
     Assert.assertEquals(expected, resultString);
   }
+  
+  @Test
+  public void deriveComplexProperty() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
+    EdmComplexType derivedComplexType = mockComplexType();
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyComp");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty("PropertyComp");
+
+    final String resultString = IOUtils.toString(serializer
+        .complex(metadata, derivedComplexType, property,
+            ComplexSerializerOptions.with()
+                .contextURL(ContextURL.with()
+                    .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName() 
+                        + "/olingo.odata.test1.CTBase")
+                    .build())
+                .build()).getContent());
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/"
+        + "PropertyComp/olingo.odata.test1.CTBase\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@odata.type\":\"#olingo.odata.test1.CTBase\","
+        + "\"AdditionalPropertyString\":null,"
+        + "\"PropertyInt16\":111,"
+        + "\"PropertyString\":\"TEST A\"}",
+        resultString);
+  }
+
+  private EdmComplexType mockComplexType() {
+    EdmProperty property1 = Mockito.mock(EdmProperty.class);
+    final String name1 = "AdditionalPropertyString";
+    Mockito.when(property1.getName()).thenReturn(name1);
+    Mockito.when(property1.isNullable()).thenReturn(true);
+    Mockito.when(property1.getType()).thenReturn(odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    Mockito.when(property1.isPrimitive()).thenReturn(true);
+    
+    EdmProperty property2 = Mockito.mock(EdmProperty.class);
+    final String name2 = "PropertyInt16";
+    Mockito.when(property2.getName()).thenReturn(name2);
+    Mockito.when(property2.isNullable()).thenReturn(false);
+    Mockito.when(property2.getType()).thenReturn(odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int16));
+    Mockito.when(property2.isPrimitive()).thenReturn(true);
+    
+    EdmProperty property3 = Mockito.mock(EdmProperty.class);
+    final String name3 = "PropertyString";
+    Mockito.when(property3.getName()).thenReturn(name3);
+    Mockito.when(property3.isNullable()).thenReturn(false);
+    Mockito.when(property3.getMaxLength()).thenReturn(50);
+    Mockito.when(property3.getType()).thenReturn(odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    Mockito.when(property3.isPrimitive()).thenReturn(true);
+    
+    EdmComplexType complexType = Mockito.mock(EdmComplexType.class);
+    Mockito.when(complexType.getPropertyNames()).thenReturn(Arrays.asList(name1, name2, name3));
+    Mockito.when(complexType.getStructuralProperty(name1)).thenReturn(property1);
+    Mockito.when(complexType.getStructuralProperty(name2)).thenReturn(property2);
+    Mockito.when(complexType.getStructuralProperty(name3)).thenReturn(property3);
+    EdmComplexType baseComplexType = metadata.getEdm().getComplexType(
+        new FullQualifiedName("olingo.odata.test1.CTTwoPrim"));
+    Mockito.when(complexType.getBaseType()).thenReturn(baseComplexType);
+    Mockito.when(complexType.getFullQualifiedName()).thenReturn(
+        new FullQualifiedName("olingo.odata.test1.CTBase"));
+    Mockito.when(complexType.getName()).thenReturn("CTBase");
+    Mockito.when(complexType.getNamespace()).thenReturn("olingo.odata.test1");
+    return complexType;
+  }  
 }
