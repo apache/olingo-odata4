@@ -1041,7 +1041,20 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
     try {
-      EdmComplexType resolvedType = resolveComplexType(metadata, type, property.getType());
+      EdmComplexType resolvedType = null;
+      if (!type.getFullQualifiedName().getFullQualifiedNameAsString().
+          equals(property.getType())) {
+        if (type.getBaseType() != null && 
+            type.getBaseType().getFullQualifiedName().getFullQualifiedNameAsString().
+            equals(property.getType())) {
+          resolvedType = resolveComplexType(metadata, type.getBaseType(), 
+              type.getFullQualifiedName().getFullQualifiedNameAsString());
+        } else {
+          resolvedType = resolveComplexType(metadata, type, property.getType());
+        }
+      } else {
+        resolvedType = resolveComplexType(metadata, type, property.getType());
+      }
       CircleStreamBuffer buffer = new CircleStreamBuffer();
       outputStream = buffer.getOutputStream();
       XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, DEFAULT_CHARSET);

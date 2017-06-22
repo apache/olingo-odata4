@@ -702,9 +702,23 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           throws IOException, SerializerException{
         json.writeStartObject();        
         String derivedName = property.getType();
-        final EdmComplexType resolvedType = resolveComplexType(metadata, type, derivedName);
+        EdmComplexType resolvedType = null;
+        if (!type.getFullQualifiedName().getFullQualifiedNameAsString().
+            equals(derivedName)) {
+          if (type.getBaseType() != null && 
+              type.getBaseType().getFullQualifiedName().getFullQualifiedNameAsString().
+              equals(derivedName)) {
+            resolvedType = resolveComplexType(metadata, type.getBaseType(), 
+                type.getFullQualifiedName().getFullQualifiedNameAsString());
+          } else {
+            resolvedType = resolveComplexType(metadata, type, derivedName);
+          }
+        } else {
+          resolvedType = resolveComplexType(metadata, type, derivedName);
+        }
         if (!isODataMetadataNone && !resolvedType.equals(type) || isODataMetadataFull) {
-           json.writeStringField(Constants.JSON_TYPE, "#" + property.getType());
+           json.writeStringField(Constants.JSON_TYPE, "#" + 
+        resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
         }          
         writeComplexValue(metadata, resolvedType, property.asComplex().getValue(), selectedPaths,
              json);
@@ -1000,9 +1014,23 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       json.writeStartObject();
       writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);      
-      final EdmComplexType resolvedType = resolveComplexType(metadata, type, property.getType());
+      EdmComplexType resolvedType = null;
+      if (!type.getFullQualifiedName().getFullQualifiedNameAsString().
+          equals(property.getType())) {
+        if (type.getBaseType() != null && 
+            type.getBaseType().getFullQualifiedName().getFullQualifiedNameAsString().
+            equals(property.getType())) {
+          resolvedType = resolveComplexType(metadata, type.getBaseType(), 
+              type.getFullQualifiedName().getFullQualifiedNameAsString());
+        } else {
+          resolvedType = resolveComplexType(metadata, type, property.getType());
+        }
+      } else {
+        resolvedType = resolveComplexType(metadata, type, property.getType());
+      }
       if (!isODataMetadataNone && !resolvedType.equals(type) || isODataMetadataFull) {
-        json.writeStringField(Constants.JSON_TYPE, "#" + property.getType());
+        json.writeStringField(Constants.JSON_TYPE, "#" + 
+      resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
       }
       writeOperations(property.getOperations(), json);      
       final List<Property> values =
