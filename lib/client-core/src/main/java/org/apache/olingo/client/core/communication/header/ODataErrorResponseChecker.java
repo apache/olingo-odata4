@@ -57,6 +57,18 @@ public final class ODataErrorResponseChecker {
       ODataError error;
       try {
         error = odataClient.getReader().readError(entity, contentType);
+        if(error != null) {
+            Map<String, String> innerError = error.getInnerError();
+            if(innerError != null) {
+                if(innerError.get("internalexception") != null) {
+                    error.setMessage(error.getMessage() + innerError.get("internalexception"));
+                }
+                else {
+                    error.setMessage(error.getMessage() + innerError.get("message"));
+                }
+            }
+        }
+
       } catch (final RuntimeException e) {
         LOG.warn("Error deserializing error response", e);
         error = getGenericError(
