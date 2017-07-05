@@ -187,4 +187,10 @@ public class ODataReaderImpl implements ODataReader {
     ClientCsdlEdmProvider prov = new ClientCsdlEdmProvider(xmlSchemas);
     return new EdmProviderImpl(prov, termDefinitionSchema);
   }
+  
+  @Override
+  public Edm readMetadata(XMLMetadata metadata, List<InputStream> termDefinitions) {
+    return readMetadata(metadata.getSchemaByNsOrAlias(),
+        client.getDeserializer(ContentType.APPLICATION_XML).fetchTermDefinitionSchema(termDefinitions));
+  }
 }

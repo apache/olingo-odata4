@@ -1631,8 +1631,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
 
     List<InputStream> streams = new ArrayList<InputStream>();
     streams.add(response.getRawResponse());
-    Edm edm = getClient().getReader().readMetadata(Thread.currentThread().getContextClassLoader().
-        getResourceAsStream("edmxWithCoreAnnotation.xml"), streams);
+    Edm edm = getClient().getReader().readMetadata(metadata, streams);
     assertNotNull(edm);
     final EdmEntityType person = edm.getEntityType(
         new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Person"));
