@@ -32,17 +32,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.serialization.JsonDeserializer;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
@@ -482,4 +488,71 @@ public class JSONTest extends AbstractTest {
       i++;
     }
   }
+
+  @Test
+  public void testOLINGO1114() throws Exception {
+    ClientEntity entityIncNullValue = client.getObjectFactory()
+            .newEntity(new FullQualifiedName("Microsoft.Dynamics.CRM", "account"));
+    List<ClientProperty> properties = entityIncNullValue.getProperties();
+
+    // Property "name"
+    ClientPrimitiveValue.Builder valueBuilder = client.getObjectFactory().newPrimitiveValueBuilder();
+    valueBuilder.setType(EdmPrimitiveTypeKind.String);
+    valueBuilder.setValue("testString");
+    ClientProperty name = client.getObjectFactory().newPrimitiveProperty("name", valueBuilder.build());
+    properties.add(name);
+
+    // Property "testDecimal"
+    valueBuilder = client.getObjectFactory().newPrimitiveValueBuilder();
+    valueBuilder.setType(EdmPrimitiveTypeKind.Decimal);
+    valueBuilder.setValue(null);
+    ClientProperty revenue = client.getObjectFactory().newPrimitiveProperty("testDecimal", valueBuilder.build());
+    properties.add(revenue);
+
+    // Property "testByte"
+    valueBuilder = client.getObjectFactory().newPrimitiveValueBuilder();
+    valueBuilder.setType(EdmPrimitiveTypeKind.Byte);
+    valueBuilder.setValue(null);
+    ClientProperty testByte = client.getObjectFactory().newPrimitiveProperty("testByte", valueBuilder.build());
+    properties.add(testByte);
+
+    // Property "testDouble"
+    valueBuilder = client.getObjectFactory().newPrimitiveValueBuilder();
+    valueBuilder.setType(EdmPrimitiveTypeKind.Double);
+    valueBuilder.setValue(null);
+    ClientProperty testDouble = client.getObjectFactory().newPrimitiveProperty("testDouble", valueBuilder.build());
+    properties.add(testDouble);
+
+    // Property "testInt64"
+    valueBuilder = client.getObjectFactory().newPrimitiveValueBuilder();
+    valueBuilder.setType(EdmPrimitiveTypeKind.Int64);
+    valueBuilder.setValue(null);
+    ClientProperty testInt64 = client.getObjectFactory().newPrimitiveProperty("testInt64", valueBuilder.build());
+    properties.add(testInt64);
+
+    // Property "testInt32"
+    valueBuilder = client.getObjectFactory().newPrimitiveValueBuilder();
+    valueBuilder.setType(EdmPrimitiveTypeKind.Int32);
+    valueBuilder.setValue(null);
+    ClientProperty testInt32 = client.getObjectFactory().newPrimitiveProperty("testInt32", valueBuilder.build());
+    properties.add(testInt32);
+
+    // Property "testInt16"
+    valueBuilder = client.getObjectFactory().newPrimitiveValueBuilder();
+    valueBuilder.setType(EdmPrimitiveTypeKind.Int16);
+    valueBuilder.setValue(null);
+    ClientProperty testInt16 = client.getObjectFactory().newPrimitiveProperty("testInt16", valueBuilder.build());
+    properties.add(testInt16);
+
+    InputStream inputStream = client.getWriter().writeEntity(entityIncNullValue, ContentType.JSON);
+    HttpEntity httpEntity = URIUtils.buildInputStreamEntity(client, inputStream);
+
+    final String actual = EntityUtils.toString(httpEntity);
+    final JsonNode expected =
+            OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo1114.json")).
+                    replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
+    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    assertEquals(expected, actualNode);
+  }
+
 }
