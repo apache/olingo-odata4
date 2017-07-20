@@ -385,7 +385,9 @@ public class JsonDeserializer implements ODataDeserializer {
       break;
 
     case ENUM:
-      valuable.setValue(ValueType.ENUM, node.asText());
+      if(!node.isNull()) {
+    	  valuable.setValue(ValueType.ENUM, node.asText());
+      }
       break;
 
     case PRIMITIVE:
