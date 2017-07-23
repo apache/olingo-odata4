@@ -123,6 +123,33 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertNotNull(entity.getProperty("PropertyGuid").getValue());
     assertNotNull(entity.getProperty("PropertyTimeOfDay").getValue());
   }
+  
+  @Test
+  public void derivedEntityETTwoPrim() throws Exception {
+    String entityString =
+        "{\"@odata.type\":\"#olingo.odata.test1.ETBase\","+
+            "\"PropertyInt16\":32767," +
+            "\"PropertyString\":\"First Resource - positive values\"," +
+            "\"AdditionalPropertyString_5\":\"Additional\"}";
+    final Entity entity = deserialize(entityString, "ETTwoPrim");
+    assertNotNull(entity);
+    assertEquals("olingo.odata.test1.ETBase", entity.getType());
+    List<Property> properties = entity.getProperties();
+    assertNotNull(properties);
+    assertEquals(3, properties.size());
+    assertEquals(new Short((short) 32767), entity.getProperty("PropertyInt16").getValue());
+    assertEquals("First Resource - positive values", entity.getProperty("PropertyString").getValue());
+    assertNotNull(entity.getProperty("AdditionalPropertyString_5").getValue());
+  }
+  
+  @Test(expected=DeserializerException.class)
+  public void derivedEntityETTwoPrimError() throws Exception {
+    String entityString =
+        "{  \"PropertyInt16\":32767," +
+            "\"PropertyString\":\"First Resource - positive values\"," +
+            "\"AdditionalPropertyString_5\":\"Additional\"}";
+   deserialize(entityString, "ETTwoPrim");
+  }
 
   @Test
   public void simpleEntityETAllPrimWithDefaultNullValue() throws Exception {
@@ -298,7 +325,132 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     Assert.assertEquals("First Resource - first", e.getProperty("PropertyString").getValue());
     Assert.assertEquals(true, e.getProperty("PropertyBoolean").getValue());
   }
+    
+  @Test
+  public void derivedEntityESCompCollDerived() throws Exception {
+    final String payload = "{\n" +
+        "   \"@odata.context\": \"$metadata#ESCompCollDerived/$entity\",\n" +
+        "   \"@odata.metadataEtag\":\"W/metadataETag\",\n" +
+        "   \"@odata.etag\":\"W/32767\",\n" +
+        "   \"PropertyInt16\":32767,\n" +
+        "   \"CollPropertyCompAno@odata.type\": \"#Collection(olingo.odata.test1.CTTwoPrimAno)\",\n" +
+        "   \"CollPropertyCompAno\": [\n" +
+        "      {\n" +
+        "     \"@odata.type\": \"#olingo.odata.test1.CTBaseAno\",\n" +
+        "            \"PropertyString\": \"TEST9876\",\n" +
+        "            \"AdditionalPropString\": \"Additional9876\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"@odata.type\": \"#olingo.odata.test1.CTTwoPrimAno\",\n" +
+        "            \"PropertyString\": \"TEST1234\"\n" +
+        "        }\n" +
+        "    ]\n" +
+        "   \n" +
+        "}";
+    final Entity entity = deserialize(payload, "ETDeriveCollComp");
+    Assert.assertNotNull(entity);
+    List<Property> properties = entity.getProperties();
+    assertNotNull(properties);
+    assertEquals(2, properties.size());
+    assertEquals("PropertyInt16=32767", properties.get(0).toString());
+    for (Property prop : properties) {
+      assertNotNull(prop);
+      if (prop.isCollection()) {
+        Property property = entity.getProperty("CollPropertyCompAno");
+        assertEquals(ValueType.COLLECTION_COMPLEX, property.getValueType());
+
+        assertTrue(property.getValue() instanceof List);
+        List<? extends Object> asCollection = property.asCollection();
+        assertEquals(2, asCollection.size());
+
+        for (Object arrayElement : asCollection) {
+          assertTrue(arrayElement instanceof ComplexValue);
+          List<Property> castedArrayElement = ((ComplexValue) arrayElement).getValue();
+          if(castedArrayElement.size() == 1){
+            assertEquals("PropertyString=TEST1234", castedArrayElement.get(0).toString());
+            assertEquals("olingo.odata.test1.CTTwoPrimAno", ((ComplexValue) arrayElement).getTypeName());
+          }else{
+            assertEquals(2, castedArrayElement.size());
+            assertEquals("AdditionalPropString=Additional9876", castedArrayElement.get(1).toString());
+            assertEquals("olingo.odata.test1.CTBaseAno", ((ComplexValue) arrayElement).getTypeName());
+          }
+        }
+      }
+    }
+  }
   
+  @Test
+  public void derivedEntityESCompCollDerivedEmptyNull() throws Exception {
+    final String payload = "{\n" +
+        "   \"@odata.context\": \"$metadata#ESCompCollDerived/$entity\",\n" +
+        "   \"@odata.metadataEtag\":\"W/metadataETag\",\n" +
+        "   \"@odata.etag\":\"W/32767\",\n" +
+        "   \"PropertyInt16\":32767,\n" +
+        "   \"PropertyCompAno\":null,\n"+
+        "   \"CollPropertyCompAno@odata.type\": \"#Collection(olingo.odata.test1.CTTwoPrimAno)\",\n" +
+        "   \"CollPropertyCompAno\": [\n" +
+        "      {\n" +
+        "     \"@odata.type\": \"#olingo.odata.test1.CTBaseAno\",\n" +
+        "            \"PropertyString\": null,\n" +
+        "            \"AdditionalPropString\": null\n" +
+        "        },\n" +
+        "        {\n" +
+        "        }\n" +
+        "    ]\n" +
+        "   \n" +
+        "}";
+    final Entity entity = deserialize(payload, "ETDeriveCollComp");
+    Assert.assertNotNull(entity);
+    List<Property> properties = entity.getProperties();
+    assertNotNull(properties);
+    assertEquals(3, properties.size());
+    assertEquals("PropertyInt16=32767", properties.get(0).toString());
+    assertEquals("PropertyCompAno=null", properties.get(1).toString());
+    for (Property prop : properties) {
+      assertNotNull(prop);
+      if (prop.isCollection()) {
+        Property property = entity.getProperty("CollPropertyCompAno");
+        assertEquals(ValueType.COLLECTION_COMPLEX, property.getValueType());
+
+        assertTrue(property.getValue() instanceof List);
+        List<? extends Object> asCollection = property.asCollection();
+        assertEquals(2, asCollection.size());
+
+        for (Object arrayElement : asCollection) {
+          assertTrue(arrayElement instanceof ComplexValue);
+          List<Property> castedArrayElement = ((ComplexValue) arrayElement).getValue();
+         if(castedArrayElement.size() == 2){
+            assertEquals(2, castedArrayElement.size());
+            assertEquals("AdditionalPropString=null", castedArrayElement.get(1).toString());
+          }else{
+            assertEquals(0, castedArrayElement.size());
+          }
+        }
+      }
+    }
+  }
+  
+  @Test(expected = DeserializerException.class)
+  public void derivedEntityESCompCollDerivedError() throws Exception {
+    final String payload = "{\n" +
+        "   \"@odata.context\": \"$metadata#ESCompCollDerived/$entity\",\n" +
+        "   \"@odata.metadataEtag\":\"W/metadataETag\",\n" +
+        "   \"@odata.etag\":\"W/32767\",\n" +
+        "   \"PropertyInt16\":32767,\n" +
+        "   \"CollPropertyCompAno@odata.type\": \"#Collection(olingo.odata.test1.CTTwoPrimAno)\",\n" +
+        "   \"CollPropertyCompAno\": [\n" +
+        "      {\n" +
+        "            \"PropertyString\": \"TEST9876\",\n" +
+        "            \"AdditionalPropString\": \"Additional9876\"\n" +
+        "        },\n" +
+        "        {\n" +
+        "            \"PropertyString\": \"TEST1234\"\n" +
+        "        }\n" +
+        "    ]\n" +
+        "   \n" +
+        "}";
+     deserialize(payload, "ETDeriveCollComp");
+  }
   private Property getCVProperty(ComplexValue cv, String name) {
     for (Property p : cv.getValue()) {
       if (p.getName().equals(name)) {
@@ -385,6 +537,77 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     }
   }
 
+  @Test
+  public void deriveEntityETMixPrimCollComp() throws Exception {
+    final String entityString = "{"
+        + "\"PropertyInt16\":32767,"
+        + "\"CollPropertyString\":"
+        + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"PropertyComp\":{\"@odata.type\": \"#olingo.odata.test1.CTBase\","
+        + "\"PropertyInt16\":111,\"PropertyString\":\"TEST A\",\"AdditionalPropString\":\"Additional\"},"
+        + "\"CollPropertyComp\":["
+        + "{\"@odata.type\": \"#olingo.odata.test1.CTBase\",\n"
+        + "\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\",\"AdditionalPropString\":\"Additional\"},"
+        + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
+        + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
+    final Entity entity = deserialize(entityString, "ETMixPrimCollComp");
+    assertNotNull(entity);
+    List<Property> properties = entity.getProperties();
+    assertNotNull(properties);
+    assertEquals(4, properties.size());
+    Property prop = entity.getProperty("PropertyComp");
+    ComplexValue asComp = prop.asComplex();
+    assertEquals(3,asComp.getValue().size());
+    assertEquals("olingo.odata.test1.CTBase",prop.getType());
+    Property property = entity.getProperty("CollPropertyComp");
+    assertEquals(ValueType.COLLECTION_COMPLEX, property.getValueType());
+
+    assertTrue(property.getValue() instanceof List);
+    List<? extends Object> asCollection = property.asCollection();
+    assertEquals(3, asCollection.size());
+    assertEquals(3,((ComplexValue)asCollection.get(0)).getValue().size());
+    assertEquals(2,((ComplexValue)asCollection.get(1)).getValue().size());
+    assertEquals(2,((ComplexValue)asCollection.get(2)).getValue().size());
+  }
+  
+  @Test
+  public void deriveEntityESAllPrimDeepInsert() throws Exception {
+    final String entityString =  "{\"PropertyInt16\": 32767,"
+        + "\"PropertyString\": \"First Resource - positive values\","
+        + "\"PropertyBoolean\": true,"
+        + "\"PropertyByte\": 255,"
+        + "\"PropertySByte\": 127,"
+        + "\"PropertyInt32\": 2147483647,"
+        + "\"PropertyInt64\": 9223372036854775807,"
+        + "\"PropertyDecimal\": 34,"
+        + "\"PropertyBinary\": \"ASNFZ4mrze8=\","
+        + "\"PropertyDate\": \"2012-12-03\","
+        + "\"PropertyDateTimeOffset\": \"2012-12-03T07:16:23Z\","
+        + "\"PropertyDuration\": \"PT6S\","
+        + "\"PropertyGuid\": \"01234567-89ab-cdef-0123-456789abcdef\","
+        + "\"PropertyTimeOfDay\": \"03:26:05\","
+        + "\"NavPropertyETTwoPrimMany\": [{\"@odata.type\": \"#olingo.odata.test1.ETBase\","
+        + "\"PropertyInt16\": -365,\"PropertyString\": \"Test String2\","
+        + "\"AdditionalPropertyString_5\": \"Test String2\"},"
+        + "{\"PropertyInt16\": -365,\"PropertyString\": \"Test String2\"}],"
+        + "\"NavPropertyETTwoPrimOne\":"
+        + "{\"@odata.type\": \"#olingo.odata.test1.ETBase\",\"PropertyInt16\": 32767,"
+        + "\"PropertyString\": \"Test String4\","
+        + "\"AdditionalPropertyString_5\": \"Test String2\"}}";
+    final Entity entity = deserialize(entityString, "ETAllPrim");
+    assertNotNull(entity);
+    List<Property> properties = entity.getProperties();
+    assertNotNull(properties);
+    assertEquals(14, properties.size());
+    List<Link> navProperties = entity.getNavigationLinks();
+    assertNotNull(navProperties);
+    assertEquals(2, navProperties.size());
+    assertNotNull(navProperties.get(1).getInlineEntitySet()
+        .getEntities().get(0).getProperty("AdditionalPropertyString_5"));
+    assertNotNull(navProperties.get(0).getInlineEntity().getProperty("AdditionalPropertyString_5"));
+  }
+
+  
   @Test
   public void eTMixPrimCollCompMissingPropertyInComplexType() throws Exception {
     final String entityString = "{"

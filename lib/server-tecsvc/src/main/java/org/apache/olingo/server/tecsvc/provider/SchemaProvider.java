@@ -57,7 +57,7 @@ public class SchemaProvider {
     // EntityTypes
     List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
     schema.setEntityTypes(entityTypes);
-    
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETDeriveCollComp));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAllPrim));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAllPrimDefaultValues));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCollAllPrim));
@@ -106,7 +106,10 @@ public class SchemaProvider {
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTNavCont));
-
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCompCollCompAno));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoPrimAno));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTBaseAno));
+    
     // Actions
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
     schema.setActions(actions);

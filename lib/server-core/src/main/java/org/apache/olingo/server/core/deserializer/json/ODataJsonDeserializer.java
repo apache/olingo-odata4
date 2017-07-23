@@ -594,6 +594,10 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     // Even if there are no properties defined we have to give back an empty list
     ComplexValue complexValue = new ComplexValue();
     EdmComplexType edmType = (EdmComplexType) type;
+    
+    //Check if the properties are from derived type
+    edmType = (EdmComplexType) getDerivedType(edmType, jsonNode);
+    
     // Check and consume all Properties
     for (String propertyName : edmType.getPropertyNames()) {
       JsonNode subNode = jsonNode.get(propertyName);
@@ -612,6 +616,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         ((ObjectNode) jsonNode).remove(propertyName);
       }
     }
+    complexValue.setTypeName(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
     return complexValue;
   }
 

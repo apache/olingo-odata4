@@ -31,6 +31,11 @@ public class ComplexTypeProvider {
 
   public static final FullQualifiedName nameCTAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTAllPrim");
   public static final FullQualifiedName nameCTBase = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTBase");
+  public static final FullQualifiedName nameCTBaseAno = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTBaseAno");
+  public static final FullQualifiedName nameCTCompCollCompAno = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "CTCompCollCompAno");
+  public static final FullQualifiedName nameCTTwoPrimAno = new FullQualifiedName(SchemaProvider.NAMESPACE, 
+      "CTTwoPrimAno");
   public static final FullQualifiedName nameCTBasePrimCompNav = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTBasePrimCompNav");
   public static final FullQualifiedName nameCTCollAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE,
@@ -86,6 +91,25 @@ public class ComplexTypeProvider {
                   PropertyProvider.collPropertyDateTimeOffset, PropertyProvider.collPropertyDuration,
                   PropertyProvider.collPropertyGuid, PropertyProvider.collPropertyTimeOfDay
                   ));
+
+    } else if (complexTypeName.equals(nameCTTwoPrimAno)) {
+      return new CsdlComplexType()
+          .setName("CTTwoPrimAno")
+          .setProperties(Arrays.asList(PropertyProvider.propertyString))
+          .setAbstract(true);
+
+    } else if (complexTypeName.equals(nameCTBaseAno)) {
+      return new CsdlComplexType()
+          .setName("CTBaseAno")
+          .setBaseType(nameCTTwoPrimAno)
+          .setProperties(Arrays.asList(
+              new CsdlProperty()
+                  .setName("AdditionalPropString")
+                  .setType(PropertyProvider.nameString)));
+    }else if (complexTypeName.equals(nameCTCompCollCompAno)) {
+      return new CsdlComplexType()
+          .setName("CTCompCollCompAno")
+          .setProperties(Arrays.asList(PropertyProvider.collPropertyComp_CTTwoPrim_Ano));
 
     } else if (complexTypeName.equals(nameCTTwoPrim)) {
       return new CsdlComplexType()

@@ -181,7 +181,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
           requestFormat.toContentTypeString());
     } else {
       final DeserializerResult deserializerResult =
-          odata.createDeserializer(requestFormat).entity(request.getBody(), edmEntityType);
+          odata.createDeserializer(requestFormat,serviceMetadata).entity(request.getBody(), edmEntityType);
       new RequestValidator(dataProvider, request.getRawBaseUri())
           .validate(edmEntitySet, deserializerResult.getEntity());
 
@@ -235,7 +235,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     odata.createETagHelper().checkChangePreconditions(entity.getETag(),
         request.getHeaders(HttpHeader.IF_MATCH),
         request.getHeaders(HttpHeader.IF_NONE_MATCH));
-    final ODataDeserializer deserializer = odata.createDeserializer(requestFormat);
+    final ODataDeserializer deserializer = odata.createDeserializer(requestFormat, serviceMetadata);
     final Entity changedEntity = deserializer.entity(request.getBody(), edmEntitySet.getEntityType()).getEntity();
 
     new RequestValidator(dataProvider,

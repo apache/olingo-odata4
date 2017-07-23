@@ -757,15 +757,18 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final Set<List<String>> selectedPaths, final JsonGenerator json)
       throws IOException, SerializerException {
     json.writeStartArray();
+    EdmComplexType derivedType = type;
     for (Object value : property.asCollection()) {
+      derivedType = ((ComplexValue) value).getTypeName()!=null ? metadata.getEdm().getComplexType
+          (new FullQualifiedName(((ComplexValue) value).getTypeName())): type;
       switch (property.getValueType()) {
       case COLLECTION_COMPLEX:
         json.writeStartObject();
-        if (isODataMetadataFull) {
+        if (isODataMetadataFull || (!isODataMetadataNone && !derivedType.equals(type))) {
              json.writeStringField(Constants.JSON_TYPE, "#" + 
-                     type.getFullQualifiedName().getFullQualifiedNameAsString());
+                 derivedType.getFullQualifiedName().getFullQualifiedNameAsString());
         }
-        writeComplexValue(metadata, type, ((ComplexValue) value).getValue(), selectedPaths, json);
+        writeComplexValue(metadata, derivedType, ((ComplexValue) value).getValue(), selectedPaths, json);
         json.writeEndObject();
         break;
       default:

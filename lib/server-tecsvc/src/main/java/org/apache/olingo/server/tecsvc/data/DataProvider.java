@@ -312,7 +312,8 @@ public class DataProvider {
   public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
       final Entity changedEntity, final boolean patch, final boolean isInsert) throws DataProviderException {
 
-    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final EdmEntityType entityType = changedEntity.getType()!=null ?
+        edm.getEntityType(new FullQualifiedName(changedEntity.getType())):edmEntitySet.getEntityType();
     final List<String> keyNames = entityType.getKeyPredicateNames();
 
     // Update Properties
@@ -468,6 +469,10 @@ public class DataProvider {
   @SuppressWarnings("unchecked")
   public void updateProperty(final EdmProperty edmProperty, Property property, final Property newProperty,
       final boolean patch) throws DataProviderException {
+    if(property == null){
+      throw new DataProviderException("Cannot update type of the entity",
+          HttpStatusCode.BAD_REQUEST);
+    }
     final EdmType type = edmProperty.getType();
     if (edmProperty.isCollection()) {
       // Updating collection properties means replacing all entries with the given ones.
@@ -508,9 +513,15 @@ public class DataProvider {
   private ComplexValue createComplexValue(final EdmProperty edmProperty, final ComplexValue complexValue,
       final boolean patch) throws DataProviderException {
     final ComplexValue result = new ComplexValue();
-    final EdmComplexType edmType = (EdmComplexType) edmProperty.getType();
+    EdmComplexType edmType = (EdmComplexType) edmProperty.getType();
     final List<Property> givenProperties = complexValue.getValue();
-
+    if(complexValue.getTypeName()!=null){
+      EdmComplexType derivedType = edm.getComplexType(new FullQualifiedName(complexValue.getTypeName()));
+      if(derivedType.getBaseType()!=null && edmType.getFullQualifiedName().getFullQualifiedNameAsString()
+          .equals(derivedType.getBaseType().getFullQualifiedName().getFullQualifiedNameAsString())){
+      edmType = derivedType;
+      }
+    }
     // Create ALL properties, even if no value is given. Check if null is allowed
     for (final String propertyName : edmType.getPropertyNames()) {
       final EdmProperty innerEdmProperty = (EdmProperty) edmType.getProperty(propertyName);
@@ -529,7 +540,7 @@ public class DataProvider {
         }
       }
     }
-
+    result.setTypeName(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
     return result;
   }
 

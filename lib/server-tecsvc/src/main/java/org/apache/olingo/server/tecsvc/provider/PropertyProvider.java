@@ -673,6 +673,15 @@ public class PropertyProvider {
       .setType(ComplexTypeProvider.nameCTPrimComp)
       .setCollection(true);
 
+  public static final CsdlProperty collPropertyComp_CTTwoPrim_Ano = new CsdlProperty()
+      .setName("CollPropertyCompAno")
+      .setType(ComplexTypeProvider.nameCTTwoPrimAno)
+      .setCollection(true);  
+
+  public static final CsdlProperty propertyComp_CTTwoPrim_Ano = new CsdlProperty()
+      .setName("PropertyCompAno")
+      .setType(ComplexTypeProvider.nameCTTwoPrimAno);
+
   public static final CsdlProperty collPropertyComp_CTTwoPrim = new CsdlProperty()
       .setName("CollPropertyComp")
       .setType(ComplexTypeProvider.nameCTTwoPrim)

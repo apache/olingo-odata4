@@ -891,14 +891,22 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       final EdmComplexType type, final Property property, final Set<List<String>> selectedPaths,
       final String xml10InvalidCharReplacement, final XMLStreamWriter writer)
       throws XMLStreamException, SerializerException {
+    EdmComplexType complexType = type;
     for (Object value : property.asCollection()) {
       writer.writeStartElement(METADATA, Constants.ELEM_ELEMENT, NS_METADATA);
-      if (derivedComplexType(type, property.getType()) != null) {
-        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE, property.getType());
+      String typeName = ((ComplexValue)value).getTypeName();
+      String propertyType = typeName != null ? typeName :property.getType();
+      if (derivedComplexType(type, propertyType ) != null) {
+        writer.writeAttribute(METADATA, NS_METADATA, Constants.ATTR_TYPE, propertyType);
+      }
+      if(typeName!=null && !propertyType.equals(type.getFullQualifiedName().getFullQualifiedNameAsString())){
+        complexType = (EdmComplexType) (metadata.getEdm().getComplexType(new FullQualifiedName(propertyType)));
+      }else{
+        complexType = type;
       }
       switch (property.getValueType()) {
       case COLLECTION_COMPLEX:
-        writeComplexValue(metadata, type,
+        writeComplexValue(metadata, complexType,
             ((ComplexValue) value).getValue(), selectedPaths,
             xml10InvalidCharReplacement, writer);
         break;

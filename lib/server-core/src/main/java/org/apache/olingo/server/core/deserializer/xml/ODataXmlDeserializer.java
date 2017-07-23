@@ -134,14 +134,28 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private Object complex(final XMLEventReader reader, final StartElement start, final EdmComplexType edmComplex)
       throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
     ComplexValue value = new ComplexValue();
+    EdmType resolvedType = edmComplex;
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
       final XMLEvent event = reader.nextEvent();
-      if (event.isStartElement()) {
+      
+      if (event.isStartElement()) {        
+        //Get the derived type from the element tag
+        final Attribute attrType = start.getAttributeByName(typeQName);
+        if (attrType != null ) {
+          String type = new EdmTypeInfo.Builder().setTypeExpression(attrType.getValue()).build().internal();
+          if (type.startsWith("Collection(") && type.endsWith(")")) {
+            type = type.substring(11, type.length()-1);
+          }
+          resolvedType = getDerivedType(edmComplex, type);
+        }
+        
+        
         StartElement se = event.asStartElement();
-        EdmProperty p = (EdmProperty) edmComplex.getProperty(se.getName().getLocalPart());
+        EdmProperty p = (EdmProperty) ((EdmComplexType)resolvedType).getProperty(se.getName().getLocalPart());
         value.getValue().add(property(reader, se, p.getType(), p.isNullable(), p.getMaxLength(),
             p.getPrecision(), p.getScale(), p.isUnicode(), p.isCollection()));
+        value.setTypeName(resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
       }
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
         foundEndProperty = true;
@@ -156,11 +170,9 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       DeserializerException {
 
     List<Object> values = new ArrayList<Object>();
-
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
       final XMLEvent event = reader.nextEvent();
-
       if (event.isStartElement()) {
         if (edmType instanceof EdmPrimitiveType) {
           values.add(primitive(reader, event.asStartElement(), edmType, isNullable,

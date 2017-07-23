@@ -629,6 +629,118 @@ public class ODataJsonSerializerTest {
         + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
+  
+  @Test
+  public void derivedEntityESCompCollDerived() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollDerived");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult =  "{"
+        + "\"@odata.context\":\"$metadata#ESCompCollDerived/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"PropertyInt16\":12345,"
+        + "\"PropertyCompAno\":{"
+        + "\"@odata.type\":\"#olingo.odata.test1.CTBaseAno\","
+        + "\"PropertyString\":\"Num111\","
+        + "\"AdditionalPropString\":\"Test123\""
+        + "},"
+        + "\"CollPropertyCompAno\":["
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTBaseAno\","
+        + "\"PropertyString\":\"TEST12345\","
+        + "\"AdditionalPropString\":\"Additional12345\"},"
+        + "{\"PropertyString\":\"TESTabcd\"}]}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void deriveEntityESAllPrimDerivedOne() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrimDerived");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+   
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETTwoPrimOne")));
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult =   "{\"@odata.context\":\"$metadata#ESAllPrimDerived/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"PropertyInt16\":32767,\"PropertyString\":\"First Resource - positive values\",\"PropertyBoolean\":true,"
+        + "\"PropertyByte\":255,\"PropertySByte\":127,\"PropertyInt32\":2147483647,"
+        + "\"PropertyInt64\":9223372036854775807,"
+        + "\"PropertySingle\":1.79E20,\"PropertyDouble\":-1.79E19,"
+        + "\"PropertyDecimal\":34,\"PropertyBinary\":\"ASNFZ4mrze8=\","
+        + "\"PropertyDate\":\"2012-12-03\",\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\","
+        + "\"PropertyDuration\":\"PT6S\","
+        + "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\",\"PropertyTimeOfDay\":\"03:26:05\","
+        + "\"NavPropertyETTwoPrimOne\":{\"@odata.type\":\"#olingo.odata.test1.ETBase\",\"PropertyInt16\":32766,"
+        + "\"PropertyString\":\"Test String1\",\"AdditionalPropertyString_5\":\"Additional String1\"}}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+  
+
+  @Test
+  public void deriveEntityWithNull() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrimDerived");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+   
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETTwoPrimOne")));
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult =   "{\"@odata.context\":\"$metadata#ESAllPrimDerived/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"PropertyInt16\":-32768,"
+        + "\"PropertyString\":\"Second Resource - negative values\","
+        + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":-128,"
+        + "\"PropertyInt32\":-2147483648,\"PropertyInt64\":-9223372036854775808,"
+        + "\"PropertySingle\":-1.79E8,\"PropertyDouble\":-179000.0,\"PropertyDecimal\":-34,"
+        + "\"PropertyBinary\":\"ASNFZ4mrze8=\",\"PropertyDate\":\"2015-11-05\","
+        + "\"PropertyDateTimeOffset\":\"2005-12-03T07:17:08Z\",\"PropertyDuration\":\"PT9S\","
+        + "\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789dddfff\","
+        + "\"PropertyTimeOfDay\":\"23:49:14\",\"NavPropertyETTwoPrimOne\":null}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+  
+  @Test
+  public void deriveEntityESAllPrimDerived() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrimDerived");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(2);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETTwoPrimMany")));
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    
+    final String expectedResult =    "{\"@odata.context\":\"$metadata#ESAllPrimDerived/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"PropertyInt16\":0,\"PropertyString\":\"\","
+        + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":0,\"PropertyInt32\":0,\"PropertyInt64\":0,"
+        + "\"PropertySingle\":0.0,\"PropertyDouble\":0.0,\"PropertyDecimal\":0,\"PropertyBinary\":\"\","
+        + "\"PropertyDate\":\"1970-01-01\","
+        + "\"PropertyDateTimeOffset\":\"2005-12-03T00:00:00Z\",\"PropertyDuration\":\"PT0S\","
+        + "\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789cccddd\","
+        + "\"PropertyTimeOfDay\":\"00:01:01\","
+        + "\"NavPropertyETTwoPrimMany\":["
+        + "{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"},"
+        + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"},"
+        + "{\"@odata.type\":\"#olingo.odata.test1.ETBase\","
+        + "\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\","
+        + "\"AdditionalPropertyString_5\":\"Additional String1\"}]}";
+    Assert.assertEquals(expectedResult, resultString);
+  
+  }
 
   @Test
   public void entityMixPrimCollCompAllNull() throws Exception {
