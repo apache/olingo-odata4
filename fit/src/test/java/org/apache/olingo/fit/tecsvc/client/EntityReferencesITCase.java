@@ -168,7 +168,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   @Test
   public void responseNonExistingEntity() {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
-                          .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0)
+                          .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(-32768)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_ONE).appendRefSegment().build();
     
     try {

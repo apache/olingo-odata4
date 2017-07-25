@@ -46,6 +46,8 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
+import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
+import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 /**
@@ -241,6 +243,24 @@ public abstract class TechnicalProcessor implements Processor {
         return dataProvider.readFunctionEntityCollection(uriResource.getFunction(), uriResource.getParameters(),
             uriInfo);
       } else {
+        if (uriInfo.getFilterOption() != null) {
+          if (uriInfo.getFilterOption().getExpression() instanceof Binary) {
+            Binary expression = (Binary) uriInfo.getFilterOption().getExpression();
+            if (expression.getLeftOperand() instanceof Member) {
+              Member member = (Member) expression.getLeftOperand();
+              if (member.getStartTypeFilter() != null) {
+                EdmEntityType entityType = (EdmEntityType) member.getStartTypeFilter();
+                EdmEntityContainer container = this.serviceMetadata.getEdm().getEntityContainer();
+                List<EdmEntitySet> entitySets = container.getEntitySets();
+                for (EdmEntitySet entitySet : entitySets) {
+                  if (entityType.getName().equals(entitySet.getEntityType().getName())) {
+                    return dataProvider.readAll(entitySet);
+                  }
+                }
+              }
+            }
+          }
+        }
         EdmEntitySet entitySet = getEntitySetBasedOnTypeCast(((UriResourceEntitySet)resourcePaths.get(0)));
         return dataProvider.readAll(entitySet);
       }

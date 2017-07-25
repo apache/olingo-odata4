@@ -753,7 +753,7 @@ public class ExpressionParser {
           throws UriParserException, UriValidationException {
 
     if (lastTokenKind == TokenKind.QualifiedName) {
-      // Type cast or bound function
+      // Type cast to an entity type or complex type or bound function
       final FullQualifiedName fullQualifiedName = new FullQualifiedName(tokenizer.getText());
       final EdmEntityType edmEntityType = edm.getEntityType(fullQualifiedName);
 
@@ -761,6 +761,26 @@ public class ExpressionParser {
         if (allowTypeFilter) {
           setTypeFilter(lastResource, edmEntityType);
 
+          if (tokenizer.next(TokenKind.SLASH)) {
+            if (tokenizer.next(TokenKind.QualifiedName)) {
+              parseBoundFunction(fullQualifiedName, uriInfo, lastResource);
+            } else if (tokenizer.next(TokenKind.ODataIdentifier)) {
+              parsePropertyPathExpr(uriInfo, lastResource);
+            } else {
+              throw new UriParserSyntaxException("Expected OData Identifier or Full Qualified Name.",
+                  UriParserSyntaxException.MessageKeys.SYNTAX);
+            }
+          }
+        } else {
+          throw new UriParserSemanticException("Type filters are not chainable.",
+              UriParserSemanticException.MessageKeys.TYPE_FILTER_NOT_CHAINABLE,
+              lastResource.getType().getFullQualifiedName().getFullQualifiedNameAsString(),
+              fullQualifiedName.getFullQualifiedNameAsString());
+        }
+      } else if (edm.getComplexType(fullQualifiedName) != null) {
+        if (allowTypeFilter) {
+          setTypeFilter(lastResource, edm.getComplexType(fullQualifiedName));
+          
           if (tokenizer.next(TokenKind.SLASH)) {
             if (tokenizer.next(TokenKind.QualifiedName)) {
               parseBoundFunction(fullQualifiedName, uriInfo, lastResource);

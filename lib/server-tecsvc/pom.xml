@@ -132,7 +132,7 @@
       <groupId>org.apache.olingo</groupId>
       <artifactId>odata-server-core</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <!-- <scope>runtime</scope> -->
     </dependency>
 
     <dependency>

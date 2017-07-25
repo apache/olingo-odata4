@@ -1371,19 +1371,29 @@ public class DataCreator {
       return entityCollection;
     }  
   
-  @SuppressWarnings("unchecked")
   private Property createCollPropertyComp() {
-    return createComplexCollection("CollPropertyComp",
+    return createComplexDerievedCollection("CollPropertyComp",
         ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
-        Arrays.asList(
-            createPrimitive("PropertyInt16", (short) 123),
-            createPrimitive("PropertyString", "TEST 1")),
-        Arrays.asList(
-            createPrimitive("PropertyInt16", (short) 456),
-            createPrimitive("PropertyString", "TEST 2")),
-        Arrays.asList(
-            createPrimitive("PropertyInt16", (short) 789),
-            createPrimitive("PropertyString", "TEST 3")));
+        Arrays.asList(new ComplexValue[] {
+            createComplexValue(ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+                Arrays.asList(new Property[] {
+                    createPrimitive("PropertyInt16", (short) 123),
+                    createPrimitive("PropertyString", "TEST 1")
+                }
+          )),
+            createComplexValue(ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+                Arrays.asList(new Property[] {
+                    createPrimitive("PropertyInt16", (short) 456),
+                    createPrimitive("PropertyString", "TEST 2")
+                }
+          )),
+            createComplexValue(ComplexTypeProvider.nameCTBase.getFullQualifiedNameAsString(),
+                Arrays.asList(new Property[] {
+                    createPrimitive("PropertyInt16", (short) 789),
+                    createPrimitive("PropertyString", "TEST 3"),
+                    createPrimitive("AdditionalPropString", "ADD TEST")
+                }
+          ))}));
   }
 
   private EntityCollection createESAllKey(final Edm edm, final OData odata) {
@@ -1526,6 +1536,7 @@ public class DataCreator {
   private void linkESAllPrim(final Map<String, EntityCollection> data) {
     final EntityCollection entityCollection = data.get("ESAllPrim");
     final List<Entity> targetEntities = data.get("ESTwoPrim").getEntities();
+    final List<Entity> targetESBaseEntities = data.get("ESBase").getEntities();
 
     setLinks(entityCollection.getEntities().get(0), "NavPropertyETTwoPrimMany", targetEntities.get(1));
     setLink(entityCollection.getEntities().get(0), "NavPropertyETTwoPrimOne", targetEntities.get(3));
@@ -1533,6 +1544,8 @@ public class DataCreator {
     setLinks(entityCollection.getEntities().get(2), "NavPropertyETTwoPrimMany", targetEntities.get(0),
         targetEntities.get(2),
         targetEntities.get(3));
+    
+    setLink(entityCollection.getEntities().get(2), "NavPropertyETTwoPrimOne", targetESBaseEntities.get(0));
   }
   
   private void linkESAllPrimDerived(final Map<String, EntityCollection> data) {

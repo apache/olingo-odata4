@@ -288,8 +288,8 @@ public class ODataXmlSerializerTest {
         "      </a:author>\n" + 
         "      <a:link rel=\"edit\" href=\"ESAllPrim(0)\" />\n" + 
         "      <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\" "
-        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\" "
-        + "href=\"ESAllPrim(0)/NavPropertyETTwoPrimOne\" />\n" + 
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\" "
+        + "href=\"ESBase(111)\" />\n" + 
         "      <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\" "
         + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\" "
         + "href=\"ESAllPrim(0)/NavPropertyETTwoPrimMany\" />\n" + 
@@ -670,9 +670,10 @@ public class ODataXmlSerializerTest {
         "            <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" +
         "            <d:PropertyString>TEST 2</d:PropertyString>\n" +
         "          </m:element>\n" +
-        "          <m:element>\n" +
+        "          <m:element m:type=\"olingo.odata.test1.CTBase\">\n" +
         "            <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" +
         "            <d:PropertyString>TEST 3</d:PropertyString>\n" +
+        "            <d:AdditionalPropString>ADD TEST</d:AdditionalPropString>\n" +
         "          </m:element>\n" +
         "        </d:CollPropertyComp>\n" +
         "    </m:properties>\n" +
@@ -2321,15 +2322,42 @@ public class ODataXmlSerializerTest {
         "          <a:link rel=\"edit\" href=\"ESAllPrim(0)\" />\n" +
         "         <a:link\n" +
         "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\"\n" +
-        "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\"\n" +
-        "            href=\"ESAllPrim(0)/NavPropertyETTwoPrimOne\">\n" +
-        "            <m:inline />\n" +
+        "            type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\"\n" +
+        "            href=\"ESBase(111)\">\n" +
+        "           <m:inline>\n "+
+        "           <a:entry>\n "+
+        "           <a:id>ESBase(111)</a:id>\n "+
+        "           <a:title/>\n "+
+        "           <a:summary/>\n "+
+        "                  <a:updated>" + UPDATED_FORMAT.format(new Date(currentTimeMillis))
+        + "</a:updated>" +
+        "           <a:author>\n "+
+        "             <a:name/>\n "+
+        "           </a:author>\n "+
+        "           <a:link rel=\"edit\" href=\"ESBase(111)\"/>\n "+
+        "           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimOne\" "
+        + "href=\"ESBase(111)/NavPropertyETAllPrimOne\"/>\n "+
+        "           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimMany\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETAllPrimMany\" "
+        + "href=\"ESBase(111)/NavPropertyETAllPrimMany\"/>\n "+
+        "           <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+        + "term=\"#olingo.odata.test1.ETBase\"/>\n "+
+        "           <a:content type=\"application/xml\">\n "+
+        "             <m:properties>\n "+
+        "               <d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>\n "+
+        "               <d:PropertyString>TEST A</d:PropertyString>\n "+
+        "               <d:AdditionalPropertyString_5>TEST A 0815</d:AdditionalPropertyString_5>\n "+
+        "             </m:properties>\n "+
+        "           </a:content>\n "+
+        "           </a:entry>\n "+
+        "           </m:inline>\n "+
         "          </a:link>" +
         "          <a:link\n" +
         "            rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\"\n" +
         "            type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\"\n" +
         "            href=\"ESAllPrim(0)/NavPropertyETTwoPrimMany\">\n" +
-        "            <m:inline>\n" +
+        "            <m:inline>\n "+
         "              <a:feed>\n" +
         "                <a:entry>\n" +
         "                  <a:id>ESTwoPrim(32766)</a:id>\n" +
@@ -2630,9 +2658,10 @@ public class ODataXmlSerializerTest {
         "    <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" +
         "    <d:PropertyString>TEST 2</d:PropertyString>\n" +
         "  </m:element>\n" +
-        "  <m:element>\n" +
+        "  <m:element m:type=\"olingo.odata.test1.CTBase\">\n" +
         "    <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" +
         "    <d:PropertyString>TEST 3</d:PropertyString>\n" +
+        "    <d:AdditionalPropString>ADD TEST</d:AdditionalPropString>\n" +
         "  </m:element>\n" +
         "</m:value>";
     checkXMLEqual(expected, resultString);
