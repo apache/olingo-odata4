@@ -109,6 +109,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESPeople"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoPrimDerived"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllPrimDerived"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESDelta")); 
 
     // Singletons
     List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
@@ -678,7 +679,7 @@ public class ContainerProvider {
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
       
-    }else if (name.equals("ESAllPrimDerived")) {
+    } else if (name.equals("ESAllPrimDerived")) {
       return new CsdlEntitySet()
           .setName("ESAllPrimDerived")
           .setType(EntityTypeProvider.nameETAllPrim)
@@ -692,6 +693,17 @@ public class ContainerProvider {
               new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                   new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))
               ));
+    } else if (name.equals("ESDelta")) {
+      return new CsdlEntitySet()
+          .setName("ESDelta")
+          .setType(EntityTypeProvider.nameETTwoPrim)
+          .setNavigationPropertyBindings(Arrays.asList(
+              new CsdlNavigationPropertyBinding()
+                  .setPath("NavPropertyETAllPrimOne")
+                  .setTarget("ESAllPrim"),
+              new CsdlNavigationPropertyBinding()
+                  .setPath("NavPropertyETAllPrimMany")
+                  .setTarget("ESAllPrim")));
 
     } 
     }

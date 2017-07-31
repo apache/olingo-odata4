@@ -40,6 +40,7 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
+import org.apache.olingo.server.api.uri.queryoption.DeltaTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
@@ -189,6 +190,7 @@ public class UriInfoImpl implements UriInfo {
     case SELECT:
     case SKIP:
     case SKIPTOKEN:
+    case DELTATOKEN:
     case TOP:
     case LEVELS:
     case APPLY:
@@ -309,5 +311,10 @@ public class UriInfoImpl implements UriInfo {
   @Override
   public String getFragment() {
     return fragment;
+  }
+  
+  @Override
+  public DeltaTokenOption getDeltaTokenOption() {
+    return (DeltaTokenOption) systemQueryOptions.get(SystemQueryOptionKind.DELTATOKEN);
   }
 }

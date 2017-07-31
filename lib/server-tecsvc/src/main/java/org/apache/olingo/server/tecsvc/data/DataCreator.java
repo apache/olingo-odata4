@@ -94,7 +94,8 @@ public class DataCreator {
     data.put("ESCompCollDerived", createESCompCollDerived(edm, odata));
     data.put("ESTwoPrimDerived", createESTwoPrimDerived(edm, odata));
     data.put("ESAllPrimDerived", createESAllPrimDerived(edm, odata));
-
+    data.put("ESDelta", createESDelta(edm, odata)); 
+    
     linkSINav(data);
     linkESTwoPrim(data);
     linkESAllPrim(data);
@@ -102,6 +103,34 @@ public class DataCreator {
     linkESKeyNav(data);
     linkESTwoKeyNav(data);
     linkESPeople(data);
+    linkESDelta(data);
+  }
+  
+
+  private EntityCollection createESDelta(final Edm edm, final OData odata) {
+   EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Number:" + Short.MAX_VALUE)));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Number:" + Short.MIN_VALUE)));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 0))
+        .addProperty(createPrimitive("PropertyString", "Number:" + 0)));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 100))
+        .addProperty(createPrimitive("PropertyString", "Number:" + 100)));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", -1))
+        .addProperty(createPrimitive("PropertyString", "Number:" + -1)));
+  
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETDelta));
+    createEntityId(edm, odata, "ESDelta", entityCollection);
+    createOperations("ESDelta", entityCollection, EntityTypeProvider.nameETDelta);
+    return entityCollection;
   }
   
   private EntityCollection createSINav(Edm edm, OData odata) {
@@ -1510,6 +1539,16 @@ public class DataCreator {
         + "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 100 100\">\n"
         + "  <g stroke=\"darkmagenta\" stroke-width=\"16\" fill=\"" + color + "\">\n"
         + "    <circle cx=\"50\" cy=\"50\" r=\"42\"/>\n" + "  </g>\n" + "</svg>\n").getBytes(Charset.forName("UTF-8"));
+  }
+  
+  
+  private void linkESDelta(final Map<String, EntityCollection> data) {
+    final EntityCollection entityCollection = data.get("ESDelta");
+    final List<Entity> targetEntities = data.get("ESAllPrim").getEntities();
+
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETAllPrimMany", targetEntities.get(1),
+        targetEntities.get(2));
+    setLink(entityCollection.getEntities().get(3), "NavPropertyETAllPrimOne", targetEntities.get(0));
   }
 
   private void linkESPeople(final Map<String, EntityCollection> data) {

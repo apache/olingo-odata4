@@ -40,7 +40,12 @@ public enum ODataServiceVersion {
   /**
    * OData Version 4.0
    */
-  V40("4.0");
+  V40("4.0"),
+  /**
+   * OData Version 4.01
+   */
+  V401("4.01");
+
 
   private static final Pattern DATASERVICEVERSIONPATTERN = Pattern.compile("(\\p{Digit}+\\.\\p{Digit}+)(:?;.*)?");
 
@@ -57,7 +62,8 @@ public enum ODataServiceVersion {
       return V10.toString().equals(possibleDataServiceVersion)
           || V20.toString().equals(possibleDataServiceVersion)
           || V30.toString().equals(possibleDataServiceVersion)
-          || V40.toString().equals(possibleDataServiceVersion);
+          || V40.toString().equals(possibleDataServiceVersion)
+          || V401.toString().equals(possibleDataServiceVersion);
     } else {
       throw new IllegalArgumentException(version);
     }

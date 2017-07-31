@@ -35,6 +35,7 @@ import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 import org.apache.olingo.server.api.prefer.Preferences;
 import org.apache.olingo.server.api.serializer.EdmAssistedSerializer;
+import org.apache.olingo.server.api.serializer.EdmDeltaSerializer;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -184,4 +185,13 @@ public abstract class OData {
    */
   public abstract EdmAssistedSerializer createEdmAssistedSerializer(final ContentType contentType)
       throws SerializerException;
+  
+  /**
+   * Creates a new serializer object capable of working without EDM information
+   * for rendering delta content in the specified format.
+   * @param contentType a content type supported by Olingo
+   * @param version versions supported by Olingo
+   */
+  public abstract EdmDeltaSerializer createEdmDeltaSerializer(final ContentType contentType,
+      final List<String> versions) throws SerializerException;
 }

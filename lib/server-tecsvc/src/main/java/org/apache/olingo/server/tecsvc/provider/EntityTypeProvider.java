@@ -87,6 +87,8 @@ public class EntityTypeProvider {
       "ETMixEnumDefCollComp");
   public static final FullQualifiedName nameETStream = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETWithStream");
+  public static final FullQualifiedName nameETDelta =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETDelta"); 
   
   public static final FullQualifiedName nameETPeople = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETPeople");
 
@@ -503,7 +505,16 @@ public class EntityTypeProvider {
             PropertyProvider.propertyId,
             PropertyProvider.propertyName))
           .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyFriends));
-    }
+    } else if (entityTypeName.equals(nameETDelta)) {
+      return new CsdlEntityType()
+          .setName("ETDelta")
+          .setBaseType(nameETTwoPrim)
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString))
+          .setNavigationProperties(
+              Arrays.asList(PropertyProvider.navPropertyETAllPrimOne_ETAllPrim,
+                  PropertyProvider.collectionNavPropertyETAllPrimMany_ETAllPrim));
+    } 
     return null;
   }
 }

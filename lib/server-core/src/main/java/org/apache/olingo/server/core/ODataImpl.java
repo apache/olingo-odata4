@@ -39,6 +39,7 @@ import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 import org.apache.olingo.server.api.prefer.Preferences;
 import org.apache.olingo.server.api.serializer.EdmAssistedSerializer;
+import org.apache.olingo.server.api.serializer.EdmDeltaSerializer;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -53,6 +54,8 @@ import org.apache.olingo.server.core.prefer.PreferencesImpl;
 import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.EdmAssistedJsonSerializer;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
+import org.apache.olingo.server.core.serializer.json.JsonDeltaSerializer;
+import org.apache.olingo.server.core.serializer.json.JsonDeltaSerializerWithNavigations;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializer;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
 
@@ -95,6 +98,33 @@ public class ODataImpl extends OData {
     }
     throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
         SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+  }
+  
+  
+  @Override
+  public EdmDeltaSerializer createEdmDeltaSerializer(final ContentType contentType, final List<String> versions)
+      throws SerializerException {
+    if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
+      if(versions!=null && versions.size()>0){
+       return getMaxVersion(versions)>4 ?  new JsonDeltaSerializerWithNavigations(contentType):
+         new JsonDeltaSerializer(contentType);
+      }
+      return new JsonDeltaSerializerWithNavigations(contentType);
+    }
+    throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
+        SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+  }
+
+  private float getMaxVersion(List<String> versions) {
+    Float versionValue [] = new Float [versions.size()];
+    int i=0;
+    Float max=new Float(0);
+    for(String version:versions){
+     Float ver = Float.valueOf(version);
+     versionValue[i++] = ver;
+     max = max > ver ? max : ver ;
+   }
+    return max;
   }
 
   @Override

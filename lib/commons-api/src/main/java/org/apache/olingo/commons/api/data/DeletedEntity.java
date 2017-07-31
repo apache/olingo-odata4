@@ -23,7 +23,7 @@ import java.net.URI;
 /**
  * A deleted entity contains the reason for deletion and the id.
  */
-public class DeletedEntity {
+public class DeletedEntity extends Entity{
   
   /**
    * Reason of the removal from the list

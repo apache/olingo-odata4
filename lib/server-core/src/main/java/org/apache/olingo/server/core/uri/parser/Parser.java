@@ -58,6 +58,7 @@ import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ApplyOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.DeltaTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
@@ -331,6 +332,14 @@ public class Parser {
               optionName, optionValue);
         }
         systemOption = new SkipTokenOptionImpl().setValue(optionValue);
+        break;
+      case DELTATOKEN:
+        if (optionValue.isEmpty()) {
+          throw new UriParserSyntaxException("Illegal value of $deltatoken option!",
+              UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+              optionName, optionValue);
+        }
+        systemOption = new DeltaTokenOptionImpl().setValue(optionValue);
         break;
       case TOP:
         systemOption = new TopOptionImpl()

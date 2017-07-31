@@ -86,6 +86,7 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCompMixPrimCollComp));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyPrimNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETStream));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETDelta)); 
     
     // ComplexTypes
     List<CsdlComplexType> complexTypes = new ArrayList<CsdlComplexType>();

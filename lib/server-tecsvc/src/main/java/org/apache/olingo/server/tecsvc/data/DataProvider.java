@@ -32,6 +32,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
+import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
@@ -563,7 +566,54 @@ public class DataProvider {
     entity.setMediaContentType(type);
     entity.setMediaETag("W/\"" + UUID.randomUUID() + "\"");
   }
-
+  
+  public List<DeletedEntity> readDeletedEntities(final EdmEntitySet edmEntitySet) throws DataProviderException {
+    EntityCollection entityCollection = data.get(edmEntitySet.getName());
+    List<DeletedEntity> listOfDeletedEntities = new ArrayList<DeletedEntity>();
+    DeletedEntity entitySetDeleted = new DeletedEntity();
+    if (entityCollection.getEntities().size() > 1) {
+      entitySetDeleted.setId(entityCollection.getEntities().get(0).getId());
+      entitySetDeleted.setReason(Reason.changed);
+      listOfDeletedEntities.add(entitySetDeleted);
+      entitySetDeleted = new DeletedEntity();
+      entitySetDeleted.setId(entityCollection.getEntities().get(1).getId());
+      entitySetDeleted.setReason(Reason.deleted);
+    }
+    listOfDeletedEntities.add(entitySetDeleted);
+    return listOfDeletedEntities;
+  }
+  
+  public List<DeltaLink> readAddedLinks(final EdmEntitySet edmEntitySet) throws DataProviderException {
+    EntityCollection entityCollection = data.get(edmEntitySet.getName());
+    List<DeltaLink> listOfAddedLinks = new ArrayList<DeltaLink>();
+    DeltaLink link = new DeltaLink();
+    if (entityCollection.getEntities().size() > 0) {
+      link.setSource(entityCollection.getEntities().get(0).getId());
+      link.setRelationship("NavPropertyETAllPrimOne");
+      link.setTarget(data.get("ESAllPrim").getEntities().get(1).getId());
+    }
+    listOfAddedLinks.add(link);
+    return listOfAddedLinks;
+  }
+  
+  public List<DeltaLink> readDeletedLinks(final EdmEntitySet edmEntitySet) throws DataProviderException {
+    EntityCollection entityCollection = data.get(edmEntitySet.getName());
+    List<DeltaLink> listOfDeletedLinks = new ArrayList<DeltaLink>();
+    if (entityCollection.getEntities().size() > 1) {
+      DeltaLink link = new DeltaLink();
+      link.setSource(entityCollection.getEntities().get(0).getId());
+      link.setRelationship("NavPropertyETAllPrimOne");
+      link.setTarget(data.get("ESAllPrim").getEntities().get(0).getId());
+      listOfDeletedLinks.add(link);
+      link = new DeltaLink();
+      link.setSource(entityCollection.getEntities().get(1).getId());
+      link.setRelationship("NavPropertyETAllPrimOne");
+      link.setTarget(data.get("ESAllPrim").getEntities().get(1).getId());
+      listOfDeletedLinks.add(link);
+    }
+    return listOfDeletedLinks;
+  }
+  
   public EntityCollection readFunctionEntityCollection(final EdmFunction function, final List<UriParameter> parameters,
       final UriInfoResource uriInfo) throws DataProviderException {
     return FunctionData.entityCollectionFunction(function.getName(),
@@ -711,6 +761,42 @@ public class DataProvider {
     public DataProviderException(final String message, final HttpStatusCode statusCode, final Throwable throwable) {
       super(message, statusCode.getStatusCode(), Locale.ROOT, throwable);
     }
+  }
+  
+  public List<Entity> readNavigationEntities(EdmEntitySet entitySet) {
+    
+    EntityCollection entityCollection = data.get(entitySet.getName());
+    List<Entity> entities = new ArrayList<Entity>();
+    Entity otherEntity = entitySet.getName() == "ESAllPrim" ? data.get("ESDelta").getEntities().get(0) :
+      data.get("ESAllPrim").getEntities().get(0);
+    EntityCollection ec1=new EntityCollection();
+    Entity entity1 = new Entity();
+    entity1.setId(entityCollection.getEntities().get(0).getId());//added navigation
+    entity1.addProperty(entityCollection.getEntities().get(0).getProperty(edm.getEntityContainer()
+        .getEntitySet(entitySet.getName()).getEntityType().getPropertyNames().get(0)));
+    Link link = new Link();
+    Entity entity2 = new Entity();
+    entity2.setId(otherEntity.getId());
+    ec1.getEntities().add(entity2);
+    link.setInlineEntitySet(ec1);
+    link.setTitle("NavPropertyETAllPrimMany");
+    entity1.getNavigationLinks().add(link);
+    
+    Entity entity3 = new Entity();
+    EntityCollection ec2=new EntityCollection();
+    entity3.setId(entityCollection.getEntities().get(0).getId());//added navigation
+    DeletedEntity delentity = new DeletedEntity();
+    delentity.setId(otherEntity.getId());
+    delentity.setReason(Reason.deleted);
+    ec2.getEntities().add(delentity);
+    Link delLink = new Link();
+    delLink.setInlineEntitySet(ec2);
+    delLink.setTitle("NavPropertyETAllPrimMany");
+    entity3.getNavigationLinks().add(delLink);
+    entities.add(otherEntity);
+    entities.add(entity1);
+    entities.add(entity3);
+    return entities;
   }
   
   public Entity read(EdmSingleton singleton) {

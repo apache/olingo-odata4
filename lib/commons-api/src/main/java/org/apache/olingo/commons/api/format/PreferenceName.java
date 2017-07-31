@@ -29,6 +29,7 @@ public enum PreferenceName {
   INCLUDE_ANNOTATIONS("odata.include-annotations"),
   MAX_PAGE_SIZE("odata.maxpagesize"),
   TRACK_CHANGES("odata.track-changes"),
+  TRACK_CHANGES_PREF("track-changes"),
   RETURN("return"),
   RESPOND_ASYNC("respond-async"),
   WAIT("wait"),
