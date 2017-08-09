@@ -95,7 +95,7 @@ public class Parser {
       throws UriParserException, UriValidationException {
 
     UriInfoImpl contextUriInfo = new UriInfoImpl();
-
+   
     // Read the query options (system and custom options).
     // This is done before parsing the resource path because the aliases have to be available there.
     // System query options that can only be parsed with context from the resource path will be post-processed later.
@@ -103,8 +103,12 @@ public class Parser {
         query == null ? Collections.<QueryOption> emptyList() : UriDecoder.splitAndDecodeOptions(query);
     for (final QueryOption option : options) {
       final String optionName = option.getName();
+      String value = option.getText();
+      if(UriDecoder.isFormEncoding()){
+        value = getFormEncodedValue(value);
+      }
       // Parse the untyped option and retrieve a system-option or alias-option instance (or null for a custom option).
-      final QueryOption parsedOption = parseOption(optionName, option.getText());
+      final QueryOption parsedOption = parseOption(optionName, value);
       try {
         contextUriInfo.setQueryOption(parsedOption == null ? option : parsedOption);
       } catch (final ODataRuntimeException e) {
@@ -288,6 +292,13 @@ public class Parser {
     parseSelectOption(contextUriInfo.getSelectOption(), contextType, contextIsCollection);
 
     return contextUriInfo;
+  }
+
+  private String getFormEncodedValue(String value) {
+    if(value.contains("+")){
+      value = value.replaceAll("\\+", " ");
+    }
+    return value;    
   }
 
   private QueryOption parseOption(final String optionName, final String optionValue)

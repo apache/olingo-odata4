@@ -19,6 +19,7 @@
 package org.apache.olingo.fit.tecsvc.http;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -287,5 +288,108 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
     assertTrue(content.contains("\"PropertyString\":\"TEST A\""));
     assertTrue(content.contains("\"AdditionalPropString\":null"));
     assertTrue(content.contains("\"@odata.type\":\"#olingo.odata.test1.CTBase\""));
+  }
+  
+  @Test
+  public void testFilterWithSpaceFormEncoding() throws Exception {
+    URL url = new URL(SERVICE_URI + 
+        "ESAllPrim?$filter=PropertyInt16%20eq%201&odata-accept-forms-encoding=true");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertNotNull(content);
+  }
+  
+  @Test
+  public void testFilterWithSpaceNoFormEncoding() throws Exception {
+    URL url = new URL(SERVICE_URI + 
+        "ESAllPrim?$filter=PropertyInt16%20eq%201");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertNotNull(content);
+  }
+  
+  @Test
+  public void testFilterWithFormEncoding() throws Exception {
+    URL url = new URL(SERVICE_URI + 
+        "ESAllPrim?$filter=PropertyInt16+eq+1&odata-accept-forms-encoding=true");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertNotNull(content);
+  }
+  
+  @Test
+  public void testFilterWithFormEncodingOrderChange() throws Exception {
+    URL url = new URL(SERVICE_URI + 
+        "ESAllPrim?odata-accept-forms-encoding=true&$filter=PropertyInt16+eq+1");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertNotNull(content);
+  }
+  
+  @Test
+  public void testFilterWithFalseFormEncoding() throws Exception {
+    URL url = new URL(SERVICE_URI + 
+        "ESAllPrim?$filter=PropertyInt16+eq+1&odata-accept-forms-encoding=false");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+  }
+  
+  @Test
+  public void testFilterWithNoFormEncoding() throws Exception {
+    URL url = new URL(SERVICE_URI + 
+        "ESAllPrim?$filter=PropertyInt16+eq+1");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+  }
+  
+  @Test
+  public void testFilterWithInvalidFormEncoding() throws Exception {
+    URL url = new URL(SERVICE_URI + 
+        "ESAllPrim?$filter=PropertyInt16+eq+1&odata-accept-forms-encoding=qwer");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;odata.metadata=full");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
   }
 }
