@@ -664,31 +664,84 @@ public class DataProvider {
     return ActionData.primitiveAction(name, actionParameters);
   }
 
+  public Property processBoundActionPrimitive(final String name, final Map<String, Parameter> actionParameters, 
+      final EdmEntitySet edmEntitySet, final List<UriParameter> keyList)
+      throws DataProviderException {
+    return ActionData.primitiveBoundAction(name, actionParameters, data, edmEntitySet, keyList);
+  }
+  
   public Property processActionComplex(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.complexAction(name, actionParameters);
   }
 
+  public Property processBoundActionComplex(final String name, final Map<String, Parameter> actionParameters,
+      final EdmEntitySet edmEntitySet, 
+      final List<UriParameter> keyList)
+      throws DataProviderException {
+    return ActionData.complexBoundAction(name, actionParameters, data, edmEntitySet, keyList);
+  }
+  
   public Property processActionComplexCollection(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.complexCollectionAction(name, actionParameters);
   }
 
+  public Property processBoundActionComplexCollection(final String name, 
+      final Map<String, Parameter> actionParameters, final EdmEntitySet edmEntitySet, 
+      final List<UriParameter> keyList)
+      throws DataProviderException {
+    return ActionData.complexCollectionBoundAction(name, actionParameters, data, edmEntitySet, keyList);
+  }
+  
   public Property processActionPrimitiveCollection(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.primitiveCollectionAction(name, actionParameters, odata);
   }
 
+  public Property processBoundActionPrimitiveCollection(final String name, 
+      final Map<String, Parameter> actionParameters, final EdmEntitySet edmEntitySet, 
+      final List<UriParameter> keyList)
+      throws DataProviderException {
+    return ActionData.primitiveCollectionBoundAction(name, actionParameters, data, edmEntitySet, keyList, odata);
+  }
+  
   public EntityActionResult processActionEntity(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.entityAction(name, actionParameters, data, odata, edm);
   }
 
+  public EntityActionResult processBoundActionEntity(final String name, final Map<String, Parameter> actionParameters, 
+      List<UriParameter> keyList, EdmEntitySet edmEntitySet)
+      throws DataProviderException {
+    return ActionData.entityBoundAction(name, actionParameters, data, odata, edm, keyList, edmEntitySet);
+  }
+  
+  public EntityActionResult processBoundActionWithNavigationEntity(final String name, 
+      final Map<String, Parameter> actionParameters, 
+      List<UriParameter> keyList, EdmEntitySet edmEntitySet, EdmNavigationProperty navProperty)
+      throws DataProviderException {
+    return ActionData.entityBoundActionWithNavigation(name, actionParameters, data, keyList, 
+        edmEntitySet, navProperty);
+  }
+  
   public EntityCollection processActionEntityCollection(final String name,
       final Map<String, Parameter> actionParameters) throws DataProviderException {
     return ActionData.entityCollectionAction(name, actionParameters, odata, edm);
   }
 
+  public EntityCollection processBoundActionEntityCollection(final String name,
+      final Map<String, Parameter> actionParameters, EdmEntitySet edmEntitySet) throws DataProviderException {
+    return ActionData.entityCollectionBoundAction(name, actionParameters, data, odata, edm, edmEntitySet);
+  }
+  
+  public EntityCollection processBoundActionWithNavEntityCollection(final String name,
+      final Map<String, Parameter> actionParameters, EdmEntitySet edmEntitySet, EdmNavigationProperty navProperty) 
+          throws DataProviderException {
+    return ActionData.entityCollectionBoundActionWithNav(name, actionParameters, data, odata, edm, 
+        edmEntitySet, navProperty);
+  }
+  
   public void createReference(final Entity entity, final EdmNavigationProperty navigationProperty, final URI entityId,
       final String rawServiceRoot) throws DataProviderException {
     setLink(navigationProperty, entity, getEntityByReference(entityId.toASCIIString(), rawServiceRoot));

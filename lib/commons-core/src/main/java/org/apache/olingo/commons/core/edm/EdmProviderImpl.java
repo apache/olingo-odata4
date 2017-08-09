@@ -47,6 +47,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
@@ -154,7 +155,10 @@ public class EdmProviderImpl extends AbstractEdm {
         if (action.isBound()) {
           final List<CsdlParameter> parameters = action.getParameters();
           final CsdlParameter parameter = parameters.get(0);
-          if (bindingParameterTypeName.equals(parameter.getTypeFQN())
+          if ((bindingParameterTypeName.equals(parameter.getTypeFQN()) || 
+              isEntityPreviousTypeCompatibleToBindingParam(bindingParameterTypeName, parameter) ||
+              isComplexPreviousTypeCompatibleToBindingParam(bindingParameterTypeName, parameter, 
+                  isBindingParameterCollection))
               && isBindingParameterCollection.booleanValue() == parameter.isCollection()) {
 
             return new EdmActionImpl(this, actionName, action);
@@ -166,6 +170,44 @@ public class EdmProviderImpl extends AbstractEdm {
     } catch (ODataException e) {
       throw new EdmException(e);
     }
+  }
+
+  /**
+   * @param bindingParameterTypeName
+   * @param parameter 
+   * @param isBindingParameterCollection 
+   * @return
+   * @throws ODataException
+   */
+  private boolean isComplexPreviousTypeCompatibleToBindingParam(
+      final FullQualifiedName bindingParameterTypeName, final CsdlParameter parameter, 
+      Boolean isBindingParameterCollection)
+      throws ODataException {
+    CsdlComplexType complexType = provider.getComplexType(bindingParameterTypeName);
+    List<CsdlProperty> properties = provider.getEntityType(parameter.getTypeFQN()).getProperties();
+    for (CsdlProperty property : properties) {
+      String paramPropertyTypeName = property.getTypeAsFQNObject().getFullQualifiedNameAsString();
+      if ((complexType != null && complexType.getBaseType() != null && 
+          complexType.getBaseTypeFQN().getFullQualifiedNameAsString().equals(paramPropertyTypeName)) || 
+          paramPropertyTypeName.equals(bindingParameterTypeName.getFullQualifiedNameAsString()) && 
+          isBindingParameterCollection.booleanValue() == property.isCollection()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * @param bindingParameterTypeName
+   * @param parameter
+   * @return
+   * @throws ODataException
+   */
+  private boolean isEntityPreviousTypeCompatibleToBindingParam(final FullQualifiedName bindingParameterTypeName,
+      final CsdlParameter parameter) throws ODataException {
+    return provider.getEntityType(bindingParameterTypeName) != null && 
+    provider.getEntityType(bindingParameterTypeName).getBaseTypeFQN() != null && 
+    provider.getEntityType(bindingParameterTypeName).getBaseTypeFQN().equals(parameter.getTypeFQN());
   }
 
   @Override

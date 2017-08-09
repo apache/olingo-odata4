@@ -678,6 +678,9 @@ public class ODataXmlSerializerTest {
         "        </d:CollPropertyComp>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "  <m:action metadata=\"#olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\" "
+        + "title=\"olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\" "
+        + "target=\"ESMixPrimCollComp(32767)/olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\"/>\n" +
         "</a:entry>\n";
     checkXMLEqual(expectedResult, resultString);
   }
@@ -718,6 +721,9 @@ public class ODataXmlSerializerTest {
         "      <d:CollPropertyComp m:null=\"true\" />\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
+        "  <m:action metadata=\"#olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\" "
+        + "title=\"olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\" "
+        + "target=\"ESMixPrimCollComp(32767)/olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\"/>\n" +
         "</a:entry>";
     checkXMLEqual(expectedResult, resultString);
   }
@@ -2350,6 +2356,9 @@ public class ODataXmlSerializerTest {
         "               <d:AdditionalPropertyString_5>TEST A 0815</d:AdditionalPropertyString_5>\n "+
         "             </m:properties>\n "+
         "           </a:content>\n "+
+        "           <m:action metadata=\"#olingo.odata.test1.BAETBaseETTwoBaseRTETTwoBase\" "
+        + "title=\"olingo.odata.test1.BAETBaseETTwoBaseRTETTwoBase\" "
+        + "target=\"ESBase(111)/olingo.odata.test1.BAETBaseETTwoBaseRTETTwoBase\"/>\n" +
         "           </a:entry>\n "+
         "           </m:inline>\n "+
         "          </a:link>" +

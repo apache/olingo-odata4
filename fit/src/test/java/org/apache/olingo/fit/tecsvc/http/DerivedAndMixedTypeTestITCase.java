@@ -188,7 +188,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
         ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
     final String content = IOUtils.toString(connection.getInputStream());
-    assertTrue(content.contains("\"value\":"
+    final String actualContent = "\"value\":"
         + "[{\"@odata.type\":\"#olingo.odata.test1.ETMixPrimCollComp\","
         + "\"@odata.id\":\"ESMixPrimCollComp(32767)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\","
@@ -214,7 +214,10 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
         + "\"PropertyInt16@odata.type\":\"#Int16\","
         + "\"PropertyInt16\":789,"
         + "\"PropertyString\":\"TEST 3\","
-        + "\"AdditionalPropString\":\"ADD TEST\"}]},"
+        + "\"AdditionalPropString\":\"ADD TEST\"}],"
+        + "\"#olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\","
+        + "\"target\":\"ESMixPrimCollComp(32767)/olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\"}},"
         + "{\"@odata.type\":\"#olingo.odata.test1.ETMixPrimCollComp\","
         + "\"@odata.id\":\"ESMixPrimCollComp(7)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\","
@@ -230,7 +233,11 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
         + "{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\",\"PropertyInt16@odata.type\":\"#Int16\","
         + "\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},{\"@odata.type\":\"#olingo.odata.test1.CTBase\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\","
-        + "\"AdditionalPropString\":\"ADD TEST\"}]},{\"@odata.type\":\"#olingo.odata.test1.ETMixPrimCollComp\","
+        + "\"AdditionalPropString\":\"ADD TEST\"}],"
+        + "\"#olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\","
+        + "\"target\":\"ESMixPrimCollComp(7)/olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\"}},"
+        + "{\"@odata.type\":\"#olingo.odata.test1.ETMixPrimCollComp\","
         + "\"@odata.id\":\"ESMixPrimCollComp(0)\",\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":0,"
         + "\"CollPropertyString@odata.type\":\"#Collection(String)\",\"CollPropertyString\":"
         + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
@@ -244,7 +251,11 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
         + "{\"@odata.type\":\"#olingo.odata.test1.CTBase\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\","
-        + "\"AdditionalPropString\":\"ADD TEST\"}]}]"));
+        + "\"AdditionalPropString\":\"ADD TEST\"}],"
+        + "\"#olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\":"
+        + "{\"title\":\"olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\","
+        + "\"target\":\"ESMixPrimCollComp(0)/olingo.odata.test1.BAETMixPrimCollCompRTCTTwoPrim\"}}]";
+    assertTrue(content.contains(actualContent));
   }
   
   @Test
@@ -338,7 +349,10 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
         + "\"PropertyInt16@odata.type\":\"#Int16\","
         + "\"PropertyInt16\":111,"
         + "\"PropertyString\":\"TEST A\","
-        + "\"AdditionalPropertyString_5\":\"TEST A 0815\"}]"));
+        + "\"AdditionalPropertyString_5\":\"TEST A 0815\""
+        + ",\"#olingo.odata.test1.BAETBaseETTwoBaseRTETTwoBase\":"
+        + "{\"title\":\"olingo.odata.test1.BAETBaseETTwoBaseRTETTwoBase\","
+        + "\"target\":\"ESBase(111)/olingo.odata.test1.BAETBaseETTwoBaseRTETTwoBase\"}}]"));
   }
   
   @Test

@@ -128,6 +128,12 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoPrimRTCollCTAllPrim));
     actions.addAll(prov.getActions(ActionProvider.nameBAETCompAllPrimRTETCompAllPrim));
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoKeyNavRTETTwoKeyNavParam));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETMixPrimCollCompRTCTTwoPrim));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETBaseETTwoBaseRTETTwoBase));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETMixPrimCollCompCTTWOPrimCompRTCollCTTwoPrim));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETMixPrimCollCompCTTWOPrimCompRTCTTwoPrim));
+    actions.addAll(prov.getActions(ActionProvider.
+        nameBAETTwoKeyNavCTBasePrimCompNavCTTwoBasePrimCompNavRTCTTwoBasePrimCompNav));
     actions.addAll(prov.getActions(ActionProvider.nameUARTString));
     actions.addAll(prov.getActions(ActionProvider.nameUARTCollStringTwoParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTCTTwoPrimParam));
