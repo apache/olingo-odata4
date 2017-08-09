@@ -44,11 +44,12 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
+import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
 public class BasicBoundActionsITCase {
 
-  private static final String SERVICE_URI = "http://localhost:8083/odata-server-tecsvc/odata.svc/";
+  private static final String SERVICE_URI = TecSvcConst.BASE_URI + "/";;
   protected static final ODataClient client = ODataClientFactory.getClient();
     
   @Test
