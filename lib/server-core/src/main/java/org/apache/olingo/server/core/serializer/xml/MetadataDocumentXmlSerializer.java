@@ -934,7 +934,7 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_UNDERLYING_TYPE, getFullQualifiedName(enumType.getUnderlyingType(), false));
 
       for (String memberName : enumType.getMemberNames()) {
-        writer.writeEmptyElement(XML_MEMBER);
+        writer.writeStartElement(XML_MEMBER);
         writer.writeAttribute(XML_NAME, memberName);
 
         EdmMember member = enumType.getMember(memberName);
@@ -943,6 +943,7 @@ public class MetadataDocumentXmlSerializer {
         }
 
         appendAnnotations(writer, member);
+        writer.writeEndElement();
       }
 
       writer.writeEndElement();
