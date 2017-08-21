@@ -109,7 +109,15 @@ public class EdmTypeInfo {
 
     fullQualifiedName = new FullQualifiedName(namespace, typeName);
 
-    primitiveType = EdmPrimitiveTypeKind.getByName(typeName);
+    try {
+      if (namespace.equals("Edm")) {
+        primitiveType = EdmPrimitiveTypeKind.valueOf(typeName);
+      } else {
+        primitiveType = EdmPrimitiveTypeKind.valueOf(namespace + "." + typeName);
+      }
+    } catch (final IllegalArgumentException e) {
+      primitiveType = null;
+    }
 
     if (primitiveType == null && edm != null) {
       typeDefinition = edm.getTypeDefinition(fullQualifiedName);
