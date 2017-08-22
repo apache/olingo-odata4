@@ -34,12 +34,17 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.annotation.EdmConstantExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionType;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
@@ -139,6 +144,63 @@ public class MetadataDocumentXmlSerializerTest {
         + "</edmx:Edmx>",
         IOUtils.toString(metadata));
   }
+  
+  /** Test if annotations on EnumType Members are added as children of the Member element
+   *  in compliance with OData v4.0, part 3: CSDL, section 14.3
+   */
+  @Test
+  public void testAnnotationsNestedInEnumMembers() throws Exception {
+    // Create mock schema
+    EdmSchema schema = mock(EdmSchema.class);
+    when(schema.getNamespace()).thenReturn("MyNamespace");
+    Edm edm = mock(Edm.class);
+    when(edm.getSchemas()).thenReturn(Arrays.asList(schema));
+    
+    // create mock metadata
+    ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
+    when(serviceMetadata.getEdm()).thenReturn(edm);
+    
+    // add mock enums to schema
+    EdmEnumType enumType = mock(EdmEnumType.class);
+    when(schema.getEnumTypes()).thenReturn(Arrays.asList(enumType));
+    when(enumType.getName()).thenReturn("MyEnum");
+    EdmPrimitiveType int32Type = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
+    when(enumType.getUnderlyingType()).thenReturn(int32Type);
+    
+    // mock enum member values
+    when(enumType.getMemberNames()).thenReturn(Collections.singletonList("MyMember"));
+    EdmMember member = mock(EdmMember.class);
+    when(enumType.getMember("MyMember")).thenReturn(member);
+    when(member.getName()).thenReturn("MyMember");
+    when(member.getValue()).thenReturn("0");
+    
+    EdmAnnotation annotation = mock(EdmAnnotation.class);
+    when(member.getAnnotations()).thenReturn(Collections.singletonList(annotation));
+    when(annotation.getQualifier()).thenReturn("Core.Description");
+    EdmConstantExpression expression = mock(EdmConstantExpression.class);
+    when(expression.isConstant()).thenReturn(true);
+    when(expression.asConstant()).thenReturn(expression);
+    when(expression.getExpressionType()).thenReturn(EdmExpressionType.String);
+    when(expression.getExpressionName()).thenReturn("String");
+    when(expression.getValueAsString()).thenReturn("MyDescription");
+    when(annotation.getExpression()).thenReturn(expression);
+    
+    InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
+    assertNotNull(metadata);
+    String metadataString = IOUtils.toString(metadata);
+    
+    
+    assertTrue(metadataString.contains(
+        "<EnumType Name=\"MyEnum\" IsFlags=\"false\" UnderlyingType=\"Edm.Int32\">" +
+          "<Member Name=\"MyMember\" Value=\"0\">" +
+            "<Annotation Qualifier=\"Core.Description\">" +
+              "<String>MyDescription</String>" +
+            "</Annotation>" +
+          "</Member>" +
+        "</EnumType>"));
+
+  }
+
 
   @Test
   public void writeEdmxWithLocalTestEdm() throws Exception {
