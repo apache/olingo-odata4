@@ -36,6 +36,7 @@ import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.serialization.JsonDeserializer;
 import org.apache.olingo.commons.api.Constants;
@@ -481,5 +482,19 @@ public class JSONTest extends AbstractTest {
       }
       i++;
     }
+  }
+  
+  @Test
+  public void issueOLINGO1152() throws Exception {
+    InputStream inputStream = getClass().getResourceAsStream(
+        "olingo1152" + "." + getSuffix(ContentType.APPLICATION_JSON));
+    ClientEntity entity = client.getReader().readEntity(inputStream, ContentType.APPLICATION_JSON);
+    assertNotNull(entity);
+    ClientProperty prop = entity.getProperty("Gender");
+    assertNotNull(prop);
+    ClientValue value = prop.getValue();
+    assertNotNull(value);
+    assertTrue(value.asEnum() == null);
+
   }
 }
