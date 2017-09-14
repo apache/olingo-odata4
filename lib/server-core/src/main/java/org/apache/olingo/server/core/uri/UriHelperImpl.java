@@ -94,13 +94,14 @@ public class UriHelperImpl implements UriHelper {
         result.append(Encoder.encode(value));
       } catch (final EdmPrimitiveTypeException e) {
         throw new SerializerException("Wrong key value!", e,
-            SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, edmProperty.getName(), propertyValue.toString());
+            SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, edmProperty.getName(), 
+            propertyValue != null ? propertyValue.toString(): null);
       }
     }
     return result.toString();
   }
   
-  private Object findPropertyRefValue(Entity entity, EdmKeyPropertyRef refType) {
+  private Object findPropertyRefValue(Entity entity, EdmKeyPropertyRef refType) throws SerializerException {
     final int INDEX_ERROR_CODE = -1;
     final String propertyPath = refType.getName();
     String tmpPropertyName;
@@ -122,6 +123,10 @@ public class UriHelperImpl implements UriHelper {
         tmpPropertyName = propertyPath.substring(lastIndex, index);
         prop = findProperty(tmpPropertyName, prop.asComplex().getValue());
      }
+    if (prop == null) {
+      throw new SerializerException("Key Value Cannot be null for property: " + propertyPath, 
+          SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, propertyPath);
+    }
     return prop.getValue();
   }
 
