@@ -18,9 +18,13 @@
  */
 package org.apache.olingo.server.core.uri;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -32,7 +36,9 @@ import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class UriHelperTest {
 
@@ -77,5 +83,30 @@ public class UriHelperTest {
     Entity entity = data.readAll(entitySet).getEntities().get(0);
     entity.getProperty("PropertyInt16").setValue(ValueType.PRIMITIVE, "wrong");
     helper.buildCanonicalURL(entitySet, entity);
+  }
+  
+  @Rule
+  public ExpectedException expectedEx = ExpectedException.none(); 
+  
+  @Test(expected = SerializerException.class)
+  public void canonicalURLWithoutKeys() throws Exception {
+    final EdmEntitySet entitySet = container.getEntitySet("ESAllPrim");
+    Entity entity = data.readAll(entitySet).getEntities().get(0);
+    List<Property> properties = entity.getProperties();
+    properties.remove(0);
+    helper.buildCanonicalURL(entitySet, entity);
+    expectedEx.expect(SerializerException.class);
+    expectedEx.expectMessage("Key Value Cannot be null for property: PropertyInt16");
+  }
+  
+  @Test(expected = SerializerException.class)
+  public void canonicalURLWithKeyHavingNullValue() throws Exception {
+    final EdmEntitySet entitySet = container.getEntitySet("ESAllPrim");
+    Entity entity = data.readAll(entitySet).getEntities().get(0);
+    Property property = entity.getProperties().get(0);
+    property.setValue(property.getValueType(), null);
+    helper.buildCanonicalURL(entitySet, entity);
+    expectedEx.expect(SerializerException.class);
+    expectedEx.expectMessage("Wrong key value!");
   }
 }
