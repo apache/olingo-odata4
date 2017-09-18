@@ -23,10 +23,12 @@ import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
@@ -42,6 +44,7 @@ import org.apache.olingo.server.core.uri.UriResourceComplexPropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourceCountImpl;
 import org.apache.olingo.server.core.uri.UriResourceEntitySetImpl;
 import org.apache.olingo.server.core.uri.UriResourceNavigationPropertyImpl;
+import org.apache.olingo.server.core.uri.UriResourcePrimitivePropertyImpl;
 import org.apache.olingo.server.core.uri.UriResourceRefImpl;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
@@ -154,27 +157,31 @@ public class ExpandParser {
           }
         }
       }
-
-      final EdmStructuredType newReferencedType = typeCastSuffix != null ? typeCastSuffix 
-        : (EdmStructuredType) lastPart.getType();
-      final boolean newReferencedIsCollection = lastPart.isCollection();
-      if (hasSlash || tokenizer.next(TokenKind.SLASH)) {
-        if (tokenizer.next(TokenKind.REF)) {
-          resource.addResourcePart(new UriResourceRefImpl());
-          item.setIsRef(true);
-          parseOptions(tokenizer, newReferencedType, newReferencedIsCollection, item, true, false);
+      //For handling $expand for Stream property in v 4.01
+        if(lastPart instanceof UriResourcePrimitivePropertyImpl){     
+          item.setResourcePath(resource);
+        }else{
+        final EdmStructuredType newReferencedType = typeCastSuffix != null ? typeCastSuffix 
+          : (EdmStructuredType) lastPart.getType();
+        final boolean newReferencedIsCollection = lastPart.isCollection();
+        if (hasSlash || tokenizer.next(TokenKind.SLASH)) {
+          if (tokenizer.next(TokenKind.REF)) {
+            resource.addResourcePart(new UriResourceRefImpl());
+            item.setIsRef(true);
+            parseOptions(tokenizer, newReferencedType, newReferencedIsCollection, item, true, false);
+          } else {
+            ParserHelper.requireNext(tokenizer, TokenKind.COUNT);
+            resource.addResourcePart(new UriResourceCountImpl());
+            item.setCountPath(true);
+            parseOptions(tokenizer, newReferencedType, newReferencedIsCollection, item, false, true);
+          }
         } else {
-          ParserHelper.requireNext(tokenizer, TokenKind.COUNT);
-          resource.addResourcePart(new UriResourceCountImpl());
-          item.setCountPath(true);
-          parseOptions(tokenizer, newReferencedType, newReferencedIsCollection, item, false, true);
+          parseOptions(tokenizer, newReferencedType, newReferencedIsCollection, item, false, false);
         }
-      } else {
-        parseOptions(tokenizer, newReferencedType, newReferencedIsCollection, item, false, false);
+  
+        item.setResourcePath(resource);
       }
-
-      item.setResourcePath(resource);
-    }
+     }
 
     return item;
   }
@@ -204,7 +211,12 @@ public class ExpandParser {
 
     final EdmNavigationProperty navigationProperty = type.getNavigationProperty(name);
     if (navigationProperty == null) {
-      if (tokenizer.next(TokenKind.STAR)) {
+      //For handling $expand with Stream Properties in version 4.01
+      final EdmProperty streamProperty = (EdmProperty) type.getProperty(name);
+      if(streamProperty != null && streamProperty.getType() ==  EdmPrimitiveTypeFactory.
+          getInstance(EdmPrimitiveTypeKind.Stream)){
+        resource.addResourcePart(new UriResourcePrimitivePropertyImpl(streamProperty));
+      }else if (tokenizer.next(TokenKind.STAR)) {
         item.setIsStar(true);
       } else {
         throw new UriParserSemanticException(

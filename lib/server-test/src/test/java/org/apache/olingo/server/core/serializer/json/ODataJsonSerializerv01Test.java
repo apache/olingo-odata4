@@ -33,6 +33,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.olingo.commons.api.IConstants;
+import org.apache.olingo.commons.api.constants.Constantsv01;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
@@ -91,17 +93,22 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class ODataJsonSerializerTest {
+public class ODataJsonSerializerv01Test {
   private static final OData odata = OData.newInstance();
   private static final ServiceMetadata metadata = odata.createServiceMetadata(
       new EdmTechProvider(), Collections.<EdmxReference> emptyList(), new MetadataETagSupport("W/\"metadataETag\""));
   private static final EdmEntityContainer entityContainer = metadata.getEdm().getEntityContainer();
   private final DataProvider data = new DataProvider(odata, metadata.getEdm());
-  private final ODataSerializer serializer = new ODataJsonSerializer(ContentType.JSON);
-  private final ODataSerializer serializerNoMetadata = new ODataJsonSerializer(ContentType.JSON_NO_METADATA);
-  private final ODataSerializer serializerFullMetadata = new ODataJsonSerializer(ContentType.JSON_FULL_METADATA);
+  private final IConstants constants = new Constantsv01();
+  private final ODataSerializer serializer = new ODataJsonSerializer(ContentType.JSON, constants);
+  private final ODataSerializer serializerNoMetadata = new ODataJsonSerializer(
+      ContentType.JSON_NO_METADATA, constants);
+  private final ODataSerializer serializerFullMetadata = new ODataJsonSerializer(
+      ContentType.JSON_FULL_METADATA,  constants);
   private final ODataSerializer serializerIEEECompatible =
-      new ODataJsonSerializer(ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true"));
+      new ODataJsonSerializer(ContentType.create(ContentType.JSON, 
+          ContentType.PARAMETER_IEEE754_COMPATIBLE, "true"),
+          constants);
   private final UriHelper helper = odata.createUriHelper();
 
   @Test
@@ -114,8 +121,8 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESAllPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyString\":\"First Resource - positive values\","
         + "\"PropertyBoolean\":true,"
@@ -145,41 +152,41 @@ public class ODataJsonSerializerTest {
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expected = "{\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.type\":\"#olingo.odata.test1.ETAllPrim\","
-        + "\"@odata.id\":\"ESAllPrim(32767)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+    final String expected = "{\"@context\":\"$metadata#ESAllPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@type\":\"#olingo.odata.test1.ETAllPrim\","
+        + "\"@id\":\"ESAllPrim(32767)\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyString\":\"First Resource - positive values\","
         + "\"PropertyBoolean\":true,"
-        + "\"PropertyByte@odata.type\":\"#Byte\","
+        + "\"PropertyByte@type\":\"#Byte\","
         + "\"PropertyByte\":255,"
-        + "\"PropertySByte@odata.type\":\"#SByte\","
+        + "\"PropertySByte@type\":\"#SByte\","
         + "\"PropertySByte\":127,"
-        + "\"PropertyInt32@odata.type\":\"#Int32\","
+        + "\"PropertyInt32@type\":\"#Int32\","
         + "\"PropertyInt32\":2147483647,"
-        + "\"PropertyInt64@odata.type\":\"#Int64\","
+        + "\"PropertyInt64@type\":\"#Int64\","
         + "\"PropertyInt64\":9223372036854775807,"
-        + "\"PropertySingle@odata.type\":\"#Single\","
+        + "\"PropertySingle@type\":\"#Single\","
         + "\"PropertySingle\":1.79E20,"
         + "\"PropertyDouble\":-1.79E19,"
-        + "\"PropertyDecimal@odata.type\":\"#Decimal\","
+        + "\"PropertyDecimal@type\":\"#Decimal\","
         + "\"PropertyDecimal\":34,"
-        + "\"PropertyBinary@odata.type\":\"#Binary\","
+        + "\"PropertyBinary@type\":\"#Binary\","
         + "\"PropertyBinary\":\"ASNFZ4mrze8=\","
-        + "\"PropertyDate@odata.type\":\"#Date\","
+        + "\"PropertyDate@type\":\"#Date\","
         + "\"PropertyDate\":\"2012-12-03\","
-        + "\"PropertyDateTimeOffset@odata.type\":\"#DateTimeOffset\","
+        + "\"PropertyDateTimeOffset@type\":\"#DateTimeOffset\","
         + "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\","
-        + "\"PropertyDuration@odata.type\":\"#Duration\","
+        + "\"PropertyDuration@type\":\"#Duration\","
         + "\"PropertyDuration\":\"PT6S\","
-        + "\"PropertyGuid@odata.type\":\"#Guid\","
+        + "\"PropertyGuid@type\":\"#Guid\","
         + "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\","
-        + "\"PropertyTimeOfDay@odata.type\":\"#TimeOfDay\","
+        + "\"PropertyTimeOfDay@type\":\"#TimeOfDay\","
         + "\"PropertyTimeOfDay\":\"03:26:05\","
-        + "\"NavPropertyETTwoPrimOne@odata.navigationLink\":\"ESTwoPrim(32767)\","
-        + "\"NavPropertyETTwoPrimMany@odata.navigationLink\":\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\","
+        + "\"NavPropertyETTwoPrimOne@navigationLink\":\"ESTwoPrim(32767)\","
+        + "\"NavPropertyETTwoPrimMany@navigationLink\":\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\","
         + "\"#olingo.odata.test1.BAETAllPrimRT\":{"
         +   "\"title\":\"olingo.odata.test1.BAETAllPrimRT\","
         +   "\"target\":\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\""
@@ -198,8 +205,8 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expected = "{" + 
-        "\"@odata.context\":\"$metadata#ESAllPrim\"," + 
-        "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+        "\"@context\":\"$metadata#ESAllPrim\"," + 
+        "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
         "\"#olingo.odata.test1.BAESAllPrimRTETAllPrim\":{" + 
           "\"title\":\"olingo.odata.test1.BAESAllPrimRTETAllPrim\"," + 
           "\"target\":\"ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim\"" + 
@@ -214,39 +221,39 @@ public class ODataJsonSerializerTest {
         "}," + 
         "\"value\":[" + 
           "{" + 
-            "\"@odata.type\":\"#olingo.odata.test1.ETAllPrim\"," + 
-            "\"@odata.id\":\"ESAllPrim(32767)\"," + 
-            "\"PropertyInt16@odata.type\":\"#Int16\"," + 
+            "\"@type\":\"#olingo.odata.test1.ETAllPrim\"," + 
+            "\"@id\":\"ESAllPrim(32767)\"," + 
+            "\"PropertyInt16@type\":\"#Int16\"," + 
             "\"PropertyInt16\":32767," + 
             "\"PropertyString\":\"First Resource - positive values\"," + 
             "\"PropertyBoolean\":true," + 
-            "\"PropertyByte@odata.type\":\"#Byte\"," + 
+            "\"PropertyByte@type\":\"#Byte\"," + 
             "\"PropertyByte\":255," + 
-            "\"PropertySByte@odata.type\":\"#SByte\"," + 
+            "\"PropertySByte@type\":\"#SByte\"," + 
             "\"PropertySByte\":127," + 
-            "\"PropertyInt32@odata.type\":\"#Int32\"," + 
+            "\"PropertyInt32@type\":\"#Int32\"," + 
             "\"PropertyInt32\":2147483647," + 
-            "\"PropertyInt64@odata.type\":\"#Int64\"," + 
+            "\"PropertyInt64@type\":\"#Int64\"," + 
             "\"PropertyInt64\":9223372036854775807," + 
-            "\"PropertySingle@odata.type\":\"#Single\"," + 
+            "\"PropertySingle@type\":\"#Single\"," + 
             "\"PropertySingle\":1.79E20," + 
             "\"PropertyDouble\":-1.79E19," + 
-            "\"PropertyDecimal@odata.type\":\"#Decimal\"," + 
+            "\"PropertyDecimal@type\":\"#Decimal\"," + 
             "\"PropertyDecimal\":34," + 
-            "\"PropertyBinary@odata.type\":\"#Binary\"," + 
+            "\"PropertyBinary@type\":\"#Binary\"," + 
             "\"PropertyBinary\":\"ASNFZ4mrze8=\"," + 
-            "\"PropertyDate@odata.type\":\"#Date\"," + 
+            "\"PropertyDate@type\":\"#Date\"," + 
             "\"PropertyDate\":\"2012-12-03\"," + 
-            "\"PropertyDateTimeOffset@odata.type\":\"#DateTimeOffset\"," + 
+            "\"PropertyDateTimeOffset@type\":\"#DateTimeOffset\"," + 
             "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," + 
-            "\"PropertyDuration@odata.type\":\"#Duration\"," + 
+            "\"PropertyDuration@type\":\"#Duration\"," + 
             "\"PropertyDuration\":\"PT6S\"," + 
-            "\"PropertyGuid@odata.type\":\"#Guid\"," + 
+            "\"PropertyGuid@type\":\"#Guid\"," + 
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," + 
-            "\"PropertyTimeOfDay@odata.type\":\"#TimeOfDay\"," + 
+            "\"PropertyTimeOfDay@type\":\"#TimeOfDay\"," + 
             "\"PropertyTimeOfDay\":\"03:26:05\"," + 
-            "\"NavPropertyETTwoPrimOne@odata.navigationLink\":\"ESTwoPrim(32767)\"," + 
-            "\"NavPropertyETTwoPrimMany@odata.navigationLink\":\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\"," + 
+            "\"NavPropertyETTwoPrimOne@navigationLink\":\"ESTwoPrim(32767)\"," + 
+            "\"NavPropertyETTwoPrimMany@navigationLink\":\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\"," + 
         "\"#olingo.odata.test1.BAETAllPrimRT\":{" + 
           "\"title\":\"olingo.odata.test1.BAETAllPrimRT\"," + 
           "\"target\":\"ESAllPrim(32767)/olingo.odata.test1.BAETAllPrimRT\"" + 
@@ -268,8 +275,8 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expected = "{" + 
-        "\"@odata.context\":\"$metadata#ESAllPrim\"," + 
-        "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+        "\"@context\":\"$metadata#ESAllPrim\"," + 
+        "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
         "\"#olingo.odata.test1.BAESAllPrimRTETAllPrim\":{" + 
           "\"title\":\"olingo.odata.test1.BAESAllPrimRTETAllPrim\"," + 
           "\"target\":\"ESAllPrim/olingo.odata.test1.BAESAllPrimRTETAllPrim\"" + 
@@ -284,46 +291,46 @@ public class ODataJsonSerializerTest {
         "}," + 
         "\"value\":[" + 
           "{" + 
-            "\"@odata.type\":\"#olingo.odata.test1.ETAllPrim\"," + 
-            "\"@odata.id\":\"ESAllPrim(32767)\"," + 
-            "\"PropertyInt16@odata.type\":\"#Int16\"," + 
+            "\"@type\":\"#olingo.odata.test1.ETAllPrim\"," + 
+            "\"@id\":\"ESAllPrim(32767)\"," + 
+            "\"PropertyInt16@type\":\"#Int16\"," + 
             "\"PropertyInt16\":32767," + 
             "\"PropertyString\":\"First Resource - positive values\"," + 
             "\"PropertyBoolean\":true," + 
-            "\"PropertyByte@odata.type\":\"#Byte\"," + 
+            "\"PropertyByte@type\":\"#Byte\"," + 
             "\"PropertyByte\":255," + 
-            "\"PropertySByte@odata.type\":\"#SByte\"," + 
+            "\"PropertySByte@type\":\"#SByte\"," + 
             "\"PropertySByte\":127," + 
-            "\"PropertyInt32@odata.type\":\"#Int32\"," + 
+            "\"PropertyInt32@type\":\"#Int32\"," + 
             "\"PropertyInt32\":2147483647," + 
-            "\"PropertyInt64@odata.type\":\"#Int64\"," + 
+            "\"PropertyInt64@type\":\"#Int64\"," + 
             "\"PropertyInt64\":9223372036854775807," + 
-            "\"PropertySingle@odata.type\":\"#Single\"," + 
+            "\"PropertySingle@type\":\"#Single\"," + 
             "\"PropertySingle\":1.79E20," + 
             "\"PropertyDouble\":-1.79E19," + 
-            "\"PropertyDecimal@odata.type\":\"#Decimal\"," + 
+            "\"PropertyDecimal@type\":\"#Decimal\"," + 
             "\"PropertyDecimal\":34," + 
-            "\"PropertyBinary@odata.type\":\"#Binary\"," + 
+            "\"PropertyBinary@type\":\"#Binary\"," + 
             "\"PropertyBinary\":\"ASNFZ4mrze8=\"," + 
-            "\"PropertyDate@odata.type\":\"#Date\"," + 
+            "\"PropertyDate@type\":\"#Date\"," + 
             "\"PropertyDate\":\"2012-12-03\"," + 
-            "\"PropertyDateTimeOffset@odata.type\":\"#DateTimeOffset\"," + 
+            "\"PropertyDateTimeOffset@type\":\"#DateTimeOffset\"," + 
             "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\"," + 
-            "\"PropertyDuration@odata.type\":\"#Duration\"," + 
+            "\"PropertyDuration@type\":\"#Duration\"," + 
             "\"PropertyDuration\":\"PT6S\"," + 
-            "\"PropertyGuid@odata.type\":\"#Guid\"," + 
+            "\"PropertyGuid@type\":\"#Guid\"," + 
             "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\"," + 
-            "\"PropertyTimeOfDay@odata.type\":\"#TimeOfDay\"," + 
+            "\"PropertyTimeOfDay@type\":\"#TimeOfDay\"," + 
             "\"PropertyTimeOfDay\":\"03:26:05\"," + 
-            "\"NavPropertyETTwoPrimOne@odata.navigationLink\":\"ESTwoPrim(32767)\"," + 
-            "\"NavPropertyETTwoPrimMany@odata.navigationLink\":\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\"," +
+            "\"NavPropertyETTwoPrimOne@navigationLink\":\"ESTwoPrim(32767)\"," + 
+            "\"NavPropertyETTwoPrimMany@navigationLink\":\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\"," +
             "\"NavPropertyETTwoPrimOne\":{" + 
-            "\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\"," + 
-            "\"@odata.id\":\"ESTwoPrim(32767)\"," + 
-            "\"PropertyInt16@odata.type\":\"#Int16\"," + 
+            "\"@type\":\"#olingo.odata.test1.ETTwoPrim\"," + 
+            "\"@id\":\"ESTwoPrim(32767)\"," + 
+            "\"PropertyInt16@type\":\"#Int16\"," + 
             "\"PropertyInt16\":32767," + 
             "\"PropertyString\":\"Test String4\"," + 
-            "\"NavPropertyETAllPrimOne@odata.navigationLink\":\"ESAllPrim(32767)\"," + 
+            "\"NavPropertyETAllPrimOne@navigationLink\":\"ESAllPrim(32767)\"," + 
             "\"#olingo.odata.test1.BAETTwoPrimRTString\":{" + 
             "\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\"," + 
             "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"" + 
@@ -359,8 +366,8 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent());
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESAllPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyString\":null,\"PropertyBoolean\":null,"
         + "\"PropertyByte\":null,\"PropertySByte\":null,"
@@ -418,12 +425,12 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
-        + "\"@odata.context\":\"$metadata#ESCompAllPrim\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.count\":4,\"value\":["
-        + "{\"@odata.etag\":\"W/\\\"32767\\\"\","));
+        + "\"@context\":\"$metadata#ESCompAllPrim\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@count\":4,\"value\":["
+        + "{\"@etag\":\"W/\\\"32767\\\"\","));
     Assert.assertThat(resultString, CoreMatchers.endsWith("}}],"
-        + "\"@odata.nextLink\":\"/next\"}"));
+        + "\"@nextLink\":\"/next\"}"));
 
     int count = 0;
     int index = -1;
@@ -467,8 +474,8 @@ public class ODataJsonSerializerTest {
     final String resultString = new String(bout.toByteArray(), "UTF-8");
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESAllPrim\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{\"PropertyInt16\":32767,\"PropertyString\""));
     Assert.assertThat(resultString, CoreMatchers.endsWith(
         "\"PropertyTimeOfDay\":\"00:01:01\"}]}"));
@@ -546,8 +553,8 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
-        + "\"@odata.context\":\"http://host/service/$metadata#ESCollAllPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"http://host/service/$metadata#ESCollAllPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":1,"
         + "\"CollPropertyString\":"
         + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
@@ -582,9 +589,9 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
-        + "\"@odata.context\":\"$metadata#ESCompAllPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.etag\":\"W/\\\"32767\\\"\","
+        + "\"@context\":\"$metadata#ESCompAllPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@etag\":\"W/\\\"32767\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyComp\":{"
         + "\"PropertyString\":\"First Resource - first\","
@@ -617,8 +624,8 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
-        + "\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESMixPrimCollComp/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"CollPropertyString\":"
         + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
@@ -626,7 +633,7 @@ public class ODataJsonSerializerTest {
         + "\"CollPropertyComp\":["
         + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
         + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
-        + "{\"@odata.type\":\"#olingo.odata.test1.CTBase\",\"PropertyInt16\":789,"
+        + "{\"@type\":\"#olingo.odata.test1.CTBase\",\"PropertyInt16\":789,"
         + "\"PropertyString\":\"TEST 3\",\"AdditionalPropString\":\"ADD TEST\"}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -641,16 +648,16 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult =  "{"
-        + "\"@odata.context\":\"$metadata#ESCompCollDerived/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESCompCollDerived/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":12345,"
         + "\"PropertyCompAno\":{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTBaseAno\","
+        + "\"@type\":\"#olingo.odata.test1.CTBaseAno\","
         + "\"PropertyString\":\"Num111\","
         + "\"AdditionalPropString\":\"Test123\""
         + "},"
         + "\"CollPropertyCompAno\":["
-        + "{\"@odata.type\":\"#olingo.odata.test1.CTBaseAno\","
+        + "{\"@type\":\"#olingo.odata.test1.CTBaseAno\","
         + "\"PropertyString\":\"TEST12345\","
         + "\"AdditionalPropString\":\"Additional12345\"},"
         + "{\"PropertyString\":\"TESTabcd\"}]}";
@@ -670,8 +677,8 @@ public class ODataJsonSerializerTest {
             .expand(expand)
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult =   "{\"@odata.context\":\"$metadata#ESAllPrimDerived/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult =   "{\"@context\":\"$metadata#ESAllPrimDerived/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,\"PropertyString\":\"First Resource - positive values\",\"PropertyBoolean\":true,"
         + "\"PropertyByte\":255,\"PropertySByte\":127,\"PropertyInt32\":2147483647,"
         + "\"PropertyInt64\":9223372036854775807,"
@@ -680,7 +687,7 @@ public class ODataJsonSerializerTest {
         + "\"PropertyDate\":\"2012-12-03\",\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\","
         + "\"PropertyDuration\":\"PT6S\","
         + "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\",\"PropertyTimeOfDay\":\"03:26:05\","
-        + "\"NavPropertyETTwoPrimOne\":{\"@odata.type\":\"#olingo.odata.test1.ETBase\",\"PropertyInt16\":32766,"
+        + "\"NavPropertyETTwoPrimOne\":{\"@type\":\"#olingo.odata.test1.ETBase\",\"PropertyInt16\":32766,"
         + "\"PropertyString\":\"Test String1\",\"AdditionalPropertyString_5\":\"Additional String1\"}}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -699,8 +706,8 @@ public class ODataJsonSerializerTest {
             .expand(expand)
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult =   "{\"@odata.context\":\"$metadata#ESAllPrimDerived/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"PropertyInt16\":-32768,"
+    final String expectedResult =   "{\"@context\":\"$metadata#ESAllPrimDerived/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\",\"PropertyInt16\":-32768,"
         + "\"PropertyString\":\"Second Resource - negative values\","
         + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":-128,"
         + "\"PropertyInt32\":-2147483648,\"PropertyInt64\":-9223372036854775808,"
@@ -725,8 +732,8 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     
-    final String expectedResult =    "{\"@odata.context\":\"$metadata#ESAllPrimDerived/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"PropertyInt16\":0,\"PropertyString\":\"\","
+    final String expectedResult =    "{\"@context\":\"$metadata#ESAllPrimDerived/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\",\"PropertyInt16\":0,\"PropertyString\":\"\","
         + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":0,\"PropertyInt32\":0,\"PropertyInt64\":0,"
         + "\"PropertySingle\":0.0,\"PropertyDouble\":0.0,\"PropertyDecimal\":0,\"PropertyBinary\":\"\","
         + "\"PropertyDate\":\"1970-01-01\","
@@ -736,7 +743,7 @@ public class ODataJsonSerializerTest {
         + "\"NavPropertyETTwoPrimMany\":["
         + "{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"},"
         + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"},"
-        + "{\"@odata.type\":\"#olingo.odata.test1.ETBase\","
+        + "{\"@type\":\"#olingo.odata.test1.ETBase\","
         + "\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\","
         + "\"AdditionalPropertyString_5\":\"Additional String1\"}]}";
     Assert.assertEquals(expectedResult, resultString);
@@ -752,8 +759,8 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent());
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESMixPrimCollComp/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESMixPrimCollComp/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"CollPropertyString\":[],\"PropertyComp\":null,\"CollPropertyComp\":[]}";
     Assert.assertEquals(expectedResult, resultString);
@@ -779,8 +786,8 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent());
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    Assert.assertEquals("{\"@context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyEnumString\":\"String2,String3\","
         + "\"CollPropertyEnumString\":[],"
         + "\"PropertyDefString\":\"Test\","
@@ -804,8 +811,8 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent());
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    Assert.assertEquals("{\"@context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyEnumString\":\"String2,String3\","
         + "\"CollPropertyEnumString\":[],"
         + "\"PropertyDefString\":\"Test\","
@@ -838,8 +845,8 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent());
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    Assert.assertEquals("{\"@context\":\"$metadata#ESMixEnumDefCollComp/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyEnumString\":\"String2,String3\","
         + "\"CollPropertyEnumString\":[\"String2\",\"String3\",\"String2,String3\"],"
         + "\"PropertyDefString\":\"Test\","
@@ -872,8 +879,8 @@ public class ODataJsonSerializerTest {
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESTwoPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
         Assert.assertEquals(expectedResult, resultString);
   }
@@ -889,10 +896,10 @@ public class ODataJsonSerializerTest {
                 .build())
         .getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoPrim\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\",\"@odata.id\":\"ESTwoPrim(32766)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32766,"
+    final String expectedResult = "{\"@context\":\"$metadata#ESTwoPrim\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"value\":[{\"@type\":\"#olingo.odata.test1.ETTwoPrim\",\"@id\":\"ESTwoPrim(32766)\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":32766,"
         + "\"PropertyString\":\"Test String1\","
         + "\"#olingo.odata.test1.BAETTwoPrimRTString\":"
         + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
@@ -907,10 +914,10 @@ public class ODataJsonSerializerTest {
         + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
         + "\"target\":\"ESTwoPrim(32766)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}"
         + "},"
-        + "{\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\",\"@odata.id\":\"ESTwoPrim(-365)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":-365,"
+        + "{\"@type\":\"#olingo.odata.test1.ETTwoPrim\",\"@id\":\"ESTwoPrim(-365)\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":-365,"
         + "\"PropertyString\":\"Test String2\","
-        + "\"NavPropertyETAllPrimMany@odata.navigationLink\":\"ESTwoPrim(-365)/NavPropertyETAllPrimMany\","
+        + "\"NavPropertyETAllPrimMany@navigationLink\":\"ESTwoPrim(-365)/NavPropertyETAllPrimMany\","
         + "\"#olingo.odata.test1.BAETTwoPrimRTString\":"
         + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
         + "\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTString\"},"
@@ -923,8 +930,8 @@ public class ODataJsonSerializerTest {
         + "\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
         + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
         + "\"target\":\"ESTwoPrim(-365)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}},"
-        + "{\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\",\"@odata.id\":\"ESTwoPrim(-32766)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":-32766,"
+        + "{\"@type\":\"#olingo.odata.test1.ETTwoPrim\",\"@id\":\"ESTwoPrim(-32766)\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":-32766,"
         + "\"PropertyString\":null,"
         + "\"#olingo.odata.test1.BAETTwoPrimRTString\":"
         + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
@@ -938,10 +945,10 @@ public class ODataJsonSerializerTest {
         + "\"#olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\":"
         + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\","
         + "\"target\":\"ESTwoPrim(-32766)/olingo.odata.test1.BAETTwoPrimRTCollCTAllPrim\"}},"
-        + "{\"@odata.type\":\"#olingo.odata.test1.ETTwoPrim\",\"@odata.id\":\"ESTwoPrim(32767)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32767,"
+        + "{\"@type\":\"#olingo.odata.test1.ETTwoPrim\",\"@id\":\"ESTwoPrim(32767)\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":32767,"
         + "\"PropertyString\":\"Test String4\","
-        + "\"NavPropertyETAllPrimOne@odata.navigationLink\":\"ESAllPrim(32767)\","
+        + "\"NavPropertyETAllPrimOne@navigationLink\":\"ESAllPrim(32767)\","
         + "\"#olingo.odata.test1.BAETTwoPrimRTString\":"
         + "{\"title\":\"olingo.odata.test1.BAETTwoPrimRTString\","
         + "\"target\":\"ESTwoPrim(32767)/olingo.odata.test1.BAETTwoPrimRTString\"},"
@@ -967,11 +974,11 @@ public class ODataJsonSerializerTest {
         .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
         .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESWithStream\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESWithStream\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{\"PropertyInt16\":32767},"
-        + "{\"PropertyInt16\":7,\"PropertyStream@odata.mediaEtag\":\"eTag\","
-        + "\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}]}";
+        + "{\"PropertyInt16\":7,\"PropertyStream@mediaEtag\":\"eTag\","
+        + "\"PropertyStream@mediaContentType\":\"image/jpeg\"}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
   
@@ -999,27 +1006,47 @@ public class ODataJsonSerializerTest {
         .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
         .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESWithStream\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESWithStream\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{"
-        + "\"@odata.type\":\"#olingo.odata.test1.ETWithStream\","
-        + "\"@odata.id\":\"ESWithStream(32767)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.ETWithStream\","
+        + "\"@id\":\"ESWithStream(32767)\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":32767,"
-        + "\"PropertyStream@odata.type\":\"#Stream\","
-        + "\"PropertyStream@odata.mediaReadLink\":\"readLink\"},"
+        + "\"PropertyStream@type\":\"#Stream\","
+        + "\"PropertyStream@mediaReadLink\":\"readLink\"},"
         + "{"
-        + "\"@odata.type\":\"#olingo.odata.test1.ETWithStream\","
-        + "\"@odata.id\":\"ESWithStream(7)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.ETWithStream\","
+        + "\"@id\":\"ESWithStream(7)\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":7,"
-        + "\"PropertyStream@odata.type\":\"#Stream\","
-        + "\"PropertyStream@odata.mediaEtag\":\"eTag\","
-        + "\"PropertyStream@odata.mediaContentType\":\"image/jpeg\","
-        + "\"PropertyStream@odata.mediaEditLink\":\"http://mediaserver:1234/editLink\""
+        + "\"PropertyStream@type\":\"#Stream\","
+        + "\"PropertyStream@mediaEtag\":\"eTag\","
+        + "\"PropertyStream@mediaContentType\":\"image/jpeg\","
+        + "\"PropertyStream@mediaEditLink\":\"http://mediaserver:1234/editLink\""
         + "}]}";
     Assert.assertEquals(expectedResult, resultString);
   }  
+  
+
+  @Test
+  public void entityWithStreamExpand() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESWithStream");
+    final EntityCollection collection = data.readAll(edmEntitySet);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "PropertyStream")));
+    InputStream result = serializer.entityCollection(metadata, edmEntitySet.getEntityType(), collection,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
+        .expand(expand).build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult =  "{\"@context\":\"$metadata#ESWithStream\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"value\":[{\"PropertyInt16\":32767,\"PropertyStream\":\"�ioz�\\\"�\"},"
+        + "{\"PropertyInt16\":7,\"PropertyStream@mediaEtag\":\"eTag\","
+        + "\"PropertyStream@mediaContentType\":\"image/jpeg\",\"PropertyStream\":\"�ioz�\\\"�\"}]}";
+    Assert.assertEquals(expectedResult, resultString);
+  } 
   
   @Test
   public void entitySetTwoPrimNoMetadata() throws Exception {
@@ -1037,18 +1064,7 @@ public class ODataJsonSerializerTest {
         + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
-  @Test(expected = SerializerException.class)
-  public void entityWithStreamExpand() throws Exception {
-    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESWithStream");
-    final EntityCollection collection = data.readAll(edmEntitySet);
-    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
-        ExpandSelectMock.mockExpandItem(edmEntitySet, "PropertyStream")));
-    serializer.entityCollection(metadata, edmEntitySet.getEntityType(), collection,
-        EntityCollectionSerializerOptions.with()
-        .contextURL(ContextURL.with().entitySet(edmEntitySet).build())
-        .expand(expand).build()).getContent();
-  }
-  
+
   @Test
   public void entityMedia() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMedia");
@@ -1058,11 +1074,11 @@ public class ODataJsonSerializerTest {
         EntitySerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
             .build()).getContent());
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.mediaEtag\":\"W/\\\"1\\\"\","
-        + "\"@odata.mediaContentType\":\"image/svg+xml\","
-        + "\"@odata.mediaEditLink\":\"ESMedia(1)/$value\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESMedia/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@mediaEtag\":\"W/\\\"1\\\"\","
+        + "\"@mediaContentType\":\"image/svg+xml\","
+        + "\"@mediaEditLink\":\"ESMedia(1)/$value\","
         + "\"PropertyInt16\":1}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -1075,17 +1091,17 @@ public class ODataJsonSerializerTest {
         edmEntitySet.getEntityType(), entitySet,
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent());
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESMedia\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":["
-        + "{\"@odata.mediaEtag\":\"W/\\\"1\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\","
-        + "\"@odata.mediaEditLink\":\"ESMedia(1)/$value\",\"PropertyInt16\":1},"
-        + "{\"@odata.mediaEtag\":\"W/\\\"2\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\","
-        + "\"@odata.mediaEditLink\":\"ESMedia(2)/$value\",\"PropertyInt16\":2},"
-        + "{\"@odata.mediaEtag\":\"W/\\\"3\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\","
-        + "\"@odata.mediaEditLink\":\"ESMedia(3)/$value\",\"PropertyInt16\":3},"
-        + "{\"@odata.mediaEtag\":\"W/\\\"4\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\","
-        + "\"@odata.mediaEditLink\":\"ESMedia(4)/$value\",\"PropertyInt16\":4}]}";
+        + "{\"@mediaEtag\":\"W/\\\"1\\\"\",\"@mediaContentType\":\"image/svg+xml\","
+        + "\"@mediaEditLink\":\"ESMedia(1)/$value\",\"PropertyInt16\":1},"
+        + "{\"@mediaEtag\":\"W/\\\"2\\\"\",\"@mediaContentType\":\"image/svg+xml\","
+        + "\"@mediaEditLink\":\"ESMedia(2)/$value\",\"PropertyInt16\":2},"
+        + "{\"@mediaEtag\":\"W/\\\"3\\\"\",\"@mediaContentType\":\"image/svg+xml\","
+        + "\"@mediaEditLink\":\"ESMedia(3)/$value\",\"PropertyInt16\":3},"
+        + "{\"@mediaEtag\":\"W/\\\"4\\\"\",\"@mediaContentType\":\"image/svg+xml\","
+        + "\"@mediaEditLink\":\"ESMedia(4)/$value\",\"PropertyInt16\":4}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
 
@@ -1100,12 +1116,12 @@ public class ODataJsonSerializerTest {
                 .entitySet(edmEntitySet).suffix(Suffix.ENTITY).build()).build())
         .getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESMedia/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.mediaEtag\":\"W/\\\\\\\"08D25949E3BFB7AB\\\\\\\"\",\"@odata.mediaContentType\":\"image/svg+xml\","
-        + "\"@odata.mediaEditLink\":\"ESMedia(1)/$value\","
-        + "\"@odata.type\":\"#olingo.odata.test1.ETMedia\",\"@odata.id\":\"ESMedia(1)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":1}";
+    final String expectedResult = "{\"@context\":\"$metadata#ESMedia/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@mediaEtag\":\"W/\\\\\\\"08D25949E3BFB7AB\\\\\\\"\",\"@mediaContentType\":\"image/svg+xml\","
+        + "\"@mediaEditLink\":\"ESMedia(1)/$value\","
+        + "\"@type\":\"#olingo.odata.test1.ETMedia\",\"@id\":\"ESMedia(1)\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":1}";
     Assert.assertEquals(expectedResult, resultString);
   }
   
@@ -1118,8 +1134,8 @@ public class ODataJsonSerializerTest {
         EntityCollectionSerializerOptions.with()
             .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).build()).getContent());
 
-    final String expected = "{\"@odata.context\":\"$metadata#ESAllNullable\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expected = "{\"@context\":\"$metadata#ESAllNullable\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{\"PropertyKey\":1,"
         + "\"PropertyInt16\":null,\"PropertyString\":null,\"PropertyBoolean\":null,\"PropertyByte\":null,"
         + "\"PropertySByte\":null,\"PropertyInt32\":null,\"PropertyInt64\":null,\"PropertySingle\":null,"
@@ -1159,9 +1175,9 @@ public class ODataJsonSerializerTest {
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.id\":\"ESAllPrim(32767)\","
+        + "\"@context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@id\":\"ESAllPrim(32767)\","
         + "\"PropertyBoolean\":true,\"PropertyDate\":\"2012-12-03\"}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -1180,8 +1196,8 @@ public class ODataJsonSerializerTest {
             .select(select)
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESTwoPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -1204,17 +1220,17 @@ public class ODataJsonSerializerTest {
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expected = "{"
-        +     "\"@odata.context\":\"$metadata#ESFourKeyAlias"
+        +     "\"@context\":\"$metadata#ESFourKeyAlias"
         +        "(PropertyInt16,PropertyCompComp/PropertyComp/PropertyString)\"," 
-        +     "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        +     "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         +     "\"value\":[" 
         +     "{" 
-        +         "\"@odata.id\":\""
+        +         "\"@id\":\""
         +         "ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\"," 
         +         "\"PropertyInt16\":1," 
         +         "\"PropertyCompComp\":{" 
         +             "\"PropertyComp\":{" 
-        +             "\"@odata.type\":\"#olingo.odata.test1.CTBase\"," 
+        +             "\"@type\":\"#olingo.odata.test1.CTBase\"," 
         +             "\"PropertyString\":\"Num111\"" 
         +     "}}}]}";
 
@@ -1234,8 +1250,8 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
 
     final String expected = "{"
-        + "\"@odata.context\":\"$metadata#ESFourKeyAlias\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESFourKeyAlias\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{"
         + "\"PropertyInt16\":1,"
         + "\"PropertyComp\":{"
@@ -1244,7 +1260,7 @@ public class ODataJsonSerializerTest {
         + "},"
         + "\"PropertyCompComp\":{"
         + "\"PropertyComp\":{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTBase\","
+        + "\"@type\":\"#olingo.odata.test1.CTBase\","
         + "\"PropertyInt16\":111,"
         + "\"PropertyString\":\"Num111\","
         + "\"AdditionalPropString\":\"Test123\""
@@ -1271,17 +1287,17 @@ public class ODataJsonSerializerTest {
                 .build()).getContent());
     
     String expected = "{"
-            + "\"@odata.context\":\"$metadata#ESFourKeyAlias"
+            + "\"@context\":\"$metadata#ESFourKeyAlias"
             +   "(PropertyComp/PropertyString,PropertyCompComp/PropertyComp)\","
-            + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+            + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
             + "\"value\":[{"
-                + "\"@odata.id\":\"ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\","
+                + "\"@id\":\"ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\","
                 + "\"PropertyComp\":{"
                     + "\"PropertyString\":\"Num11\""
                 + "},"
                 + "\"PropertyCompComp\":{"
                     + "\"PropertyComp\":{"
-                        + "\"@odata.type\":\"#olingo.odata.test1.CTBase\","
+                        + "\"@type\":\"#olingo.odata.test1.CTBase\","
                         + "\"PropertyInt16\":111,"
                         + "\"PropertyString\":\"Num111\","
                         + "\"AdditionalPropString\":\"Test123\""
@@ -1301,52 +1317,52 @@ public class ODataJsonSerializerTest {
                  .build())
         .getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompCollComp\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.ETCompCollComp\","
-        + "\"@odata.id\":\"ESCompCollComp(32767)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32767,"
+    final String expectedResult = "{\"@context\":\"$metadata#ESCompCollComp\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"value\":[{\"@type\":\"#olingo.odata.test1.ETCompCollComp\","
+        + "\"@id\":\"ESCompCollComp(32767)\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":32767,"
         + "\"PropertyComp\":{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTCompCollComp\","
-        + "\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
+        + "\"@type\":\"#olingo.odata.test1.CTCompCollComp\","
+        + "\"CollPropertyComp@type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
         + "\"CollPropertyComp\":["
         + "{" 
-        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":555,"
         + "\"PropertyString\":\"1 Test Complex in Complex Property\""
         + "},{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":666,"
         + "\"PropertyString\":\"2 Test Complex in Complex Property\""
         + "},{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":777,"
         + "\"PropertyString\":\"3 Test Complex in Complex Property\""
         + "}]}},{"
-        + "\"@odata.type\":\"#olingo.odata.test1.ETCompCollComp\","
-        + "\"@odata.id\":\"ESCompCollComp(12345)\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.ETCompCollComp\","
+        + "\"@id\":\"ESCompCollComp(12345)\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":12345,"
         + "\"PropertyComp\":{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTCompCollComp\","
-        + "\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
+        + "\"@type\":\"#olingo.odata.test1.CTCompCollComp\","
+        + "\"CollPropertyComp@type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
         + "\"CollPropertyComp\":["
         + "{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":888,"
         + "\"PropertyString\":\"11 Test Complex in Complex Property\""
         + "},{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":999,"
         + "\"PropertyString\":\"12 Test Complex in Complex Property\""
         + "},{"
-        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\","
+        + "\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@type\":\"#Int16\","
         + "\"PropertyInt16\":0,"
         + "\"PropertyString\":\"13 Test Complex in Complex Property\""
         + "}]}}]}";
@@ -1364,8 +1380,8 @@ public class ODataJsonSerializerTest {
                  .build())
         .getContent();
     final String resultString = IOUtils.toString(result);
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompCollComp\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    final String expectedResult = "{\"@context\":\"$metadata#ESCompCollComp\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{"
         + "\"PropertyInt16\":32767,"
         + "\"PropertyComp\":{"
@@ -1398,7 +1414,7 @@ public class ODataJsonSerializerTest {
 
   @Test
   public void selectComplexNestedCollectionOfComplexWithMetadataNone() throws Exception{
-    final String METADATA_TEXT = "@odata.";
+    final String METADATA_TEXT = "@";
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollComp");
     final EntityCollection entitySet = data.readAll(edmEntitySet);
     InputStream result = serializerNoMetadata
@@ -1430,8 +1446,8 @@ public class ODataJsonSerializerTest {
                 .build()).getContent();
           Assert.assertNotNull(result);   
           final String resultString = IOUtils.toString(result);
-           Assert.assertEquals(  "{\"@odata.context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","+
-           "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"@odata.id\":\"ESAllPrim(32767)\","+
+           Assert.assertEquals(  "{\"@context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","+
+           "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\",\"@id\":\"ESAllPrim(32767)\","+
             "\"PropertyBoolean\":true,\"PropertyDate\":\"2012-12-03\"}",
           resultString);   
   }
@@ -1448,8 +1464,8 @@ public class ODataJsonSerializerTest {
             .expand(expand)
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    Assert.assertEquals("{\"@context\":\"$metadata#ESTwoPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\","
         + "\"NavPropertyETAllPrimOne\":{"
         + "\"PropertyInt16\":32767,"
@@ -1490,10 +1506,10 @@ public class ODataJsonSerializerTest {
                 .expand(expand)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\","
-        + "\"NavPropertyETAllPrimOne\":{\"@odata.id\":\"ESAllPrim(32767)\",\"PropertyDate\":\"2012-12-03\"}}",
+        + "\"NavPropertyETAllPrimOne\":{\"@id\":\"ESAllPrim(32767)\",\"PropertyDate\":\"2012-12-03\"}}",
         resultString);
   }
 
@@ -1519,9 +1535,9 @@ public class ODataJsonSerializerTest {
                 .select(select)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertySByte)/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.id\":\"ESAllPrim(32767)\","
+        + "\"@context\":\"$metadata#ESAllPrim(PropertySByte)/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@id\":\"ESAllPrim(32767)\","
         + "\"PropertySByte\":127,"
         + "\"NavPropertyETTwoPrimOne\":{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"},"
         + "\"NavPropertyETTwoPrimMany\":[{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"}]}",
@@ -1548,9 +1564,9 @@ public class ODataJsonSerializerTest {
                 .select(select)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.id\":\"ESAllPrim(-32768)\","
+        + "\"@context\":\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@id\":\"ESAllPrim(-32768)\","
         + "\"PropertyTimeOfDay\":\"23:49:14\","
         + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]}",
         resultString);
@@ -1580,14 +1596,14 @@ public class ODataJsonSerializerTest {
                 .expand(expand)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
         + "\"NavPropertyETAllPrimMany\":["
-        + "{\"@odata.id\":\"ESAllPrim(-32768)\",\"PropertyInt32\":-2147483648,"
+        + "{\"@id\":\"ESAllPrim(-32768)\",\"PropertyInt32\":-2147483648,"
         + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]},"
-        + "{\"@odata.id\":\"ESAllPrim(0)\",\"PropertyInt32\":0,\"NavPropertyETTwoPrimOne\":{"
-        + "\"@odata.type\":\"#olingo.odata.test1.ETBase\",\"PropertyInt16\":111,"
+        + "{\"@id\":\"ESAllPrim(0)\",\"PropertyInt32\":0,\"NavPropertyETTwoPrimOne\":{"
+        + "\"@type\":\"#olingo.odata.test1.ETBase\",\"PropertyInt16\":111,"
         + "\"PropertyString\":\"TEST A\",\"AdditionalPropertyString_5\":\"TEST A 0815\"},"
         + "\"NavPropertyETTwoPrimMany\":["
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
@@ -1618,8 +1634,8 @@ public class ODataJsonSerializerTest {
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .build()).getContent());
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+    Assert.assertEquals("{\"@context\":\"$metadata#ESTwoPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
         + "\"NavPropertyETAllPrimOne\":null,"
         + "\"NavPropertyETAllPrimMany\":["
@@ -1636,7 +1652,7 @@ public class ODataJsonSerializerTest {
         + "\"PropertyDate\":\"1970-01-01\",\"PropertyDateTimeOffset\":\"2005-12-03T00:00:00Z\","
         + "\"PropertyDuration\":\"PT0S\",\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789cccddd\","
         + "\"PropertyTimeOfDay\":\"00:01:01\",\"NavPropertyETTwoPrimOne\":{"
-        + "\"@odata.type\":\"#olingo.odata.test1.ETBase\",\"PropertyInt16\":111,"
+        + "\"@type\":\"#olingo.odata.test1.ETBase\",\"PropertyInt16\":111,"
         + "\"PropertyString\":\"TEST A\",\"AdditionalPropertyString_5\":\"TEST A 0815\"},"
         + "\"NavPropertyETTwoPrimMany\":["
         + "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"},"
@@ -1658,8 +1674,8 @@ public class ODataJsonSerializerTest {
                     .build())
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyString\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESAllPrim(32767)/PropertyString\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":\"First Resource - positive values\"}",
         resultString);
   }
@@ -1691,8 +1707,8 @@ public class ODataJsonSerializerTest {
                     .build())
             .getContent());
     Assert.assertEquals(
-        "{\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyString\","
-            + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        "{\"@context\":\"$metadata#ESAllPrim(32767)/PropertyString\","
+            + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
             + "\"value\":\"First Resource - positive values\"}",
         resultString);
   } 
@@ -1724,8 +1740,8 @@ public class ODataJsonSerializerTest {
                     .build())
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyString\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESCollAllPrim(1)/CollPropertyString\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"]}",
         resultString);
   }
@@ -1755,9 +1771,9 @@ public class ODataJsonSerializerTest {
                                         .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName())
                                         .build())
                                 .build()).getContent());
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyString\"," +
-                    "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," +
-                    "\"@odata.type\":\"#Collection(String)\",\"value\":[\"Employee1@company.example\"," +
+    Assert.assertEquals("{\"@context\":\"$metadata#ESCollAllPrim(1)/CollPropertyString\"," +
+                    "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\"," +
+                    "\"@type\":\"#Collection(String)\",\"value\":[\"Employee1@company.example\"," +
                     "\"Employee2@company.example\",\"Employee3@company.example\"]}", resultString);
   }
 
@@ -1775,8 +1791,8 @@ public class ODataJsonSerializerTest {
                     .build())
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/PropertyComp\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESMixPrimCollComp(32767)/PropertyComp\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":111,\"PropertyString\":\"TEST A\"}",
         resultString);
   }
@@ -1802,10 +1818,10 @@ public class ODataJsonSerializerTest {
                             .contextURL(ContextURL.with()
                                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName())
                                         .build()).build()).getContent());
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/PropertyComp\"," +
-                "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," +
-                "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\"," +
-                "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":111," +
+    Assert.assertEquals("{\"@context\":\"$metadata#ESMixPrimCollComp(32767)/PropertyComp\"," +
+                "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\"," +
+                "\"@type\":\"#olingo.odata.test1.CTTwoPrim\"," +
+                "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":111," +
                 "\"PropertyString\":\"TEST A\"}",resultString);
   }
 
@@ -1823,11 +1839,11 @@ public class ODataJsonSerializerTest {
                     .build())
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
         + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
-        + "{\"@odata.type\":\"#olingo.odata.test1.CTBase\",\"PropertyInt16\":789,"
+        + "{\"@type\":\"#olingo.odata.test1.CTBase\",\"PropertyInt16\":789,"
         + "\"PropertyString\":\"TEST 3\",\"AdditionalPropString\":\"ADD TEST\"}]}",
         resultString);
   }
@@ -1858,17 +1874,17 @@ public class ODataJsonSerializerTest {
                         .navOrPropertyPath(edmProperty.getName()).build())
                     .build())
             .getContent());
-    final String expectedResult = "{\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
-        + "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":123,"
+    final String expectedResult = "{\"@context\":\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
+        + "\"value\":[{\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":123,"
         + "\"PropertyString\":\"TEST 1\"},"
-        + "{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":456,"
+        + "{\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":456,"
         + "\"PropertyString\":\"TEST 2\"},"
-        + "{\"@odata.type\":\"#olingo.odata.test1.CTBase\","
-        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":789,"
+        + "{\"@type\":\"#olingo.odata.test1.CTBase\","
+        + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":789,"
         + "\"PropertyString\":\"TEST 3\",\"AdditionalPropString\":\"ADD TEST\"}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -1882,8 +1898,8 @@ public class ODataJsonSerializerTest {
         ReferenceSerializerOptions.with().contextURL(ContextURL.with().suffix(Suffix.REFERENCE).build()).build());
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#$ref\","
-        + "\"@odata.id\":\"ESAllPrim(32767)\"}",
+    Assert.assertEquals("{\"@context\":\"$metadata#$ref\","
+        + "\"@id\":\"ESAllPrim(32767)\"}",
         resultString);
   }
 
@@ -1893,7 +1909,7 @@ public class ODataJsonSerializerTest {
     final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     final String resultString = IOUtils.toString(
         serializerNoMetadata.reference(metadata, edmEntitySet, entity, null).getContent());
-    Assert.assertEquals("{\"@odata.id\":\"ESAllPrim(32767)\"}", resultString);
+    Assert.assertEquals("{\"@id\":\"ESAllPrim(32767)\"}", resultString);
   }
 
   @Test
@@ -1910,10 +1926,10 @@ public class ODataJsonSerializerTest {
 
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\","
-        + "\"value\":[{\"@odata.id\":\"ESAllPrim(32767)\"},"
-        + "{\"@odata.id\":\"ESAllPrim(-32768)\"},"
-        + "{\"@odata.id\":\"ESAllPrim(0)\"}]}",
+    Assert.assertEquals("{\"@context\":\"$metadata#Collection($ref)\","
+        + "\"value\":[{\"@id\":\"ESAllPrim(32767)\"},"
+        + "{\"@id\":\"ESAllPrim(-32768)\"},"
+        + "{\"@id\":\"ESAllPrim(0)\"}]}",
         resultString);
   }
 
@@ -1930,7 +1946,7 @@ public class ODataJsonSerializerTest {
 
     final String resultString = IOUtils.toString(serializerResult.getContent());
 
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#Collection($ref)\","
+    Assert.assertEquals("{\"@context\":\"$metadata#Collection($ref)\","
         + "\"value\":[]}", resultString);
   }
 
@@ -1953,8 +1969,8 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESAllPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,"
         + "\"PropertyString\":\"First Resource - positive values\","
         + "\"PropertyBoolean\":true,"
@@ -1986,8 +2002,8 @@ public class ODataJsonSerializerTest {
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
-        + "\"@odata.context\":\"http://host/service/$metadata#ESCollAllPrim/$entity\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"http://host/service/$metadata#ESCollAllPrim/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":1,"
         + "\"CollPropertyString\":"
         + "[\"Employee1@company.example\",\"Employee2@company.example\",\"Employee3@company.example\"],"
@@ -2025,8 +2041,8 @@ public class ODataJsonSerializerTest {
                     .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName()).build())
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyInt64\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESCollAllPrim(1)/CollPropertyInt64\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[\"929292929292\",\"333333333333\",\"444444444444\"]}",
         resultString);
   }
@@ -2044,8 +2060,8 @@ public class ODataJsonSerializerTest {
                     .entitySet(edmEntitySet).keyPath("1").navOrPropertyPath(edmProperty.getName()).build())
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESCollAllPrim(1)/CollPropertyDecimal\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESCollAllPrim(1)/CollPropertyDecimal\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":[\"12\",\"-2\",\"1234\"]}",
         resultString);
   }
@@ -2062,8 +2078,8 @@ public class ODataJsonSerializerTest {
                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName()).build())
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyInt64\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESAllPrim(32767)/PropertyInt64\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":\"" + Long.MAX_VALUE + "\"}",
         resultString);
   }
@@ -2080,8 +2096,8 @@ public class ODataJsonSerializerTest {
                     .entitySet(edmEntitySet).keyPath("32767").navOrPropertyPath(edmProperty.getName()).build())
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(32767)/PropertyDecimal\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@context\":\"$metadata#ESAllPrim(32767)/PropertyDecimal\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"value\":\"34\"}",
         resultString);
   }
@@ -2102,11 +2118,11 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.count\":\"3\",\"value\":["));
+        + "\"@context\":\"$metadata#ESAllPrim\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@count\":\"3\",\"value\":["));
     Assert.assertThat(resultString, CoreMatchers.endsWith("],"
-        + "\"@odata.nextLink\":\"/next\"}"));
+        + "\"@nextLink\":\"/next\"}"));
 
     int count = 0;
     int index = -1;
@@ -2132,10 +2148,10 @@ public class ODataJsonSerializerTest {
     final String resultString = IOUtils.toString(result);
 
     Assert.assertThat(resultString, CoreMatchers.startsWith("{"
-        + "\"@odata.context\":\"$metadata#Collection($ref)\","
-        + "\"@odata.count\":\"3\",\"value\":["));
+        + "\"@context\":\"$metadata#Collection($ref)\","
+        + "\"@count\":\"3\",\"value\":["));
     Assert.assertThat(resultString, CoreMatchers.endsWith("],"
-        + "\"@odata.nextLink\":\"/next\"}"));
+        + "\"@nextLink\":\"/next\"}"));
 
     int count = 0;
     int index = -1;
@@ -2320,8 +2336,8 @@ public class ODataJsonSerializerTest {
         .getContent();
     final String resultString = IOUtils.toString(result);
     final String expected = "{" + 
-         "\"@odata.context\":\"$metadata#ESPeople/$entity\"," + 
-         "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+         "\"@context\":\"$metadata#ESPeople/$entity\"," + 
+         "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
          "\"id\":1," + 
          "\"name\":\"B\"," + 
          "\"friends\":[" + 
@@ -2330,14 +2346,14 @@ public class ODataJsonSerializerTest {
                   "\"name\":\"A\"," + 
                   "\"friends\":[" + 
                      "{" + 
-                        "\"@odata.id\":\"ESPeople(1)\"" + 
+                        "\"@id\":\"ESPeople(1)\"" + 
                      "}," + 
                      "{" + 
                         "\"id\":2," + 
                         "\"name\":\"C\"," + 
                         "\"friends\":[" + 
                            "{" + 
-                              "\"@odata.id\":\"ESPeople(0)\"" + 
+                              "\"@id\":\"ESPeople(0)\"" + 
                            "}," + 
                            "{" + 
                               "\"id\":3," + 
@@ -2358,10 +2374,10 @@ public class ODataJsonSerializerTest {
                         "\"name\":\"A\"," + 
                         "\"friends\":[" + 
                            "{" + 
-                              "\"@odata.id\":\"ESPeople(1)\"" + 
+                              "\"@id\":\"ESPeople(1)\"" + 
                            "}," + 
                            "{" + 
-                              "\"@odata.id\":\"ESPeople(2)\"" + 
+                              "\"@id\":\"ESPeople(2)\"" + 
                            "}" + 
                         "]" + 
                      "}," + 
@@ -2396,8 +2412,8 @@ public class ODataJsonSerializerTest {
         .getContent();
     final String resultString = IOUtils.toString(result);
     final String expected = "{" +
-       "\"@odata.context\":\"$metadata#ESPeople/$entity\"," + 
-       "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
+       "\"@context\":\"$metadata#ESPeople/$entity\"," + 
+       "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\"," + 
        "\"id\":1," + 
        "\"name\":\"B\"," + 
        "\"friends\":[" + 
@@ -2406,14 +2422,14 @@ public class ODataJsonSerializerTest {
            "\"name\":\"A\"," + 
            "\"friends\":[" + 
              "{" + 
-               "\"@odata.id\":\"ESPeople(1)\"" + 
+               "\"@id\":\"ESPeople(1)\"" + 
              "}," + 
              "{" + 
                "\"id\":2," + 
                "\"name\":\"C\"," + 
                "\"friends\":[" + 
                  "{" + 
-                   "\"@odata.id\":\"ESPeople(0)\"" + 
+                   "\"@id\":\"ESPeople(0)\"" + 
                  "}," + 
                  "{" + 
                    "\"id\":3," + 
@@ -2432,10 +2448,10 @@ public class ODataJsonSerializerTest {
                "\"name\":\"A\"," + 
                "\"friends\":[" + 
                  "{" + 
-                   "\"@odata.id\":\"ESPeople(1)\"" + 
+                   "\"@id\":\"ESPeople(1)\"" + 
                  "}," + 
                  "{" + 
-                   "\"@odata.id\":\"ESPeople(2)\"" + 
+                   "\"@id\":\"ESPeople(2)\"" + 
                  "}" + 
                "]" + 
              "}," + 
@@ -2467,10 +2483,10 @@ public class ODataJsonSerializerTest {
                         + "/olingo.odata.test1.CTBase")
                     .build())
                 .build()).getContent());
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESMixPrimCollComp(32767)/"
+    Assert.assertEquals("{\"@context\":\"$metadata#ESMixPrimCollComp(32767)/"
         + "PropertyComp/olingo.odata.test1.CTBase\","
-        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.type\":\"#olingo.odata.test1.CTBase\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@type\":\"#olingo.odata.test1.CTBase\","
         + "\"AdditionalPropertyString\":null,"
         + "\"PropertyInt16\":111,"
         + "\"PropertyString\":\"TEST A\"}",

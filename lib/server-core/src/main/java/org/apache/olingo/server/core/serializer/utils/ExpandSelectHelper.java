@@ -141,8 +141,10 @@ public abstract class ExpandSelectHelper {
           continue;
       }
       final UriResource resource = item.getResourcePath().getUriResourceParts().get(0);
-      if (resource instanceof UriResourceNavigation
-          && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName())) {
+      if ((resource instanceof UriResourceNavigation
+          && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName())) ||
+          resource instanceof UriResourceProperty
+          && propertyName.equals(((UriResourceProperty) resource).getProperty().getName())) {
         return item;
       }
     }

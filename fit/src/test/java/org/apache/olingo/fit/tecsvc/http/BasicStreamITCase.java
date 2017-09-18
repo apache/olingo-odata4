@@ -58,6 +58,18 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertTrue(content.contains("\"PropertyString\":\"TEST 1->streamed\""));
     assertTrue(content.contains("\"PropertyString\":\"TEST 2->streamed\""));
   }
+  
+  @Test
+  public void streamESWithStreamJson() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESWithStream?$expand=PropertyStream&$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+  }
 
   @Test
   public void streamESStreamXml() throws Exception {

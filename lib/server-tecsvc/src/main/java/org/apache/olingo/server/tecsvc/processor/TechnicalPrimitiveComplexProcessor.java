@@ -27,6 +27,7 @@ import java.util.Locale;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Builder;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
@@ -83,6 +84,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     implements PrimitiveProcessor, PrimitiveValueProcessor,
     PrimitiveCollectionProcessor, CountPrimitiveCollectionProcessor,
     ComplexProcessor, ComplexCollectionProcessor, CountComplexCollectionProcessor {
+
+  private static final Object EDMSTREAM = "Edm.Stream";
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider,
       final ServiceMetadata serviceMetadata) {
@@ -264,7 +267,15 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
           if (representationType == RepresentationType.VALUE) {
             response.setContent(serializePrimitiveValue(property, edmProperty, (EdmPrimitiveType) type, returnType));
-          } else {
+          }else if(representationType == RepresentationType.PRIMITIVE && type.getFullQualifiedName()
+              .getFullQualifiedNameAsString().equals(EDMSTREAM)){
+            response.setContent(odata.createFixedFormatSerializer().binary(dataProvider.readStreamProperty(property)));
+            response.setStatusCode(HttpStatusCode.OK.getStatusCode());
+            response.setHeader(HttpHeader.CONTENT_TYPE, ((Link)property.getValue()).getType());
+            if (entity.getMediaETag() != null) {
+              response.setHeader(HttpHeader.ETAG, entity.getMediaETag());
+            }
+          }else {
             final ExpandOption expand = uriInfo.getExpandOption();
             final SelectOption select = uriInfo.getSelectOption();
             final SerializerResult result = serializeProperty(entity, edmEntitySet, path, property, edmProperty,

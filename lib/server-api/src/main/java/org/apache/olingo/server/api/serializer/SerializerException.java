@@ -51,6 +51,7 @@ public class SerializerException extends ODataLibraryException {
     WRONG_PRIMITIVE_VALUE,
     UNKNOWN_TYPE,
     WRONG_BASE_TYPE,
+    UNSUPPORTED_OPERATION_TYPE,
     /** parameter: encoding-name */
     UNSUPPORTED_ENCODING;
 
