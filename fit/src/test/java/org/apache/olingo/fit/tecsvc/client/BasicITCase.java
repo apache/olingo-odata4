@@ -253,6 +253,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
 
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);
+    assertNotNull(response.getHeaderNames());
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertContentType(response.getContentType());
 

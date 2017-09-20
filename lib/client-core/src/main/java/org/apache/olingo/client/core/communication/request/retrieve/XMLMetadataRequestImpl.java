@@ -75,6 +75,10 @@ public class XMLMetadataRequestImpl
       final SingleXMLMetadatRequestImpl includeReq = new SingleXMLMetadatRequestImpl(
           odataClient,
           odataClient.newURIBuilder(uri.resolve(reference.getUri()).toASCIIString()).build());
+      // Copying the headers from first request to next request
+      for(String key : rootReq.getHeaderNames()){
+         includeReq.addCustomHeader(key ,rootReq.getHeader(key));
+      }
       final XMLMetadata includeMetadata = includeReq.execute().getBody();
 
       // edmx:Include
