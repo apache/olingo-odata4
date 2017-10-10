@@ -92,7 +92,10 @@ public class ErrorTest extends AbstractTest {
         checkResponse(odataClient, statusLine, entity, "Json");
     assertTrue(exp.getMessage().contains("(500) Internal Server Error"));
     ODataError error = exp.getODataError();
-    assertEquals("Internal Server Error", error.getMessage());
+    /* Error message should be dynamic. Previously it was sending the same error message for any error. 
+       But after this change, user will get actual error message depending on the error. */
+    //assertEquals("Internal Server Error", error.getMessage());
+    assertTrue(error.getMessage().startsWith("Internal Server Error"));
     assertEquals(500, Integer.parseInt(error.getCode()));
     assertEquals(2, error.getInnerError().size());
     assertEquals("\"Method does not support entities of specific type\"", error.getInnerError().get("message"));
@@ -111,6 +114,7 @@ public class ErrorTest extends AbstractTest {
         
     ODataServerErrorException exp = (ODataServerErrorException) ODataErrorResponseChecker.
         checkResponse(odataClient, statusLine, entity, "Json");
-    assertEquals("Internal Server Error", exp.getMessage());
+    //assertEquals("Internal Server Error", exp.getMessage());
+    assertTrue(exp.getMessage().startsWith("Internal Server Error"));
   }
 }
