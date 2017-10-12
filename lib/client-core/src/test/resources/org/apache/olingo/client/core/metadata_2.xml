@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices m:DataServiceVersion="4.0" m:MaxDataServiceVersion="4.0" xmlns:m="http://docs.oasis-open.org/odata/ns/metadata">
+    <Schema Namespace="Microsoft.Exchange.Services.OData.Model" xmlns="http://docs.oasis-open.org/odata/ns/edm" Alias="Namespace1_Alias">
+    <EntityType Name="Customer" Abstract="true">
+    	<Key>
+          <PropertyRef Name="CustomerId" />
+        </Key>
+        <Property Name="CustomerId" Type="Edm.String" Nullable="false"/>
+        <Property Name="CustomerName" Type="Edm.String" />
+        <Property Name="Pet" Type="Microsoft.Exchange.Services.OData.Model.Animal" />
+      </EntityType>
+    <EntityType Name="VipCustomer" BaseType="Microsoft.Exchange.Services.OData.Model.Customer" Abstract="true">
+        <Property Name="CustomerType" Type="Edm.String" />
+        <Property Name="VipLocations" Type="Collection(Microsoft.Exchange.Services.OData.Model.Address)" />
+      </EntityType>
+      <EntityType Name="City">
+    	<Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.String" Nullable="false"/>
+      </EntityType>
+      <ComplexType Name="Animal">
+      </ComplexType>
+      <ComplexType Name="Human" BaseType="Microsoft.Exchange.Services.OData.Model.Animal">
+        <Property Name="HumanAddress" Type="Microsoft.Exchange.Services.OData.Model.USAddress" />
+      </ComplexType>
+      <ComplexType Name="Horse" BaseType="Microsoft.Exchange.Services.OData.Model.Animal">
+        <Property Name="HorseAddress" Type="Microsoft.Exchange.Services.OData.Model.USAddress" />
+        <Property Name="HorseAddresses" Type="Collection(Microsoft.Exchange.Services.OData.Model.USAddress)" />
+      </ComplexType>
+      <ComplexType Name="Address">
+        <NavigationProperty Name="City" Type="Microsoft.Exchange.Services.OData.Model.City" />
+      </ComplexType>
+      <ComplexType Name="USAddress" BaseType="Microsoft.Exchange.Services.OData.Model.Address">
+      	<Property Name="CountryAddress" Type="Microsoft.Exchange.Services.OData.Model.CountryAddress" />
+        <NavigationProperty Name="SubCity" Type="Microsoft.Exchange.Services.OData.Model.City" />
+      </ComplexType>
+      <ComplexType Name="CountryAddress" BaseType="Microsoft.Exchange.Services.OData.Model.Address">
+      	<NavigationProperty Name="SubCity" Type="Microsoft.Exchange.Services.OData.Model.City" />
+      </ComplexType>
+      <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Customers" EntityType="Microsoft.Exchange.Services.OData.Model.Customer">
+          <NavigationPropertyBinding Path="Pet/Microsoft.Exchange.Services.OData.Model.Human/HumanAddress/SubCity" Target="ODataWebExperimental.OData.Model.EntityContainer1/HumanCities" />
+          <NavigationPropertyBinding Path="Pet/Microsoft.Exchange.Services.OData.Model.Horse/HorseAddress/SubCity" Target="HorseCities" />
+          <NavigationPropertyBinding Path="Pet/Microsoft.Exchange.Services.OData.Model.Horse/HorseAddresses/SubCity" Target="HorseCities" />
+          <NavigationPropertyBinding Path="Microsoft.Exchange.Services.OData.Model.VipCustomer/VipLocations/Microsoft.Exchange.Services.OData.Model.USAddress/SubCity" Target="ODataWebExperimental.OData.Model.EntityContainer1/HumanCities" />
+          <NavigationPropertyBinding Path="Microsoft.Exchange.Services.OData.Model.VipCustomer/VipLocations/Microsoft.Exchange.Services.OData.Model.USAddress/CountryAddress/SubCity" Target="ODataWebExperimental.OData.Model.EntityContainer1/HumanCities" />
+          <NavigationPropertyBinding Path="Microsoft.Exchange.Services.OData.Model.VipCustomer/VipLocations/City" Target="ODataWebExperimental.OData.Model.EntityContainer1/HumanCities" />
+        </EntitySet>
+        <EntitySet Name="HorseCities" EntityType="Microsoft.Exchange.Services.OData.Model.City"/>
+      </EntityContainer>
+    </Schema>
+    <Schema Namespace="ODataWebExperimental.OData.Model" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityContainer Name="EntityContainer1" p4:LazyLoadingEnabled="true" xmlns:p4="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+      <EntitySet Name="HumanCities" EntityType="Microsoft.Exchange.Services.OData.Model.City"/>
+      <EntitySet Name="Customers" EntityType="Microsoft.Exchange.Services.OData.Model.Customer">
+      	<NavigationPropertyBinding Path="Pet/Microsoft.Exchange.Services.OData.Model.Human/HumanAddress/SubCity" Target="HumanCities" />
+          <NavigationPropertyBinding Path="Pet/Microsoft.Exchange.Services.OData.Model.Horse/HorseAddress/SubCity" Target="Namespace1_Alias.EntityContainer/HorseCities" />
+          <NavigationPropertyBinding Path="Pet/Microsoft.Exchange.Services.OData.Model.Horse/HorseAddresses/SubCity" Target="Microsoft.Exchange.Services.OData.Model.EntityContainer/HorseCities" />
+          <NavigationPropertyBinding Path="Microsoft.Exchange.Services.OData.Model.VipCustomer/VipLocations/Microsoft.Exchange.Services.OData.Model.USAddress/SubCity" Target="HumanCities" />
+          <NavigationPropertyBinding Path="Microsoft.Exchange.Services.OData.Model.VipCustomer/VipLocations/Microsoft.Exchange.Services.OData.Model.USAddress/CountryAddress/SubCity" Target="HumanCities" />
+          <NavigationPropertyBinding Path="Microsoft.Exchange.Services.OData.Model.VipCustomer/VipLocations/City" Target="HumanCities" />
+      </EntitySet>
+      </EntityContainer>
+      </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

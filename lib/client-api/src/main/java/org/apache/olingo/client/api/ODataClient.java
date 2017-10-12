@@ -28,6 +28,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.RetrieveReque
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
+import org.apache.olingo.client.api.serialization.ODataMetadataValidation;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.api.serialization.ODataSerializer;
 import org.apache.olingo.client.api.serialization.ODataWriter;
@@ -75,4 +76,6 @@ public interface ODataClient {
   CUDRequestFactory getCUDRequestFactory();
 
   BatchRequestFactory getBatchRequestFactory();
+  
+  ODataMetadataValidation metadataValidation();
 }
