@@ -203,7 +203,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
           try {
             // wait for retry-after
-            Thread.sleep(retryAfter * 1000);
+            Thread.sleep((long)retryAfter * 1000);
           } catch (InterruptedException ignore) {
             // ignore
           }

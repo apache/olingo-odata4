@@ -134,17 +134,16 @@ public final class ServiceDocumentImpl implements ServiceDocument {
     if (title != null ? !title.equals(that.title) : that.title != null) {
       return false;
     }
-    if (entitySets != null ? !entitySets.equals(that.entitySets) : that.entitySets != null) {
+    if (!entitySets.equals(that.entitySets)) {
       return false;
     }
-    if (functionImports != null ? !functionImports.equals(that.functionImports) : that.functionImports != null) {
+    if (!functionImports.equals(that.functionImports)) {
       return false;
     }
-    if (singletons != null ? !singletons.equals(that.singletons) : that.singletons != null) {
+    if (!singletons.equals(that.singletons)) {
       return false;
     }
-    if (relatedServiceDocuments != null ?
-        !relatedServiceDocuments.equals(that.relatedServiceDocuments) : that.relatedServiceDocuments != null) {
+    if (!relatedServiceDocuments.equals(that.relatedServiceDocuments)) {
       return false;
     }
     return !(metadata != null ? !metadata.equals(that.metadata) : that.metadata != null);
@@ -154,10 +153,10 @@ public final class ServiceDocumentImpl implements ServiceDocument {
   @Override
   public int hashCode() {
     int result = title != null ? title.hashCode() : 0;
-    result = 31 * result + (entitySets != null ? entitySets.hashCode() : 0);
-    result = 31 * result + (functionImports != null ? functionImports.hashCode() : 0);
-    result = 31 * result + (singletons != null ? singletons.hashCode() : 0);
-    result = 31 * result + (relatedServiceDocuments != null ? relatedServiceDocuments.hashCode() : 0);
+    result = 31 * result + (entitySets.hashCode());
+    result = 31 * result + (functionImports.hashCode());
+    result = 31 * result + (singletons.hashCode());
+    result = 31 * result + (relatedServiceDocuments.hashCode());
     result = 31 * result + (metadata != null ? metadata.hashCode() : 0);
     return result;
   }

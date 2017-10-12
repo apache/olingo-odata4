@@ -61,9 +61,9 @@ public class ClientDeltaImpl extends ClientEntitySetImpl implements ClientDelta 
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((addedLinks == null) ? 0 : addedLinks.hashCode());
-    result = prime * result + ((deletedEntities == null) ? 0 : deletedEntities.hashCode());
-    result = prime * result + ((deletedLinks == null) ? 0 : deletedLinks.hashCode());
+    result = prime * result + (addedLinks.hashCode());
+    result = prime * result + (deletedEntities.hashCode());
+    result = prime * result + (deletedLinks.hashCode());
     return result;
   }
 

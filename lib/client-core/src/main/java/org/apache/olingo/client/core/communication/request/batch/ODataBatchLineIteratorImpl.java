@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
+import java.util.NoSuchElementException;
+
 import org.apache.commons.io.LineIterator;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 
@@ -63,6 +65,9 @@ public class ODataBatchLineIteratorImpl implements ODataBatchLineIterator {
    */
   @Override
   public String next() {
+    if(!hasNext()){
+      throw new NoSuchElementException();
+    }
     return nextLine();
   }
 

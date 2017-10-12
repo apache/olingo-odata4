@@ -207,10 +207,10 @@ public class ClientComplexValueImpl extends AbstractClientValue implements Clien
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
-    result = prime * result + ((associationLinks == null) ? 0 : associationLinks.hashCode());
-    result = prime * result + ((fields == null) ? 0 : fields.hashCode());
-    result = prime * result + ((navigationLinks == null) ? 0 : navigationLinks.hashCode());
+    result = prime * result + (annotations.hashCode());
+    result = prime * result + (associationLinks.hashCode());
+    result = prime * result + (fields.hashCode());
+    result = prime * result + (navigationLinks.hashCode());
     return result;
   }
 

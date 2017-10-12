@@ -124,7 +124,7 @@ public class ClientCollectionValueImpl<OV extends ClientValue> extends AbstractC
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((values == null) ? 0 : values.hashCode());
+    result = prime * result + (values.hashCode());
     return result;
   }
 
