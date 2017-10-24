@@ -98,11 +98,10 @@ public class OData4HttpHandler extends ODataHttpHandlerImpl {
     final String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
     response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
 
-    if (maxVersion != null) {
-      if (ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
-        throw new ODataHandlerException("ODataVersion not supported: " + maxVersion, //$NON-NLS-1$
-            ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
-      }
+    if (maxVersion != null 
+        && ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
+      throw new ODataHandlerException("ODataVersion not supported: " + maxVersion, //$NON-NLS-1$
+          ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
     }
   }
 

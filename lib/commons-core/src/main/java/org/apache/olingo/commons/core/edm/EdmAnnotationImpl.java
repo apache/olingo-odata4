@@ -58,10 +58,8 @@ public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnno
 
   @Override
   public EdmExpression getExpression() {
-    if (expression == null) {
-      if (annotation.getExpression() != null) {
-        expression = AbstractEdmExpression.getExpression(edm, annotation.getExpression());
-      }
+    if (expression == null && annotation.getExpression() != null) {
+      expression = AbstractEdmExpression.getExpression(edm, annotation.getExpression());
     }
     return expression;
   }

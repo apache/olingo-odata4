@@ -230,21 +230,20 @@ public class EdmProviderImpl extends AbstractEdm {
       for (CsdlFunction function : functions) {
         if (function.isBound()) {
           List<CsdlParameter> providerParameters = function.getParameters();
-          if (providerParameters == null || providerParameters.size() == 0) {
+          if (providerParameters == null || providerParameters.isEmpty()) {
             throw new EdmException("No parameter specified for bound function: " + functionName);
           }
           final CsdlParameter bindingParameter = providerParameters.get(0);
           if (bindingParameterTypeName.equals(bindingParameter.getTypeFQN())
-              && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()) {
+              && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()
+              && parameterNamesCopy.size() == providerParameters.size() - 1) {
 
-            if (parameterNamesCopy.size() == providerParameters.size() - 1) {
-              final List<String> providerParameterNames = new ArrayList<String>();
-              for (int i = 1; i < providerParameters.size(); i++) {
-                providerParameterNames.add(providerParameters.get(i).getName());
-              }
-              if (parameterNamesCopy.containsAll(providerParameterNames)) {
-                return new EdmFunctionImpl(this, functionName, function);
-              }
+            final List<String> providerParameterNames = new ArrayList<String>();
+            for (int i = 1; i < providerParameters.size(); i++) {
+              providerParameterNames.add(providerParameters.get(i).getName());
+            }
+            if (parameterNamesCopy.containsAll(providerParameterNames)) {
+              return new EdmFunctionImpl(this, functionName, function);
             }
           }
         }
@@ -382,7 +381,7 @@ public class EdmProviderImpl extends AbstractEdm {
       CsdlTerm providerTerm = provider.getTerm(termName);
       if (providerTerm != null) {
         return new EdmTermImpl(this, termName.getNamespace(), providerTerm);
-      } else if (termSchemaDefinition != null && termSchemaDefinition.size() > 0) {
+      } else if (termSchemaDefinition != null && !termSchemaDefinition.isEmpty()) {
           for (CsdlSchema schema : termSchemaDefinition) {
               if (schema.getNamespace().equalsIgnoreCase(termName.getNamespace())) {
                 List<CsdlTerm> terms = schema.getTerms();

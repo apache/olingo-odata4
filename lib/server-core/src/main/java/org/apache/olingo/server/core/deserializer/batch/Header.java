@@ -60,7 +60,7 @@ public class Header implements Iterable<HeaderField>, Cloneable {
   public boolean exists(final String name) {
     final HeaderField field = headers.get(name.toLowerCase(Locale.ENGLISH));
 
-    return field != null && field.getValues().size() != 0;
+    return field != null && !field.getValues().isEmpty();
   }
 
   public void removeHeader(final String name) {

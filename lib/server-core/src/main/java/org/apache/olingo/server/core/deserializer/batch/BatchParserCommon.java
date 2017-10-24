@@ -140,12 +140,12 @@ public class BatchParserCommon {
     }
 
     // Remove preamble
-    if (messageParts.size() > 0) {
+    if (!messageParts.isEmpty()) {
       messageParts.remove(0);
     }
 
     if (!isEndReached) {
-      final int lineNumber = (message.size() > 0) ? message.get(0).getLineNumber() : 0;
+      final int lineNumber = (!message.isEmpty()) ? message.get(0).getLineNumber() : 0;
       throw new BatchDeserializerException("Missing close boundary delimiter",
           BatchDeserializerException.MessageKeys.MISSING_CLOSE_DELIMITER, Integer.toString(lineNumber));
     }
@@ -154,7 +154,7 @@ public class BatchParserCommon {
   }
 
   private static void removeEndingCRLFFromList(final List<Line> list) {
-    if (list.size() > 0) {
+    if (!list.isEmpty()) {
       Line lastLine = list.remove(list.size() - 1);
       list.add(removeEndingCRLF(lastLine));
     }
@@ -170,7 +170,7 @@ public class BatchParserCommon {
   }
 
   public static Header consumeHeaders(final List<Line> remainingMessage) {
-    final int headerLineNumber = remainingMessage.size() != 0 ? remainingMessage.get(0).getLineNumber() : 0;
+    final int headerLineNumber = !remainingMessage.isEmpty() ? remainingMessage.get(0).getLineNumber() : 0;
     final Header headers = new Header(headerLineNumber);
     final Iterator<Line> iter = remainingMessage.iterator();
     Line currentLine;
@@ -197,11 +197,11 @@ public class BatchParserCommon {
 
   public static void consumeBlankLine(final List<Line> remainingMessage, final boolean isStrict)
       throws BatchDeserializerException {
-    if (remainingMessage.size() > 0 && remainingMessage.get(0).toString().matches("\\s*\r?\n\\s*")) {
+    if (!remainingMessage.isEmpty() && remainingMessage.get(0).toString().matches("\\s*\r?\n\\s*")) {
       remainingMessage.remove(0);
     } else {
       if (isStrict) {
-        final int lineNumber = (remainingMessage.size() > 0) ? remainingMessage.get(0).getLineNumber() : 0;
+        final int lineNumber = (!remainingMessage.isEmpty()) ? remainingMessage.get(0).getLineNumber() : 0;
         throw new BatchDeserializerException("Missing blank line",
             BatchDeserializerException.MessageKeys.MISSING_BLANK_LINE, "[None]", Integer.toString(lineNumber));
       }

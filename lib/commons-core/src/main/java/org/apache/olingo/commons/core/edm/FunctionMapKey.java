@@ -77,16 +77,15 @@ public final class FunctionMapKey {
         && (isBindingParameterCollection == null
         && other.isBindingParameterCollection == null)
         || (isBindingParameterCollection != null
-        && isBindingParameterCollection.equals(other.isBindingParameterCollection))) {
+        && isBindingParameterCollection.equals(other.isBindingParameterCollection))
+            && parameterNames.size() == other.parameterNames.size()) {
 
-      if (parameterNames.size() == other.parameterNames.size()) {
-        for (String name : parameterNames) {
-          if (!other.parameterNames.contains(name)) {
-            return false;
-          }
+      for (String name : parameterNames) {
+        if (!other.parameterNames.contains(name)) {
+          return false;
         }
-        return true;
       }
+      return true;
     }
     return false;
   }

@@ -137,7 +137,7 @@ public class ODataImpl extends OData {
   public EdmDeltaSerializer createEdmDeltaSerializer(final ContentType contentType, final List<String> versions)
       throws SerializerException {
     if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
-      if(versions!=null && versions.size()>0){
+      if(versions!=null && !versions.isEmpty()){
        return getMaxVersion(versions)>4 ?  new JsonDeltaSerializerWithNavigations(contentType):
          new JsonDeltaSerializer(contentType);
       }

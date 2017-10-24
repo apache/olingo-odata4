@@ -336,12 +336,10 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   @Override
   public CsdlEntityType getEntityType(final FullQualifiedName fqn) throws ODataException {
     CsdlSchema schema = getSchema(fqn.getNamespace());
-    if (schema != null) {
-      if (schema.getEntityTypes() != null) {
-        for (CsdlEntityType type : schema.getEntityTypes()) {
-          if (type.getName().equals(fqn.getName())) {
-            return type;
-          }
+    if (schema != null && schema.getEntityTypes() != null) {
+      for (CsdlEntityType type : schema.getEntityTypes()) {
+        if (type.getName().equals(fqn.getName())) {
+          return type;
         }
       }
     }
@@ -351,12 +349,10 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   @Override
   public CsdlComplexType getComplexType(final FullQualifiedName fqn) throws ODataException {
     CsdlSchema schema = getSchema(fqn.getNamespace());
-    if (schema != null) {
-      if (schema.getComplexTypes() != null) {
-        for (CsdlComplexType type : schema.getComplexTypes()) {
-          if (type.getName().equals(fqn.getName())) {
-            return type;
-          }
+    if (schema != null && schema.getComplexTypes() != null) {
+      for (CsdlComplexType type : schema.getComplexTypes()) {
+        if (type.getName().equals(fqn.getName())) {
+          return type;
         }
       }
     }

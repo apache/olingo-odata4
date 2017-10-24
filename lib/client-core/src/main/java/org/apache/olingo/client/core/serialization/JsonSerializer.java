@@ -377,7 +377,7 @@ public class JsonSerializer implements ODataSerializer {
 
   private boolean isIEEE754Compatible() {
     final String parameter = contentType.getParameters().get(ContentType.PARAMETER_IEEE754_COMPATIBLE);
-    return parameter == null ? false : "true".equals(parameter.toLowerCase());
+    return parameter == null ? false : "true".equalsIgnoreCase(parameter);
   }
 
   private boolean isODataMetadataNone() {

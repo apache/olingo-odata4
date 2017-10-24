@@ -412,7 +412,7 @@ public class UriValidator {
   private void validatePropertyOperations(final UriInfo uriInfo, final HttpMethod method)
       throws UriValidationException {
     final List<UriResource> parts = uriInfo.getUriResourceParts();
-    final UriResource last = parts.size() > 0 ? parts.get(parts.size() - 1) : null;
+    final UriResource last = !parts.isEmpty() ? parts.get(parts.size() - 1) : null;
     final UriResource previous = parts.size() > 1 ? parts.get(parts.size() - 2) : null;
     if (last != null
         && (last.getKind() == UriResourceKind.primitiveProperty

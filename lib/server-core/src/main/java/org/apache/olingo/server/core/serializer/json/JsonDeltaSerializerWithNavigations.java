@@ -213,14 +213,14 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
     json.writeStringField(Constants.ELEM_REASON,
         ((DeletedEntity) deletedEntity).getReason().name());
     List<Annotation> annotations = deletedEntity.getAnnotations();
-    if (annotations != null && annotations.size() > 0) {
+    if (annotations != null && !annotations.isEmpty()) {
       for (Annotation annotation : annotations) {
         json.writeStringField(Constants.AT + annotation.getTerm(), annotation.getValue().toString());
       }
     }
     json.writeEndObject();
     List<Property> properties = deletedEntity.getProperties();
-    if (properties != null && properties.size() > 0) {
+    if (properties != null && !properties.isEmpty()) {
       for (Property property : properties) {
         json.writeStringField(property.getName(), property.getValue().toString());
       }
@@ -491,7 +491,7 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
     final Set<String> selected = all ? new HashSet<String>() : ExpandSelectHelper.getSelectedPropertyNames(select
         .getSelectItems());
     for (final String propertyName : type.getPropertyNames()) {
-      if ((all || selected.contains(propertyName)) && properties.size() > 0) {
+      if ((all || selected.contains(propertyName)) && !properties.isEmpty()) {
         final EdmProperty edmProperty = type.getStructuralProperty(propertyName);
         final Property property = findProperty(propertyName, properties);
         final Set<List<String>> selectedPaths = all || edmProperty.isPrimitive() ? null : ExpandSelectHelper

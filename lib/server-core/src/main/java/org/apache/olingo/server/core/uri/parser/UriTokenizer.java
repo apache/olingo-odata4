@@ -1065,10 +1065,8 @@ public class UriTokenizer {
     if (nextConstantIgnoreCase("duration") && nextCharacter('\'')) {
       nextSign();
       if (nextCharacter('P') || nextCharacter('p')) {
-        if (nextIntegerValue(false)) {
-          if (!(nextCharacter('D') || nextCharacter('d'))) {
-            return false;
-          }
+        if (nextIntegerValue(false) && (!(nextCharacter('D') || nextCharacter('d')))) {
+          return false;
         }
         if (nextCharacter('T') || nextCharacter('t')) {
           boolean hasNumber = false;
@@ -1085,10 +1083,8 @@ public class UriTokenizer {
             }
           }
           if (hasNumber || nextIntegerValue(false)) {
-            if (nextCharacter('.')) {
-              if (!nextIntegerValue(false)) {
-                return false;
-              }
+            if (nextCharacter('.') && !nextIntegerValue(false)) {
+              return false;
             }
             if (!(nextCharacter('S') || nextCharacter('s'))) {
               return false;

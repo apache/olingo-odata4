@@ -42,10 +42,8 @@ class ClientCsdlNull extends CsdlNull implements Serializable {
       final ClientCsdlNull _null = new ClientCsdlNull();
       for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();
-        if (token == JsonToken.FIELD_NAME) {
-          if ("Annotation".equals(jp.getCurrentName())) {
-            _null.getAnnotations().add(jp.readValueAs(ClientCsdlAnnotation.class));
-          }
+        if (token == JsonToken.FIELD_NAME && "Annotation".equals(jp.getCurrentName())) {
+           _null.getAnnotations().add(jp.readValueAs(ClientCsdlAnnotation.class));
         }
       }
       return _null;

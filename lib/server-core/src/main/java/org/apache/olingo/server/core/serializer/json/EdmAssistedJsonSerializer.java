@@ -180,13 +180,12 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
       valuable(json, property, name, edmProperty == null ? null : edmProperty.getType(), edmProperty);
     }
 
-    if (!isODataMetadataNone) {
-      if (entity.getEditLink() != null && entity.getEditLink().getHref() != null) {
-        json.writeStringField(Constants.JSON_EDIT_LINK, entity.getEditLink().getHref());
+    if (!isODataMetadataNone &&
+        entity.getEditLink() != null && entity.getEditLink().getHref() != null) {
+      json.writeStringField(Constants.JSON_EDIT_LINK, entity.getEditLink().getHref());
 
-        if (entity.isMediaEntity()) {
-          json.writeStringField(Constants.JSON_MEDIA_READ_LINK, entity.getEditLink().getHref() + "/$value");
-        }
+      if (entity.isMediaEntity()) {
+        json.writeStringField(Constants.JSON_MEDIA_READ_LINK, entity.getEditLink().getHref() + "/$value");
       }
     }
 
@@ -367,23 +366,22 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
         && !(valuable instanceof Annotation) && !valuable.isComplex()) {
 
       String typeName = valuable.getType();
-      if (typeName == null && type == null) {
-        if (valuable.isPrimitive()) {
-          if (valuable.isCollection()) {
-            if (!valuable.asCollection().isEmpty()) {
-              final EdmPrimitiveTypeKind kind = EdmTypeInfo.determineTypeKind(valuable.asCollection().get(0));
-              if (kind != null) {
-                typeName = "Collection(" + kind.getFullQualifiedName().getFullQualifiedNameAsString() + ')';
-              }
-            }
-          } else {
-            final EdmPrimitiveTypeKind kind = EdmTypeInfo.determineTypeKind(valuable.asPrimitive());
+      if (typeName == null && type == null && valuable.isPrimitive()) {
+        if (valuable.isCollection()) {
+          if (!valuable.asCollection().isEmpty()) {
+            final EdmPrimitiveTypeKind kind = EdmTypeInfo.determineTypeKind(valuable.asCollection().get(0));
             if (kind != null) {
-              typeName = kind.getFullQualifiedName().getFullQualifiedNameAsString();
+              typeName = "Collection(" + kind.getFullQualifiedName().getFullQualifiedNameAsString() + ')';
             }
+          }
+        } else {
+          final EdmPrimitiveTypeKind kind = EdmTypeInfo.determineTypeKind(valuable.asPrimitive());
+          if (kind != null) {
+            typeName = kind.getFullQualifiedName().getFullQualifiedNameAsString();
           }
         }
       }
+      
       if (typeName != null) {
         json.writeStringField(name + Constants.JSON_TYPE, constructTypeExpression(typeName));
       }

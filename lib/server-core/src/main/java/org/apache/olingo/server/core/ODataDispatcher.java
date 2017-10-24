@@ -571,17 +571,15 @@ public class ODataDispatcher {
 
   /*Delete method is not allowed for Entities navigating to Singleton*/ 
   private void validateIsSingleton(HttpMethod method) throws ODataHandlerException {
-   final int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
-   final UriResource pathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
-   if(pathSegment instanceof UriResourceNavigation){
-   if(uriInfo.getUriResourceParts().get(lastPathSegmentIndex-1) instanceof UriResourceEntitySet){
-     if(((UriResourceEntitySet)uriInfo.getUriResourceParts().
-         get(lastPathSegmentIndex-1)).getEntitySet().getRelatedBindingTarget(
-         pathSegment.getSegmentValue())instanceof EdmSingleton){
-         throwMethodNotAllowed(method);
-       }
-     }
-   }
+    final int lastPathSegmentIndex = uriInfo.getUriResourceParts().size() - 1;
+    final UriResource pathSegment = uriInfo.getUriResourceParts().get(lastPathSegmentIndex);
+    if (pathSegment instanceof UriResourceNavigation
+        && uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1) instanceof UriResourceEntitySet
+        && ((UriResourceEntitySet) uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1)).getEntitySet()
+            .getRelatedBindingTarget(
+                pathSegment.getSegmentValue()) instanceof EdmSingleton) {
+      throwMethodNotAllowed(method);
+    }
   }
 
 

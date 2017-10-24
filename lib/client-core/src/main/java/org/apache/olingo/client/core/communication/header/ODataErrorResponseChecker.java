@@ -80,7 +80,7 @@ public final class ODataErrorResponseChecker {
             statusLine.getReasonPhrase());
       }
 
-      if (statusLine.getStatusCode() >= 500 && (error.getDetails() == null || error.getDetails().size() == 0) && 
+      if (statusLine.getStatusCode() >= 500 && (error.getDetails() == null || error.getDetails().isEmpty()) && 
           (error.getInnerError() == null || error.getInnerError().size() == 0)) {
         result = new ODataServerErrorException(statusLine);
       } else {

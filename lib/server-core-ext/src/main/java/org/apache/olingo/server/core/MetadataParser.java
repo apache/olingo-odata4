@@ -673,11 +673,9 @@ public class MetadataParser {
           readAttributeExpressions(element, target);        
           
           for (ConstantExpressionType type:ConstantExpressionType.values()) {
-            if (name.equals(type.name())) {
-              if (reader.peek().isCharacters()) {
-                CsdlExpression expr = new CsdlConstantExpression(type, elementValue(reader, element));
-                write(target, expr);
-              }
+            if (name.equals(type.name()) && reader.peek().isCharacters()) {
+              CsdlExpression expr = new CsdlConstantExpression(type, elementValue(reader, element));
+              write(target, expr);
             }        
           }
         }

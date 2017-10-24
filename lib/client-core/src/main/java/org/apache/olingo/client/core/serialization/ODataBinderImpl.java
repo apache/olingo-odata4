@@ -715,14 +715,12 @@ public class ODataBinderImpl implements ODataBinder {
           if (idx != -1) {
             String navigationName = property.getName().substring(0, idx);
             edmProperty = ((EdmEntityType) edmType).getProperty(navigationName);
-            if (edmProperty != null) {
-              if (edmProperty instanceof EdmNavigationProperty) {
-                ClientLink link = entity.getNavigationLink(navigationName);
-                if (link == null) {
-                  countMap.put(navigationName, (Integer)property.getValue());
-                } else {
-                  link.asInlineEntitySet().getEntitySet().setCount((Integer)property.getValue());
-                }
+            if (edmProperty != null && edmProperty instanceof EdmNavigationProperty) {
+              ClientLink link = entity.getNavigationLink(navigationName);
+              if (link == null) {
+                countMap.put(navigationName, (Integer) property.getValue());
+              } else {
+                link.asInlineEntitySet().getEntitySet().setCount((Integer) property.getValue());
               }
             }            
           }

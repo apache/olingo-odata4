@@ -261,16 +261,12 @@ public class Parser {
       if (lastSegment instanceof UriResourcePartTyped) {
         final UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
         contextType = ParserHelper.getTypeInformation(typed);
-        if (contextType != null) {
-          if ((lastSegment instanceof UriResourceEntitySet && 
-              (((UriResourceEntitySet) lastSegment).getTypeFilterOnCollection() != null 
-              || ((UriResourceEntitySet) lastSegment).getTypeFilterOnEntry() != null)) 
-          || contextUriInfo.getIdOption() != null) {
-            if (contextType instanceof EdmEntityType) {
-              contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
-            }
-           }
-         }
+        if (contextType != null && ((lastSegment instanceof UriResourceEntitySet &&
+            (((UriResourceEntitySet) lastSegment).getTypeFilterOnCollection() != null
+                || ((UriResourceEntitySet) lastSegment).getTypeFilterOnEntry() != null))
+            || contextUriInfo.getIdOption() != null) && contextType instanceof EdmEntityType) {
+          contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
+        }
         contextIsCollection = typed.isCollection();
       }
     }
