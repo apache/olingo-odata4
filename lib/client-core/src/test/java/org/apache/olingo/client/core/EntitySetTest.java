@@ -52,6 +52,21 @@ public class EntitySetTest extends AbstractTest {
   }
 
   @Test
+  public void testOperations() throws Exception {
+    final InputStream input = getClass().
+        getResourceAsStream("CustomersWithOperations." + getSuffix(ContentType.APPLICATION_JSON));
+    final ClientEntitySet entitySet = client.getBinder().getODataEntitySet(
+        client.getDeserializer(ContentType.APPLICATION_JSON).toEntitySet(input));
+    assertNotNull(entitySet);
+
+    assertEquals(2, entitySet.getEntities().size());
+    assertNull(entitySet.getNext());
+    assertEquals(1, entitySet.getOperations().size());
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.BAESAllPrimRTETAllPrim",
+        entitySet.getOperations().get(0).getTitle());
+  }
+
+  @Test
   public void fromAtom() throws Exception {
     read(ContentType.APPLICATION_ATOM_XML);
   }

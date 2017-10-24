@@ -258,7 +258,7 @@ public class MetadataTest extends AbstractTest {
 
     EdmEntityContainer demoService = schema.getEntityContainer();
     assertNotNull(demoService);
-    for (EdmFunction function : schema.getFunctions()) {
+    EdmFunction function = schema.getFunctions().get(0);
       final EdmFunctionImport fi = demoService.getFunctionImport(function.getName());
       assertNotNull(fi);
       assertEquals(demoService.getEntitySet("Products"), fi.getReturnedEntitySet());
@@ -276,7 +276,6 @@ public class MetadataTest extends AbstractTest {
           fi.getUnboundFunction(function.getParameterNames()).getReturnType().getType().getName());
       assertEquals(edmFunction.getReturnType().getType().getNamespace(),
           fi.getUnboundFunction(function.getParameterNames()).getReturnType().getType().getNamespace());
-    }
 
     final EdmTypeDefinition weight = edm.getTypeDefinition(new FullQualifiedName("ODataDemo", "Weight"));
     assertNotNull(weight);

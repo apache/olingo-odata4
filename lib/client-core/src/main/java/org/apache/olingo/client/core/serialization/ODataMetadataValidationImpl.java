@@ -27,7 +27,6 @@ import org.apache.olingo.client.api.serialization.ODataMetadataValidation;
 import org.apache.olingo.client.core.metadatavalidator.CsdlTypeValidator;
 import org.apache.olingo.client.core.metadatavalidator.EdmTypeValidator;
 import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntityType;

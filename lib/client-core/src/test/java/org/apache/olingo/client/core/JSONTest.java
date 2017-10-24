@@ -33,17 +33,29 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.data.ResWrap;
+import org.apache.olingo.client.api.domain.ClientAnnotation;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
+import org.apache.olingo.client.api.domain.ClientEnumValue;
+import org.apache.olingo.client.api.domain.ClientLink;
+import org.apache.olingo.client.api.domain.ClientOperation;
+import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
+import org.apache.olingo.client.core.domain.ClientAnnotationImpl;
 import org.apache.olingo.client.core.serialization.JsonDeserializer;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
@@ -128,6 +140,15 @@ public class JSONTest extends AbstractTest {
     assertEquals(expected, actualNode);
   }
 
+  private void assertJSONSimilar(final String filename, final String actual) throws Exception {
+    final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
+        replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
+    cleanup((ObjectNode) expected);
+    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    cleanup(actualNode);
+    assertEquals(expected, actualNode);
+  }
+  
   protected void entitySet(final String filename, final ContentType contentType) throws Exception {
     final StringWriter writer = new StringWriter();
     client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
@@ -496,5 +517,338 @@ public class JSONTest extends AbstractTest {
     assertNotNull(value);
     assertTrue(value.asEnum() == null);
 
+  }
+  
+  @Test
+  public void issue2OLINGO1073_WithEntitySet() throws Exception {
+    final ClientEntity message = createClientEntity();
+    
+    InputStream inputStream = client.getWriter().writeEntity(message, ContentType.APPLICATION_JSON);
+    ResWrap<Entity> entity = new JsonDeserializer(false).toEntity(inputStream);
+    assertNotNull(entity);
+    
+    StringWriter writer = new StringWriter();
+    setNavigationBindingLinkOnEntity(entity);
+    
+    client.getSerializer(ContentType.APPLICATION_JSON).write(writer, entity);
+    assertNotNull(writer.toString());
+    writer = new StringWriter();
+    client.getSerializer(ContentType.APPLICATION_JSON).write(writer, 
+        new ResWrap<URI>(URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/"), null, 
+            URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/People('russellwhyte')")));
+    assertNotNull(writer.toString());
+    assertEquals("{\"@odata.context\":\"http://services.odata.org/V4/("
+        + "S(fe5rsnxo3fkkkk2bvmh1nl1y))/TripPinServiceRW/\",\"@odata.id\":"
+        + "\"http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/TripPinServiceRW/"
+        + "People('russellwhyte')\"}", writer.toString());
+    
+    writer = new StringWriter();
+    Link linkPayload = new Link();
+    linkPayload.setBindingLink("Photos");
+    linkPayload.setMediaETag("xyz");
+    linkPayload.setInlineEntity(createEntity());
+    linkPayload.setTitle("Photos");
+    linkPayload.setHref("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/Photos");
+    client.getSerializer(ContentType.APPLICATION_JSON).write(writer, 
+        new ResWrap<Link>(URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/"), linkPayload.getMediaETag(), linkPayload));
+    assertNotNull(writer.toString());
+    assertEquals("{\"url\":\"http://services.odata.org/V4/"
+        + "(S(fe5rsnxo3fkkkk2bvmh1nl1y))/TripPinServiceRW/Photos\"}", writer.toString());
+  }
+
+  /**
+   * @return
+   */
+  private ClientEntity createClientEntity() {
+    final ClientEntity message = client.getObjectFactory().
+        newEntity(new FullQualifiedName("Microsoft.OData.SampleService.Models.TripPin.Person"));
+    
+    final ClientComplexValue cityComplexType = getCityComplexType();
+    
+    final ClientComplexValue locationComplexType = client.getObjectFactory().
+        newComplexValue("Microsoft.OData.SampleService.Models.TripPin.Location");
+    locationComplexType.add(client.getObjectFactory().newPrimitiveProperty("Address",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("187 Suffolk Ln.")));
+    locationComplexType.add(client.getObjectFactory().newComplexProperty("City",cityComplexType));
+
+    final ClientComplexValue eventLocationComplexType = client.getObjectFactory().
+        newComplexValue("Microsoft.OData.SampleService.Models.TripPin.EventLocation");
+    eventLocationComplexType.add(client.getObjectFactory().newPrimitiveProperty("BuildingInfo",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("187 Suffolk Ln12.")));
+    eventLocationComplexType.add(client.getObjectFactory().newPrimitiveProperty("Address",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("187 Suffolk Ln12.")));
+    eventLocationComplexType.add(client.getObjectFactory().newComplexProperty("City",cityComplexType));
+    
+    final ClientComplexValue airportLocationComplexType = client.getObjectFactory().
+        newComplexValue("Microsoft.OData.SampleService.Models.TripPin.AirportLocation");
+    airportLocationComplexType.add(client.getObjectFactory().newPrimitiveProperty("Address",
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("187 Suffolk Ln123.")));
+    airportLocationComplexType.add(client.getObjectFactory().newComplexProperty("City",cityComplexType));
+    
+    final ClientCollectionValue<ClientValue> collectionAddressInfo = client.getObjectFactory().
+        newCollectionValue("Microsoft.OData.SampleService.Models.TripPin.Location");
+    collectionAddressInfo.add(locationComplexType);
+    collectionAddressInfo.add(eventLocationComplexType);
+    collectionAddressInfo.add(airportLocationComplexType);
+    
+    message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("UserName", 
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("russellwhyte")));
+    message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("FirstName", 
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("Russell")));
+    message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("LastName", 
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("Whyte")));
+    final ClientLink messageLink1 = client.getObjectFactory().newEntityNavigationLink("Photo", 
+        URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/People('russellwhyte')/Photo"));
+    final ClientAnnotation messageLink1Annotation = createAnnotation();
+    messageLink1.getAnnotations().add(messageLink1Annotation);
+    
+    final ClientLink messageLink2 = client.getObjectFactory().newEntitySetNavigationLink("Friends", 
+        URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/People('russellwhyte')/Friends"));
+    final ClientAnnotation messageLink2Annotation = createAnnotation();
+    messageLink2.getAnnotations().add(messageLink2Annotation);
+    
+    final ClientLink messageLink3 = client.getObjectFactory().newEntitySetNavigationLink("Trips", 
+        URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/People('russellwhyte')/Trips"));
+    final ClientAnnotation messageLink3Annotation = createAnnotation();
+    messageLink3.getAnnotations().add(messageLink3Annotation);
+        
+    message.getNavigationLinks().add(messageLink1);
+    message.getNavigationLinks().add(messageLink2);
+    message.getNavigationLinks().add(messageLink3);
+    
+    final ClientAnnotation messageAnnotation = createAnnotation();
+    message.getAnnotations().add(messageAnnotation);
+    
+    final ClientCollectionValue<ClientValue> emailCollectionValue = client.getObjectFactory().
+        newCollectionValue("String");
+    emailCollectionValue.add(client.getObjectFactory().newPrimitiveValueBuilder().buildString("Russell@example.com"));
+    emailCollectionValue.add(client.getObjectFactory().newPrimitiveValueBuilder().buildString("Russell@contoso.com"));
+    message.getProperties().add(client.getObjectFactory().newCollectionProperty("Emails", emailCollectionValue));
+    
+    message.getProperties().add(client.getObjectFactory().newCollectionProperty("AddressInfo", collectionAddressInfo));
+    message.getProperties().add(client.getObjectFactory().newEnumProperty("Gender", 
+        client.getObjectFactory().newEnumValue(
+            "Microsoft.OData.SampleService.Models.TripPin.PersonGender", "Male")));
+    message.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Concurrency", 
+        client.getObjectFactory().newPrimitiveValueBuilder().buildInt64(Long.valueOf("636293755917400747"))));
+    message.setId(URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/People('russellwhyte')"));
+    message.setETag("W/\"08D491CCBE417AAB\"");
+    message.setEditLink(URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/People('russellwhyte')"));
+    
+    final ClientEntity innerEntity = client.getObjectFactory().
+        newEntity(new FullQualifiedName("Microsoft.OData.SampleService.Models.TripPin.Photo"));
+    innerEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Id", 
+        client.getObjectFactory().newPrimitiveValueBuilder().buildInt64(Long.valueOf(123))));
+    innerEntity.getProperties().add(client.getObjectFactory().newPrimitiveProperty("Name", 
+        client.getObjectFactory().newPrimitiveValueBuilder().buildString("ABC")));
+    innerEntity.getAnnotations().add(createAnnotation());
+    final ClientLink link = client.getObjectFactory().newDeepInsertEntity("Photos", innerEntity);
+    final ClientAnnotation linkAnnotation = createAnnotation();
+    link.getAnnotations().add(linkAnnotation);
+    message.getNavigationLinks().add(link);
+    
+    final ClientLink assoLink = client.getObjectFactory().newAssociationLink("Photos", 
+        URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/People('russellwhyte')/Photo"));
+    final ClientAnnotation assoLinkAnnotation = createAnnotation();
+    assoLink.getAnnotations().add(assoLinkAnnotation);
+
+    message.getAssociationLinks().add(assoLink);
+    final ClientOperation operation = new ClientOperation();
+    operation.setTarget(URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
+        + "TripPinServiceRW/Photos"));
+    operation.setTitle("Photos");
+    message.getOperations().add(operation);
+    return message;
+  }
+
+  /**
+   * @param entity
+   */
+  private void setNavigationBindingLinkOnEntity(ResWrap<Entity> entity) {
+    Link entityLink = new Link();
+    Entity en = createEntity();
+    
+    entityLink.setBindingLink("Photos");
+    entityLink.setInlineEntity(en);
+    entityLink.setType("Microsoft.OData.SampleService.Models.TripPin.Photos");
+    
+    Link entityColLink = new Link();
+    EntityCollection enCol = new EntityCollection();
+    enCol.getEntities().add(en);
+    
+    entityColLink.setBindingLink("Friends");
+    entityColLink.setInlineEntitySet(enCol);
+    entityColLink.setType("Microsoft.OData.SampleService.Models.TripPin.Friends");
+    
+    Link link = new Link();
+    link.setBindingLink("Trips");
+    link.setType("Microsoft.OData.SampleService.Models.TripPin.Trips");
+    
+    entity.getPayload().getNavigationBindings().add(entityLink);
+    entity.getPayload().getNavigationBindings().add(entityColLink);
+    entity.getPayload().getNavigationBindings().add(link);
+  }
+
+  /**
+   * @return
+   */
+  private Entity createEntity() {
+    Entity en = new Entity();
+    Property p1 = new Property();
+    p1.setName("Id");
+    p1.setType("Int64");
+    p1.setValue(ValueType.PRIMITIVE, Long.valueOf(123));
+    en.addProperty(p1);
+    
+    Property p2 = new Property();
+    p2.setName("Name");
+    p2.setType("String");
+    p2.setValue(ValueType.PRIMITIVE, "ABC");
+    en.addProperty(p2);
+    return en;
+  }
+
+  /**
+   * @return
+   */
+  private ClientAnnotation createAnnotation() {
+    final ClientAnnotation messageAnnotation = 
+        new ClientAnnotationImpl("Org.OData.Core.V1.Permissions", new ClientPrimitiveValue() {
+      
+      @Override
+      public boolean isPrimitive() {
+        return false;
+      }
+      
+      @Override
+      public boolean isEnum() {
+        return true;
+      }
+      
+      @Override
+      public boolean isComplex() {
+        return false;
+      }
+      
+      @Override
+      public boolean isCollection() {
+        return false;
+      }
+      
+      @Override
+      public String getTypeName() {
+        return "String";
+      }
+      
+      @Override
+      public ClientPrimitiveValue asPrimitive() {
+        return null;
+      }
+      
+      @Override
+      public ClientEnumValue asEnum() {
+        return client.getObjectFactory().newEnumValue("Org.OData.Core.V1.Permissions", "Read");
+      }
+      
+      @Override
+      public ClientComplexValue asComplex() {
+        return null;
+      }
+      
+      @Override
+      public <T extends ClientValue> ClientCollectionValue<T> asCollection() {
+        return null;
+      }
+      
+      @Override
+      public Object toValue() {
+        return client.getObjectFactory().newEnumValue("Org.OData.Core.V1.Permissions", "Read");
+      }
+      
+      @Override
+      public <T> T toCastValue(Class<T> reference) throws EdmPrimitiveTypeException {
+        return null;
+      }
+      
+      @Override
+      public EdmPrimitiveTypeKind getTypeKind() {
+        return null;
+      }
+      
+      @Override
+      public EdmPrimitiveType getType() {
+        return null;
+      }
+    });
+    return messageAnnotation;
+  }
+  
+  protected void property1(final String filename) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(ContentType.APPLICATION_JSON).write(writer, 
+        client.getDeserializer(ContentType.APPLICATION_JSON).
+        toProperty(getClass().getResourceAsStream(filename + ".json")));
+
+    assertJSONSimilar(filename + ".json", writer.toString());
+  }
+
+  @Test
+  public void properties1() throws Exception {
+    property1("Products_5_SkinColor");
+    property1("Products_5_CoverColors");
+    property1("Employees_3_HomeAddress");
+    property1("Employees_3_HomeAddress");
+  }
+  
+  protected void entity1(final String filename) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(ContentType.APPLICATION_JSON).write(writer, client.getDeserializer(
+        ContentType.APPLICATION_JSON).toEntity(
+        getClass().getResourceAsStream(filename + ".json")));
+    assertJSONSimilar(filename + ".json", writer.toString());
+  }
+
+  @Test
+  public void additionalEntities1() throws Exception {
+    entity1("entity.minimal");
+    entity1("entity.primitive");
+    entity1("entity.complex");
+    entity1("entity.collection.primitive");
+    entity1("entity.collection.complex");
+  }
+
+  @Test
+  public void entities1() throws Exception {
+    entity1("Products_5");
+    entity1("VipCustomer");
+    entity1("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7");
+    entity1("entityReference");
+    entity1("entity.withcomplexnavigation");
+    entity1("annotated");
+  }
+  
+  protected void entitySet1(final String filename) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(ContentType.APPLICATION_JSON).write(writer, 
+        client.getDeserializer(ContentType.APPLICATION_JSON).toEntitySet(
+        getClass().getResourceAsStream(filename + ".json")));
+
+    assertJSONSimilar(filename + ".json", writer.toString());
+  }
+
+  @Test
+  public void entitySets1() throws Exception {
+    entitySet1("Customers");
+    entitySet1("collectionOfEntityReferences");
   }
 }

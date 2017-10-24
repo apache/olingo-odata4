@@ -28,12 +28,13 @@
   </edmx:Reference>
   <edmx:DataServices>
     <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="ODataDemo">
-      <TypeDefinition Name="Length" UnderlyingType="Edm.Int32">
+      <TypeDefinition Name="Length" UnderlyingType="Edm.Int32" Precision="10" SCale="5" Nullable="true">
         <Annotation Term="Org.OData.Measures.V1.Unit" String="Centimeters"/>
       </TypeDefinition>
       <TypeDefinition Name="Weight" UnderlyingType="Edm.Int32">
         <Annotation Term="Org.OData.Measures.V1.Unit" String="Kilograms"/>
       </TypeDefinition>
+      <TypeDefinition Name="Name" UnderlyingType="Edm.String" MaxLength="100" SRID="1" Unicode="true"/>
       <ComplexType Name="Size">
         <Property Name="Height" Type="Self.Length" />
         <Property Name="Weight" Type="Self.Weight" />
@@ -96,8 +97,20 @@
         </NavigationProperty>
       </ComplexType>
       <Function Name="ProductsByRating">
-        <Parameter Name="Rating" Type="Edm.Int32"/>
-        <ReturnType Type="Collection(ODataDemo.Product)"/>
+        <Parameter Name="Rating" Type="Edm.Int32" Precision="20" Scale="0" Nullable="false"/>
+        <ReturnType Type="Collection(ODataDemo.Product)" Nullable="true"/>
+      </Function>
+      <Function Name="ProductsByName">
+        <Parameter Name="Productname" Type="Edm.String" MaxLength="200" SRID="1"/>
+        <ReturnType Type="ODataDemo.Product"/>
+      </Function>
+      <Function Name="ProductsIdByRating">
+        <Parameter Name="Rating" Type="Edm.Int32" Precision="20" Scale="0" Nullable="false"/>
+        <ReturnType Type="Collection(Edm.Int32)" Nullable="true" Precision="5" Scale="5"/>
+      </Function>
+      <Function Name="ProductsNameByName">
+        <Parameter Name="Productname" Type="Edm.String" MaxLength="200" SRID="1"/>
+        <ReturnType Type="Edm.String" MaxLength="50" SRID="1"/>
       </Function>
       <EntityContainer Name="DemoService">
         <EntitySet Name="Products" EntityType="ODataDemo.Product">
@@ -120,6 +133,9 @@
         </Singleton>
         <EntitySet Name="Countries" EntityType="ODataDemo.Country"/>
         <FunctionImport Name="ProductsByRating" EntitySet="Products" Function="ODataDemo.ProductsByRating"/>
+        <FunctionImport Name="ProductsByName" EntitySet="Products" Function="ODataDemo.ProductsByName"/>
+        <FunctionImport Name="ProductsIdByRating" Function="ODataDemo.ProductsIdByRating"/>
+        <FunctionImport Name="ProductsNameByName" Function="ODataDemo.ProductsNameByName"/>
       </EntityContainer>
     </Schema>
   </edmx:DataServices>

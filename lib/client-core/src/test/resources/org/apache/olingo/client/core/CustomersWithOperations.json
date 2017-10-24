@@ -1,0 +1,61 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Customers",
+  "@odata.count": 2,
+  "value": [{
+      "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)",
+      "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)",
+      "PersonID": 1,
+      "FirstName": "Bob",
+      "LastName": "Cat",
+      "MiddleName": null,
+      "HomeAddress": {
+        "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.HomeAddress",
+        "Street": "1 Microsoft Way",
+        "City": "London",
+        "PostalCode": "98052",
+        "FamilyName": "Cats"
+      },
+      "Home": {
+        "type": "Point",
+        "coordinates": [23.1, 32.1],
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        }
+      },
+      "Numbers": ["111-111-1111"],
+      "Emails": ["abc@abc.com"],
+      "City": "London",
+      "Birthday": "1957-04-03T00:00:00Z",
+      "TimeBetweenLastTwoOrders": "PT0.0000001S"
+    }, {
+      "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=2)",
+      "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=2)",
+      "PersonID": 2,
+      "FirstName": "Jill",
+      "LastName": "Jones",
+      "MiddleName": null,
+      "HomeAddress": null,
+      "Home": {
+        "type": "Point",
+        "coordinates": [161.8, 15.0],
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        }
+      },
+      "Numbers": [],
+      "Emails": [],
+      "City": "Sydney",
+      "Birthday": "1983-01-15T00:00:00Z",
+      "TimeBetweenLastTwoOrders": "PT0.0000002S"
+    }],
+    "#Microsoft.Test.OData.Services.ODataWCFService.BAESAllPrimRTETAllPrim": {
+        "title": "Microsoft.Test.OData.Services.ODataWCFService.BAESAllPrimRTETAllPrim",
+        "target": "Customers/Microsoft.Test.OData.Services.ODataWCFService.BAESAllPrimRTETAllPrim"
+    }
+}

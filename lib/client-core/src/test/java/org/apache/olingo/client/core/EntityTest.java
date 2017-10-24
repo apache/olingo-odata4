@@ -52,6 +52,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class EntityTest extends AbstractTest {
+  
+  private static final String SERVICE_URI = "http://services.odata.org/V4/"
+      + "(S(jf0ernw5hgyg1ekhqmzrdsch))/TripPinServiceRW/";
 
   private EdmEnabledODataClient getEdmEnabledClient() {
     return new EdmEnabledODataClientImpl(null, null, null) {
@@ -400,5 +403,18 @@ public class EntityTest extends AbstractTest {
     assertNull(property.getValue());
     assertTrue(property.isPrimitive());
     assertEquals(property.getValueType(), ValueType.PRIMITIVE);
+  }
+  
+  @Test
+  public void testFindTypeInEdmEnabledClient() throws Exception {
+    final Edm edm = client.getReader().readMetadata(getClass().getResourceAsStream("metadata_TripInService.xml"));
+    assertNotNull(edm);
+    final InputStream input = getClass().getResourceAsStream("tripinServEntity.json");
+    EdmEnabledODataClient edmClient = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, ContentType.APPLICATION_JSON);
+    ClientEntity entity = edmClient.getBinder().getODataEntity(
+        edmClient.getDeserializer(ContentType.APPLICATION_JSON).toEntity(input));
+    assertNotNull(entity);
+    assertEquals(entity.getTypeName().getFullQualifiedNameAsString(), 
+        "Microsoft.OData.SampleService.Models.TripPin.Person");
   }
 }
