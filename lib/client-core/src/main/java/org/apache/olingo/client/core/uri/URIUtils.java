@@ -71,7 +71,6 @@ public final class URIUtils {
   /**
    * Logger.
    */
-//  private static final Logger LOG = LoggerFactory.getLogger(URIUtils.class);
 
   private static final Pattern ENUM_VALUE = Pattern.compile("(.+\\.)?.+'.+'");
   private static final String URI_OPTIONS = "/$";

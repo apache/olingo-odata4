@@ -277,19 +277,19 @@ public class MetadataParser {
   
   private void loadCoreVocabulary(SchemaBasedEdmProvider provider,
       String namespace) throws XMLStreamException {
-    if(namespace.equalsIgnoreCase("Org.OData.Core.V1")) {
+    if("Org.OData.Core.V1".equalsIgnoreCase(namespace)) {
       loadLocalVocabularySchema(provider, "Org.OData.Core.V1", "Org.OData.Core.V1.xml");
-    } else if (namespace.equalsIgnoreCase("Org.OData.Capabilities.V1")) {
+    } else if ("Org.OData.Capabilities.V1".equalsIgnoreCase(namespace)) {
       loadLocalVocabularySchema(provider, "Org.OData.Capabilities.V1", "Org.OData.Capabilities.V1.xml");
-    } else if (namespace.equalsIgnoreCase("Org.OData.Measures.V1")) {
+    } else if ("Org.OData.Measures.V1".equalsIgnoreCase(namespace)) {
       loadLocalVocabularySchema(provider, "Org.OData.Measures.V1", "Org.OData.Measures.V1.xml");
     }
   }
 
   private boolean isCoreVocabulary(String namespace) {
-    if(namespace.equalsIgnoreCase("Org.OData.Core.V1") || 
-        namespace.equalsIgnoreCase("Org.OData.Capabilities.V1") || 
-        namespace.equalsIgnoreCase("Org.OData.Measures.V1")) {
+    if("Org.OData.Core.V1".equalsIgnoreCase(namespace) || 
+        "Org.OData.Capabilities.V1".equalsIgnoreCase(namespace) || 
+        "Org.OData.Measures.V1".equalsIgnoreCase(namespace)) {
       return true;
     }
     return false;
@@ -323,9 +323,9 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, SchemaBasedEdmProvider provider,
           String name) throws XMLStreamException {
-        if (name.equals("DataServices")) {
+        if ("DataServices".equals(name)) {
           readSchema(reader, element, provider);
-        } else if (name.equals("Reference")) {
+        } else if ("Reference".equals(name)) {
           readReference(reader, element, provider, "Reference");
         }
       }
@@ -345,17 +345,17 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element,
           EdmxReference reference, String name) throws XMLStreamException {
-        if (name.equals("Include")) {
+        if ("Include".equals(name)) {
           EdmxReferenceInclude include = new EdmxReferenceInclude(attr(element, "Namespace"),
               attr(element, "Alias"));
           reference.addInclude(include);
-        } else if (name.equals("IncludeAnnotations")) {
+        } else if ("IncludeAnnotations".equals(name)) {
           EdmxReferenceIncludeAnnotation annotation = new EdmxReferenceIncludeAnnotation(
               attr(element, "TermNamespace"));
           annotation.setTargetNamespace(attr(element, "TargetNamespace"));
           annotation.setQualifier(attr(element, "Qualifier"));
           reference.addIncludeAnnotation(annotation);
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, reference);
         }
       }
@@ -391,25 +391,25 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlSchema schema, String name)
           throws XMLStreamException {
-        if (name.equals("Action")) {
+        if ("Action".equals(name)) {
           readAction(reader, element, schema);
-        } else if (name.equals("Annotations")) {
+        } else if ("Annotations".equals(name)) {
           readAnnotationGroup(reader, element, schema);
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, schema);
-        } else if (name.equals("ComplexType")) {
+        } else if ("ComplexType".equals(name)) {
           readComplexType(reader, element, schema);
-        } else if (name.equals("EntityContainer")) {
+        } else if ("EntityContainer".equals(name)) {
           readEntityContainer(reader, element, schema);
-        } else if (name.equals("EntityType")) {
+        } else if ("EntityType".equals(name)) {
           readEntityType(reader, element, schema);
-        } else if (name.equals("EnumType")) {
+        } else if ("EnumType".equals(name)) {
           readEnumType(reader, element, schema);
-        } else if (name.equals("Function")) {
+        } else if ("Function".equals(name)) {
           readFunction(reader, element, schema);
-        } else if (name.equals("Term")) {
+        } else if ("Term".equals(name)) {
           schema.getTerms().add(readTerm(reader, element));
-        } else if (name.equals("TypeDefinition")) {
+        } else if ("TypeDefinition".equals(name)) {
           schema.getTypeDefinitions().add(readTypeDefinition(reader, element));
         }
       }
@@ -593,7 +593,7 @@ public class MetadataParser {
       
       if (event.isStartElement()) {
         StartElement element = event.asStartElement();
-        if (element.getName().getLocalPart().equals("Annotation")) {
+        if ("Annotation".equals(element.getName().getLocalPart())) {
           reader.nextEvent();
           readAnnotations(reader, element, edmObject);
         }
@@ -601,7 +601,7 @@ public class MetadataParser {
       
       if (event.isEndElement()) {
         EndElement element = event.asEndElement();
-        if (element.getName().getLocalPart().equals("Annotation")) {
+        if ("Annotation".equals(element.getName().getLocalPart())) {
           reader.nextEvent();
         }
         
@@ -668,7 +668,7 @@ public class MetadataParser {
           throws XMLStreamException {
         
         // element based expressions
-        if (!name.equals("Annotation")) {
+        if (!"Annotation".equals(name)) {
           // attribute based expressions.
           readAttributeExpressions(element, target);        
           
@@ -680,59 +680,59 @@ public class MetadataParser {
           }
         }
         
-        if (name.equals("Collection")) {
+        if ("Collection".equals(name)) {
           CsdlCollection expr = new CsdlCollection();
           readExpressions(reader, element, expr);
           write(target, expr);
-        } else if (name.equals("AnnotationPath")) {
+        } else if ("AnnotationPath".equals(name)) {
           write(target, new CsdlAnnotationPath().setValue(elementValue(reader, element)));
-        } else if (name.equals("NavigationPropertyPath")) {
+        } else if ("NavigationPropertyPath".equals(name)) {
           write(target, new CsdlNavigationPropertyPath()
               .setValue(elementValue(reader, element)));
-        } else if (name.equals("Path")) {
+        } else if ("Path".equals(name)) {
           write(target, new CsdlPath().setValue(elementValue(reader, element)));
-        } else if (name.equals("PropertyPath")) {
+        } else if ("PropertyPath".equals(name)) {
           write(target, new CsdlPropertyPath().setValue(elementValue(reader, element)));
-        } else if (name.equals("UrlRef")) {
+        } else if ("UrlRef".equals(name)) {
           CsdlUrlRef expr = new CsdlUrlRef();
           readExpressions(reader, element, expr);
           write(target, expr);
-        } else if (name.equals("Apply")) {
+        } else if ("Apply".equals(name)) {
           CsdlApply expr = new CsdlApply();
           expr.setFunction(attr(element, "Function"));
           readExpressions(reader, element, expr);
           write(target, expr);
-        } else if (name.equals("Cast")) {
+        } else if ("Cast".equals(name)) {
           CsdlCast expr = new CsdlCast();
           expr.setType(attr(element, "Type"));
           readExpressions(reader, element, expr);
           write(target, expr);
-        } else if (name.equals("If")) {
+        } else if ("If".equals(name)) {
           CsdlIf expr = new CsdlIf();
           readExpressions(reader, element, expr);
           write(target, expr);
-        } else if (name.equals("IsOf")) {
+        } else if ("IsOf".equals(name)) {
           CsdlIsOf expr = new CsdlIsOf();
           expr.setType(attr(element, "Type"));
           readExpressions(reader, element, expr);
           write(target, expr);
-        } else if (name.equals("LabeledElement")) {
+        } else if ("LabeledElement".equals(name)) {
           CsdlLabeledElement expr = new CsdlLabeledElement();
           expr.setName(attr(element, "Name"));
           readExpressions(reader, element, expr);
           write(target, expr);
-        } else if (name.equals("LabeledElementReference")) {
+        } else if ("LabeledElementReference".equals(name)) {
           CsdlLabeledElementReference expr = new CsdlLabeledElementReference();
           expr.setValue(elementValue(reader, element));
           write(target, expr);
-        } else if (name.equals("Null")) {
+        } else if ("Null".equals(name)) {
           write(target, new CsdlNull());
-        } else if (name.equals("Record")) {
+        } else if ("Record".equals(name)) {
           CsdlRecord expr = new CsdlRecord();
           expr.setType(attr(element, "Type"));          
           readPropertyValues(reader, element, expr);
           write(target, expr);          
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, (CsdlAnnotatable)target);
         }
       }
@@ -796,13 +796,13 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlRecord record, String name)
           throws XMLStreamException {
-        if (name.equals("PropertyValue")) {
+        if ("PropertyValue".equals(name)) {
           CsdlPropertyValue value = new CsdlPropertyValue();
           value.setProperty(attr(element, "Property"));
           readAttributeExpressions(element, value);
           readExpressions(reader, element, value);
           record.getPropertyValues().add(value);
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, record);
         }
       }
@@ -831,11 +831,11 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlOperation operation, String name)
           throws XMLStreamException {
-        if (name.equals("Parameter")) {
+        if ("Parameter".equals(name)) {
           readParameter(reader, element, operation);
-        } else if (name.equals("ReturnType")) {
+        } else if ("ReturnType".equals(name)) {
           readReturnType(reader, element, operation);
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, operation);
         }
       }
@@ -863,13 +863,13 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlEnumType type, String name)
           throws XMLStreamException {
-        if (name.equals("Member")) {
+        if ("Member".equals(name)) {
           CsdlEnumMember member = new CsdlEnumMember();
           member.setName(attr(element, "Name"));
           member.setValue(attr(element, "Value"));
           peekAnnotations(reader, name, member);
           type.getMembers().add(member);
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, type);
         }
       }
@@ -899,13 +899,13 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlEntityType entityType, String name)
           throws XMLStreamException {
-        if (name.equals("Property")) {
+        if ("Property".equals(name)) {
           entityType.getProperties().add(readProperty(reader, element));
-        } else if (name.equals("NavigationProperty")) {
+        } else if ("NavigationProperty".equals(name)) {
           entityType.getNavigationProperties().add(readNavigationProperty(reader, element));
-        } else if (name.equals("Key")) {
+        } else if ("Key".equals(name)) {
           readKey(reader, element, entityType);
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, entityType);
         }
       }
@@ -942,18 +942,18 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlNavigationProperty property,
           String name) throws XMLStreamException {
-        if (name.equals("ReferentialConstraint")) {
+        if ("ReferentialConstraint".equals(name)) {
           CsdlReferentialConstraint constraint = new CsdlReferentialConstraint();
           constraint.setProperty(attr(element, "Property"));
           constraint.setReferencedProperty(attr(element, "ReferencedProperty"));
           peekAnnotations(reader, name, constraint);
           property.getReferentialConstraints().add(constraint);
-        } else if (name.equals("OnDelete")) {
+        } else if ("OnDelete".equals(name)) {
           CsdlOnDelete delete = new CsdlOnDelete();
           delete.setAction(CsdlOnDeleteAction.valueOf(attr(element, "Action")));
           property.setOnDelete(delete);
           peekAnnotations(reader, name, delete);
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, property);
         }
       }
@@ -1029,15 +1029,15 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlSchema schema, String name)
           throws XMLStreamException {
-        if (name.equals("EntitySet")) {
+        if ("EntitySet".equals(name)) {
           readEntitySet(reader, element, container);
-        } else if (name.equals("Singleton")) {
+        } else if ("Singleton".equals(name)) {
           readSingleton(reader, element, container);
-        } else if (name.equals("ActionImport")) {
+        } else if ("ActionImport".equals(name)) {
           readActionImport(reader, element, container);
-        } else if (name.equals("FunctionImport")) {
+        } else if ("FunctionImport".equals(name)) {
           readFunctionImport(reader, element, container);
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, container);
         }
       }
@@ -1103,12 +1103,12 @@ public class MetadataParser {
           @Override
           void build(XMLEventReader reader, StartElement element,
               CsdlBindingTarget entitySet, String name) throws XMLStreamException {
-            if (name.equals("NavigationPropertyBinding")) {
+            if ("NavigationPropertyBinding".equals(name)) {
               CsdlNavigationPropertyBinding binding = new CsdlNavigationPropertyBinding();
               binding.setPath(attr(element, "Path"));
               binding.setTarget(attr(element, "Target"));
               entitySet.getNavigationPropertyBindings().add(binding);
-            } else if (name.equals("Annotation")) {
+            } else if ("Annotation".equals(name)) {
               readAnnotations(reader, element, entitySet);
             }
           }
@@ -1141,11 +1141,11 @@ public class MetadataParser {
       @Override
       void build(XMLEventReader reader, StartElement element, CsdlComplexType complexType, String name)
           throws XMLStreamException {
-        if (name.equals("Property")) {
+        if ("Property".equals(name)) {
           complexType.getProperties().add(readProperty(reader, element));
-        } else if (name.equals("NavigationProperty")) {
+        } else if ("NavigationProperty".equals(name)) {
           complexType.getNavigationProperties().add(readNavigationProperty(reader, element));
-        } else if (name.equals("Annotation")) {
+        } else if ("Annotation".equals(name)) {
           readAnnotations(reader, element, complexType);
         }
       }
@@ -1212,13 +1212,13 @@ public class MetadataParser {
       while (reader.hasNext()) {
         if (event.isStartElement()) {
           StartElement element = event.asStartElement();
-          if (element.getName().getLocalPart().equals("Annotation")) {
+          if ("Annotation".equals(element.getName().getLocalPart())) {
             skip = true;
           }
         }
         if (event.isEndElement()) {
           EndElement element = event.asEndElement();
-          if (element.getName().getLocalPart().equals("Annotation")) {
+          if ("Annotation".equals(element.getName().getLocalPart())) {
             return reader.peek();
           }
         }

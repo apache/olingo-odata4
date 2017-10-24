@@ -90,7 +90,7 @@ public abstract class ClientCsdlDynamicExpression extends CsdlDynamicExpression 
         }
         not.setLeft(jp.readValueAs(ClientCsdlDynamicExpression.class));
         // Search for end object
-        while (jp.getCurrentToken() != JsonToken.END_OBJECT || !jp.getCurrentName().equals("Not")) {
+        while (jp.getCurrentToken() != JsonToken.END_OBJECT || !"Not".equals(jp.getCurrentName())) {
           jp.nextToken();
         }
 

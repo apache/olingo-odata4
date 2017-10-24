@@ -161,105 +161,105 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmTypeDefinition> createTypeDefinitions() {
-    final List<EdmTypeDefinition> typeDefinitions = new ArrayList<EdmTypeDefinition>();
+    final List<EdmTypeDefinition> typeDefns = new ArrayList<EdmTypeDefinition>();
     final List<CsdlTypeDefinition> providerTypeDefinitions = schema.getTypeDefinitions();
     if (providerTypeDefinitions != null) {
       for (CsdlTypeDefinition def : providerTypeDefinitions) {
         FullQualifiedName typeDefName = new FullQualifiedName(namespace, def.getName());
         EdmTypeDefinitionImpl typeDefImpl = new EdmTypeDefinitionImpl(edm, typeDefName, def);
-        typeDefinitions.add(typeDefImpl);
+        typeDefns.add(typeDefImpl);
         edm.cacheTypeDefinition(typeDefName, typeDefImpl);
       }
     }
-    return typeDefinitions;
+    return typeDefns;
   }
 
   protected List<EdmEnumType> createEnumTypes() {
-    final List<EdmEnumType> enumTypes = new ArrayList<EdmEnumType>();
+    final List<EdmEnumType> enumTyps = new ArrayList<EdmEnumType>();
     final List<CsdlEnumType> providerEnumTypes = schema.getEnumTypes();
     if (providerEnumTypes != null) {
       for (CsdlEnumType enumType : providerEnumTypes) {
         FullQualifiedName enumName = new FullQualifiedName(namespace, enumType.getName());
         EdmEnumType enumTypeImpl = new EdmEnumTypeImpl(edm, enumName, enumType);
-        enumTypes.add(enumTypeImpl);
+        enumTyps.add(enumTypeImpl);
         edm.cacheEnumType(enumName, enumTypeImpl);
       }
     }
-    return enumTypes;
+    return enumTyps;
   }
 
   protected List<EdmEntityType> createEntityTypes() {
-    final List<EdmEntityType> entityTypes = new ArrayList<EdmEntityType>();
+    final List<EdmEntityType> edmEntityTypes = new ArrayList<EdmEntityType>();
     final List<CsdlEntityType> providerEntityTypes = schema.getEntityTypes();
     if (providerEntityTypes != null) {
       for (CsdlEntityType entityType : providerEntityTypes) {
         FullQualifiedName entityTypeName = new FullQualifiedName(namespace, entityType.getName());
         EdmEntityTypeImpl entityTypeImpl = new EdmEntityTypeImpl(edm, entityTypeName, entityType);
-        entityTypes.add(entityTypeImpl);
+        edmEntityTypes.add(entityTypeImpl);
         edm.cacheEntityType(entityTypeName, entityTypeImpl);
       }
     }
-    return entityTypes;
+    return edmEntityTypes;
   }
 
   protected List<EdmComplexType> createComplexTypes() {
-    final List<EdmComplexType> complexTypes = new ArrayList<EdmComplexType>();
+    final List<EdmComplexType> edmComplexTypes = new ArrayList<EdmComplexType>();
     final List<CsdlComplexType> providerComplexTypes = schema.getComplexTypes();
     if (providerComplexTypes != null) {
       for (CsdlComplexType complexType : providerComplexTypes) {
         FullQualifiedName comlexTypeName = new FullQualifiedName(namespace, complexType.getName());
         EdmComplexTypeImpl complexTypeImpl = new EdmComplexTypeImpl(edm, comlexTypeName, complexType);
-        complexTypes.add(complexTypeImpl);
+        edmComplexTypes.add(complexTypeImpl);
         edm.cacheComplexType(comlexTypeName, complexTypeImpl);
       }
     }
-    return complexTypes;
+    return edmComplexTypes;
   }
 
   protected List<EdmAction> createActions() {
-    final List<EdmAction> actions = new ArrayList<EdmAction>();
+    final List<EdmAction> edmActions = new ArrayList<EdmAction>();
     final List<CsdlAction> providerActions = schema.getActions();
     if (providerActions != null) {
       for (CsdlAction action : providerActions) {
         FullQualifiedName actionName = new FullQualifiedName(namespace, action.getName());
         EdmActionImpl edmActionImpl = new EdmActionImpl(edm, actionName, action);
-        actions.add(edmActionImpl);
+        edmActions.add(edmActionImpl);
         edm.cacheAction(actionName, edmActionImpl);
       }
     }
-    return actions;
+    return edmActions;
   }
 
   protected List<EdmFunction> createFunctions() {
-    final List<EdmFunction> functions = new ArrayList<EdmFunction>();
+    final List<EdmFunction> edmFunctions = new ArrayList<EdmFunction>();
     final List<CsdlFunction> providerFunctions = schema.getFunctions();
     if (providerFunctions != null) {
       for (CsdlFunction function : providerFunctions) {
         FullQualifiedName functionName = new FullQualifiedName(namespace, function.getName());
         EdmFunctionImpl functionImpl = new EdmFunctionImpl(edm, functionName, function);
-        functions.add(functionImpl);
+        edmFunctions.add(functionImpl);
         edm.cacheFunction(functionName, functionImpl);
       }
     }
-    return functions;
+    return edmFunctions;
   }
 
   protected List<EdmTerm> createTerms() {
-    final List<EdmTerm> terms = new ArrayList<EdmTerm>();
+    final List<EdmTerm> edmTerms = new ArrayList<EdmTerm>();
     final List<CsdlTerm> providerTerms = schema.getTerms();
     if (providerTerms != null) {
       for (CsdlTerm term : providerTerms) {
         FullQualifiedName termName = new FullQualifiedName(namespace, term.getName());
         EdmTermImpl termImpl = new EdmTermImpl(edm, getNamespace(), term);
-        terms.add(termImpl);
+        edmTerms.add(termImpl);
         edm.cacheTerm(termName, termImpl);
       }
     }
-    return terms;
+    return edmTerms;
   }
 
   protected List<EdmAnnotations> createAnnotationGroups() {
-    final List<EdmAnnotations> annotationGroups = new ArrayList<EdmAnnotations>();
+    final List<EdmAnnotations> edmAnnotationGroups = new ArrayList<EdmAnnotations>();
     final List<CsdlAnnotations> providerAnnotations =
         schema.getAnnotationGroups();
     if (providerAnnotations != null) {
@@ -271,23 +271,23 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
           targetName = new FullQualifiedName(namespace, annotationGroup.getTarget());
         }
         EdmAnnotationsImpl annotationsImpl = new EdmAnnotationsImpl(edm, annotationGroup);
-        annotationGroups.add(annotationsImpl);
+        edmAnnotationGroups.add(annotationsImpl);
         edm.cacheAnnotationGroup(targetName, annotationsImpl);
       }
     }
-    return annotationGroups;
+    return edmAnnotationGroups;
   }
 
   protected List<EdmAnnotation> createAnnotations() {
-    final List<EdmAnnotation> annotations = new ArrayList<EdmAnnotation>();
+    final List<EdmAnnotation> edmAnnotations = new ArrayList<EdmAnnotation>();
     final List<CsdlAnnotation> providerAnnotations =
         schema.getAnnotations();
     if (providerAnnotations != null) {
       for (CsdlAnnotation annotation : providerAnnotations) {
         EdmAnnotationImpl annotationImpl = new EdmAnnotationImpl(edm, annotation);
-        annotations.add(annotationImpl);
+        edmAnnotations.add(annotationImpl);
       }
     }
-    return annotations;
+    return edmAnnotations;
   }
 }

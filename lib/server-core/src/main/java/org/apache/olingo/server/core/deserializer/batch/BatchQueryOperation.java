@@ -46,7 +46,7 @@ public class BatchQueryOperation implements BatchPart {
   }
 
   protected Line consumeHttpStatusLine(final List<Line> message) throws BatchDeserializerException {
-    if (!message.isEmpty() && !message.get(0).toString().trim().equals("")) {
+    if (!message.isEmpty() && !"".equals(message.get(0).toString().trim())) {
       final Line method = message.get(0);
       message.remove(0);
 

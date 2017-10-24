@@ -106,9 +106,9 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
   
   protected void handleException(ODataException e, ContentType contentType,
       ODataRequest odRequest, ODataResponse odResponse) {
-    ErrorHandler handler = new ErrorHandler(this.odata, this.metadata,
+    ErrorHandler errorHandler = new ErrorHandler(this.odata, this.metadata,
         this.handler, contentType);
-    handler.handleException(e, odRequest, odResponse);    
+    errorHandler.handleException(e, odRequest, odResponse);    
   }
   
   private void internalExecute(UriInfo uriInfo, ODataRequest odRequest,
@@ -119,7 +119,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
 
     // part1, 8.2.6
     String isolation = odRequest.getHeader(HttpHeader.ODATA_ISOLATION);
-    if (isolation != null && isolation.equals("snapshot") && !this.handler.supportsDataIsolation()) {
+    if (isolation != null && "snapshot".equals(isolation) && !this.handler.supportsDataIsolation()) {
       odResponse.setStatusCode(HttpStatusCode.PRECONDITION_FAILED.getStatusCode());
       return;
     }
@@ -255,17 +255,6 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
   public void visit(UriInfoEntityId info) {
     DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
     this.request = dataRequest;
-
-    /*
-    // this can relative or absolute form
-    String id = info.getIdOption().getValue();
-    try {
-      URL url = new URL(id);
-      this.idOption = url.getPath();
-    } catch (MalformedURLException e) {
-      this.idOption = id;
-    }
-    */
     super.visit(info);
   }
 

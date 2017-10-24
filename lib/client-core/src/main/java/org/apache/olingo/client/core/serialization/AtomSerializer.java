@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
@@ -154,7 +155,7 @@ public class AtomSerializer implements ODataSerializer {
     }
 
     EdmTypeInfo typeInfo = null;
-    if (property.getType() != null && !property.getValueType().name().equalsIgnoreCase("COMPLEX")) {
+    if (property.getType() != null && !"COMPLEX".equalsIgnoreCase(property.getValueType().name())) {
       typeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
       if (!EdmPrimitiveTypeKind.String.getFullQualifiedName().toString().equals(typeInfo.internal())) {
         writer.writeAttribute(Constants.PREFIX_METADATA, Constants.NS_METADATA,
@@ -279,13 +280,13 @@ public class AtomSerializer implements ODataSerializer {
         }
       }
     }
-    for (String title : entitySetLinks.keySet()) {
-      final List<String>entitySetLink = entitySetLinks.get(title);
+    for (Entry<String, List<String>> entry : entitySetLinks.entrySet()) {
+      final List<String>entitySetLink = entry.getValue();
       if (!entitySetLink.isEmpty()) {
         Link link = new Link();
-        link.setTitle(title);
+        link.setTitle(entry.getKey());
         link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
-        link.setRel(Constants.NS_NAVIGATION_LINK_REL+title);
+        link.setRel(Constants.NS_NAVIGATION_LINK_REL+entry.getKey());
 
         writeLink(writer, link, new ExtraContent() {
           @Override
@@ -302,7 +303,7 @@ public class AtomSerializer implements ODataSerializer {
           }
         });                
       }
-    }    
+    }   
   }
 
   private void links(final XMLStreamWriter writer, final List<Link> links)

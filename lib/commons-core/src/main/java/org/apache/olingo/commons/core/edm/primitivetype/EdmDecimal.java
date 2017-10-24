@@ -75,7 +75,7 @@ public final class EdmDecimal extends SingletonPrimitiveType {
 
     final Matcher matcher = PATTERN.matcher(value);
     matcher.matches();
-    final int significantIntegerDigits = matcher.group(1).equals("0") ? 0 : matcher.group(1).length();
+    final int significantIntegerDigits = "0".equals(matcher.group(1)) ? 0 : matcher.group(1).length();
     final int decimals = matcher.group(2) == null ? 0 : matcher.group(2).length();
     return (precision == null || precision >= significantIntegerDigits + decimals)
         && (decimals <= (scale == null ? 0 : scale));

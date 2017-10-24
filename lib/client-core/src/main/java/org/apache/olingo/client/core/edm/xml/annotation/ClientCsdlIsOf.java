@@ -50,12 +50,12 @@ class ClientCsdlIsOf extends CsdlIsOf implements Serializable {
             isof.getAnnotations().add(jp.readValueAs(ClientCsdlAnnotation.class));
           } else if ("MaxLength".equals(jp.getCurrentName())) {
             final String maxLenght = jp.nextTextValue();
-            isof.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
+            isof.setMaxLength("max".equalsIgnoreCase(maxLenght) ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
           } else if ("Precision".equals(jp.getCurrentName())) {
             isof.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            isof.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+            isof.setScale("variable".equalsIgnoreCase(scale) ? 0 : Integer.valueOf(scale));
           } else if ("SRID".equals(jp.getCurrentName())) {
             final String srid = jp.nextTextValue();
             if (srid != null) {

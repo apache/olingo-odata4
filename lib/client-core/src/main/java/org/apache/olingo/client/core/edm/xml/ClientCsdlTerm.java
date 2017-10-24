@@ -59,12 +59,12 @@ class ClientCsdlTerm extends CsdlTerm implements Serializable {
             term.setNullable(BooleanUtils.toBoolean(jp.nextTextValue()));
           } else if ("MaxLength".equals(jp.getCurrentName())) {
             final String maxLenght = jp.nextTextValue();
-            term.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
+            term.setMaxLength("max".equalsIgnoreCase(maxLenght) ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
           } else if ("Precision".equals(jp.getCurrentName())) {
             term.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            term.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+            term.setScale("variable".equalsIgnoreCase(scale) ? 0 : Integer.valueOf(scale));
           } else if ("SRID".equals(jp.getCurrentName())) {
             final String srid = jp.nextTextValue();
             if (srid != null) {

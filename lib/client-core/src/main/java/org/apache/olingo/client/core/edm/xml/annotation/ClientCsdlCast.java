@@ -51,12 +51,12 @@ class ClientCsdlCast extends CsdlCast implements Serializable {
             cast.getAnnotations().add(jp.readValueAs(ClientCsdlAnnotation.class));
           } else if ("MaxLength".equals(jp.getCurrentName())) {
             final String maxLenght = jp.nextTextValue();
-            cast.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
+            cast.setMaxLength("max".equalsIgnoreCase(maxLenght) ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
           } else if ("Precision".equals(jp.getCurrentName())) {
             cast.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            cast.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+            cast.setScale("variable".equalsIgnoreCase(scale) ? 0 : Integer.valueOf(scale));
           } else if ("SRID".equals(jp.getCurrentName())) {
             final String srid = jp.nextTextValue();
             if (srid != null) {

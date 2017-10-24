@@ -142,21 +142,21 @@ public class Parser {
       ensureLastSegment(firstSegment, 1, numberOfSegments);
       contextUriInfo.setKind(UriInfoKind.service);
 
-    } else if (firstSegment.equals("$batch")) {
+    } else if ("$batch".equals(firstSegment)) {
       ensureLastSegment(firstSegment, 1, numberOfSegments);
       contextUriInfo.setKind(UriInfoKind.batch);
 
-    } else if (firstSegment.equals("$metadata")) {
+    } else if ("$metadata".equals(firstSegment)) {
       ensureLastSegment(firstSegment, 1, numberOfSegments);
       contextUriInfo.setKind(UriInfoKind.metadata);
       contextUriInfo.setFragment(fragment);
 
-    } else if (firstSegment.equals("$all")) {
+    } else if ("$all".equals(firstSegment)) {
       ensureLastSegment(firstSegment, 1, numberOfSegments);
       contextUriInfo.setKind(UriInfoKind.all);
       contextIsCollection = true;
 
-    } else if (firstSegment.equals("$entity")) {
+    } else if ("$entity".equals(firstSegment)) {
       if (null != contextUriInfo.getIdOption()) {
         String idOptionText = contextUriInfo.getIdOption().getText();
         if (idOptionText.startsWith(HTTP)) {
@@ -317,7 +317,7 @@ public class Parser {
         systemOption = new FilterOptionImpl();
         break;
       case COUNT:
-        if (optionValue.equals("true") || optionValue.equals("false")) {
+        if ("true".equals(optionValue) || "false".equals(optionValue)) {
           systemOption = new CountOptionImpl().setValue(Boolean.parseBoolean(optionValue));
         } else {
           throw new UriParserSyntaxException("Illegal value of $count option!",

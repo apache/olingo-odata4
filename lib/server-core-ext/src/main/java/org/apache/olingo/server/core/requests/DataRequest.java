@@ -216,16 +216,6 @@ public class DataRequest extends ServiceRequest {
     return valueRequest;
   }
 
-  /*
-  private boolean hasMediaStream() {
-    return this.uriResourceEntitySet != null && this.uriResourceEntitySet.getEntityType().hasStream();
-  }
-
-  private InputStream getMediaStream() {
-    return this.request.getBody();
-  }
-  */
-  
   public void setValueRequest(boolean valueRequest) {
     this.valueRequest = valueRequest;
     this.type = new ValueRequest();
@@ -340,7 +330,7 @@ public class DataRequest extends ServiceRequest {
         // by this specification.
         boolean ifMatch = getHeader(HttpHeader.IF_MATCH) != null;
         boolean ifNoneMatch = (getHeader(HttpHeader.IF_NONE_MATCH)!= null 
-            && getHeader(HttpHeader.IF_NONE_MATCH).equals("*"));
+            && "*".equals(getHeader(HttpHeader.IF_NONE_MATCH)));
         if(ifMatch) {
           handler.updateEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
               entityResponse);
@@ -620,8 +610,8 @@ public class DataRequest extends ServiceRequest {
         builder.navOrPropertyPath(edmProperty.getName());
       }
       if (isPropertyComplex()) {
-        EdmComplexType type = ((UriResourceComplexProperty) uriResourceProperty).getComplexType();
-        String select = helper.buildContextURLSelectList(type, getUriInfo().getExpandOption(),
+        EdmComplexType complexType = ((UriResourceComplexProperty) uriResourceProperty).getComplexType();
+        String select = helper.buildContextURLSelectList(complexType, getUriInfo().getExpandOption(),
             getUriInfo().getSelectOption());
         builder.selectList(select);
       }

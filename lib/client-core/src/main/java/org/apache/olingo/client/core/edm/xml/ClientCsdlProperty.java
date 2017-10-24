@@ -64,12 +64,12 @@ class ClientCsdlProperty extends CsdlProperty implements Serializable {
             property.setDefaultValue(jp.nextTextValue());
           } else if ("MaxLength".equals(jp.getCurrentName())) {
             final String maxLenght = jp.nextTextValue();
-            property.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
+            property.setMaxLength("max".equalsIgnoreCase(maxLenght) ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
           } else if ("Precision".equals(jp.getCurrentName())) {
             property.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            property.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+            property.setScale("variable".equalsIgnoreCase(scale) ? 0 : Integer.valueOf(scale));
           } else if ("Unicode".equals(jp.getCurrentName())) {
             property.setUnicode(BooleanUtils.toBoolean(jp.nextTextValue()));
           } else if ("SRID".equals(jp.getCurrentName())) {

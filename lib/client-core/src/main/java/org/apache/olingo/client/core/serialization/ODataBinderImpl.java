@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
@@ -730,8 +731,8 @@ public class ODataBinderImpl implements ODataBinder {
     }
     
     if (!countMap.isEmpty()) {
-      for (String name:countMap.keySet()) {
-        entity.addLink(createLinkFromEmptyNavigationProperty(name, countMap.get(name)));
+      for (Entry<String, Integer> entry : countMap.entrySet()) {
+        entity.addLink(createLinkFromEmptyNavigationProperty(entry.getKey(), entry.getValue()));
       }
     }
 
