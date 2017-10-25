@@ -23,11 +23,14 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
@@ -47,6 +50,10 @@ public class Storage {
 
   private List<Entity> productList;
   private List<Entity> categoryList;
+  public static final String ACTION_PROVIDE_DISCOUNT = "DiscountProducts";
+  public static final String ACTION_PROVIDE_DISCOUNT_FOR_PRODUCT = "DiscountProduct";
+  public static final String AMOUNT_PROPERTY = "Amount";
+  public static final String PRICE_PROPERTY= "Price";
   
   public Storage() {
     
@@ -378,6 +385,7 @@ public class Storage {
     entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Notebook Basic 15"));
     entity.addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
         "Notebook Basic, 1.7GHz - 15 XGA - 1024MB DDR2 SDRAM - 40GB"));
+    entity.addProperty(new Property(null, "Price", ValueType.PRIMITIVE, 100));
     entity.setType(DemoEdmProvider.ET_PRODUCT_FQN.getFullQualifiedNameAsString());
     entity.setId(createId(entity, "ID"));
     productList.add(entity);
@@ -387,6 +395,7 @@ public class Storage {
     entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Notebook Professional 17"));
     entity.addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
         "Notebook Professional, 2.8GHz - 15 XGA - 8GB DDR3 RAM - 500GB"));
+    entity.addProperty(new Property(null, "Price", ValueType.PRIMITIVE, 200));
     entity.setType(DemoEdmProvider.ET_PRODUCT_FQN.getFullQualifiedNameAsString());
     entity.setId(createId(entity, "ID"));
     productList.add(entity);
@@ -396,6 +405,7 @@ public class Storage {
     entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "1UMTS PDA"));
     entity.addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
         "Ultrafast 3G UMTS/HSDPA Pocket PC, supports GSM network"));
+    entity.addProperty(new Property(null, "Price", ValueType.PRIMITIVE, 300));
     entity.setType(DemoEdmProvider.ET_PRODUCT_FQN.getFullQualifiedNameAsString());
     entity.setId(createId(entity, "ID"));
     productList.add(entity);
@@ -405,6 +415,7 @@ public class Storage {
     entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Comfort Easy"));
     entity.addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
         "32 GB Digital Assitant with high-resolution color screen"));
+    entity.addProperty(new Property(null, "Price", ValueType.PRIMITIVE, 100));
     entity.setType(DemoEdmProvider.ET_PRODUCT_FQN.getFullQualifiedNameAsString());
     entity.setId(createId(entity, "ID"));
     productList.add(entity);
@@ -414,6 +425,7 @@ public class Storage {
     entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Ergo Screen"));
     entity.addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
         "19 Optimum Resolution 1024 x 768 @ 85Hz, resolution 1280 x 960"));
+    entity.addProperty(new Property(null, "Price", ValueType.PRIMITIVE, 400));
     entity.setType(DemoEdmProvider.ET_PRODUCT_FQN.getFullQualifiedNameAsString());
     entity.setId(createId(entity, "ID"));
     productList.add(entity);
@@ -423,6 +435,7 @@ public class Storage {
     entity.addProperty(new Property(null, "Name", ValueType.PRIMITIVE, "Flat Basic"));
     entity.addProperty(new Property(null, "Description", ValueType.PRIMITIVE,
         "Optimum Hi-Resolution max. 1600 x 1200 @ 85Hz, Dot Pitch: 0.24mm"));
+    entity.addProperty(new Property(null, "Price", ValueType.PRIMITIVE, 100));
     entity.setType(DemoEdmProvider.ET_PRODUCT_FQN.getFullQualifiedNameAsString());
     entity.setId(createId(entity, "ID"));
     productList.add(entity);
@@ -478,5 +491,36 @@ public class Storage {
       return DemoEdmProvider.ES_PRODUCTS_NAME;
     }
     return entity.getType();
+  }
+
+  public EntityCollection processBoundActionEntityCollection(EdmAction action, Map<String, Parameter> parameters) {
+    EntityCollection collection = new EntityCollection();
+    if (ACTION_PROVIDE_DISCOUNT.equals(action.getName())) {
+      for (Entity entity : categoryList) {
+        Entity en = getRelatedEntity(entity, (EdmEntityType) action.getReturnType().getType());
+        Integer currentValue = (Integer)en.getProperty(PRICE_PROPERTY).asPrimitive();
+        Integer newValue = currentValue - (Integer)parameters.get(AMOUNT_PROPERTY).asPrimitive();
+        en.getProperty(PRICE_PROPERTY).setValue(ValueType.PRIMITIVE, newValue);
+        collection.getEntities().add(en);
+      }
+    }
+    return collection;
+  }
+
+  public DemoEntityActionResult processBoundActionEntity(EdmAction action, Map<String, Parameter> parameters,
+      List<UriParameter> keyParams) throws ODataApplicationException {
+    DemoEntityActionResult result = new DemoEntityActionResult();
+    if (ACTION_PROVIDE_DISCOUNT_FOR_PRODUCT.equals(action.getName())) {
+      for (Entity entity : categoryList) {
+        Entity en = getRelatedEntity(entity, (EdmEntityType) action.getReturnType().getType(), keyParams);
+        Integer currentValue = (Integer)en.getProperty(PRICE_PROPERTY).asPrimitive();
+        Integer newValue = currentValue - (Integer)parameters.get(AMOUNT_PROPERTY).asPrimitive();
+        en.getProperty(PRICE_PROPERTY).setValue(ValueType.PRIMITIVE, newValue);
+        result.setEntity(en);
+        result.setCreated(true);
+        return result;
+      }
+    }
+    return null;
   }
 }
