@@ -350,8 +350,8 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
    * @return ascii representation of the entity id
    */
   private String getEntityId(Entity entity, EdmEntityType entityType, String name) throws SerializerException {
-    if(entity.getId() == null) {
-      if(entity == null || entityType == null || entityType.getKeyPredicateNames() == null 
+    if(entity != null && entity.getId() == null) {
+      if(entityType == null || entityType.getKeyPredicateNames() == null 
           || name == null) {
         throw new SerializerException("Entity id is null.", SerializerException.MessageKeys.MISSING_ID);
       }else{

@@ -125,12 +125,14 @@ public class CsdlTypeValidator {
         baseTypeFQName = validateCsdlEntityTypeWithAlias(baseTypeFQName);
       }
       baseEntityType = csdlEntityTypesMap.get(baseTypeFQName);
-      if (baseEntityType.getKey() != null) {
-        break;
-      } else if (baseEntityType != null && baseEntityType.getBaseType() != null) {
-        baseTypeFQName = baseEntityType.getBaseTypeFQN();
-      } else if (baseEntityType.getBaseType() == null) {
-        break;
+      if (baseEntityType != null) {
+        if (baseEntityType.getKey() != null) {
+          break;
+        } else if (baseEntityType.getBaseType() != null) {
+          baseTypeFQName = baseEntityType.getBaseTypeFQN();
+        } else if (baseEntityType.getBaseType() == null) {
+          break;
+        }
       }
     }
     return baseEntityType;
@@ -149,16 +151,18 @@ public class CsdlTypeValidator {
         baseTypeFQName = validateCsdlEntityTypeWithAlias(baseTypeFQName);
       }
       baseEntityType = csdlEntityTypesMap.get(baseTypeFQName);
-      if (baseEntityType.getNavigationProperty(navBindingProperty) != null) {
-        break;
-      } else if (baseEntityType != null && baseEntityType.getBaseType() != null) {
-        baseTypeFQName = baseEntityType.getBaseTypeFQN();
-      } else if (baseEntityType.getBaseType() == null) {
-        break;
+      if (baseEntityType != null) {
+        if (baseEntityType.getNavigationProperty(navBindingProperty) != null) {
+          break;
+        } else if (baseEntityType.getBaseType() != null) {
+          baseTypeFQName = baseEntityType.getBaseTypeFQN();
+        } else if (baseEntityType.getBaseType() == null) {
+          break;
+        }
       }
     }
     if (baseEntityType == null) {
-      throw new RuntimeException("Entity TYpe is null with fully qualified name:" + baseTypeFQName);
+      throw new RuntimeException("Entity Type is null with fully qualified name:" + baseTypeFQName);
     }
     return baseEntityType.getNavigationProperty(navBindingProperty);
   }

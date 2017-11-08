@@ -404,17 +404,4 @@ public class EntityTest extends AbstractTest {
     assertTrue(property.isPrimitive());
     assertEquals(property.getValueType(), ValueType.PRIMITIVE);
   }
-  
-  @Test
-  public void testFindTypeInEdmEnabledClient() throws Exception {
-    final Edm edm = client.getReader().readMetadata(getClass().getResourceAsStream("metadata_TripInService.xml"));
-    assertNotNull(edm);
-    final InputStream input = getClass().getResourceAsStream("tripinServEntity.json");
-    EdmEnabledODataClient edmClient = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, ContentType.APPLICATION_JSON);
-    ClientEntity entity = edmClient.getBinder().getODataEntity(
-        edmClient.getDeserializer(ContentType.APPLICATION_JSON).toEntity(input));
-    assertNotNull(entity);
-    assertEquals(entity.getTypeName().getFullQualifiedNameAsString(), 
-        "Microsoft.OData.SampleService.Models.TripPin.Person");
-  }
 }
