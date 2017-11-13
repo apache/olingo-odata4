@@ -18,10 +18,15 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
@@ -34,6 +39,8 @@ import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 
 public class FunctionData {
+
+  private static final UUID GUID = UUID.fromString("01234567-89ab-cdef-0123-456789abcdef");;
 
   protected static EntityCollection entityCollectionFunction(final String name,
       final Map<String, Parameter> parameters, final Map<String, EntityCollection> data)
@@ -97,6 +104,8 @@ public class FunctionData {
       return DataCreator.createPrimitive(name, (short) 12345);
     } else if (name.equals("UFCRTString")) {
       return DataCreator.createPrimitive(name, "UFCRTString string value");
+    }else if ( name.equals("BFNESTwoKeyNavRTString") ) {
+      return DataCreator.createPrimitive(name, "BFNESTwoKeyNavRTString string value");
     } else if (name.equals("UFCRTCollString")) {
       return data.get("ESCollAllPrim").getEntities().get(0).getProperty("CollPropertyString");
     } else if (name.equals("UFCRTCTTwoPrim")) {
@@ -173,7 +182,42 @@ public class FunctionData {
         }
       }
       return DataCreator.createPrimitive(null, count);
-    } else {
+    } else if (name.equals("_FC_RTTimeOfDay_")) {
+      return DataCreator.createPrimitive(name,  getParameterTimeOfDay(parameters));
+    } else if (name.equals("BFNESAllPrimRTCTAllPrim")) {
+      return DataCreator.createComplex(name,
+          ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
+          DataCreator.createPrimitive("PropertyString", "First Resource - first"),
+          DataCreator.createPrimitive("PropertyBinary",
+              new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }),
+          DataCreator.createPrimitive("PropertyBoolean", true),
+          DataCreator.createPrimitive("PropertyByte", (short) 255),
+          DataCreator.createPrimitive("PropertyDate", getDate(2012, 10, 3)),
+          DataCreator.createPrimitive("PropertyDateTimeOffset", getTimestamp(2012, 10, 3, 7, 16, 23, 123456700)),
+          DataCreator.createPrimitive("PropertyDecimal", BigDecimal.valueOf(34.27)),
+          DataCreator.createPrimitive("PropertySingle", (float) 1.79000000E+20),
+          DataCreator.createPrimitive("PropertyDouble", -1.7900000000000000E+19),
+          DataCreator.createPrimitive("PropertyDuration", BigDecimal.valueOf(6)),
+          DataCreator.createPrimitive("PropertyGuid", GUID),
+          DataCreator.createPrimitive("PropertyInt16", Short.MAX_VALUE),
+          DataCreator.createPrimitive("PropertyInt32", Integer.MAX_VALUE),
+          DataCreator.createPrimitive("PropertyInt64", Long.MAX_VALUE),
+          DataCreator.createPrimitive("PropertySByte", Byte.MAX_VALUE),
+          DataCreator.createPrimitive("PropertyTimeOfDay", getTime(1, 0, 1)));
+    } else if (name.equals("BFCESTwoKeyNavRTCollCTNavFiveProp")) {
+      return DataCreator.createComplexCollection(name,
+          ComplexTypeProvider.nameCTNavFiveProp.getFullQualifiedNameAsString(),
+          Arrays.asList(
+              DataCreator.createPrimitive("PropertyInt16", (short) 1)));
+    } else if (name.equals("BFCESTwoKeyNavRTCollDecimal")) {
+      return DataCreator.createPrimitiveCollection(name,
+         1d);
+    } else if (name.equals("BFCETTwoKeyNavRTCTTwoPrim")) {
+      return DataCreator.createComplex(name,
+          ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+          DataCreator.createPrimitive("PropertyInt16", (short) 16),
+          DataCreator.createPrimitive("PropertyString", "BFCETTwoKeyNavRTCTTwoPrim string value"));
+    }  else {
       throw new DataProviderException("Function " + name + " is not yet implemented.",
           HttpStatusCode.NOT_IMPLEMENTED);
     }
@@ -185,5 +229,46 @@ public class FunctionData {
 
   private static String getParameterString(final Map<String, Parameter> parameters) {
     return parameters.containsKey("ParameterString") ? (String) parameters.get("ParameterString").getValue() : null;
+  }
+  
+  private static Calendar getParameterTimeOfDay(final Map<String, Parameter> parameters) {
+    return parameters.containsKey("ParameterTimeOfDay") ? (Calendar) parameters.get("ParameterTimeOfDay")
+        .getValue() : null;
+  }
+  
+  private static Calendar getDate(final int year, final int month, final int day) {
+    // Date values are always in the local timezone.
+    Calendar date = Calendar.getInstance();
+    date.clear();
+    date.set(year, month - 1, day, 0, 0, 0);
+    date.set(Calendar.MILLISECOND, 0);
+    return date;
+  }
+
+  private static Calendar getTime(final int hour, final int minute, final int second) {
+    // Time values are always in the local timezone.
+    Calendar time = Calendar.getInstance();
+    time.clear();
+    time.set(1970, Calendar.JANUARY, 1, hour, minute, second);
+    time.set(Calendar.MILLISECOND, 0);
+    return time;
+  }
+
+  private static Timestamp getTimestamp(final int year, final int month, final int day,
+      final int hour, final int minute, final int second, final int nanosecond) {
+    Timestamp timestamp = new Timestamp(getDateTime(year, month, day, hour, minute, second).getTimeInMillis());
+    timestamp.setNanos(nanosecond);
+    return timestamp;
+  }
+
+
+  private static Calendar getDateTime(final int year, final int month, final int day,
+      final int hour, final int minute, final int second) {
+    // Date/Time values are serialized with a timezone offset, so we choose a predictable timezone.
+    Calendar dateTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+    dateTime.clear();
+    dateTime.set(year, month - 1, day, hour, minute, second);
+    dateTime.set(Calendar.MILLISECOND, 0);
+    return dateTime;
   }
 }

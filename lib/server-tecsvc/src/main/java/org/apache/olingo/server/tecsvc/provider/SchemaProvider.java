@@ -211,6 +211,7 @@ public class SchemaProvider {
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESKeyNavRTESTwoKeyNav));
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFNESTwoKeyNavRTString)); 
     functions.addAll(prov.getFunctions(FunctionProvider.nameBFCESTwoKeyNavRTCollDecimal));
+    functions.addAll(prov.getFunctions(FunctionProvider.nameBFESBaseRTESTwoBase));
 
     // functions.addAll(prov.getFunctions(FunctionProvider.nameBFCCTPrimCompRTESTwoKeyNavParam));
 

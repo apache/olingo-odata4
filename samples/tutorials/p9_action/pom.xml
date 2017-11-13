@@ -30,7 +30,7 @@
 	<name>${project.artifactId}-Webapp</name>
 
 	<build>
-		<finalName>DemoService</finalName>
+		<finalName>DemoService-Action</finalName>
 	</build>
 
 	<properties>

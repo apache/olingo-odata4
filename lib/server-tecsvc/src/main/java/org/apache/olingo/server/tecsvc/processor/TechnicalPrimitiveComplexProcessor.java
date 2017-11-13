@@ -76,6 +76,7 @@ import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 
 /**
  * Technical Processor which provides functionality related to primitive and complex types and collections thereof.
@@ -228,7 +229,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
         getPropertyData(
             dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(0)).getFunction(),
             ((UriResourceFunction) resourceParts.get(0)).getParameters(), resource), path) :
-        getPropertyData(entity, path);
+        getData(entity, path, resourceParts, resource);
 
     // TODO: implement filter on collection properties (on a shallow copy of the values)
     // FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), property, uriInfo, serviceMetadata.getEdm());
@@ -257,13 +258,21 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
               getComplexTypeFilter() != null) {
             type = ((UriResourceComplexProperty)resourceParts.get(resourceParts.size() - trailing - 1)).
                 getComplexTypeFilter();
-          } else {
+          }else if(resourceParts.get(resourceParts.size() - trailing - 1) 
+             instanceof UriResourceFunction &&
+              ((UriResourceFunction)resourceParts.get(resourceParts.size() - trailing - 1)).
+              getFunction() != null){ 
+            type = ((UriResourceFunction)resourceParts.get(resourceParts.size() - trailing - 1)).
+                getType();
+          }else {
             type = edmProperty == null ?
                 ((UriResourceFunction) resourceParts.get(0)).getType() :
                 edmProperty.getType();
           }
           final EdmReturnType returnType = resourceParts.get(0) instanceof UriResourceFunction ?
-              ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : null;
+              ((UriResourceFunction) resourceParts.get(0)).getFunction().getReturnType() : 
+                resourceParts.get(1) instanceof UriResourceFunction ? 
+                    ((UriResourceFunction) resourceParts.get(1)).getFunction().getReturnType():null ;
 
           if (representationType == RepresentationType.VALUE) {
             response.setContent(serializePrimitiveValue(property, edmProperty, (EdmPrimitiveType) type, returnType));
@@ -289,6 +298,20 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
         response.setHeader(HttpHeader.ETAG, entity.getETag());
       }
     }
+  }
+
+  private Property getData(Entity entity, List<String> path, List<UriResource> resourceParts, UriInfoResource resource) 
+      throws DataProviderException {
+    if(resourceParts.size()>1 && resourceParts.get(1) instanceof UriResourceFunction){
+      return dataProvider.readFunctionPrimitiveComplex(((UriResourceFunction) resourceParts.get(1)).getFunction(),
+          ((UriResourceFunction) resourceParts.get(1)).getParameters(), resource);
+    }
+    return getPropertyData(entity, path);
+  }
+
+  private Property getFunctionData(UriResource uriResource) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   private void updateProperty(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
@@ -516,7 +539,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
           && kind != UriResourceKind.primitiveProperty
           && kind != UriResourceKind.complexProperty
           && kind != UriResourceKind.count
-          && kind != UriResourceKind.value) {
+          && kind != UriResourceKind.value
+          && kind != UriResourceKind.function) {
         throw new ODataApplicationException("Invalid resource type.",
             HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
       }

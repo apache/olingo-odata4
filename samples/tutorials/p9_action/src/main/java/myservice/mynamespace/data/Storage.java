@@ -144,6 +144,30 @@ public class Storage {
 
     return null;
   }
+  
+  public EntityCollection readEntitySetData(String edmEntityTypeName) throws ODataApplicationException {
+
+    if (edmEntityTypeName.equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+      return getEntityCollection(productList);
+    } else if(edmEntityTypeName.equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+      return getEntityCollection(categoryList);
+    }
+
+    return null;
+  }
+  
+
+  public Entity readEntityData(String entityTypeName) {
+
+    if (entityTypeName.equals(DemoEdmProvider.ET_PRODUCT_NAME)) {
+      return  getEntityCollection(productList).getEntities().get(0);
+    } else if(entityTypeName.equals(DemoEdmProvider.ET_CATEGORY_NAME)) {
+      return getEntityCollection(categoryList).getEntities().get(0);
+    }
+
+    return null;
+  
+  }
 
   public Entity readEntityData(EdmEntitySet edmEntitySet, List<UriParameter> keyParams)
       throws ODataApplicationException {

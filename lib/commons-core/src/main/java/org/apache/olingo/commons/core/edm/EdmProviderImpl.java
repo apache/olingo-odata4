@@ -184,6 +184,9 @@ public class EdmProviderImpl extends AbstractEdm {
       Boolean isBindingParameterCollection)
       throws ODataException {
     CsdlComplexType complexType = provider.getComplexType(bindingParameterTypeName);
+    if(provider.getEntityType(parameter.getTypeFQN()) == null){
+      return false;
+    }
     List<CsdlProperty> properties = provider.getEntityType(parameter.getTypeFQN()).getProperties();
     for (CsdlProperty property : properties) {
       String paramPropertyTypeName = property.getTypeAsFQNObject().getFullQualifiedNameAsString();
@@ -234,7 +237,10 @@ public class EdmProviderImpl extends AbstractEdm {
             throw new EdmException("No parameter specified for bound function: " + functionName);
           }
           final CsdlParameter bindingParameter = providerParameters.get(0);
-          if (bindingParameterTypeName.equals(bindingParameter.getTypeFQN())
+          if ((bindingParameterTypeName.equals(bindingParameter.getTypeFQN())
+              ||isEntityPreviousTypeCompatibleToBindingParam(bindingParameterTypeName, bindingParameter) ||
+              isComplexPreviousTypeCompatibleToBindingParam(bindingParameterTypeName, bindingParameter, 
+                  isBindingParameterCollection))
               && isBindingParameterCollection.booleanValue() == bindingParameter.isCollection()
               && parameterNamesCopy.size() == providerParameters.size() - 1) {
 

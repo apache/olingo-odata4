@@ -37,8 +37,10 @@ import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
+import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
+import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,7 +72,9 @@ public class EdmProviderImplOverloadingTest {
         new CsdlAction().setName(operationName1.getName()).setBound(true).setParameters(action2Parameters);
     actions.add(action);
     when(provider.getActions(operationName1)).thenReturn(actions);
-
+    CsdlEntityType type = new CsdlEntityType().setProperties(new ArrayList<CsdlProperty>());
+    when(provider.getEntityType(operationType1)).thenReturn(type);
+    when(provider.getEntityType(operationType2)).thenReturn(type);
     List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
     CsdlFunction function = new CsdlFunction().setName(operationName1.getName());
     functions.add(function);
