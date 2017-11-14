@@ -79,6 +79,11 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
     </dependency>
+    <dependency>
+	  <groupId>io.netty</groupId>
+	  <artifactId>netty-all</artifactId>
+	  <version>4.1.16.Final</version>
+	</dependency>
   </dependencies>
 
   <build>

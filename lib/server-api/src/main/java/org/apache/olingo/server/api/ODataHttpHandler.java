@@ -39,7 +39,7 @@ public interface ODataHttpHandler extends ODataHandler {
    * @param response - HTTP OData response
    */
   void process(HttpServletRequest request, HttpServletResponse response);
-
+  
   /**
    * Sets the split parameter which is used for service resolution.
    * @param split the number of path segments reserved for service resolution; default is 0

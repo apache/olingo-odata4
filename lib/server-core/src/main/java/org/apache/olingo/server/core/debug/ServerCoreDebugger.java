@@ -62,7 +62,7 @@ public class ServerCoreDebugger {
       }
     }
   }
-
+  
   public ODataResponse createDebugResponse(final ODataRequest request, final ODataResponse response,
       final Exception exception, final UriInfo uriInfo, final Map<String, String> serverEnvironmentVariables) {
     // Failsafe so we do not generate unauthorized debug messages
