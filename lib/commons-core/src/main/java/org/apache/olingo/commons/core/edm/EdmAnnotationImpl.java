@@ -38,6 +38,10 @@ public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnno
     this.annotation = annotation;
   }
 
+  public CsdlAnnotation getAnnotation(){
+    return annotation;
+  }
+
   @Override
   public EdmTerm getTerm() {
     if (term == null) {
