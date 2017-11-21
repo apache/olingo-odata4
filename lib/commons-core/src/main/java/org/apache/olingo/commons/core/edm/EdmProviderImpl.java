@@ -384,7 +384,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   protected EdmTerm createTerm(final FullQualifiedName termName) {
     try {
-      CsdlTerm providerTerm = provider.getTerm(termName);
+      CsdlTerm providerTerm = provider.getTerm(termName); // ICI
       if (providerTerm != null) {
         return new EdmTermImpl(this, termName.getNamespace(), providerTerm);
       } else if (termSchemaDefinition != null && !termSchemaDefinition.isEmpty()) {

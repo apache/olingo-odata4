@@ -44,6 +44,7 @@ import org.apache.olingo.commons.api.ex.ODataException;
 
 public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
 
+  public static final String CORE_VOCABULARY_NAMESPACE = "Org.OData.Core.V1";
   private final Map<String, CsdlSchema> xmlSchemas;
 
   public ClientCsdlEdmProvider(Map<String, CsdlSchema> xmlSchemas) {
@@ -110,7 +111,11 @@ public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
     if (schema != null) {
       return schema.getTerm(termName.getName());
     }
-    return null;
+
+    CsdlTerm t = new CsdlTerm();
+    t.setName(termName.getFullQualifiedNameAsString());
+
+    return t;
   }
 
   @Override
@@ -180,6 +185,9 @@ public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
         aliasInfo.add(new CsdlAliasInfo().setNamespace(schema.getNamespace()).setAlias(schema.getAlias()));
       }
     }
+
+    aliasInfo.add(new CsdlAliasInfo().setAlias("Core").setNamespace(CORE_VOCABULARY_NAMESPACE));
+    System.out.println("Add Code alias " + CORE_VOCABULARY_NAMESPACE);
     return aliasInfo;
   }
 
