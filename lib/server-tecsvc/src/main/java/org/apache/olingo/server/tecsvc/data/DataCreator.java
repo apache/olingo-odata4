@@ -94,7 +94,11 @@ public class DataCreator {
     data.put("ESCompCollDerived", createESCompCollDerived(edm, odata));
     data.put("ESTwoPrimDerived", createESTwoPrimDerived(edm, odata));
     data.put("ESAllPrimDerived", createESAllPrimDerived(edm, odata));
-    data.put("ESDelta", createESDelta(edm, odata)); 
+    data.put("ESDelta", createESDelta(edm, odata));
+    data.put("ESKeyNavCont", createESKeyNavCont(edm, odata));
+    data.put("ETCont", createETCont(edm, odata));
+    data.put("ETBaseCont", createETBaseCont(edm, odata));
+    data.put("ETTwoCont", createETTwoCont(edm, odata));
     
     linkSINav(data);
     linkESTwoPrim(data);
@@ -104,6 +108,8 @@ public class DataCreator {
     linkESTwoKeyNav(data);
     linkESPeople(data);
     linkESDelta(data);
+    linkESKeyNavCont(data);
+    linkETBaseCont(data);
   }
   
 
@@ -1696,6 +1702,35 @@ public class DataCreator {
      setLinks(entityCollection.getEntities().get(0), "NavPropertyETTwoKeyNavMany", esTwoKeyNavTargets.get(0),
          esTwoKeyNavTargets.get(1));
   }
+   
+   private void linkESKeyNavCont(final Map<String, EntityCollection> data) {
+     final EntityCollection entityCollection = data.get("ESKeyNavCont");
+     final List<Entity> targetEntities = data.get("ETCont").getEntities();
+     final List<Entity> etBaseContEntities = data.get("ETBaseCont").getEntities();
+     
+     setLinks(entityCollection.getEntities().get(1), "NavPropertyETContMany", targetEntities.get(1),
+         targetEntities.get(2));
+     
+     setLinkForContNav(entityCollection.getEntities().get(3), "NavPropertyETContOne", targetEntities.get(0));
+     
+     setLinks(entityCollection.getEntities().get(2), "NavPropertyETBaseContMany", etBaseContEntities.get(1),
+         etBaseContEntities.get(2));
+   }
+   
+   protected static void setLinkForContNav(final Entity entity, 
+       final String navigationPropertyName, final Entity target) {
+     Link link = entity.getNavigationLink(navigationPropertyName);
+     if (link == null) {
+       link = new Link();
+       link.setRel(Constants.NS_NAVIGATION_LINK_REL + navigationPropertyName);
+       link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+       link.setTitle(navigationPropertyName);
+       link.setHref(entity.getId().toASCIIString() + 
+           (navigationPropertyName != null && navigationPropertyName.length() > 0 ? "/" + navigationPropertyName: ""));
+       entity.getNavigationLinks().add(link);
+     }
+     link.setInlineEntity(target);
+   }
 
   protected static Property createPrimitive(final String name, final Object value) {
     return new Property(null, name, ValueType.PRIMITIVE, value);
@@ -1847,5 +1882,264 @@ public class DataCreator {
         entity.setId(null);
       }
     }
+  }
+  
+  private EntityCollection createESKeyNavCont(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 32766))
+        .addProperty(createPrimitive("PropertyString", "Test String1"))
+        .addProperty(createComplex("PropertyCompNavCont",
+            ComplexTypeProvider.nameCTNavCont.getFullQualifiedNameAsString())));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) -365))
+        .addProperty(createPrimitive("PropertyString", "Test String2"))
+        .addProperty(createComplex("PropertyCompNavCont",
+            ComplexTypeProvider.nameCTNavCont.getFullQualifiedNameAsString())));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) -32766))
+        .addProperty(createPrimitive("PropertyString", "Test String3"))
+        .addProperty(createComplex("PropertyCompNavCont",
+            ComplexTypeProvider.nameCTNavCont.getFullQualifiedNameAsString())));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Test String4"))
+        .addProperty(createComplex("PropertyCompNavCont",
+            ComplexTypeProvider.nameCTNavCont.getFullQualifiedNameAsString())));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETKeyNavCont));
+    createEntityId(edm, odata, "ESKeyNavCont", entityCollection);
+    createOperations("ESKeyNavCont", entityCollection, EntityTypeProvider.nameETKeyNavCont);
+    return entityCollection;
+  }
+  
+  private EntityCollection createETCont(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyString", "First Resource - positive values"))
+        .addProperty(createPrimitive("PropertyBoolean", true))
+        .addProperty(createPrimitive("PropertyByte", (short) 255))
+        .addProperty(createPrimitive("PropertySByte", Byte.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyInt64", Long.MAX_VALUE))
+        .addProperty(createPrimitive("PropertySingle", (float) 1.79000000E+20))
+        .addProperty(createPrimitive("PropertyDouble", -1.7900000000000000E+19))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)))
+        .addProperty(createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
+        .addProperty(createPrimitive("PropertyDate", getDate(2012, 12, 3)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2012, 12, 3, 7, 16, 23)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(6)))
+        .addProperty(createPrimitive("PropertyGuid", GUID))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(3, 26, 5))));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Second Resource - negative values"))
+        .addProperty(createPrimitive("PropertyBoolean", false))
+        .addProperty(createPrimitive("PropertyByte", (short) 0))
+        .addProperty(createPrimitive("PropertySByte", Byte.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyInt64", Long.MIN_VALUE))
+        .addProperty(createPrimitive("PropertySingle", (float) -1.79000000E+08))
+        .addProperty(createPrimitive("PropertyDouble", -1.7900000000000000E+05))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(-34)))
+        .addProperty(createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
+        .addProperty(createPrimitive("PropertyDate", getDate(2015, 11, 5)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 7, 17, 8)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(9)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789dddfff")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(23, 49, 14))));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 0))
+        .addProperty(createPrimitive("PropertyString", ""))
+        .addProperty(createPrimitive("PropertyBoolean", false))
+        .addProperty(createPrimitive("PropertyByte", (short) 0))
+        .addProperty(createPrimitive("PropertySByte", 0))
+        .addProperty(createPrimitive("PropertyInt32", 0))
+        .addProperty(createPrimitive("PropertyInt64", 0L))
+        .addProperty(createPrimitive("PropertySingle", (float) 0))
+        .addProperty(createPrimitive("PropertyDouble", 0D))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyBinary", new byte[] {}))
+        .addProperty(createPrimitive("PropertyDate", getDate(1970, 1, 1)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETCont));
+    createEntityId(edm, odata, "ESKeyNavCont", entityCollection);
+    String id = "ESKeyNavCont(-365)";
+    id = id + "/NavPropertyETContMany(" + 
+    entityCollection.getEntities().get(1).getProperty("PropertyInt16").getValue() + ")";
+    entityCollection.getEntities().get(1).setId(URI.create(id));
+    id = "ESKeyNavCont(-365)";
+    id = id + "/NavPropertyETContMany(" + 
+    entityCollection.getEntities().get(2).getProperty("PropertyInt16").getValue() + ")";
+    entityCollection.getEntities().get(2).setId(URI.create(id));
+    id = "ESKeyNavCont(32766)";
+    id = id + "/NavPropertyETContOne(" + 
+    entityCollection.getEntities().get(0).getProperty("PropertyInt16").getValue() + ")";
+    entityCollection.getEntities().get(0).setId(URI.create(id));
+    return entityCollection;
+  }
+  
+  private EntityCollection createETBaseCont(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyString", "First Resource - positive values"))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyInt64", Long.MAX_VALUE))
+        .addProperty(createPrimitive("PropertySingle", (float) 1.79000000E+20))
+        .addProperty(createPrimitive("PropertyDouble", -1.7900000000000000E+19))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)))
+        .addProperty(createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
+        .addProperty(createPrimitive("PropertyDate", getDate(2012, 12, 3)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2012, 12, 3, 7, 16, 23)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(6)))
+        .addProperty(createPrimitive("PropertyGuid", GUID))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(3, 26, 5))));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Second Resource - negative values"))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyInt64", Long.MIN_VALUE))
+        .addProperty(createPrimitive("PropertySingle", (float) -1.79000000E+08))
+        .addProperty(createPrimitive("PropertyDouble", -1.7900000000000000E+05))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(-34)))
+        .addProperty(createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
+        .addProperty(createPrimitive("PropertyDate", getDate(2015, 11, 5)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 7, 17, 8)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(9)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789dddfff")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(23, 49, 14))));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 0))
+        .addProperty(createPrimitive("PropertyString", ""))
+        .addProperty(createPrimitive("PropertyInt32", 0))
+        .addProperty(createPrimitive("PropertyInt64", 0L))
+        .addProperty(createPrimitive("PropertySingle", (float) 0))
+        .addProperty(createPrimitive("PropertyDouble", 0D))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyBinary", new byte[] {}))
+        .addProperty(createPrimitive("PropertyDate", getDate(1970, 1, 1)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETBaseCont));
+    createEntityId(edm, odata, "ESKeyNavCont", entityCollection);
+    String id = "ESKeyNavCont(-32766)";
+    id = id + "/NavPropertyETBaseContMany(" + 
+    entityCollection.getEntities().get(1).getProperty("PropertyInt16").getValue() + ")";
+    entityCollection.getEntities().get(1).setId(URI.create(id));
+    id = "ESKeyNavCont(-32766)";
+    id = id + "/NavPropertyETBaseContMany(" + 
+    entityCollection.getEntities().get(2).getProperty("PropertyInt16").getValue() + ")";
+    entityCollection.getEntities().get(2).setId(URI.create(id));
+    return entityCollection;
+  }
+  
+  private void linkETBaseCont(final Map<String, EntityCollection> data) {
+    final EntityCollection entityCollection = data.get("ETBaseCont");
+    final List<Entity> etTwoContEntities = data.get("ETTwoCont").getEntities();
+    
+    setLinkForContNav(entityCollection.getEntities().get(1), 
+        "NavPropertyETBaseContTwoContOne", etTwoContEntities.get(0));
+    
+    setLinks(entityCollection.getEntities().get(2), "NavPropertyETBaseContTwoContMany", etTwoContEntities.get(1),
+        etTwoContEntities.get(2));
+  }
+  
+  private EntityCollection createETTwoCont(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyString", "First Resource - positive values"))
+        .addProperty(createPrimitive("PropertyBoolean", true))
+        .addProperty(createPrimitive("PropertyByte", (short) 255))
+        .addProperty(createPrimitive("PropertySByte", Byte.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyInt64", Long.MAX_VALUE))
+        .addProperty(createPrimitive("PropertySingle", (float) 1.79000000E+20))
+        .addProperty(createPrimitive("PropertyDouble", -1.7900000000000000E+19))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)))
+        .addProperty(createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
+        .addProperty(createPrimitive("PropertyDate", getDate(2012, 12, 3)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2012, 12, 3, 7, 16, 23)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(6)))
+        .addProperty(createPrimitive("PropertyGuid", GUID))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(3, 26, 5))));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Second Resource - negative values"))
+        .addProperty(createPrimitive("PropertyBoolean", false))
+        .addProperty(createPrimitive("PropertyByte", (short) 0))
+        .addProperty(createPrimitive("PropertySByte", Byte.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyInt64", Long.MIN_VALUE))
+        .addProperty(createPrimitive("PropertySingle", (float) -1.79000000E+08))
+        .addProperty(createPrimitive("PropertyDouble", -1.7900000000000000E+05))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(-34)))
+        .addProperty(createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
+        .addProperty(createPrimitive("PropertyDate", getDate(2015, 11, 5)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 7, 17, 8)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(9)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789dddfff")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(23, 49, 14))));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 0))
+        .addProperty(createPrimitive("PropertyString", ""))
+        .addProperty(createPrimitive("PropertyBoolean", false))
+        .addProperty(createPrimitive("PropertyByte", (short) 0))
+        .addProperty(createPrimitive("PropertySByte", 0))
+        .addProperty(createPrimitive("PropertyInt32", 0))
+        .addProperty(createPrimitive("PropertyInt64", 0L))
+        .addProperty(createPrimitive("PropertySingle", (float) 0))
+        .addProperty(createPrimitive("PropertyDouble", 0D))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyBinary", new byte[] {}))
+        .addProperty(createPrimitive("PropertyDate", getDate(1970, 1, 1)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETTwoCont));
+    createEntityId(edm, odata, "ESKeyNavCont", entityCollection);
+    String id = "ESKeyNavCont(-32766)/NavPropertyETBaseContMany(-32768)";
+    id = id + "/NavPropertyETBaseContTwoContOne(" + 
+    entityCollection.getEntities().get(0).getProperty("PropertyInt16").getValue() + ")";
+    entityCollection.getEntities().get(0).setId(URI.create(id));
+    id = "ESKeyNavCont(-32766)/NavPropertyETBaseContMany(0)";
+    id = id + "/NavPropertyETBaseContTwoContMany(" + 
+    entityCollection.getEntities().get(1).getProperty("PropertyInt16").getValue() + ")";
+    entityCollection.getEntities().get(1).setId(URI.create(id));
+    id = "ESKeyNavCont(-32766)/NavPropertyETBaseContMany(0)";
+    id = id + "/NavPropertyETBaseContTwoContMany(" + 
+        entityCollection.getEntities().get(2).getProperty("PropertyInt16").getValue() + ")";
+        entityCollection.getEntities().get(2).setId(URI.create(id));
+    return entityCollection;
   }
 }

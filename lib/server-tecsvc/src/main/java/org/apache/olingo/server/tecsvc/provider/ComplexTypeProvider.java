@@ -182,7 +182,9 @@ public class ComplexTypeProvider {
               PropertyProvider.navPropertyETKeyNavOne_CT_ETeyNav,
               PropertyProvider.collectionNavPropertyETKeyNavMany_CT_ETKeyNav,
               PropertyProvider.navPropertyETTwoKeyNavOne_CT_ETTwoKeyNav,
-              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_CT_ETTwoKeyNav
+              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_CT_ETTwoKeyNav,
+              PropertyProvider.navPropertyETTwoKeyNavMany_CT_ETCont,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_CT_ETBaseCont
               ));
 
     } else if (complexTypeName.equals(nameCTBasePrimCompNav)) {

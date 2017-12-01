@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.data.ContextURL.Suffix;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.EntityIterator;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -2514,4 +2515,81 @@ public class ODataJsonSerializerTest {
     Mockito.when(complexType.getNamespace()).thenReturn("olingo.odata.test1");
     return complexType;
   }  
+  
+  @Test
+  public void entityESKeyNavContFullMetadata() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESKeyNavCont");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    InputStream result = serializerFullMetadata.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expected = "{\"@odata.context\":\"$metadata#ESKeyNavCont/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"@odata.type\":"
+        + "\"#olingo.odata.test1.ETKeyNavCont\",\"@odata.id\":\"ESKeyNavCont(32766)\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32766,"
+        + "\"PropertyString\":\"Test String1\",\"PropertyCompNavCont\":"
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTNavCont\"}}";        
+
+    Assert.assertEquals(expected, resultString);
+  }
+  
+  @Test
+  public void entityESKeyNavContFullMetadataWithContNav() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESKeyNavCont");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    Link link = entity.getNavigationLink("NavPropertyETContMany");
+    InputStream result = serializerFullMetadata.entityCollection(metadata, 
+        edmEntitySet.getEntityType().getNavigationProperty("NavPropertyETContMany").getType(), 
+        link.getInlineEntitySet(),
+        EntityCollectionSerializerOptions.with()
+            .contextURL(ContextURL.with().
+                type(edmEntitySet.getEntityType().getNavigationProperty("NavPropertyETContMany").getType())
+                .entitySetOrSingletonOrType("ESKeyNavCont(-365)/NavPropertyETContMany").build())
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expected = "{\"@odata.context\":\"$metadata#ESKeyNavCont%28-365%29%2FNavPropertyETContMany\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"value\":[{"
+        + "\"@odata.type\":\"#olingo.odata.test1.ETCont\",\"@odata.id\":"
+        + "\"ESKeyNavCont(-365)/NavPropertyETContMany(-32768)\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":-32768,"
+        + "\"PropertyString\":\"Second Resource - negative values\",\"PropertyInt32@odata.type\":"
+        + "\"#Int32\",\"PropertyInt32\":-2147483648,\"PropertyInt64@odata.type\":\"#Int64\","
+        + "\"PropertyInt64\":-9223372036854775808,\"PropertySingle@odata.type\":\"#Single\","
+        + "\"PropertySingle\":-1.79E8,\"PropertyDouble\":-179000.0,"
+        + "\"PropertyDecimal@odata.type\":\"#Decimal\",\"PropertyDecimal\":-34,"
+        + "\"PropertyBinary@odata.type\":\"#Binary\",\"PropertyBinary\":\"ASNFZ4mrze8=\","
+        + "\"PropertyDate@odata.type\":\"#Date\",\"PropertyDate\":\"2015-11-05\","
+        + "\"PropertyDateTimeOffset@odata.type\":\"#DateTimeOffset\","
+        + "\"PropertyDateTimeOffset\":\"2005-12-03T07:17:08Z\","
+        + "\"PropertyDuration@odata.type\":\"#Duration\","
+        + "\"PropertyDuration\":\"PT9S\",\"PropertyGuid@odata.type\":"
+        + "\"#Guid\",\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789dddfff\","
+        + "\"PropertyTimeOfDay@odata.type\":\"#TimeOfDay\","
+        + "\"PropertyTimeOfDay\":\"23:49:14\",\"PropertyBoolean\":false,"
+        + "\"PropertyByte@odata.type\":\"#Byte\",\"PropertyByte\":0,"
+        + "\"PropertySByte@odata.type\":\"#SByte\",\"PropertySByte\":-128},"
+        + "{\"@odata.type\":\"#olingo.odata.test1.ETCont\","
+        + "\"@odata.id\":\"ESKeyNavCont(-365)/NavPropertyETContMany(0)\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":0,"
+        + "\"PropertyString\":\"\",\"PropertyInt32@odata.type\":\"#Int32\","
+        + "\"PropertyInt32\":0,\"PropertyInt64@odata.type\":\"#Int64\","
+        + "\"PropertyInt64\":0,\"PropertySingle@odata.type\":\"#Single\","
+        + "\"PropertySingle\":0.0,\"PropertyDouble\":0.0,"
+        + "\"PropertyDecimal@odata.type\":\"#Decimal\",\"PropertyDecimal\":0,"
+        + "\"PropertyBinary@odata.type\":\"#Binary\",\"PropertyBinary\":\"\","
+        + "\"PropertyDate@odata.type\":\"#Date\",\"PropertyDate\":\"1970-01-01\","
+        + "\"PropertyDateTimeOffset@odata.type\":\"#DateTimeOffset\","
+        + "\"PropertyDateTimeOffset\":\"2005-12-03T00:00:00Z\","
+        + "\"PropertyDuration@odata.type\":\"#Duration\",\"PropertyDuration\":\"PT0S\","
+        + "\"PropertyGuid@odata.type\":\"#Guid\","
+        + "\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789cccddd\","
+        + "\"PropertyTimeOfDay@odata.type\":\"#TimeOfDay\","
+        + "\"PropertyTimeOfDay\":\"00:01:01\",\"PropertyBoolean\":false,"
+        + "\"PropertyByte@odata.type\":\"#Byte\",\"PropertyByte\":0,"
+        + "\"PropertySByte@odata.type\":\"#SByte\",\"PropertySByte\":0}]}";        
+
+    Assert.assertEquals(expected, resultString);
+  }
 }

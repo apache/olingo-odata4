@@ -31,6 +31,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
@@ -869,5 +870,110 @@ public class DataProvider {
       }
     }
     return null;
+  }
+  
+  public Entity createContNav(final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType, 
+      final Entity newEntity, List<UriParameter> keys, String navPropertyName) throws DataProviderException {
+    List<Entity> rootEntity = data.get(edmEntitySet.getName()).getEntities();
+    EntityCollection entitySet = data.get(edmEntityType.getName());
+    entitySet.getEntities().add(newEntity);
+    
+    
+    
+    for (Entity entity : rootEntity) {
+      if (isRootEntity(entity, keys)){
+        String id = entity.getId().toASCIIString() + "/" + navPropertyName + 
+            appendKeys(newEntity.getProperties(), edmEntityType.getKeyPredicateNames());
+        newEntity.setId(URI.create(id));
+        
+        Link link = entity.getNavigationLink(navPropertyName);
+        if (link == null) {
+          link = new Link();
+          link.setRel(Constants.NS_NAVIGATION_LINK_REL + navPropertyName);
+          link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+          link.setTitle(navPropertyName);
+          link.setHref(entity.getId().toASCIIString() + 
+              (navPropertyName != null && navPropertyName.length() > 0 ? "/" + navPropertyName: ""));
+          entity.getNavigationLinks().add(link);
+        }
+        if (link.getInlineEntitySet() != null) {
+          link.getInlineEntitySet().getEntities().add(newEntity);
+        } else {
+          EntityCollection collection = new EntityCollection();
+          collection.getEntities().add(newEntity);
+          link.setInlineEntitySet(collection);
+        }
+      }
+    }
+    
+    return newEntity;
+  }
+
+  private String appendKeys(List<Property> properties, List<String> keyNames) {
+    StringBuilder keyValue = new StringBuilder();
+    keyValue.append("(");
+    for (int i = 0; i < keyNames.size(); i++) {
+      for (Property property : properties) {
+        if (property.getName().equals(keyNames.get(i))) {
+          keyValue.append(property.getName()).append("=");
+          keyValue.append(property.getValue());
+        }
+        if (i < keyNames.size() - 1) {
+          keyValue.append(",");
+        }
+      }
+    }
+    keyValue.append(")");
+    return keyValue.toString();
+  }
+
+  private boolean isRootEntity(Entity entity, List<UriParameter> keys) {
+    boolean found = false;
+    for (UriParameter key : keys) {
+      if (entity.getProperty(key.getName()).getValue().toString().equals(key.getText())) {
+        found = true;
+      } else {
+        found = false;
+      }
+    }
+    return found;
+  }
+  
+  public Entity readDataFromEntity(final EdmEntityType edmEntityType,
+      final List<UriParameter> keys) throws DataProviderException {
+    EntityCollection coll = data.get(edmEntityType.getName());
+    List<Entity> entities = coll.getEntities();
+    try {
+      for (final Entity entity : entities) {
+        boolean found = true;
+        for (final UriParameter key : keys) {
+          EdmKeyPropertyRef refType = edmEntityType.getKeyPropertyRef(key.getName());
+          Object value =  findPropertyRefValue(entity, refType);
+          
+          final EdmProperty property = refType.getProperty();
+          final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
+          
+          if (key.getExpression() != null && !(key.getExpression() instanceof Literal)) {
+            throw new DataProviderException("Expression in key value is not supported yet!",
+                HttpStatusCode.NOT_IMPLEMENTED);
+          }
+          final String text = key.getAlias() == null ? key.getText() : ((Literal) key.getExpression()).getText();
+          final Object keyValue = type.valueOfString(type.fromUriLiteral(text),
+              property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+              property.isUnicode(),
+              Calendar.class.isAssignableFrom(value.getClass()) ? Calendar.class : value.getClass());
+          if (!value.equals(keyValue)) {
+            found = false;
+            break;
+          }
+        }
+        if (found) {
+          return entity;
+        }
+      }
+      return null;
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new DataProviderException("Wrong key!", HttpStatusCode.BAD_REQUEST, e);
+    }
   }
 }

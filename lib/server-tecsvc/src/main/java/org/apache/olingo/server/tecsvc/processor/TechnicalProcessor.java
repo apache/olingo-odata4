@@ -111,8 +111,7 @@ public abstract class TechnicalProcessor implements Processor {
             (UriResourceNavigation) resourcePaths.get(navigationCount);
         blockTypeFilters(uriResourceNavigation);
         if (uriResourceNavigation.getProperty().containsTarget()) {
-          throw new ODataApplicationException("Containment navigation is not supported.",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+          return entitySet;
         }
         EdmBindingTarget target = null ;
         if(entitySet!=null){
@@ -203,12 +202,24 @@ public abstract class TechnicalProcessor implements Processor {
           key.isEmpty() ?
               link.getInlineEntity() :
               dataProvider.read(navigationProperty.getType(), link.getInlineEntitySet(), key);
+      EdmEntityType edmEntityType = getEntityTypeBasedOnNavPropertyTypeCast(uriNavigationResource);
+      entity = edmEntityType != null ? dataProvider.readDataFromEntity(edmEntityType, key) : entity;
       if (entity == null) {
         throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
       }
     }
 
     return entity;
+  }
+  
+  private EdmEntityType getEntityTypeBasedOnNavPropertyTypeCast(UriResourceNavigation uriNavigationResource) {
+    if (uriNavigationResource.getTypeFilterOnCollection() != null) {
+      return (EdmEntityType) uriNavigationResource.getTypeFilterOnCollection();
+    } else if (uriNavigationResource.getTypeFilterOnEntry() != null) {
+      return (EdmEntityType) uriNavigationResource.getTypeFilterOnEntry();
+    }
+    return null;
+    
   }
 
   protected EdmEntitySet getEntitySetBasedOnTypeCast(UriResourceEntitySet uriResource) {
@@ -301,10 +312,7 @@ public abstract class TechnicalProcessor implements Processor {
   private void blockTypeFilters(final UriResource uriResource) throws ODataApplicationException {
     if (uriResource instanceof UriResourceFunction
         && (((UriResourceFunction) uriResource).getTypeFilterOnCollection() != null
-        || ((UriResourceFunction) uriResource).getTypeFilterOnEntry() != null)
-        || uriResource instanceof UriResourceNavigation
-        && (((UriResourceNavigation) uriResource).getTypeFilterOnCollection() != null
-        || ((UriResourceNavigation) uriResource).getTypeFilterOnEntry() != null)) {
+        || ((UriResourceFunction) uriResource).getTypeFilterOnEntry() != null)) {
       throw new ODataApplicationException("Type filters are not supported.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }

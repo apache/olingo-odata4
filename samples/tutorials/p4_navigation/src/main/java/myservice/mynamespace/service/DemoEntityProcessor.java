@@ -109,8 +109,13 @@ public class DemoEntityProcessor implements EntityProcessor {
         UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) navSegment;
         EdmNavigationProperty edmNavigationProperty = uriResourceNavigation.getProperty();
         responseEdmEntityType = edmNavigationProperty.getType();
-        // contextURL displays the last segment
-        responseEdmEntitySet = Util.getNavigationTargetEntitySet(startEdmEntitySet, edmNavigationProperty);
+        if (!edmNavigationProperty.containsTarget()) {
+       // contextURL displays the last segment
+          responseEdmEntitySet = Util.getNavigationTargetEntitySet(startEdmEntitySet, edmNavigationProperty);
+        } else {
+          responseEdmEntitySet = startEdmEntitySet;
+        }
+        
 
         // 2nd: fetch the data from backend.
         // e.g. for the URI: Products(1)/Category we have to find the correct Category entity
@@ -141,7 +146,14 @@ public class DemoEntityProcessor implements EntityProcessor {
     }
 
     // 3. serialize
-    ContextURL contextUrl = ContextURL.with().entitySet(responseEdmEntitySet).suffix(Suffix.ENTITY).build();
+    ContextURL contextUrl = null;
+    if (isContNav(uriInfo)) {
+      contextUrl = ContextURL.with().entitySetOrSingletonOrType(request.getRawODataPath()).
+          suffix(Suffix.ENTITY).build();
+    } else {
+      contextUrl = ContextURL.with().entitySet(responseEdmEntitySet).suffix(Suffix.ENTITY).build();
+    }
+    
     EntitySerializerOptions opts = EntitySerializerOptions.with().contextURL(contextUrl).build();
 
     ODataSerializer serializer = this.odata.createSerializer(responseFormat);
@@ -152,6 +164,19 @@ public class DemoEntityProcessor implements EntityProcessor {
     response.setContent(serializerResult.getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+  }
+  
+  private boolean isContNav(UriInfo uriInfo) {
+    List<UriResource> resourceParts = uriInfo.getUriResourceParts();
+    for (UriResource resourcePart : resourceParts) {
+      if (resourcePart instanceof UriResourceNavigation) {
+        UriResourceNavigation navResource = (UriResourceNavigation) resourcePart;
+        if (navResource.getProperty().containsTarget()) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /*
