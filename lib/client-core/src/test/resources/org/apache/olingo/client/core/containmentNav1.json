@@ -1,0 +1,36 @@
+{
+    "@odata.context": "../../$metadata#ESKeyNavCont(-32766)/NavPropertyETBaseContMany(0)/NavPropertyETBaseContTwoContMany",
+    "@odata.metadataEtag": "W/\"c32f78fd-8c2d-44a1-a602-2c6527d44930\"",
+    "value": [
+        {
+            "PropertyInt16": -32768,
+            "PropertyString": "Second Resource - negative values",
+            "PropertyInt32": -2147483648,
+            "PropertyInt64": -9223372036854775808,
+            "PropertySingle": -179000000,
+            "PropertyDouble": -179000,
+            "PropertyDecimal": -34,
+            "PropertyBinary": "ASNFZ4mrze8=",
+            "PropertyDate": "2015-11-05",
+            "PropertyDateTimeOffset": "2005-12-03T07:17:08Z",
+            "PropertyDuration": "PT9S",
+            "PropertyGuid": "76543201-23ab-cdef-0123-456789dddfff",
+            "PropertyTimeOfDay": "23:49:14"
+        },
+        {
+            "PropertyInt16": 0,
+            "PropertyString": "",
+            "PropertyInt32": 0,
+            "PropertyInt64": 0,
+            "PropertySingle": 0,
+            "PropertyDouble": 0,
+            "PropertyDecimal": 0,
+            "PropertyBinary": "",
+            "PropertyDate": "1970-01-01",
+            "PropertyDateTimeOffset": "2005-12-03T00:00:00Z",
+            "PropertyDuration": "PT0S",
+            "PropertyGuid": "76543201-23ab-cdef-0123-456789cccddd",
+            "PropertyTimeOfDay": "00:01:01"
+        }
+    ]
+}

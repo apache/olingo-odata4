@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="../v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="Core" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
+			Namespace="olingo.odata.test1" Alias="Namespace1_Alias">
+			<EntityType Name="ETKeyNavCont">
+				<Key>
+					<PropertyRef Name="PropertyInt16" />
+				</Key>
+				<Property Name="PropertyInt16" Type="Edm.Int16" Nullable="false" />
+				<Property Name="PropertyString" Type="Edm.String" Nullable="false" />
+				<Property Name="PropertyCompNavCont" Type="Namespace1_Alias.CTNavCont" />
+				<NavigationProperty Name="NavPropertyETContOne"
+					Type="Namespace1_Alias.ETCont" ContainsTarget="true" />
+				<NavigationProperty Name="NavPropertyETContMany"
+					Type="Collection(Namespace1_Alias.ETCont)" ContainsTarget="true" />
+				<NavigationProperty Name="NavPropertyETBaseContMany"
+					Type="Collection(Namespace1_Alias.ETBaseCont)" ContainsTarget="true" />
+			</EntityType>
+			<EntityType Name="ETBaseCont">
+				<Key>
+					<PropertyRef Name="PropertyInt16" />
+				</Key>
+				<Property Name="PropertyInt16" Type="Edm.Int16" Nullable="false" />
+				<Property Name="PropertyString" Type="Edm.String" />
+				<Property Name="PropertyInt32" Type="Edm.Int32" />
+				<Property Name="PropertyInt64" Type="Edm.Int64" />
+				<Property Name="PropertySingle" Type="Edm.Single" />
+				<Property Name="PropertyDouble" Type="Edm.Double" />
+				<Property Name="PropertyDecimal" Type="Edm.Decimal" Scale="10" />
+				<Property Name="PropertyBinary" Type="Edm.Binary" />
+				<Property Name="PropertyDate" Type="Edm.Date" />
+				<Property Name="PropertyDateTimeOffset" Type="Edm.DateTimeOffset" />
+				<Property Name="PropertyDuration" Type="Edm.Duration" />
+				<Property Name="PropertyGuid" Type="Edm.Guid" />
+				<Property Name="PropertyTimeOfDay" Type="Edm.TimeOfDay" />
+				<NavigationProperty Name="NavPropertyETBaseContTwoContMany"
+					Type="Collection(Namespace1_Alias.ETTwoCont)" ContainsTarget="true" />
+				<NavigationProperty Name="NavPropertyETBaseContTwoContOne"
+					Type="Namespace1_Alias.ETTwoCont" Nullable="false" ContainsTarget="true" />
+			</EntityType>
+			<EntityType Name="ETCont" BaseType="Namespace1_Alias.ETBaseCont">
+				<Property Name="PropertyBoolean" Type="Edm.Boolean" />
+				<Property Name="PropertyByte" Type="Edm.Byte" />
+				<Property Name="PropertySByte" Type="Edm.SByte" />
+			</EntityType>
+			<EntityType Name="ETTwoCont">
+				<Key>
+					<PropertyRef Name="PropertyInt16" />
+					<PropertyRef Name="PropertyString" />
+				</Key>
+				<Property Name="PropertyInt16" Type="Edm.Int16" Nullable="false" />
+				<Property Name="PropertyString" Type="Edm.String" Nullable="false" />
+				<Property Name="PropertyInt32" Type="Edm.Int32" />
+				<Property Name="PropertyInt64" Type="Edm.Int64" />
+				<Property Name="PropertySingle" Type="Edm.Single" />
+				<Property Name="PropertyDouble" Type="Edm.Double" />
+				<Property Name="PropertyDecimal" Type="Edm.Decimal" Scale="10" />
+				<Property Name="PropertyBinary" Type="Edm.Binary" />
+				<Property Name="PropertyDate" Type="Edm.Date" />
+				<Property Name="PropertyDateTimeOffset" Type="Edm.DateTimeOffset" />
+				<Property Name="PropertyDuration" Type="Edm.Duration" />
+				<Property Name="PropertyGuid" Type="Edm.Guid" />
+				<Property Name="PropertyTimeOfDay" Type="Edm.TimeOfDay" />
+			</EntityType>
+			<ComplexType Name="CTNavCont">
+				<NavigationProperty Name="NavPropertyETTwoKeyNavETContOne"
+					Type="Namespace1_Alias.ETCont" ContainsTarget="true" />
+				<NavigationProperty Name="NavPropertyETTwoKeyNavETContMany"
+					Type="Collection(Namespace1_Alias.ETBaseCont)" ContainsTarget="true" />
+			</ComplexType>
+			<EntityType Name="ETTwoPrim">
+				<Key>
+					<PropertyRef Name="PropertyInt16" />
+				</Key>
+				<Property Name="PropertyInt16" Type="Edm.Int16" Nullable="false" />
+				<Property Name="PropertyString" Type="Edm.String" />
+				<Property Name="PropertyCompNavCont" Type="Namespace1_Alias.CTNavCont" />
+				<NavigationProperty Name="NavPropertyETContOne"
+					Type="Namespace1_Alias.ETCont" ContainsTarget="true" />
+				<NavigationProperty Name="NavPropertyETContMany"
+					Type="Collection(Namespace1_Alias.ETCont)" ContainsTarget="true" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="ESKeyNavCont" EntityType="Namespace1_Alias.ETKeyNavCont">
+					<NavigationPropertyBinding
+						Path="NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne" Target="ESKeyNav" />
+					<NavigationPropertyBinding
+						Path="NavPropertyETTwoKeyNavMany/NavPropertyETKeyNavOne" Target="ESKeyNav" />
+					<NavigationPropertyBinding Path="NavPropertyETTwoKeyNavContOne"
+						Target="ESTwoKeyNavCont" />
+					<NavigationPropertyBinding Path="NavPropertyETTwoKeyNavContMany"
+						Target="ESTwoKeyNavCont" />
+					<NavigationPropertyBinding
+						Path="PropertyCompNavCont/NavPropertyETKeyNavOne/NavPropertyETKeyNavOne"
+						Target="ESKeyNav" />
+					<NavigationPropertyBinding
+						Path="PropertyCompNavCont/NavPropertyETKeyNavMany/NavPropertyETKeyNavOne"
+						Target="ESKeyNav" />
+					<NavigationPropertyBinding
+						Path="PropertyCompNavCont/NavPropertyETTwoKeyNavOne/NavPropertyETKeyNavOne"
+						Target="ESKeyNav" />
+					<NavigationPropertyBinding
+						Path="PropertyCompNavCont/NavPropertyETTwoKeyNavMany/NavPropertyETKeyNavOne"
+						Target="ESKeyNav" />
+					<Annotation Term="Core.Description">
+						<String>Contains entities with containment navigation properties
+						</String>
+					</Annotation>
+					<Annotation Term="Namespace1_Alias.Data">
+						<Bool>false</Bool>
+					</Annotation>
+				</EntitySet>
+				<Singleton Name="SI" Type="Namespace1_Alias.ETTwoPrim" />
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

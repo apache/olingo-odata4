@@ -496,10 +496,10 @@ public class ODataBinderImpl implements ODataBinder {
             inlineEntitySet)));
   }
 
-  private EdmEntityType findEntityType(
+  private EdmType findEntityType(
       final String entitySetOrSingletonOrType, final EdmEntityContainer container) {
 
-    EdmEntityType type = null;
+    EdmType type = null;
 
     final String firstToken = StringUtils.substringBefore(entitySetOrSingletonOrType, "/");
     EdmBindingTarget bindingTarget = container.getEntitySet(firstToken);
@@ -514,9 +514,14 @@ public class ODataBinderImpl implements ODataBinder {
       final String[] splitted = entitySetOrSingletonOrType.split("/");
       if (splitted.length > 1) {
         for (int i = 1; i < splitted.length && type != null; i++) {
-          final EdmNavigationProperty navProp = type.getNavigationProperty(splitted[i]);
+          final EdmNavigationProperty navProp = ((EdmStructuredType) type).getNavigationProperty(splitted[i]);
           if (navProp == null) {
-            type = null;
+            EdmProperty property = ((EdmStructuredType) type).getStructuralProperty(splitted[i]);
+            if (property != null) {
+              type = property.getType();
+            } else {
+              type = null;
+            }
           } else {
             type = navProp.getType();
           }
@@ -548,17 +553,17 @@ public class ODataBinderImpl implements ODataBinder {
           for (EdmSchema schema : edm.getSchemas()) {
             final EdmEntityContainer container = schema.getEntityContainer();
             if (container != null) {
-              final EdmEntityType entityType = findEntityType(contextURL.getEntitySetOrSingletonOrType(), container);
+              final EdmType structuredType = findEntityType(contextURL.getEntitySetOrSingletonOrType(), container);
 
-              if (entityType != null) {
+              if (structuredType != null) {
                 if (contextURL.getNavOrPropertyPath() == null) {
-                  type = entityType;
+                  type = structuredType;
                 } else {
                   final EdmNavigationProperty navProp =
-                      entityType.getNavigationProperty(contextURL.getNavOrPropertyPath());
+                      ((EdmStructuredType) structuredType).getNavigationProperty(contextURL.getNavOrPropertyPath());
 
                   type = navProp == null
-                      ? entityType
+                      ? structuredType
                       : navProp.getType();
                 }
               }
