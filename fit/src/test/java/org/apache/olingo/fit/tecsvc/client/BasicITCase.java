@@ -78,7 +78,10 @@ import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
+import org.apache.olingo.client.api.uri.FilterArgFactory;
+import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -1662,5 +1665,44 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
       assertEquals("Org.OData.Core.V1.Permission/Read", expression.asConstant().getValueAsString());
       assertEquals("EnumMember", expression.getExpressionName());
   }
+  }
+  
+  @Test
+  public void issue1144() {
+    FilterFactory filFactory = getClient().getFilterFactory();
+    FilterArgFactory filArgFactory = filFactory.getArgFactory();
+    URIFilter andFilExp = filFactory.and(filFactory.eq("d/olingo.odata.test1.CTBase/AdditionalPropString", "ADD TEST"), 
+        filFactory.eq("d/olingo.odata.test1.CTBase/AdditionalPropString", "ADD TEST"));
+    final URIFilter filter = filFactory.match(
+        filArgFactory.any(filArgFactory.property("CollPropertyComp"), "d", andFilExp));
+    String strFilter = filter.build();
+    ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
+        .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_MIX_PRIM_COLL_COMP).filter(strFilter).build());
+    assertNotNull(request);
+    setCookieHeader(request);
+
+    final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
+    saveCookieHeader(response);
+    assertNotNull(response.getHeaderNames());
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertContentType(response.getContentType());
+
+    final ClientEntitySet entitySet = response.getBody();
+    assertNotNull(entitySet);
+
+    assertNull(entitySet.getCount());
+    assertNull(entitySet.getNext());
+    assertEquals(Collections.<ClientAnnotation> emptyList(), entitySet.getAnnotations());
+    assertNull(entitySet.getDeltaLink());
+
+    final List<ClientEntity> entities = entitySet.getEntities();
+    assertNotNull(entities);
+    assertEquals(3, entities.size());
+    final ClientEntity entity = entities.get(2);
+    assertNotNull(entity);
+    final ClientProperty property = entity.getProperty("CollPropertyComp");
+    assertNotNull(property);
+    assertEquals(3, property.getCollectionValue().size());
   }
 }

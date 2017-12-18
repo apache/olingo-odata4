@@ -90,5 +90,31 @@ public class FilterFactoryTest extends AbstractTest {
     assertEquals("(OrderDate ge " + Encoder.encode("2011-03-08T14:21:12-08:00") + ")",
         filter.build());
   }
+  
+  @Test
+  public void issue1144Any() {
+    URIFilter andFilExp = getFilterFactory().and(getFilterFactory().eq("d/Quantity", 100), 
+        getFilterFactory().eq("d/Quantity", 50));
+    final URIFilter filter = getFilterFactory().match(
+        getFilterArgFactory().any(getFilterArgFactory().property("Items"), "d", andFilExp));
+    assertEquals("Items/any(d:((d/Quantity eq 100) and (d/Quantity eq 50)))", filter.build());
+  }
 
+  @Test
+  public void all() {
+    final URIFilter filter = getFilterFactory().match(
+        getFilterArgFactory().all(getFilterArgFactory().property("Items"),
+            getFilterFactory().gt("d:d/Quantity", 100)));
+
+    assertEquals("Items/all(d:d/Quantity gt 100)", filter.build());
+  }
+  
+  @Test
+  public void issue1144All() {
+    URIFilter andFilExp = getFilterFactory().and(getFilterFactory().eq("d/Quantity", 100), 
+        getFilterFactory().eq("d/Quantity", 50));
+    final URIFilter filter = getFilterFactory().match(
+        getFilterArgFactory().all(getFilterArgFactory().property("Items"), "d", andFilExp));
+    assertEquals("Items/all(d:((d/Quantity eq 100) and (d/Quantity eq 50)))", filter.build());
+  }
 }
