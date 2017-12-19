@@ -90,6 +90,11 @@ public class URIBuilderImpl implements URIBuilder {
   protected final Map<String, String> queryOptions = new LinkedHashMap<String, String>();
 
   /**
+   * Insertion-order map of custom query options.
+   */
+  protected final Map<String, String> customQueryOptions = new LinkedHashMap<String, String>();
+  
+  /**
    * Insertion-order map of parameter aliases.
    */
   protected final Map<String, String> parameters = new LinkedHashMap<String, String>();
@@ -294,7 +299,7 @@ public class URIBuilderImpl implements URIBuilder {
     }
 
     try {
-      if ((queryOptions.size() + parameters.size()) > 0) {
+      if ((customQueryOptions.size() + queryOptions.size() + parameters.size()) > 0) {
         segmentsBuilder.append("?");
         List<NameValuePair> list1 = new LinkedList<NameValuePair>();
         for (Map.Entry<String, String> option : queryOptions.entrySet()) {
@@ -303,7 +308,9 @@ public class URIBuilderImpl implements URIBuilder {
         for (Map.Entry<String, String> parameter : parameters.entrySet()) {
           list1.add(new BasicNameValuePair("@" + parameter.getKey(), parameter.getValue()));
         }
-
+        for (Map.Entry<String, String> customOption : customQueryOptions.entrySet()) {
+          list1.add(new BasicNameValuePair(customOption.getKey(), customOption.getValue()));
+        }
         // don't use UriBuilder.build():
         // it will try to call URLEncodedUtils.format(Iterable<>,Charset) method,
         // which works in desktop java application, however, throws NoSuchMethodError in android OS,
@@ -457,5 +464,11 @@ public class URIBuilderImpl implements URIBuilder {
   @Override
   public URIBuilder expandWithSelect(final String expandItem, final String... selectItems) {
     return expand(expandItem + "($select=" + StringUtils.join(selectItems, ",") + ")");
+  }
+
+  @Override
+  public URIBuilder addCustomQueryOption(String customName, String customValue) {
+    customQueryOptions.put(customName, customValue);
+    return this;
   }
 }

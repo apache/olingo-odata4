@@ -384,4 +384,13 @@ public interface URIBuilder {
    * @return current URIBuilder instance
    */
   URIBuilder appendActionCallSegment(String action);
+  
+  /**
+   * Adds/Replaces the specified custom query option to the URI.
+   *
+   * @param option.
+   * @param value.
+   * @return current URIBuilder instance.
+   */
+  URIBuilder addCustomQueryOption(String customName, String customValue);
 }
