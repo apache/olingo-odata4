@@ -31,7 +31,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
  */
 public final class EdmDecimal extends SingletonPrimitiveType {
 
-  private static final Pattern PATTERN = Pattern.compile("(?:\\+|-)?(?:0*(\\p{Digit}+?))(?:\\.(\\p{Digit}+?)0*)?");
+  private static final Pattern PATTERN = Pattern.compile(
+          "(?:\\+|-)?(?:0*(\\p{Digit}+?))(?:\\.(\\p{Digit}+?)0*)?((?:E|e)(?:\\+|-)?\\p{Digit}+)?");
 
   private static final EdmDecimal INSTANCE = new EdmDecimal();
 
