@@ -78,4 +78,8 @@ public class UriParameterImpl implements UriParameter {
     return this;
   }
 
+  @Override
+  public String toString() {
+    return name;
+  }
 }
