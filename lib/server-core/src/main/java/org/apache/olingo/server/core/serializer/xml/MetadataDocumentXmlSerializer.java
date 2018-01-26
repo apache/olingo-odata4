@@ -137,6 +137,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String SCHEMA = "Schema";
   private static final String DATA_SERVICES = "DataServices";
   private static final String ABSTRACT = "Abstract";
+  private static final String OPEN_TYPE = "OpenType";
 
   private static final String XML_ANNOTATIONS = "Annotations";
 
@@ -773,6 +774,10 @@ public class MetadataDocumentXmlSerializer {
         writer.writeAttribute(ABSTRACT, TRUE);
       }
 
+      if (complexType.isOpenType()) {
+        writer.writeAttribute(OPEN_TYPE, TRUE);
+      }
+
       appendProperties(writer, complexType);
 
       appendNavigationProperties(writer, complexType);
@@ -799,6 +804,10 @@ public class MetadataDocumentXmlSerializer {
 
       if (entityType.isAbstract()) {
         writer.writeAttribute(ABSTRACT, TRUE);
+      }
+
+      if (entityType.isOpenType()) {
+        writer.writeAttribute(OPEN_TYPE, TRUE);
       }
 
       appendKey(writer, entityType);
