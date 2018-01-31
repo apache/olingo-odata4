@@ -49,8 +49,10 @@ public class ContentNegotiatorTest {
   static final private String ACCEPT_CASE_MIN_IEEE754 = ACCEPT_CASE_MIN + ";IEEE754Compatible=true";
   static final private String ACCEPT_CASE_JSONQ = "application/json;q=0.2";
   static final private String ACCEPT_CASE_XML = ContentType.APPLICATION_XML.toContentTypeString();
+  static final private String ACCEPT_CASE_JSON = ContentType.APPLICATION_JSON.toContentTypeString();
   static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
   static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
+  static final private String ACCEPT_CASE_JSON_IEEE754 = ACCEPT_CASE_JSON + ";IEEE754Compatible=true";
 
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
@@ -90,9 +92,25 @@ public class ContentNegotiatorTest {
       { ACCEPT_CASE_XML,        null,             ACCEPT_CASE_WILDCARD1, null             },
       { ACCEPT_CASE_XML,        null,             ACCEPT_CASE_WILDCARD2, null             },
       { "a/a",                  "a/a",            null,                  "a/a,b/b"        },
-      { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        }
+      { "a/a;x=y",              "a/a",            ACCEPT_CASE_WILDCARD1, "a/a;x=y"        },
+      { ACCEPT_CASE_JSON,       "json",           ACCEPT_CASE_JSON_IEEE754, null          },
+      { ACCEPT_CASE_JSON,       "json",           ACCEPT_CASE_WILDCARD1,   null           },
+      { ACCEPT_CASE_JSON,       "application/json",ACCEPT_CASE_JSON_IEEE754, null         },
+      { ACCEPT_CASE_JSON_IEEE754,null,            ACCEPT_CASE_JSON_IEEE754, null          },
+      { ACCEPT_CASE_JSON,        null,            ACCEPT_CASE_JSON,         null          }
   };
 
+  String[][] casesMetadataFail = {
+      /* expected               $format           accept                 modified content types */
+      { "Unsupported $format = json;IEEE754Compatible=true","json;IEEE754Compatible=true", null, null},
+      { "Unsupported $format = json;charset=ISO-8859-1","json;charset=ISO-8859-1",     null, null},
+      { "Unsupported or illegal Accept header value: json;"
+          + "charset=ISO-8859-1 != [application/xml, application/json]",null,
+          "json;charset=ISO-8859-1", null},
+      { "Unsupported $format = application/json;charset=ISO-8859-1",
+            "application/json;charset=ISO-8859-1",null, null},
+  };
+  
   String[][] casesFail = {
       /* expected               $format           accept                 modified content types */
       { null,                   "xxx/yyy",        null,                  null             },
@@ -126,9 +144,10 @@ public class ContentNegotiatorTest {
     testContentNegotiation(new String[] { ACCEPT_CASE_XML, null, null, null }, RepresentationType.METADATA);
   }
 
-  @Test(expected = ContentNegotiatorException.class)
-  public void metadataJsonFail() throws Exception {
-    testContentNegotiation(new String[] { null, "json", null, null }, RepresentationType.METADATA);
+  @Test
+  public void metadataJson() throws Exception {
+    testContentNegotiation(new String[] { ACCEPT_CASE_JSON, 
+        "application/json", null, null }, RepresentationType.METADATA);
   }
 
   @Test
@@ -144,6 +163,18 @@ public class ContentNegotiatorTest {
       try {
         testContentNegotiation(useCase, RepresentationType.COLLECTION_ENTITY);
         fail("Exception expected for '" + useCase[1] + '|' + useCase[2] + '|' + useCase[3] + "'!");
+      } catch (final ContentNegotiatorException e) {
+        // Expected Exception
+      }
+    }
+  }
+  
+  @Test
+  public void metadataFail() throws Exception {
+    for (String[] useCase : casesMetadataFail) {
+      try {
+        testContentNegotiation(useCase, RepresentationType.METADATA);
+        fail("Unsupported $format = " + useCase[1] + '|' + useCase[2] + '|' + useCase[3] + "'!");
       } catch (final ContentNegotiatorException e) {
         // Expected Exception
       }
@@ -191,10 +222,8 @@ public class ContentNegotiatorTest {
 
     final CustomContentTypeSupport customContentTypeSupport = useCase[3] == null ? null :
       createCustomContentTypeSupport(useCase[3]);
-
     final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(
-        formatOption, request, customContentTypeSupport, representationType);
-
+          formatOption, request, customContentTypeSupport, representationType);
     assertNotNull(requestedContentType);
     if (useCase[0] != null) {
       assertEquals(ContentType.create(useCase[0]), requestedContentType);

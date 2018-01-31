@@ -34,7 +34,9 @@ public final class ContentNegotiator {
 
   private static final String ATOM = "atom";
   private static final String JSON = "json";
+  private static final String APPLICATION_JSON = "application/json";
   private static final String XML = "xml";
+  private static final String METADATA = "METADATA";
 
   private static final List<ContentType> DEFAULT_SUPPORTED_CONTENT_TYPES =
       Collections.unmodifiableList(Arrays.asList(
@@ -50,7 +52,8 @@ public final class ContentNegotiator {
   private static List<ContentType> getDefaultSupportedContentTypes(final RepresentationType type) {
     switch (type) {
     case METADATA:
-      return Collections.singletonList(ContentType.APPLICATION_XML);
+      return Collections.unmodifiableList(Arrays.asList(ContentType.APPLICATION_XML,
+          ContentType.APPLICATION_JSON));
     case MEDIA:
     case BINARY:
       return Collections.singletonList(ContentType.APPLICATION_OCTET_STREAM);
@@ -88,7 +91,7 @@ public final class ContentNegotiator {
 
     if (formatOption != null && formatOption.getFormat() != null) {
       final String formatString = formatOption.getFormat().trim();
-      final ContentType contentType = mapContentType(formatString);
+      final ContentType contentType = mapContentType(formatString, representationType);
 
       try {
         result = getAcceptedType(
@@ -126,10 +129,19 @@ public final class ContentNegotiator {
     return result;
   }
 
-  private static ContentType mapContentType(final String formatString) {
-    return JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
+  private static ContentType mapContentType(final String formatString, 
+      RepresentationType representationType) {
+    if (representationType.name().equals(METADATA)) {
+      return JSON.equalsIgnoreCase(formatString) ||
+          APPLICATION_JSON.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_JSON :
         XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
-            ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
+          ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : null;
+    } else {
+      return JSON.equalsIgnoreCase(formatString) ? ContentType.JSON :
+          XML.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_XML :
+              ATOM.equalsIgnoreCase(formatString) ? ContentType.APPLICATION_ATOM_XML : 
+                APPLICATION_JSON.equalsIgnoreCase(formatString)? ContentType.APPLICATION_JSON: null;
+    }
   }
 
   private static ContentType getAcceptedType(final List<AcceptType> acceptedContentTypes,
