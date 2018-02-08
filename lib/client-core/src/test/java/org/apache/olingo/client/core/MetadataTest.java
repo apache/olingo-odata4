@@ -63,10 +63,12 @@ import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCollection;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlExpression;
 //CHECKSTYLE:OFF
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression.LogicalOrComparisonExpressionType;
 //CHECKSTYLE:ON
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlRecord;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlUrlRef;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDecimal;
@@ -480,5 +482,21 @@ public class MetadataTest extends AbstractTest {
     assertNull(providerLicensePractices.getRelatedBindingTarget("ProviderLicensePractice"));
     assertNull(providerLicensePractices.getRelatedBindingTarget("Provider"));
     assertNull(providerLicenses.getRelatedBindingTarget("ProviderLicense"));
+  }
+  
+  @Test
+  public void issueOLINGO1232() {
+    XMLMetadata xmlMetadata  = client.getDeserializer(ContentType.APPLICATION_XML).
+    toMetadata(getClass().getResourceAsStream("caps.products.CatalogService_default.xml"));
+    assertNotNull(xmlMetadata);
+    assertEquals(94, xmlMetadata.getSchema(0).getAnnotationGroups().size());
+    List<CsdlExpression> expressions = xmlMetadata.getSchema(0).getAnnotationGroups().get(0).
+        getAnnotation("UI.LineItem").getExpression().asDynamic().asCollection().getItems();
+    assertEquals(6, expressions.size());
+    CsdlRecord record = (CsdlRecord) expressions.get(0);
+    assertEquals("UI.DataField", record.getType());
+    assertEquals(1, record.getAnnotations().size());
+    assertEquals("Value", record.getPropertyValues().get(0).getProperty());
+    assertEquals("image", record.getPropertyValues().get(0).getValue().asDynamic().asPath().getValue());
   }
 }
