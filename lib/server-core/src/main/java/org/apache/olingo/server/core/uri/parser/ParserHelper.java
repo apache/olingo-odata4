@@ -600,4 +600,37 @@ public class ParserHelper {
           optionName, optionValue);
     }
   }
+  
+  protected static void validateFunctionParameterFacets(final EdmFunction function, 
+      final List<UriParameter> parameters, Edm edm, Map<String, AliasQueryOption> aliases) 
+          throws UriParserException, UriValidationException {
+    for (UriParameter parameter : parameters) {
+      EdmParameter edmParameter = function.getParameter(parameter.getName());
+      final EdmType type = edmParameter.getType();
+      final EdmTypeKind kind = type.getKind();
+      if ((kind == EdmTypeKind.PRIMITIVE || kind == EdmTypeKind.DEFINITION || kind == EdmTypeKind.ENUM)
+          && !edmParameter.isCollection()) {
+        final EdmPrimitiveType primitiveType = (EdmPrimitiveType) type;
+        String text = null;
+        try {
+          text = parameter.getAlias() == null ?
+              parameter.getText() :
+                aliases.containsKey(parameter.getAlias()) ?
+                    parseAliasValue(parameter.getAlias(),
+                        edmParameter.getType(), edmParameter.isNullable(), edmParameter.isCollection(),
+                        edm, type, aliases).getText() : null;
+          primitiveType.valueOfString(primitiveType.fromUriLiteral(text),
+              edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), 
+              edmParameter.getScale(), true,
+              edmParameter.getMapping() == null ?
+                  primitiveType.getDefaultType() :
+                    edmParameter.getMapping().getMappedJavaClass());
+        } catch (final EdmPrimitiveTypeException e) {
+          throw new UriValidationException(
+              "Invalid value '" + text + "' for parameter " + parameter.getName(), e,
+              UriValidationException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, parameter.getName());
+        }
+      }
+    }
+  }
 }

@@ -406,6 +406,7 @@ public class ResourcePathParser {
       }
     }
     ParserHelper.validateFunctionParameters(function, parameters, edm, null, aliases);
+    ParserHelper.validateFunctionParameterFacets(function, parameters, edm, aliases);
     UriResourceFunctionImpl resource = new UriResourceFunctionImpl(edmFunctionImport, function, parameters);
     if (tokenizer.next(TokenKind.OPEN)) {
       if (function.getReturnType() != null
