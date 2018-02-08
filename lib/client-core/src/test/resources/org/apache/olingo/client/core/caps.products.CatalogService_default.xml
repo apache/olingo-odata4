@@ -30,15 +30,6 @@ under the License.
   <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs02/vocabularies/Org.OData.Aggregation.V1.xml">
     <edmx:Include Alias="Aggregation" Namespace="Org.OData.Aggregation.V1"/>
   </edmx:Reference>
-  <edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/448470974/Common.xml?api=v2">
-    <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
-  </edmx:Reference>
-  <edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/448470971/Communication.xml?api=v2">
-    <edmx:Include Alias="Communication" Namespace="com.sap.vocabularies.Communication.v1"/>
-  </edmx:Reference>
-  <edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/448470968/UI.xml?api=v2">
-    <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
-  </edmx:Reference>
   <edmx:DataServices>
     <Schema Namespace="caps.products.CatalogService" Alias="caps.products.CatalogService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityContainer Name="EntityContainer">
