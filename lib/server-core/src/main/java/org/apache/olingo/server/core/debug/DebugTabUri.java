@@ -105,7 +105,11 @@ public class DebugTabUri implements DebugTab {
     } else if (uriInfo.getKind() == UriInfoKind.entityId) {
       appendType(gen, "typeCast", uriInfo.asUriInfoEntityId().getEntityTypeCast());
     }
-
+    
+    if (uriInfo.getDeltaTokenOption() != null) {
+      gen.writeStringField("deltatoken", uriInfo.getDeltaTokenOption().getValue());
+    }
+    
     if (uriInfo.getFormatOption() != null) {
       gen.writeStringField("format", uriInfo.getFormatOption().getFormat());
     }

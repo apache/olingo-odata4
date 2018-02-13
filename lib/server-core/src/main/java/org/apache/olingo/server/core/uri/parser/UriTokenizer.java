@@ -801,7 +801,7 @@ public class UriTokenizer {
    * otherwise leaves the index unchanged.
    * @return whether whitespace characters have been found at the current index
    */
-  private boolean nextWhitespace() {
+  boolean nextWhitespace() {
     int count = 0;
     while (nextCharacter(' ') || nextCharacter('\t')) {
       count++;

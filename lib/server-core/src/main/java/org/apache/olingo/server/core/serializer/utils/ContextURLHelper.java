@@ -57,7 +57,7 @@ public final class ContextURLHelper {
       handleSelect(type, select, result);
     }
 
-    if (ExpandSelectHelper.hasExpand(expand) && !ExpandSelectHelper.isExpandAll(expand)) {
+    if (ExpandSelectHelper.hasExpand(expand) && !(null != ExpandSelectHelper.getExpandAll(expand))) {
       handleExpand(type, expand, result);
     }
     return result.length() == 0 ? null : result.toString();
@@ -111,7 +111,7 @@ public final class ContextURLHelper {
       if (expandedPropertyNames.contains(propertyName)) {
         final ExpandItem expandItem = ExpandSelectHelper.getExpandItem(expand.getExpandItems(), propertyName);
         if (ExpandSelectHelper.hasExpand(expandItem.getExpandOption())
-            && !ExpandSelectHelper.isExpandAll(expandItem.getExpandOption())
+            && !(null != ExpandSelectHelper.getExpandAll(expandItem.getExpandOption()))
             || ExpandSelectHelper.hasSelect(expandItem.getSelectOption())) {
           final String innerSelectList = buildSelectList(type.getNavigationProperty(propertyName).getType(),
               expandItem.getExpandOption(), expandItem.getSelectOption());

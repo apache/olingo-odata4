@@ -57,7 +57,7 @@ public class SchemaProvider {
     // EntityTypes
     List<CsdlEntityType> entityTypes = new ArrayList<CsdlEntityType>();
     schema.setEntityTypes(entityTypes);
-    
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETDeriveCollComp));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAllPrim));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETAllPrimDefaultValues));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCollAllPrim));
@@ -86,6 +86,7 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCompMixPrimCollComp));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETKeyPrimNav));
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETStream));
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETDelta)); 
     
     // ComplexTypes
     List<CsdlComplexType> complexTypes = new ArrayList<CsdlComplexType>();
@@ -106,7 +107,10 @@ public class SchemaProvider {
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoBasePrimCompNav));
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCompNav));
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTNavCont));
-
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCompCollCompAno));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoPrimAno));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTBaseAno));
+    
     // Actions
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
     schema.setActions(actions);
@@ -124,6 +128,12 @@ public class SchemaProvider {
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoPrimRTCollCTAllPrim));
     actions.addAll(prov.getActions(ActionProvider.nameBAETCompAllPrimRTETCompAllPrim));
     actions.addAll(prov.getActions(ActionProvider.nameBAETTwoKeyNavRTETTwoKeyNavParam));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETMixPrimCollCompRTCTTwoPrim));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETBaseETTwoBaseRTETTwoBase));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETMixPrimCollCompCTTWOPrimCompRTCollCTTwoPrim));
+    actions.addAll(prov.getActions(ActionProvider.nameBAETMixPrimCollCompCTTWOPrimCompRTCTTwoPrim));
+    actions.addAll(prov.getActions(ActionProvider.
+        nameBAETTwoKeyNavCTBasePrimCompNavCTTwoBasePrimCompNavRTCTTwoBasePrimCompNav));
     actions.addAll(prov.getActions(ActionProvider.nameUARTString));
     actions.addAll(prov.getActions(ActionProvider.nameUARTCollStringTwoParam));
     actions.addAll(prov.getActions(ActionProvider.nameUARTCTTwoPrimParam));

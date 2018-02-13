@@ -93,6 +93,7 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESInvisible"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESServerSidePaging"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, ES_STREAM_SERVER_PAGINATION));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESCompCollDerived"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllNullable"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESKeyNav"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoKeyNav"));
@@ -106,6 +107,9 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESWithStream"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, ES_STREAM));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESPeople"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoPrimDerived"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllPrimDerived"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESDelta")); 
 
     // Singletons
     List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
@@ -327,6 +331,10 @@ public class ContainerProvider {
                 new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
                     new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
 
+      }  else if (name.equals("ESCompCollDerived")) {
+        return new CsdlEntitySet()
+            .setName("ESCompCollDerived")
+            .setType(EntityTypeProvider.nameETDeriveCollComp);                       
       } else if (name.equals("ESMedia")) {
         return new CsdlEntitySet()
             .setName("ESMedia")
@@ -653,7 +661,51 @@ public class ContainerProvider {
           .setType(EntityTypeProvider.nameETPeople)
           .setNavigationPropertyBindings(Arrays.asList(new CsdlNavigationPropertyBinding().setPath("friends")
             .setTarget("ESPeople")));
-      }
+      } else if (name.equals("ESTwoPrimDerived")) {
+        return new CsdlEntitySet()
+            .setName("ESTwoPrimDerived")
+            .setType(EntityTypeProvider.nameETTwoPrim)
+            .setNavigationPropertyBindings(Arrays.asList(
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETAllPrimOne")
+                    .setTarget("ESAllPrimDerived"),
+                new CsdlNavigationPropertyBinding()
+                    .setPath("NavPropertyETAllPrimMany")
+                    .setTarget("ESAllPrimDerived")))
+            .setAnnotations(Arrays.asList(
+                new CsdlAnnotation().setTerm("Core.Description")
+                    .setExpression(new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String)
+                        .setValue("Contains entities with two primitive types")),
+                new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                    new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))));
+      
+    } else if (name.equals("ESAllPrimDerived")) {
+      return new CsdlEntitySet()
+          .setName("ESAllPrimDerived")
+          .setType(EntityTypeProvider.nameETAllPrim)
+          .setTitle("All PropertyTypes EntitySet")
+          .setNavigationPropertyBindings(Arrays.asList(
+              new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimOne").setTarget("ESTwoPrimDerived"),
+              new CsdlNavigationPropertyBinding().setPath("NavPropertyETTwoPrimMany").setTarget("ESTwoPrimDerived")))
+          .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("Core.Description").setExpression(
+              new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.String,
+                  "Contains entities with all primitive types")),
+              new CsdlAnnotation().setTerm(TermProvider.TERM_DATA.getFullQualifiedNameAsString()).setExpression(
+                  new CsdlConstantExpression(CsdlConstantExpression.ConstantExpressionType.Bool, "true"))
+              ));
+    } else if (name.equals("ESDelta")) {
+      return new CsdlEntitySet()
+          .setName("ESDelta")
+          .setType(EntityTypeProvider.nameETTwoPrim)
+          .setNavigationPropertyBindings(Arrays.asList(
+              new CsdlNavigationPropertyBinding()
+                  .setPath("NavPropertyETAllPrimOne")
+                  .setTarget("ESAllPrim"),
+              new CsdlNavigationPropertyBinding()
+                  .setPath("NavPropertyETAllPrimMany")
+                  .setTarget("ESAllPrim")));
+
+    } 
     }
     return null;
   }

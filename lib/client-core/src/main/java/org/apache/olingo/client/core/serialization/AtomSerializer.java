@@ -127,6 +127,12 @@ public class AtomSerializer implements ODataSerializer {
       collection(writer, valueType.getBaseType(), kind, (List<?>) value);
       break;
     case COMPLEX:
+      if (((ComplexValue) value).getTypeName() != null) {
+        EdmTypeInfo typeInfo = new EdmTypeInfo.Builder().
+            setTypeExpression(((ComplexValue) value).getTypeName()).build();
+        writer.writeAttribute(Constants.PREFIX_METADATA, Constants.NS_METADATA,
+            Constants.ATTR_TYPE, typeInfo.external());
+      }
       for (Property property : ((ComplexValue) value).getValue()) {
         property(writer, property, false);
       }
@@ -148,7 +154,7 @@ public class AtomSerializer implements ODataSerializer {
     }
 
     EdmTypeInfo typeInfo = null;
-    if (property.getType() != null) {
+    if (property.getType() != null && !property.getValueType().name().equalsIgnoreCase("COMPLEX")) {
       typeInfo = new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build();
       if (!EdmPrimitiveTypeKind.String.getFullQualifiedName().toString().equals(typeInfo.internal())) {
         writer.writeAttribute(Constants.PREFIX_METADATA, Constants.NS_METADATA,

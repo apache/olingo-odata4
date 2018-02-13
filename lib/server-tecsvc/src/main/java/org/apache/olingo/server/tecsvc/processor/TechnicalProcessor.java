@@ -21,10 +21,13 @@ package org.apache.olingo.server.tecsvc.processor;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.edm.EdmBindingTarget;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
@@ -45,6 +48,8 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
+import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
+import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 /**
@@ -79,7 +84,7 @@ public abstract class TechnicalProcessor implements Processor {
     // First must be an entity, an entity collection, a function import, or an action import.
     blockTypeFilters(resourcePaths.get(0));
     if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
-      entitySet = ((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet();
+      entitySet = getEntitySetBasedOnTypeCast(((UriResourceEntitySet)resourcePaths.get(0)));
     } else if (resourcePaths.get(0) instanceof UriResourceFunction) {
       entitySet = ((UriResourceFunction) resourcePaths.get(0)).getFunctionImport().getReturnedEntitySet();
     } else if (resourcePaths.get(0) instanceof UriResourceAction) {
@@ -143,7 +148,8 @@ public abstract class TechnicalProcessor implements Processor {
     Entity entity = null;
     if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
       final UriResourceEntitySet uriResource = (UriResourceEntitySet) resourcePaths.get(0);
-      entity = dataProvider.read(uriResource.getEntitySet(), uriResource.getKeyPredicates());
+      EdmEntitySet entitySet = getEntitySetBasedOnTypeCast(uriResource);
+      entity = dataProvider.read(entitySet, uriResource.getKeyPredicates());
     }else if (resourcePaths.get(0) instanceof UriResourceSingleton) {
       final UriResourceSingleton uriResource = (UriResourceSingleton) resourcePaths.get(0);
       entity = dataProvider.read( uriResource.getSingleton());
@@ -205,6 +211,45 @@ public abstract class TechnicalProcessor implements Processor {
     return entity;
   }
 
+  protected EdmEntitySet getEntitySetBasedOnTypeCast(UriResourceEntitySet uriResource) {
+    EdmEntitySet entitySet = null;
+    EdmEntityContainer container = this.serviceMetadata.getEdm().getEntityContainer();
+    if (uriResource.getTypeFilterOnEntry() != null ||
+        uriResource.getTypeFilterOnCollection() != null) {
+      List<EdmEntitySet> entitySets = container.getEntitySets();
+      for (EdmEntitySet entitySet1 : entitySets) {
+        EdmEntityType entityType = entitySet1.getEntityType();
+        if ((uriResource.getTypeFilterOnEntry() != null && 
+            entityType.getName().equalsIgnoreCase(uriResource.getTypeFilterOnEntry().getName())) ||
+            (uriResource.getTypeFilterOnCollection() != null && 
+            entityType.getName().equalsIgnoreCase(uriResource.getTypeFilterOnCollection().getName()))) {
+          entitySet = entitySet1;
+          break;
+        }
+      }
+    } else {
+      entitySet = uriResource.getEntitySet();
+    }
+    return entitySet;
+  }
+  
+  protected List<DeletedEntity> readDeletedEntities(final UriInfoResource uriInfo) throws ODataApplicationException {
+    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+    return dataProvider.readDeletedEntities(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+  }
+
+
+  protected List<DeltaLink> readAddedLinks(final UriInfoResource uriInfo) throws ODataApplicationException {
+    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+    return dataProvider.readAddedLinks(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+  }
+  
+  protected List<DeltaLink> readDeletedLinks(final UriInfoResource uriInfo) throws ODataApplicationException {
+    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+    return dataProvider.readDeletedLinks(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+  }
+  
+  
   protected EntityCollection readEntityCollection(final UriInfoResource uriInfo) throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     if (resourcePaths.size() > 1 && resourcePaths.get(1) instanceof UriResourceNavigation) {
@@ -217,7 +262,26 @@ public abstract class TechnicalProcessor implements Processor {
         return dataProvider.readFunctionEntityCollection(uriResource.getFunction(), uriResource.getParameters(),
             uriInfo);
       } else {
-        return dataProvider.readAll(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+        if (uriInfo.getFilterOption() != null) {
+          if (uriInfo.getFilterOption().getExpression() instanceof Binary) {
+            Binary expression = (Binary) uriInfo.getFilterOption().getExpression();
+            if (expression.getLeftOperand() instanceof Member) {
+              Member member = (Member) expression.getLeftOperand();
+              if (member.getStartTypeFilter() != null) {
+                EdmEntityType entityType = (EdmEntityType) member.getStartTypeFilter();
+                EdmEntityContainer container = this.serviceMetadata.getEdm().getEntityContainer();
+                List<EdmEntitySet> entitySets = container.getEntitySets();
+                for (EdmEntitySet entitySet : entitySets) {
+                  if (entityType.getName().equals(entitySet.getEntityType().getName())) {
+                    return dataProvider.readAll(entitySet);
+                  }
+                }
+              }
+            }
+          }
+        }
+        EdmEntitySet entitySet = getEntitySetBasedOnTypeCast(((UriResourceEntitySet)resourcePaths.get(0)));
+        return dataProvider.readAll(entitySet);
       }
     }
   }
@@ -235,10 +299,7 @@ public abstract class TechnicalProcessor implements Processor {
   }
 
   private void blockTypeFilters(final UriResource uriResource) throws ODataApplicationException {
-    if (uriResource instanceof UriResourceEntitySet
-        && (((UriResourceEntitySet) uriResource).getTypeFilterOnCollection() != null
-        || ((UriResourceEntitySet) uriResource).getTypeFilterOnEntry() != null)
-        || uriResource instanceof UriResourceFunction
+    if (uriResource instanceof UriResourceFunction
         && (((UriResourceFunction) uriResource).getTypeFilterOnCollection() != null
         || ((UriResourceFunction) uriResource).getTypeFilterOnEntry() != null)
         || uriResource instanceof UriResourceNavigation

@@ -27,6 +27,8 @@ import java.util.List;
 public class ComplexValue extends Linked {
 
   private final List<Property> value = new ArrayList<Property>();
+  
+  private String typeName;
 
   /**
    * Get list of all values for this ComplexValue.
@@ -52,5 +54,21 @@ public class ComplexValue extends Linked {
   @Override
   public String toString() {
     return value.toString();
+  }
+  
+  /**
+   * Get string representation of type (can be null if not set).
+   * @return string representation of type (can be null if not set)
+   */
+  public String getTypeName() {
+    return typeName;
+  }
+
+  /**
+   * Set string representation of type.
+   * @param type string representation of type
+   */
+  public void setTypeName(final String typeName) {
+    this.typeName = typeName;
   }
 }

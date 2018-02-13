@@ -1,0 +1,33 @@
+{
+  "@odata.context": "$metadata#ESAllPrim/$entity",
+  "@odata.metadataEtag": "W/\"e5db7a43-370a-44d7-9600-9f0443e6e351\"",
+  "PropertyInt16": 32767,
+  "PropertyString": "First Resource - positive values",
+  "PropertyBoolean": true,
+  "PropertyByte": 255,
+  "PropertySByte": 127,
+  "PropertyInt32": 2147483647,
+  "PropertyInt64": 9223372036854775807,
+  "PropertySingle": 17900,
+  "PropertyDouble": -179000,
+  "PropertyDecimal": 34,
+  "PropertyBinary": "ASNFZ4mrze8=",
+  "PropertyDate": "2012-12-03",
+  "PropertyDateTimeOffset": "2012-12-03T07:16:23Z",
+  "PropertyDuration": "PT6S",
+  "PropertyGuid": "01234567-89ab-cdef-0123-456789abcdef",
+  "PropertyTimeOfDay": "03:26:05",
+  "NavPropertyETTwoPrimMany@odata.type": "#Collection(olingo.odata.test1.ETTwoPrim)",
+  "NavPropertyETTwoPrimMany": [
+    {
+      "@odata.type": "#olingo.odata.test1.ETBase",
+      "PropertyInt16": -365,
+      "PropertyString": "Test String2",
+      "AdditionalPropertyString_5": "ABC"
+    },
+    {
+      "@odata.type": "#olingo.odata.test1.ETBase",
+      "AdditionalPropertyString_5": "ABC"
+    }
+  ]
+}

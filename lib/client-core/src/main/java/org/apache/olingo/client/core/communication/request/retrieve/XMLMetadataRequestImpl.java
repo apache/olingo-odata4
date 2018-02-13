@@ -47,7 +47,7 @@ public class XMLMetadataRequestImpl
 
   @Override
   public ODataRetrieveResponse<XMLMetadata> execute() {
-    SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl(odataClient, uri, null);
+    SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl(odataClient, uri);
     if (getPrefer() != null) {
       rootReq.setPrefer(getPrefer());
     }
@@ -74,8 +74,7 @@ public class XMLMetadataRequestImpl
     for (Reference reference : rootRes.getBody().getReferences()) {
       final SingleXMLMetadatRequestImpl includeReq = new SingleXMLMetadatRequestImpl(
           odataClient,
-          odataClient.newURIBuilder(uri.resolve(reference.getUri()).toASCIIString()).build(),
-          uri);
+          odataClient.newURIBuilder(uri.resolve(reference.getUri()).toASCIIString()).build());
       final XMLMetadata includeMetadata = includeReq.execute().getBody();
 
       // edmx:Include
@@ -132,36 +131,19 @@ public class XMLMetadataRequestImpl
 
   private class SingleXMLMetadatRequestImpl extends AbstractMetadataRequestImpl<XMLMetadata> {
 
-    private final URI parentURI;
     private HttpResponse httpResponse;
 
-    public SingleXMLMetadatRequestImpl(final ODataClient odataClient, final URI uri, final URI parent) {
+    public SingleXMLMetadatRequestImpl(final ODataClient odataClient, final URI uri) {
       super(odataClient, uri);
-      parentURI = parent;
     }
 
     public HttpResponse getHttpResponse() {
       return httpResponse;
     }
 
-    /**
-     * Referenced document's URIs must only have the same scheme, host, and port as the
-     * main metadata document's URI but don't have to start with the service root
-     * as all other OData request URIs.
-     */
     @Override
     protected void checkRequest(final ODataClient odataClient, final HttpUriRequest request) {
-      if (parentURI == null) {
-        super.checkRequest(odataClient, request);
-      } else {
-        if (!parentURI.getScheme().equals(uri.getScheme())
-            || !parentURI.getAuthority().equals(uri.getAuthority())) {
-          throw new IllegalArgumentException(
-              String.format("The referenced EDMX document has the URI '%s'"
-                  + " where scheme, host, or port is different from the main metadata document URI '%s'.",
-                  uri.toASCIIString(), parentURI.toASCIIString()));
-        }
-      }
+      // override the parent check, as the reference urls in metadata can be spanning cross-site
     }
 
     @Override

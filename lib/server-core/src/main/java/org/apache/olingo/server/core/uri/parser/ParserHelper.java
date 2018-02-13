@@ -108,6 +108,10 @@ public class ParserHelper {
     requireNext(tokenizer, TokenKind.EOF);
   }
 
+  protected static boolean bws(UriTokenizer tokenizer) {
+    return tokenizer.nextWhitespace();
+  }
+  
   protected static TokenKind next(UriTokenizer tokenizer, final TokenKind... kinds) {
     for (final TokenKind kind : kinds) {
       if (tokenizer.next(kind)) {

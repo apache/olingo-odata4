@@ -33,6 +33,7 @@ import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceCount;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceRef;
@@ -57,6 +58,7 @@ import org.apache.olingo.server.core.uri.parser.search.SearchParser;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ApplyOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.CountOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.DeltaTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FilterOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
@@ -93,7 +95,7 @@ public class Parser {
       throws UriParserException, UriValidationException {
 
     UriInfoImpl contextUriInfo = new UriInfoImpl();
-
+   
     // Read the query options (system and custom options).
     // This is done before parsing the resource path because the aliases have to be available there.
     // System query options that can only be parsed with context from the resource path will be post-processed later.
@@ -101,8 +103,12 @@ public class Parser {
         query == null ? Collections.<QueryOption> emptyList() : UriDecoder.splitAndDecodeOptions(query);
     for (final QueryOption option : options) {
       final String optionName = option.getName();
+      String value = option.getText();
+      if(UriDecoder.isFormEncoding()){
+        value = getFormEncodedValue(value);
+      }
       // Parse the untyped option and retrieve a system-option or alias-option instance (or null for a custom option).
-      final QueryOption parsedOption = parseOption(optionName, option.getText());
+      final QueryOption parsedOption = parseOption(optionName, value);
       try {
         contextUriInfo.setQueryOption(parsedOption == null ? option : parsedOption);
       } catch (final ODataRuntimeException e) {
@@ -255,11 +261,16 @@ public class Parser {
       if (lastSegment instanceof UriResourcePartTyped) {
         final UriResourcePartTyped typed = (UriResourcePartTyped) lastSegment;
         contextType = ParserHelper.getTypeInformation(typed);
-        if (contextUriInfo.getIdOption() != null && contextType != null) {
-          if (contextType instanceof EdmEntityType) {
-            contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
-          }
-        }
+        if (contextType != null) {
+          if ((lastSegment instanceof UriResourceEntitySet && 
+              (((UriResourceEntitySet) lastSegment).getTypeFilterOnCollection() != null 
+              || ((UriResourceEntitySet) lastSegment).getTypeFilterOnEntry() != null)) 
+          || contextUriInfo.getIdOption() != null) {
+            if (contextType instanceof EdmEntityType) {
+              contextUriInfo.setEntityTypeCast((EdmEntityType) contextType);
+            }
+           }
+         }
         contextIsCollection = typed.isCollection();
       }
     }
@@ -281,6 +292,13 @@ public class Parser {
     parseSelectOption(contextUriInfo.getSelectOption(), contextType, contextIsCollection);
 
     return contextUriInfo;
+  }
+
+  private String getFormEncodedValue(String value) {
+    if(value.contains("+")){
+      value = value.replaceAll("\\+", " ");
+    }
+    return value;    
   }
 
   private QueryOption parseOption(final String optionName, final String optionValue)
@@ -325,6 +343,14 @@ public class Parser {
               optionName, optionValue);
         }
         systemOption = new SkipTokenOptionImpl().setValue(optionValue);
+        break;
+      case DELTATOKEN:
+        if (optionValue.isEmpty()) {
+          throw new UriParserSyntaxException("Illegal value of $deltatoken option!",
+              UriParserSyntaxException.MessageKeys.WRONG_VALUE_FOR_SYSTEM_QUERY_OPTION,
+              optionName, optionValue);
+        }
+        systemOption = new DeltaTokenOptionImpl().setValue(optionValue);
         break;
       case TOP:
         systemOption = new TopOptionImpl()

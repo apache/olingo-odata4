@@ -21,6 +21,7 @@ package org.apache.olingo.server.api.uri;
 import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
+import org.apache.olingo.server.api.uri.queryoption.DeltaTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
@@ -91,4 +92,9 @@ public interface UriInfoCrossjoin {
    * @return Object containing information of the $top option
    */
   TopOption getTopOption();
+  
+  /**
+   * @return Object containing information of the $deltatoken option
+   */
+  DeltaTokenOption getDeltaTokenOption();
 }

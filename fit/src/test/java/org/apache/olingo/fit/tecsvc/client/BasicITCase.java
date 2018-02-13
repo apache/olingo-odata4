@@ -29,14 +29,19 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
@@ -72,14 +77,18 @@ import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.edm.xml.Reference;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.api.uri.URIBuilder;
+import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmAnnotation;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.ex.ODataError;
@@ -108,7 +117,12 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   private static final String ES_TWO_PRIM = "ESTwoPrim";
   private static final String ES_KEY_NAV = "ESKeyNav";
   private static final String ES_MIX_PRIM_COLL_COMP = "ESMixPrimCollComp";
+  private static final String PROPERTY_COMP_NAV = "CollPropertyCompNav";
+  private static final String COL_PROPERTY_COMP = "CollPropertyComp";
+  private static final String PROPERTY_COMP_TWO_PRIM = "PropertyCompTwoPrim";
 
+  private static final String SERVICE_ROOT_URL = "http://localhost:9080/odata-server-tecsvc/";
+  
   @Test
   public void readServiceDocument() {
     ODataServiceDocumentRequest request = getClient().getRetrieveRequestFactory()
@@ -405,7 +419,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         property2.getPrimitiveValue().toValue());
     final ClientProperty property3 = entity.getProperty(PROPERTY_INT64);
     assertNotNull(property3);
-    assertNull(property3.getPrimitiveValue());
+    assertNull(property3.getPrimitiveValue().toValue());
     final ClientProperty property4 = entity.getProperty("PropertyDuration");
     assertNotNull(property4);
     assertEquals(isJson() ? "PT6S" : BigDecimal.valueOf(6), property4.getPrimitiveValue().toValue());
@@ -432,7 +446,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertShortOrInt(42, property1.getPrimitiveValue().toValue());
     final ClientProperty property2 = entity.getProperty(PROPERTY_DECIMAL);
     assertNotNull(property2);
-    assertNull(property2.getPrimitiveValue());
+    assertNull(property2.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -497,7 +511,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertNotNull(complex);
     final ClientProperty property = complex.get(PROPERTY_INT16);
     assertNotNull(property);
-    assertNull(property.getPrimitiveValue());
+    assertNull(property.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -527,7 +541,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertShortOrInt(42, property1.getPrimitiveValue().toValue());
     final ClientProperty property2 = createdEntity.getProperty(PROPERTY_DECIMAL);
     assertNotNull(property2);
-    assertNull(property2.getPrimitiveValue());
+    assertNull(property2.getPrimitiveValue().toValue());
   }
 
   @Test
@@ -1463,5 +1477,189 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     assertEquals(BigDecimal.valueOf(34), response.getBody().getPrimitiveValue().toValue());
+  }
+  
+  
+  @Test
+  public void test1Olingo1064() throws ODataDeserializerException {
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    assertNotNull(request);
+    setCookieHeader(request);    
+    
+    ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    Edm edm = response.getBody();
+    
+    EdmEnabledODataClient odataClient = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, edm, null);
+    final InputStream input = Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("ESCompAllPrimWithValueForComplexProperty.json");
+    ClientEntity entity = odataClient.getReader().readEntity(input, ContentType.JSON);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertNotNull(entity.getProperty(PROPERTY_COMP).getComplexValue());
+    assertEquals("olingo.odata.test1.CTAllPrim", entity.getProperty(PROPERTY_COMP).getComplexValue().getTypeName());
+    assertEquals(PROPERTY_COMP, entity.getProperty(PROPERTY_COMP).getName());
+    assertNull(entity.getProperty(PROPERTY_COMP).getComplexValue().get("PropertyString").
+        getPrimitiveValue().toValue());
+    assertNull(entity.getProperty(PROPERTY_COMP).getComplexValue().get("PropertyBoolean").
+        getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void test2Olingo1064() throws ODataDeserializerException {
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    assertNotNull(request);
+    setCookieHeader(request);    
+    
+    ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    Edm edm = response.getBody();
+    
+    EdmEnabledODataClient odataClient = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, edm, null);
+    final InputStream input = Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("ESCompAllPrimWithNullValueForComplexProperty.json");
+    ClientEntity entity = odataClient.getReader().readEntity(input, ContentType.JSON);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertNotNull(entity.getProperty(PROPERTY_COMP).getComplexValue());
+    assertEquals("olingo.odata.test1.CTAllPrim", entity.getProperty(PROPERTY_COMP).getComplexValue().getTypeName());
+    assertEquals(PROPERTY_COMP, entity.getProperty(PROPERTY_COMP).getName());
+    assertTrue(entity.getProperty(PROPERTY_COMP).hasNullValue());
+  }
+  
+  @Test
+  public void test3Olingo1064() throws ODataDeserializerException {
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    assertNotNull(request);
+    setCookieHeader(request);    
+    
+    ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    Edm edm = response.getBody();
+    
+    EdmEnabledODataClient odataClient = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, edm, null);
+    final InputStream input = Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("ESCompAllPrimWithEmptyValueForComplexProperty.json");
+    ClientEntity entity = odataClient.getReader().readEntity(input, ContentType.JSON);
+    assertEquals("olingo.odata.test1.CTAllPrim", entity.getProperty(PROPERTY_COMP).getComplexValue().getTypeName());
+    assertEquals(PROPERTY_COMP, entity.getProperty(PROPERTY_COMP).getName());
+    assertTrue(entity.getProperty(PROPERTY_COMP).hasNullValue());
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Test
+  public void test4Olingo1064() throws ODataDeserializerException {
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    assertNotNull(request);
+    setCookieHeader(request);    
+    
+    ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    Edm edm = response.getBody();
+    
+    EdmEnabledODataClient odataClient = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, edm, null);
+    final InputStream input = Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("ESTwoKeyNavWithNestedComplexTypes.json");
+    ClientEntity entity = odataClient.getReader().readEntity(input, ContentType.JSON);
+    assertEquals("olingo.odata.test1.CTPrimComp", entity.getProperty(PROPERTY_COMP).getComplexValue().getTypeName());
+    assertEquals(PROPERTY_COMP, entity.getProperty(PROPERTY_COMP).getName());
+    Map<String, Object> map = entity.getProperty(PROPERTY_COMP).getComplexValue().asJavaMap();
+    assertEquals(map.size(), 2);
+    assertEquals(((Map<String, Object>)map.get(PROPERTY_COMP)).size(), 16);
+    assertEquals("Collection(olingo.odata.test1.CTPrimComp)", entity.getProperty(COL_PROPERTY_COMP).
+        getCollectionValue().getTypeName());
+    assertEquals(0, entity.getProperty(COL_PROPERTY_COMP).getCollectionValue().size());
+    assertEquals("olingo.odata.test1.CTNavFiveProp", entity.getProperty(PROPERTY_COMP_NAV).
+        getComplexValue().getTypeName());
+    assertEquals("olingo.odata.test1.CTTwoPrim", entity.getProperty(PROPERTY_COMP_TWO_PRIM).
+        getComplexValue().getTypeName());
+  }
+  
+  @Test
+  public void testOLINGO975() throws ODataDeserializerException {
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    assertNotNull(request);
+    setCookieHeader(request);    
+    
+    ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    Edm edm = response.getBody();
+    
+    EdmEnabledODataClient odataClient = ODataClientFactory.getEdmEnabledClient(SERVICE_URI, edm, null);
+    final InputStream input = Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("OdataTypesInBaseAndDerivedTypes.json");
+    ClientEntity entity = odataClient.getReader().readEntity(input, ContentType.JSON);
+    assertEquals("NavPropertyETTwoPrimMany", entity.getNavigationLinks().get(0).getName());
+    assertNotNull(entity.getNavigationLinks().get(0).asInlineEntitySet());
+    assertEquals(2, entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().getEntities().size());
+    assertEquals(3, entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().getEntities().get(0).
+        getProperties().size());
+    assertEquals(1, entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().getEntities().get(1).
+        getProperties().size());
+    assertEquals("#olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
+        getEntities().get(0).getTypeName().toString());
+    assertEquals("#olingo.odata.test1.ETBase", entity.getNavigationLinks().get(0).asInlineEntitySet().getEntitySet().
+        getEntities().get(1).getTypeName().toString());
+    assertEquals("olingo.odata.test1.ETAllPrim", entity.getTypeName().toString());
+  }
+  
+  @Test
+  public void readViaXmlMetadataAnnotation() throws URISyntaxException, IOException {
+    InputStream input = Thread.currentThread().getContextClassLoader().
+        getResourceAsStream("edmxWithCoreAnnotation.xml");
+    final XMLMetadata metadata = getClient().getDeserializer(ContentType.APPLICATION_XML).toMetadata(input);
+    String vocabUrl = metadata.getReferences().get(0).getUri().toString();
+    vocabUrl = vocabUrl.substring(vocabUrl.indexOf("../") + 3);
+    vocabUrl = SERVICE_ROOT_URL + vocabUrl;
+    URI uri = new URI(vocabUrl);
+    input.close();
+    ODataRawRequest request = getClient().getRetrieveRequestFactory().getRawRequest(uri);
+    assertNotNull(request);
+    setCookieHeader(request);
+
+    ODataRawResponse response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    List<InputStream> streams = new ArrayList<InputStream>();
+    streams.add(response.getRawResponse());
+    Edm edm = getClient().getReader().readMetadata(metadata, streams);
+    assertNotNull(edm);
+    final EdmEntityType person = edm.getEntityType(
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Person"));
+    assertNotNull(person);
+    EdmProperty concurrency = (EdmProperty) person.getProperty("Concurrency");
+    List<EdmAnnotation> annotations = concurrency.getAnnotations();
+    for (EdmAnnotation annotation : annotations) {
+      annotation.getExpression();
+      EdmTerm term = annotation.getTerm();
+      assertNotNull(term);
+      assertEquals("Computed", term.getName());
+      assertEquals("Org.OData.Core.V1.Computed",
+          term.getFullQualifiedName().getFullQualifiedNameAsString());
+      assertEquals(1, term.getAnnotations().size());
+    }
+    EdmProperty userName = (EdmProperty) person.getProperty("UserName");
+    List<EdmAnnotation> userNameAnnotations = userName.getAnnotations();
+    for (EdmAnnotation annotation : userNameAnnotations) {
+      EdmTerm term = annotation.getTerm();
+      assertNotNull(term);
+      assertEquals("Permissions", term.getName());
+      assertEquals("Org.OData.Core.V1.Permissions",
+          term.getFullQualifiedName().getFullQualifiedNameAsString());
+      org.apache.olingo.commons.api.edm.annotation.EdmExpression expression = annotation.getExpression();
+      assertNotNull(expression);
+      assertTrue(expression.isConstant());
+      assertEquals("Org.OData.Core.V1.Permission/Read", expression.asConstant().getValueAsString());
+      assertEquals("EnumMember", expression.getExpressionName());
+  }
   }
 }

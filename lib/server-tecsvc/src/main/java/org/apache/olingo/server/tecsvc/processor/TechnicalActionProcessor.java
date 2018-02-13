@@ -20,6 +20,8 @@ package org.apache.olingo.server.tecsvc.processor;
 
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -31,8 +33,10 @@ import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -58,7 +62,10 @@ import org.apache.olingo.server.api.serializer.EntitySerializerOptions;
 import org.apache.olingo.server.api.serializer.PrimitiveSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriInfo;
+import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceAction;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.data.EntityActionResult;
 
@@ -79,13 +86,36 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   public void processActionEntityCollection(final ODataRequest request, final ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, ODataLibraryException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
-    EntityCollection collection =
-        dataProvider.processActionEntityCollection(action.getName(), parameters);
-
+    Map<String, Parameter> parameters = new HashMap<String, Parameter>();
+    EdmAction action = null;
+    EntityCollection collection = null;
+    List<UriResource> resourcePaths = uriInfo.asUriInfoResource().getUriResourceParts();
+    if (resourcePaths.size() > 1) {
+      UriResourceEntitySet boundEntityCollection = (UriResourceEntitySet) resourcePaths.get(0);
+      if (resourcePaths.get(1) instanceof UriResourceNavigation) {
+        UriResourceNavigation navResource = (UriResourceNavigation) resourcePaths.get(1);
+        EdmNavigationProperty navProperty = navResource.getProperty();
+        action = ((UriResourceAction) resourcePaths.get(2))
+            .getAction();
+        parameters = readParameters(action, request.getBody(), requestFormat);
+        collection =
+            dataProvider.processBoundActionWithNavEntityCollection(action.getName(), parameters, 
+                boundEntityCollection.getEntitySet(), navProperty);
+      } else if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
+        action = ((UriResourceAction) resourcePaths.get(1))
+            .getAction();
+        parameters = readParameters(action, request.getBody(), requestFormat);
+        collection =
+            dataProvider.processBoundActionEntityCollection(action.getName(), parameters, 
+                boundEntityCollection.getEntitySet());
+      }
+    } else {
+      action = ((UriResourceAction) resourcePaths.get(0))
+          .getAction();
+      parameters = readParameters(action, request.getBody(), requestFormat);
+      collection =
+          dataProvider.processActionEntityCollection(action.getName(), parameters);
+    }
     // Collections must never be null.
     // Not nullable return types must not contain a null value.
     if (collection == null
@@ -118,15 +148,57 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   public void processActionEntity(final ODataRequest request, final ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, ODataLibraryException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
+    EdmAction action = null;
+    Map<String, Parameter> parameters = new HashMap<String, Parameter>(); 
+    EntityActionResult entityResult = null;
+    
+    final List<UriResource> resourcePaths = uriInfo.asUriInfoResource().getUriResourceParts();
+    if (resourcePaths.size() > 1) {
+      UriResourceEntitySet boundEntity = (UriResourceEntitySet) resourcePaths.get(0);
+      EdmEntitySet entitySet = boundEntity.getEntitySet();
+      if (resourcePaths.get(1) instanceof UriResourceNavigation) {
+        UriResourceNavigation navEntity = (UriResourceNavigation) resourcePaths.get(1);
+        action = ((UriResourceAction) resourcePaths.get(2))
+            .getAction();
+        parameters = readParameters(action, request.getBody(), requestFormat);
+        if (navEntity.getTypeFilterOnEntry() != null) {
+          EdmEntityType edmEntityType = (EdmEntityType) navEntity.
+              getTypeFilterOnEntry();
+          entitySet = getTypeCastedEntitySet(entitySet, edmEntityType);
+          entityResult =
+              dataProvider.processBoundActionEntity(action.getName(), parameters, boundEntity.getKeyPredicates(),
+                  entitySet);
+        } else {
+          EdmNavigationProperty navProperty = navEntity.getProperty();
+          entityResult =
+              dataProvider.processBoundActionWithNavigationEntity(action.getName(), 
+                  parameters, boundEntity.getKeyPredicates(),
+                  entitySet, navProperty);
+        }
+      } else if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
+        UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0);
+        action = ((UriResourceAction) resourcePaths.get(1))
+            .getAction();
+        if (uriResourceEntitySet.getTypeFilterOnEntry() != null) {
+            EdmEntityType edmEntityType = (EdmEntityType) uriResourceEntitySet.
+                getTypeFilterOnEntry();
+            entitySet = getTypeCastedEntitySet(entitySet, edmEntityType);
+          }
+        parameters = readParameters(action, request.getBody(), requestFormat);
+        entityResult =
+            dataProvider.processBoundActionEntity(action.getName(), parameters, boundEntity.getKeyPredicates(),
+                entitySet);
+      }
+    } else {
+      action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
+          .getAction();
+      parameters = readParameters(action, request.getBody(), requestFormat);
+      entityResult =
+          dataProvider.processActionEntity(action.getName(), parameters);
+    }
     final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
     final EdmEntityType type = (EdmEntityType) action.getReturnType().getType();
 
-    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
-    final EntityActionResult entityResult =
-        dataProvider.processActionEntity(action.getName(), parameters);
     if (entityResult == null || entityResult.getEntity() == null) {
       if (action.getReturnType().isNullable()) {
         response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
@@ -169,17 +241,47 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       }
     }
   }
+  
+  /**
+   * @param entitySet
+   * @param edmType
+   * @param edmEntityType
+   * @return
+   */
+  private EdmEntitySet getTypeCastedEntitySet(EdmEntitySet entitySet, EdmEntityType edmEntityType) {
+    EdmEntityContainer container = serviceMetadata.getEdm().getEntityContainer();
+    List<EdmEntitySet> entitySets = container.getEntitySets();
+    for (EdmEntitySet enSet : entitySets) {
+      if (enSet.getEntityType().getFullQualifiedName().getFullQualifiedNameAsString().equals
+          (edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString())) {
+        entitySet = enSet;
+        break;
+      }
+    }
+    return entitySet;
+  }
 
   @Override
   public void processActionPrimitiveCollection(final ODataRequest request, ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, ODataLibraryException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
-    Property property =
-        dataProvider.processActionPrimitiveCollection(action.getName(), parameters);
+    EdmAction action = null;
+    Map<String, Parameter> parameters = null;
+    List<UriResource> uriResource = uriInfo.asUriInfoResource().getUriResourceParts();
+    Property property = null;
+    if (uriResource.size() > 1) {
+      UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) uriResource.get(0);
+      action = ((UriResourceAction) uriResource.get(uriResource.size() - 1)).getAction();
+      parameters = readParameters(action, request.getBody(), requestFormat);
+      property = dataProvider.processBoundActionPrimitiveCollection(action.getName(), parameters, 
+          uriResourceEntitySet.getEntitySet(), uriResourceEntitySet.getKeyPredicates());
+    } else {
+      action = ((UriResourceAction) uriResource.get(0))
+          .getAction();
+      parameters = readParameters(action, request.getBody(), requestFormat);
+      property =
+          dataProvider.processActionPrimitiveCollection(action.getName(), parameters);
+    }
 
     if (property == null || property.isNull()) {
       // Collection Propertys must never be null
@@ -214,11 +316,23 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   public void processActionPrimitive(final ODataRequest request, ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, ODataLibraryException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
-    Property property = dataProvider.processActionPrimitive(action.getName(), parameters);
+    EdmAction action = null;
+    Map<String, Parameter> parameters = null;
+    List<UriResource> uriResource = uriInfo.asUriInfoResource().getUriResourceParts();
+    Property property = null;
+    if (uriResource.size() > 1) {
+      UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) uriResource.get(0);
+      action = ((UriResourceAction) uriResource.get(uriResource.size() - 1)).getAction();
+      parameters = readParameters(action, request.getBody(), requestFormat);
+      property = dataProvider.processBoundActionPrimitive(action.getName(), parameters, 
+          uriResourceEntitySet.getEntitySet(), uriResourceEntitySet.getKeyPredicates());
+    } else {
+      action = ((UriResourceAction) uriResource.get(0))
+          .getAction();
+      parameters = readParameters(action, request.getBody(), requestFormat);
+      property = dataProvider.processActionPrimitive(action.getName(), parameters);
+    }
+    
     EdmPrimitiveType type = (EdmPrimitiveType) action.getReturnType().getType();
     if (property == null || property.isNull()) {
       if (action.getReturnType().isNullable()) {
@@ -252,13 +366,29 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   public void processActionComplexCollection(final ODataRequest request, ODataResponse response,
       final UriInfo uriInfo, final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, ODataLibraryException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
-    Property property =
-        dataProvider.processActionComplexCollection(action.getName(), parameters);
-
+    EdmAction action = null;
+    Map<String, Parameter> parameters = null;
+    Property property = null;
+    final List<UriResource> resourcePaths = uriInfo.asUriInfoResource().getUriResourceParts();
+    if (resourcePaths.size() > 1) {
+      if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
+        UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0);
+        EdmEntitySet entitySet = uriResourceEntitySet.getEntitySet();
+        action = ((UriResourceAction) resourcePaths.get(resourcePaths.size() - 1))
+            .getAction();
+        parameters = readParameters(action, request.getBody(), requestFormat);
+        property =
+            dataProvider.processBoundActionComplexCollection(action.getName(), parameters, entitySet, 
+                uriResourceEntitySet.getKeyPredicates());
+      }
+    } else {
+      action = ((UriResourceAction) resourcePaths.get(0))
+          .getAction();
+      parameters = readParameters(action, request.getBody(), requestFormat);
+      property =
+          dataProvider.processActionComplexCollection(action.getName(), parameters);
+    }
+    
     if (property == null || property.isNull()) {
       // Collection Propertys must never be null
       throw new ODataApplicationException("The action could not be executed.",
@@ -291,11 +421,28 @@ public class TechnicalActionProcessor extends TechnicalProcessor
   public void processActionComplex(final ODataRequest request, ODataResponse response, final UriInfo uriInfo,
       final ContentType requestFormat, final ContentType responseFormat)
       throws ODataApplicationException, ODataLibraryException {
-    blockBoundActions(uriInfo);
-    final EdmAction action = ((UriResourceAction) uriInfo.asUriInfoResource().getUriResourceParts().get(0))
-        .getAction();
-    final Map<String, Parameter> parameters = readParameters(action, request.getBody(), requestFormat);
-    Property property = dataProvider.processActionComplex(action.getName(), parameters);
+    EdmAction action = null;
+    Map<String, Parameter> parameters = null;
+    Property property = null;
+    final List<UriResource> resourcePaths = uriInfo.asUriInfoResource().getUriResourceParts();
+    if (resourcePaths.size() > 1) {
+      if (resourcePaths.get(0) instanceof UriResourceEntitySet) {
+        UriResourceEntitySet uriResourceEntitySet = (UriResourceEntitySet) resourcePaths.get(0);
+        EdmEntitySet entitySet = uriResourceEntitySet.getEntitySet();
+        action = ((UriResourceAction) resourcePaths.get(resourcePaths.size() - 1))
+            .getAction();
+        parameters = readParameters(action, request.getBody(), requestFormat);
+        property =
+            dataProvider.processBoundActionComplex(action.getName(), parameters, entitySet, 
+                uriResourceEntitySet.getKeyPredicates());
+      }
+    } else {
+      action = ((UriResourceAction) resourcePaths.get(0))
+          .getAction();
+      parameters = readParameters(action, request.getBody(), requestFormat);
+      property = dataProvider.processActionComplex(action.getName(), parameters);
+    }
+    
     EdmComplexType type = (EdmComplexType) action.getReturnType().getType();
     if (property == null || property.isNull()) {
       if (action.getReturnType().isNullable()) {
@@ -339,7 +486,8 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       final ContentType requestFormat) throws ODataApplicationException, DeserializerException {
     if (action.getParameterNames().size() - (action.isBound() ? 1 : 0) > 0) {
       checkRequestFormat(requestFormat);
-      return odata.createDeserializer(requestFormat).actionParameters(body, action).getActionParameters();
+      return odata.createDeserializer(requestFormat, serviceMetadata).
+          actionParameters(body, action).getActionParameters();
     }
     return Collections.<String, Parameter> emptyMap();
   }

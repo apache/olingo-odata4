@@ -1,0 +1,7 @@
+{
+  "@odata.context": "$metadata#ESCompAllPrim/$entity",
+  "@odata.metadataEtag": "W/\"2010a206-ee09-4cfb-9087-df530cdbb6ea\"",
+  "@odata.etag": "W/\"-32768\"",
+  "PropertyInt16": -32768,
+  "PropertyComp": { "PropertyString": null, "PropertyBoolean": null }
+}

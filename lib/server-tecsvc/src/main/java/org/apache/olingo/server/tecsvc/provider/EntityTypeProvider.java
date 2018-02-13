@@ -33,6 +33,8 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETAllKey = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAllKey");
   public static final FullQualifiedName nameETAllNullable = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETAllNullable");
+  public static final FullQualifiedName nameETDeriveCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "ETDeriveCollComp");
   public static final FullQualifiedName nameETAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAllPrim");
   public static final FullQualifiedName nameETAllPrimDefaultValues = new FullQualifiedName(SchemaProvider.NAMESPACE, 
          "ETAllPrimDefaultValues");
@@ -85,6 +87,8 @@ public class EntityTypeProvider {
       "ETMixEnumDefCollComp");
   public static final FullQualifiedName nameETStream = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETWithStream");
+  public static final FullQualifiedName nameETDelta =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETDelta"); 
   
   public static final FullQualifiedName nameETPeople = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETPeople");
 
@@ -169,6 +173,15 @@ public class EntityTypeProvider {
           .setProperties(Arrays.asList(
               PropertyProvider.propertyInt16_NotNullable, PropertyProvider.collPropertyString,
               PropertyProvider.propertyComp_CTTwoPrim, PropertyProvider.collPropertyComp_CTTwoPrim));
+
+    } else if (entityTypeName.equals(nameETDeriveCollComp)) {
+      return new CsdlEntityType()
+          .setName("ETDeriveCollComp")
+          .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+             PropertyProvider.propertyInt16_NotNullable,
+             PropertyProvider.propertyComp_CTTwoPrim_Ano,
+             PropertyProvider.collPropertyComp_CTTwoPrim_Ano));
 
     } else if (entityTypeName.equals(nameETTwoKeyTwoPrim)) {
       return new CsdlEntityType()
@@ -492,7 +505,16 @@ public class EntityTypeProvider {
             PropertyProvider.propertyId,
             PropertyProvider.propertyName))
           .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyFriends));
-    }
+    } else if (entityTypeName.equals(nameETDelta)) {
+      return new CsdlEntityType()
+          .setName("ETDelta")
+          .setBaseType(nameETTwoPrim)
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString))
+          .setNavigationProperties(
+              Arrays.asList(PropertyProvider.navPropertyETAllPrimOne_ETAllPrim,
+                  PropertyProvider.collectionNavPropertyETAllPrimMany_ETAllPrim));
+    } 
     return null;
   }
 }

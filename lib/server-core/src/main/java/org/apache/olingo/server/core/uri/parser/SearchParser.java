@@ -71,7 +71,9 @@ public class SearchParser {
 
   private SearchExpression processTerm(UriTokenizer tokenizer) throws SearchParserException {
     if (tokenizer.next(TokenKind.OPEN)) {
+      ParserHelper.bws(tokenizer);
       final SearchExpression expr = processExprOr(tokenizer);
+      ParserHelper.bws(tokenizer);
       if (!tokenizer.next(TokenKind.CLOSE)) {
         throw new SearchParserException("Missing close parenthesis after open parenthesis.",
             SearchParserException.MessageKeys.MISSING_CLOSE);

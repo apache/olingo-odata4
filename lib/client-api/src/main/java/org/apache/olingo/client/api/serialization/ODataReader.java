@@ -19,6 +19,7 @@
 package org.apache.olingo.client.api.serialization;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.olingo.client.api.data.ResWrap;
@@ -26,6 +27,7 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.ex.ODataError;
@@ -47,6 +49,23 @@ public interface ODataReader {
    * @return metadata representation.
    */
   Edm readMetadata(InputStream input);
+  
+  /**
+   * Parses a stream into metadata representation. 
+   * Also parses a term definition stream into Term representation.
+   * @param input
+   * @param termDefinitions
+   * @return
+   */
+  Edm readMetadata(InputStream input, List<InputStream> termDefinitions);
+
+  /**
+   * Fetches schema from metadata document and parses the document which includes term definitions
+   * @param metadata
+   * @param termDefinitions
+   * @return
+   */
+  Edm readMetadata(XMLMetadata metadata, List<InputStream> termDefinitions);
 
   /**
    * Parses a stream into metadata representation, including referenced metadata documents.
@@ -56,6 +75,14 @@ public interface ODataReader {
    * @return metadata representation.
    */
   Edm readMetadata(Map<String, CsdlSchema> xmlSchemas);
+  
+  /**
+   * Parses metadata document along with the document which includes term definitions
+   * @param xmlSchemas
+   * @param termDefinitionSchema
+   * @return
+   */
+  Edm readMetadata(Map<String, CsdlSchema> xmlSchemas, List<CsdlSchema> termDefinitionSchema);
 
   /**
    * Parses an OData service document.

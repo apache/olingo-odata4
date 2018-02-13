@@ -83,7 +83,12 @@ public enum SystemQueryOptionKind {
    * @see LevelsExpandOption
    */
   LEVELS("$levels"),
-
+  
+  /**
+   * @see deltaTokenOption
+   */
+  DELTATOKEN("$deltatoken"),
+  
   /**
    * @see ApplyOption
    */

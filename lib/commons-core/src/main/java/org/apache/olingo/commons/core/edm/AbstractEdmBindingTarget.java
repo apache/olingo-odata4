@@ -92,7 +92,7 @@ public abstract class AbstractEdmBindingTarget extends AbstractEdmNamed implemen
       if (binding.getPath() == null || binding.getTarget() == null) {
         throw new EdmException("Path or Target in navigation property binding must not be null!");
       }
-      if (path.startsWith(binding.getPath())) {
+      if (path.equals(binding.getPath())) {
         final Target edmTarget = new Target(binding.getTarget(), container);
 
         final EdmEntityContainer entityContainer = edm.getEntityContainer(edmTarget.getEntityContainer());

@@ -30,7 +30,7 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-lib</artifactId>
-    <version>4.4.0-SNAPSHOT</version>
+    <version>4.4.0</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -132,7 +132,7 @@
       <groupId>org.apache.olingo</groupId>
       <artifactId>odata-server-core</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <!-- <scope>runtime</scope> -->
     </dependency>
 
     <dependency>

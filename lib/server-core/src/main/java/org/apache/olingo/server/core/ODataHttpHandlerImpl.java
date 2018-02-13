@@ -57,6 +57,7 @@ import org.apache.olingo.server.core.debug.ServerCoreDebugger;
 public class ODataHttpHandlerImpl implements ODataHttpHandler {
 
   public static final int COPY_BUFFER_SIZE = 8192;
+  private static final String REQUESTMAPPING = "requestMapping";
 
   private final ODataHandlerImpl handler;
   private final ServerCoreDebugger debugger;
@@ -267,7 +268,12 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
     String rawRequestUri = httpRequest.getRequestURL().toString();
 
     String rawODataPath;
-    if (!"".equals(httpRequest.getServletPath())) {
+    //Application need to set the request mapping attribute if the request is coming from a spring based application
+    if(httpRequest.getAttribute(REQUESTMAPPING)!=null){
+      String requestMapping = httpRequest.getAttribute(REQUESTMAPPING).toString();
+      int beginIndex = rawRequestUri.indexOf(requestMapping) + requestMapping.length();
+      rawODataPath = rawRequestUri.substring(beginIndex);
+    }else if(!"".equals(httpRequest.getServletPath())) {
       int beginIndex = rawRequestUri.indexOf(httpRequest.getServletPath()) + httpRequest.getServletPath().length();
       rawODataPath = rawRequestUri.substring(beginIndex);
     } else if (!"".equals(httpRequest.getContextPath())) {

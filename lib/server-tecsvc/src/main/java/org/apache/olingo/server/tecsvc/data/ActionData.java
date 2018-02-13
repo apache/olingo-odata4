@@ -23,22 +23,32 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 
@@ -67,6 +77,25 @@ public class ActionData {
         HttpStatusCode.NOT_IMPLEMENTED);
   }
 
+  
+  protected static Property primitiveBoundAction(final String name, final Map<String, Parameter> parameters, 
+      final Map<String, EntityCollection> data, final EdmEntitySet edmEntitySet, final List<UriParameter> keyList)
+      throws DataProviderException {
+    List<Object> keyPropertyValues = new ArrayList<Object>();
+    List<String> keyPropertyNames = new ArrayList<String>();
+    if ("BAETTwoPrimRTString".equals(name)) {
+      if (!keyList.isEmpty()) {
+        setBindingPropertyKeyNameAndValue(keyList, edmEntitySet, keyPropertyValues, keyPropertyNames);
+        EntityCollection entityCollection = data.get(edmEntitySet.getName());
+        Entity entity = getSpecificEntity1(entityCollection, keyPropertyValues, keyPropertyNames);
+        Property property = entity.getProperty("PropertyString");
+        return property;
+      }
+    }
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
+  }
+  
   protected static Property primitiveCollectionAction(final String name, final Map<String, Parameter> parameters,
       final OData oData) throws DataProviderException {
     if ("UARTCollStringTwoParam".equals(name)) {
@@ -103,6 +132,26 @@ public class ActionData {
     throw new DataProviderException("Action " + name + " is not yet implemented.",
         HttpStatusCode.NOT_IMPLEMENTED);
   }
+  
+  protected static Property primitiveCollectionBoundAction(final String name, final Map<String, Parameter> parameters,
+      final Map<String, EntityCollection> data, 
+      EdmEntitySet edmEntitySet, List<UriParameter> keyList, final OData oData) throws DataProviderException {
+    List<Object> collectionValues = new ArrayList<Object>();
+    if ("BAETTwoPrimRTCollString".equals(name)) {
+      EdmPrimitiveType strType = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String);
+      try {
+        String strValue1 = strType.valueToString("ABC", false, 100, null, null, false);
+        collectionValues.add(strValue1);
+        String strValue2 = strType.valueToString("XYZ", false, 100, null, null, false);
+        collectionValues.add(strValue2);
+      } catch (EdmPrimitiveTypeException e) {
+        throw new DataProviderException("EdmPrimitiveTypeException", HttpStatusCode.BAD_REQUEST, e);
+      }
+      return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, collectionValues);
+    }
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
+  }
 
   private static String valueAsString(final Parameter parameter, final EdmPrimitiveTypeKind kind, final OData oData)
       throws EdmPrimitiveTypeException {
@@ -119,6 +168,22 @@ public class ActionData {
           (short) 32767 :
           (Short) paramInt16.asPrimitive();
       return createCTTwoPrimComplexProperty(name, number, "UARTCTTwoPrimParam string value");
+    }
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
+  }
+  
+  protected static Property complexBoundAction(final String name, final Map<String, Parameter> parameters,
+      final Map<String, EntityCollection> data, 
+      EdmEntitySet edmEntitySet, List<UriParameter> keyList)
+      throws DataProviderException {
+    if ("BAETTwoKeyNavCTBasePrimCompNavCTTwoBasePrimCompNavRTCTTwoBasePrimCompNav".equals(name)) {
+      if (!keyList.isEmpty()) {
+        return DataCreator.createComplex(name, 
+            ComplexTypeProvider.nameCTTwoBasePrimCompNav.getFullQualifiedNameAsString(), 
+            DataCreator.createPrimitive("PropertyInt16", 10),
+            createKeyNavAllPrimComplexValue("PropertyComp"));
+      }
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.",
         HttpStatusCode.NOT_IMPLEMENTED);
@@ -151,7 +216,58 @@ public class ActionData {
     throw new DataProviderException("Action " + name + " is not yet implemented.",
         HttpStatusCode.NOT_IMPLEMENTED);
   }
-
+  
+  @SuppressWarnings("unchecked")
+  protected static Property complexCollectionBoundAction(final String name, 
+      final Map<String, Parameter> parameters, final Map<String, EntityCollection> data, 
+      EdmEntitySet edmEntitySet, List<UriParameter> keyList) 
+          throws DataProviderException {
+    List<Object> keyPropertyValues = new ArrayList<Object>();
+    List<String> keyPropertyNames = new ArrayList<String>();
+    if ("BAETMixPrimCollCompRTCTTwoPrim".equals(name)) {
+      if (!keyList.isEmpty()) {
+        setBindingPropertyKeyNameAndValue(keyList, edmEntitySet, keyPropertyValues, keyPropertyNames);
+        EntityCollection entityCollection = data.get(edmEntitySet.getName());
+        Entity entity = getSpecificEntity1(entityCollection, keyPropertyValues, keyPropertyNames);
+        List<ComplexValue> complexProperties = (List<ComplexValue>) entity.getProperty("CollPropertyComp").
+            asCollection();
+        List<ComplexValue> complexParameters = (List<ComplexValue>) parameters.get("CollPropertyComp").
+            asCollection();
+        for (int i = 0; i < complexProperties.size() && i < complexParameters.size(); i++) {
+          List<Property> values = complexProperties.get(i).getValue();
+          List<Property> paramValues = complexParameters.get(i).getValue();
+          for (int j = 0; j < values.size() && j < paramValues.size(); j++) {
+            values.get(j).setValue(values.get(j).getValueType(), paramValues.get(j).asPrimitive());
+          }
+        }
+        return new Property(entity.getProperty("CollPropertyComp").getType(), 
+            entity.getProperty("CollPropertyComp").getName(), 
+            entity.getProperty("CollPropertyComp").getValueType(), complexProperties);
+      }
+    } else if ("BAETMixPrimCollCompCTTWOPrimCompRTCollCTTwoPrim".equals(name)) {
+      List<ComplexValue> complexCollection = new ArrayList<ComplexValue>();
+      if (!keyList.isEmpty()) {
+        setBindingPropertyKeyNameAndValue(keyList, edmEntitySet, keyPropertyValues, keyPropertyNames);
+        EntityCollection entityCollection = data.get(edmEntitySet.getName());
+        Entity entity = getSpecificEntity1(entityCollection, keyPropertyValues, keyPropertyNames);
+        ComplexValue complexValue = entity.getProperty("PropertyComp").asComplex();
+        ComplexValue paramComplexValue = parameters.get("PropertyComp").asComplex();
+        List<Property> complexProperties = complexValue.getValue();
+        List<Property> paramProperties = paramComplexValue.getValue();
+        for (int i = 0; i < complexProperties.size() && i < paramProperties.size(); i++) {
+          complexProperties.get(i).setValue(complexProperties.get(i).getValueType(), 
+              paramProperties.get(i).asPrimitive());
+        }
+        complexCollection.add(complexValue);
+        return new Property(entity.getProperty("PropertyComp").getType(), 
+            entity.getProperty("PropertyComp").getName(), 
+            ValueType.COLLECTION_COMPLEX, complexCollection);
+      }
+    }
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
+  }
+  
   protected static EntityActionResult entityAction(final String name, final Map<String, Parameter> parameters,
       final Map<String, EntityCollection> data, final OData oData, final Edm edm) throws DataProviderException {
     if ("UARTETTwoKeyTwoPrimParam".equals(name)) {
@@ -194,6 +310,154 @@ public class ActionData {
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.",
         HttpStatusCode.NOT_IMPLEMENTED);
+  }
+  
+  protected static EntityActionResult entityBoundAction(final String name, final Map<String, Parameter> parameters,
+      final Map<String, EntityCollection> data, final OData oData, final Edm edm, 
+      List<UriParameter> keyList, EdmEntitySet edmEntitySet) throws DataProviderException {
+    List<Object> keyPropertyValues = new ArrayList<Object>();
+    List<String> keyPropertyNames = new ArrayList<String>();
+    if ("BA_RTETTwoKeyNav".equals(name)) {
+      if (!keyList.isEmpty()) {
+        setBindingPropertyKeyNameAndValue(keyList, edmEntitySet, keyPropertyValues, keyPropertyNames);
+        EntityCollection entityCollection = data.get(edmEntitySet.getName());
+        Entity entity = null;
+        if (edmEntitySet.getName().equals("ESKeyNav")) {
+          entity = getSpecificEntity1(entityCollection, keyPropertyValues, keyPropertyNames);
+          Entity etTwoKeyNavEntity = 
+              createETTwoKeyNav((short)100, "String1", oData, edm);
+          Link link = new Link();
+          link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETTwoKeyNavOne");
+          link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+          link.setTitle("NavPropertyETTwoKeyNavOne");
+          link.setHref(etTwoKeyNavEntity.getId().toASCIIString());
+          link.setInlineEntity(etTwoKeyNavEntity);
+          entity.getNavigationLinks().add(link);
+          return new EntityActionResult().setEntity(etTwoKeyNavEntity);
+        } else {
+          entity = getSpecificEntity(entityCollection, keyPropertyValues, keyPropertyNames);
+          return new EntityActionResult().setEntity(entity);
+        }
+      }
+    } else if ("BAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav".equals(name)) {
+      if (!keyList.isEmpty()) {
+        setBindingPropertyKeyNameAndValue(keyList, edmEntitySet, keyPropertyValues, keyPropertyNames);
+        EdmEntityType entityTypeFqn = edmEntitySet.getEntityType().getBaseType();
+        List<EdmEntitySet> entitySets = edm.getEntityContainer().getEntitySets();
+        for (EdmEntitySet entitySet : entitySets) {
+          if (entitySet.getEntityType().getFullQualifiedName().getFullQualifiedNameAsString().equals
+              (entityTypeFqn.getFullQualifiedName().getFullQualifiedNameAsString())) {
+            edmEntitySet = entitySet;
+            break;
+          }
+        }
+        EntityCollection entityCollection = data.get(edmEntitySet.getName());
+        Entity entity = getSpecificEntity(entityCollection, keyPropertyValues, keyPropertyNames);
+        return new EntityActionResult().setEntity(entity).setCreated(true);
+      }
+    } else if ("BAETBaseETTwoBaseRTETTwoBase".equals(name)) {
+      if (!keyList.isEmpty()) {
+        setBindingPropertyKeyNameAndValue(keyList, edmEntitySet, keyPropertyValues, keyPropertyNames);
+        EntityCollection entityCollection = data.get(edmEntitySet.getName());
+        Entity entity = getSpecificEntity1(entityCollection, keyPropertyValues, keyPropertyNames);
+        Property property1 = entity.getProperty("PropertyString");
+        property1.setValue(property1.getValueType(), parameters.get("PropertyString").asPrimitive());
+        
+        Property property2 = entity.getProperty("AdditionalPropertyString_5");
+        property2.setValue(property2.getValueType(), parameters.get("AdditionalPropertyString_5").asPrimitive());
+        
+        Property property3 = entity.getProperty("AdditionalPropertyString_6");
+        property3.setValue(property3.getValueType(), parameters.get("AdditionalPropertyString_6").asPrimitive());
+        
+        return new EntityActionResult().setEntity(entity).setCreated(true);
+      }
+    } 
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
+  }
+  
+  protected static EntityActionResult entityBoundActionWithNavigation(final String name, 
+      final Map<String, Parameter> parameters,
+      final Map<String, EntityCollection> data, List<UriParameter> keyList, 
+      EdmEntitySet edmEntitySet, EdmNavigationProperty navProperty) 
+          throws DataProviderException {
+    List<Object> keyPropertyValues = new ArrayList<Object>();
+    List<String> keyPropertyNames = new ArrayList<String>();
+    if ("BAETTwoKeyNavRTETTwoKeyNavParam".equals(name)) {
+      if (!keyList.isEmpty()) {
+        setBindingPropertyKeyNameAndValue(keyList, edmEntitySet, keyPropertyValues, keyPropertyNames);
+        EntityCollection entityCollection = data.get(edmEntitySet.getName());
+        Entity entity = getSpecificEntity(entityCollection, keyPropertyValues, keyPropertyNames);
+        
+        Link link = entity.getNavigationLink(navProperty.getName());
+        Entity inlineEntity = link.getInlineEntity();
+        ComplexValue complexValue = inlineEntity.getProperty("PropertyComp").asComplex();
+        List<Property> complexProperties = complexValue.getValue();
+        Iterator<Property> itr = complexProperties.iterator();
+        Parameter actionParam = parameters.get("PropertyComp");
+        Property actionProp = actionParam.asComplex().getValue().get(0);
+        while (itr.hasNext()) {
+          Property property = itr.next();
+          if (property.getName().equals(actionProp.getName())) {
+            property.setValue(actionProp.getValueType(), actionProp.getValue());
+            break;
+          }
+        }
+        return new EntityActionResult().setEntity(inlineEntity);
+        }
+    }
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
+  }
+
+  private static Entity getSpecificEntity(EntityCollection entityCollection, List<Object> values, 
+      List<String> propertyNames) throws DataProviderException {
+    for (Entity entity : entityCollection.getEntities()) {
+      Object asPrimitive1 = entity.getProperty(propertyNames.get(0)).asPrimitive();
+      Object asPrimitive2 = entity.getProperty(propertyNames.get(1)).asPrimitive();
+      if (values.get(0).equals(String.valueOf(asPrimitive1)) && 
+          values.get(1).equals(String.valueOf(asPrimitive2))) {
+        return entity;
+      }
+    }
+    // Entity Not found
+    throw new DataProviderException("Entity not found with key: " + values.get(0) +
+        "," + values.get(1), HttpStatusCode.NOT_FOUND);
+  }
+
+  private static Entity getSpecificEntity1(EntityCollection entityCollection, List<Object> values, 
+      List<String> propertyNames) throws DataProviderException {
+    for (Entity entity : entityCollection.getEntities()) {
+      Object asPrimitive1 = entity.getProperty(propertyNames.get(0)).asPrimitive();
+      if (values.get(0).equals(String.valueOf(asPrimitive1))) {
+        return entity;
+      }
+    }
+    // Entity Not found
+    throw new DataProviderException("Entity not found with key: " + values.get(0), 
+        HttpStatusCode.NOT_FOUND);
+  }
+  
+  /**
+   * @param keyList
+   * @param edmEntitySet
+   * @param values
+   * @param propertyNames
+   * @throws DataProviderException
+   */
+  private static void setBindingPropertyKeyNameAndValue(List<UriParameter> keyList, EdmEntitySet edmEntitySet,
+      List<Object> values, List<String> propertyNames) throws DataProviderException {
+    for (final UriParameter key : keyList) {
+      EdmKeyPropertyRef refType = edmEntitySet.getEntityType().getKeyPropertyRef(key.getName());
+      final EdmProperty property = refType.getProperty();
+      final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
+      try {
+        values.add(type.fromUriLiteral(key.getText()));
+      } catch (EdmPrimitiveTypeException e) {
+        throw new DataProviderException("Wrong key!", HttpStatusCode.BAD_REQUEST, e);
+      }
+      propertyNames.add(key.getName());
+    }
   }
 
   private static Entity createAllPrimEntity(final Short key, final String val, final Calendar date,
@@ -247,6 +511,73 @@ public class ActionData {
         HttpStatusCode.NOT_IMPLEMENTED);
   }
 
+  protected static EntityCollection entityCollectionBoundAction(final String name, 
+      final Map<String, Parameter> parameters,
+      Map<String, EntityCollection> data, final OData oData, final Edm edm, EdmEntitySet edmEntitySet) 
+          throws DataProviderException {
+    if ("BAESTwoKeyNavRTESTwoKeyNav".equals(name)) {
+      EntityCollection collection = data.get(edmEntitySet.getName());
+      collection.getEntities().add(createETTwoKeyNav((short)111, "newValue", oData, edm));
+      return collection;
+    }
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
+  }
+  
+  protected static EntityCollection entityCollectionBoundActionWithNav(final String name, 
+      final Map<String, Parameter> parameters, Map<String, EntityCollection> data, 
+      final OData oData, final Edm edm, EdmEntitySet edmEntitySet, EdmNavigationProperty navProperty) 
+          throws DataProviderException {
+    throw new DataProviderException("Action " + name + " is not yet implemented.",
+        HttpStatusCode.NOT_IMPLEMENTED);
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static Entity createETTwoKeyNav (final short number, final String value, final OData oData,
+      final Edm edm) throws DataProviderException {
+    Entity entity = new Entity()
+        .addProperty(DataCreator.createPrimitive("PropertyInt16", number))
+        .addProperty(DataCreator.createPrimitive("PropertyString", value))
+        .addProperty(DataCreator.createComplex("PropertyComp",
+            ComplexTypeProvider.nameCTPrimComp.getFullQualifiedNameAsString(),
+            DataCreator.createPrimitive("PropertyInt16", 11),
+            DataCreator.createComplex("PropertyComp",
+                ComplexTypeProvider.nameCTAllPrim.getFullQualifiedNameAsString(),
+                DataCreator.createPrimitive("PropertyString", "StringValue"),
+                DataCreator.createPrimitive("PropertyBinary", new byte[] { 1, 35, 69, 103, -119, -85, -51, -17 }),
+                DataCreator.createPrimitive("PropertyBoolean", true),
+                DataCreator.createPrimitive("PropertyByte", (short) 255),
+                DataCreator.createPrimitive("PropertyDate", null),
+                DataCreator.createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)),
+                DataCreator.createPrimitive("PropertySingle", (float) 179000000000000000000D),
+                DataCreator.createPrimitive("PropertyDouble", -179000000000000000000D),
+                DataCreator.createPrimitive("PropertyDuration", BigDecimal.valueOf(6)),
+                DataCreator.createPrimitive("PropertyGuid", UUID.fromString("01234567-89ab-cdef-0123-456789abcdef")),
+                DataCreator.createPrimitive("PropertyInt16", Short.MAX_VALUE),
+                DataCreator.createPrimitive("PropertyInt32", Integer.MAX_VALUE),
+                DataCreator.createPrimitive("PropertyInt64", Long.MAX_VALUE),
+                DataCreator.createPrimitive("PropertySByte", Byte.MAX_VALUE),
+                DataCreator.createPrimitive("PropertyTimeOfDay", null))))
+        .addProperty(DataCreator.createComplex("PropertyCompNav",
+            ComplexTypeProvider.nameCTBasePrimCompNav.getFullQualifiedNameAsString(),
+            DataCreator.createPrimitive("PropertyInt16", (short) 1),
+            createKeyNavAllPrimComplexValue("PropertyComp")))
+        .addProperty(DataCreator.createComplexCollection("CollPropertyComp", null))
+        .addProperty(DataCreator.createComplexCollection("CollPropertyCompNav",
+            ComplexTypeProvider.nameCTNavFiveProp.getFullQualifiedNameAsString(),
+            Arrays.asList(
+                DataCreator.createPrimitive("PropertyInt16", (short) 1))))
+        .addProperty(DataCreator.createPrimitiveCollection("CollPropertyString",
+            "1",
+            "2"))
+        .addProperty(DataCreator.createComplex("PropertyCompTwoPrim",
+            ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+            DataCreator.createPrimitive("PropertyInt16", (short) 11),
+            DataCreator.createPrimitive("PropertyString", "11")));
+    setEntityId(entity, "ESTwoKeyNav", oData, edm);
+    return entity;
+  }
+  
   @SuppressWarnings("unchecked")
   private static Entity createETKeyNavEntity(final Short number, final OData oData, final Edm edm)
       throws DataProviderException {
@@ -274,7 +605,7 @@ public class ActionData {
     setEntityId(entity, "ESKeyNav", oData, edm);
     return entity;
   }
-
+  
   private static void setEntityId(Entity entity, final String entitySetName, final OData oData, final Edm edm)
       throws DataProviderException {
     try {

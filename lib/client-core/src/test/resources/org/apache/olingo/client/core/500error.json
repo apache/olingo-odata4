@@ -1,0 +1,10 @@
+{
+  "error": {
+    "code": "500",
+    "message": "Internal Server Error",
+    "innererror": {
+      "type": "FaultException",
+      "message": "Method does not support entities of specific type"
+    }
+  }
+}

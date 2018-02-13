@@ -21,7 +21,6 @@ package org.apache.olingo.client.core.uri;
 import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -33,6 +32,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
+import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.EdmEnumTypeImpl;
 import org.junit.Test;
 
@@ -62,7 +62,7 @@ public class URIEscapeTest {
     calendar.clear();
     calendar.set(2014, 6, 11, 12, 30, 04);
 
-    assertEquals(URLEncoder.encode("2014-07-11T12:30:04+01:00", Constants.UTF8),
+    assertEquals(Encoder.encode("2014-07-11T12:30:04+01:00"),
         URIUtils.escape( calendar));
   }
 
@@ -72,7 +72,7 @@ public class URIEscapeTest {
     point.setX(142.1);
     point.setY(64.1);
 
-    assertEquals(URLEncoder.encode("geography'SRID=4326;Point(142.1 64.1)'", Constants.UTF8),
+    assertEquals(Encoder.encode("geography'SRID=4326;Point(142.1 64.1)'"),
         URIUtils.escape( point));
   }
 

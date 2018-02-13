@@ -74,6 +74,25 @@ public class ActionProvider {
   public static final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNavParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETTwoKeyNavRTETTwoKeyNavParam");
   
+  public static final FullQualifiedName nameBAETBaseETTwoBaseRTETTwoBase =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETBaseETTwoBaseRTETTwoBase");
+  
+  public static final FullQualifiedName nameBAETMixPrimCollCompRTCTTwoPrim =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETMixPrimCollCompRTCTTwoPrim");
+  
+  public static final FullQualifiedName nameBAETMixPrimCollCompCTTwoPrimRTCTTwoPrim = 
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETMixPrimCollCompCTTwoPrimRTCTTwoPrim");
+  
+  public static final FullQualifiedName nameBAETMixPrimCollCompCTTWOPrimCompRTCTTwoPrim =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETMixPrimCollCompCTTWOPrimCompRTCTTwoPrim");
+  
+  public static final FullQualifiedName nameBAETMixPrimCollCompCTTWOPrimCompRTCollCTTwoPrim = 
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BAETMixPrimCollCompCTTWOPrimCompRTCollCTTwoPrim");
+  
+  public static final FullQualifiedName 
+  nameBAETTwoKeyNavCTBasePrimCompNavCTTwoBasePrimCompNavRTCTTwoBasePrimCompNav = 
+      new FullQualifiedName(SchemaProvider.NAMESPACE, 
+          "BAETTwoKeyNavCTBasePrimCompNavCTTwoBasePrimCompNavRTCTTwoBasePrimCompNav");
   // Unknown Actions
   public static final FullQualifiedName name_A_RTTimeOfDay_ =
      new FullQualifiedName(SchemaProvider.NAMESPACE, "_A_RTTimeOfDay_");
@@ -109,7 +128,7 @@ public class ActionProvider {
         nameBAETTwoBaseTwoKeyNavRTETBaseTwoKeyNav, nameBA_RTETTwoKeyNav,nameBAESAllPrimRT, 
         nameBAETAllPrimRT, nameBAETTwoPrimRTString, nameBAETTwoPrimRTCollString, nameBAETTwoPrimRTCTAllPrim,
         nameBAETTwoPrimRTCollCTAllPrim, nameBAETCompAllPrimRTETCompAllPrim, nameBAETTwoKeyNavRTETTwoKeyNavParam, 
-        name_A_RTTimeOfDay_ };
+        nameBAETBaseETTwoBaseRTETTwoBase, nameBAETMixPrimCollCompRTCTTwoPrim, name_A_RTTimeOfDay_ };
     
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
     for (FullQualifiedName fqn:actionNames) {
@@ -404,10 +423,67 @@ public class ActionProvider {
               .setParameters(Arrays.asList(
                   new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
                       .setNullable(false),
-                  new CsdlParameter().setName("ParameterInt16").setType(PropertyProvider.nameInt16)
+                  new CsdlParameter().setName("PropertyComp").setType(ComplexTypeProvider.nameCTPrimComp)
                       .setNullable(false)))
               .setReturnType(new CsdlReturnType().setType(EntityTypeProvider.nameETTwoKeyNav)));
-    }    
+    } else if (actionName.equals(nameBAETBaseETTwoBaseRTETTwoBase)) {
+      return Collections.singletonList(
+          new CsdlAction().setName(nameBAETBaseETTwoBaseRTETTwoBase.getName())
+              .setBound(true)
+              .setEntitySetPath("BindingParam/olingo.odata.test1.ETTwoBase")
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETBase)
+                      .setNullable(false),
+                  new CsdlParameter().setName("PropertyString").setType(PropertyProvider.nameString)
+                      .setNullable(false),
+                  new CsdlParameter().setName("AdditionalPropertyString_5").setType(PropertyProvider.nameString)
+                      .setNullable(false),
+                  new CsdlParameter().setName("AdditionalPropertyString_6").setType(PropertyProvider.nameString)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType().setType(EntityTypeProvider.nameETTwoBase)));
+    } else if (actionName.equals(nameBAETMixPrimCollCompRTCTTwoPrim)) {
+      return Collections.singletonList(
+          new CsdlAction().setName(nameBAETMixPrimCollCompRTCTTwoPrim.getName())
+              .setBound(true)
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETMixPrimCollComp)
+                      .setNullable(false),
+                  new CsdlParameter().setName("CollPropertyComp").setType(ComplexTypeProvider.nameCTTwoPrim)
+                      .setNullable(false).setCollection(true)))
+              .setReturnType(new CsdlReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true)));
+    } else if (actionName.equals(nameBAETMixPrimCollCompCTTWOPrimCompRTCTTwoPrim)) {
+      return Collections.singletonList(
+          new CsdlAction().setName(nameBAETMixPrimCollCompCTTWOPrimCompRTCTTwoPrim.getName())
+              .setBound(true)
+              .setEntitySetPath("BindingParam")
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETMixPrimCollComp)
+                      .setNullable(false),
+                  new CsdlParameter().setName("PropertyComp").setType(ComplexTypeProvider.nameCTTwoPrim)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType().setType(ComplexTypeProvider.nameCTTwoPrim)));
+    } else if (actionName.equals(nameBAETMixPrimCollCompCTTWOPrimCompRTCollCTTwoPrim)) {
+      return Collections.singletonList(
+          new CsdlAction().setName(nameBAETMixPrimCollCompCTTWOPrimCompRTCollCTTwoPrim.getName())
+              .setBound(true)
+              .setEntitySetPath("BindingParam/CollPropertyComp")
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETMixPrimCollComp)
+                      .setNullable(false).setCollection(true),
+                  new CsdlParameter().setName("PropertyComp").setType(ComplexTypeProvider.nameCTTwoPrim)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType().setType(ComplexTypeProvider.nameCTTwoPrim).setCollection(true)));
+    } else if (actionName.equals(nameBAETTwoKeyNavCTBasePrimCompNavCTTwoBasePrimCompNavRTCTTwoBasePrimCompNav)) {
+      return Collections.singletonList(
+          new CsdlAction().setName(
+              nameBAETTwoKeyNavCTBasePrimCompNavCTTwoBasePrimCompNavRTCTTwoBasePrimCompNav.getName())
+              .setBound(true)
+              .setEntitySetPath("BindingParam/PropertyCompNav/olingo.odata.test1.CTTwoBasePrimCompNav")
+              .setParameters(Arrays.asList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
+                      .setNullable(false)))
+              .setReturnType(new CsdlReturnType().setType(ComplexTypeProvider.nameCTTwoBasePrimCompNav)));
+    }
     return null;
   }
 }

@@ -905,6 +905,9 @@ public class UriParserTest {
     // OLINGO-846 trim query option value
     testUri.run("ESAllPrim", "$filter= PropertyInt16 eq 12 ")
         .isKind(UriInfoKind.resource).goFilter().isBinary(BinaryOperatorKind.EQ).is("<<PropertyInt16> eq <12>>");
+    
+    testUri.run("ESAllPrim", "%20$filter%20=%20PropertyInt16%20%20eq%2012%20")
+      .isKind(UriInfoKind.resource).goFilter().isBinary(BinaryOperatorKind.EQ).is("<<PropertyInt16> eq <12>>");    
   }
 
   @Test

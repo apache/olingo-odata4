@@ -47,6 +47,7 @@ import org.apache.olingo.server.api.uri.UriResourceRoot;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.UriResourceValue;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
+import org.apache.olingo.server.api.uri.queryoption.DeltaTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
@@ -259,7 +260,10 @@ public class RequestURLHierarchyVisitor implements RequestURLVisitor {
     if (info.getSkipTokenOption() != null) {
       visit(info.getSkipTokenOption());
     }
-
+    
+    if (info.getDeltaTokenOption() != null) {
+      visit(info.getDeltaTokenOption());
+    }
   }
 
   @Override
@@ -313,7 +317,11 @@ public class RequestURLHierarchyVisitor implements RequestURLVisitor {
   @Override
   public void visit(UriResourceRef info) {
   }
-
+  
+  @Override
+  public void visit(DeltaTokenOption option) {
+  }
+  
   @Override
   public void visit(UriResourceRoot info) {
   }

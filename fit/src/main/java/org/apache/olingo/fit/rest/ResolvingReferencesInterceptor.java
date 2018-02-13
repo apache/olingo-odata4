@@ -18,15 +18,14 @@
  */
 package org.apache.olingo.fit.rest;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
+import org.apache.olingo.commons.core.Decoder;
 
 public class ResolvingReferencesInterceptor extends AbstractPhaseInterceptor<Message> {
 
@@ -39,21 +38,17 @@ public class ResolvingReferencesInterceptor extends AbstractPhaseInterceptor<Mes
     final String path = (String) message.get(Message.PATH_INFO);
     final String query = (String) message.get(Message.QUERY_STRING);
 
-    try {
-      if (path.endsWith("$entity") && StringUtils.isNotBlank(query)
-          && URLDecoder.decode(query, "UTF-8").contains("$id=")) {
+    if (path.endsWith("$entity") && StringUtils.isNotBlank(query)
+        && Decoder.decode(query).contains("$id=")) {
 
-        final String id = URLDecoder.decode(query, "UTF-8");
-        final String newURL = id.substring(id.indexOf("$id=") + 4);
+      final String id = Decoder.decode(query);
+      final String newURL = id.substring(id.indexOf("$id=") + 4);
 
-        final URI uri = URI.create(newURL);
+      final URI uri = URI.create(newURL);
 
-        message.put(Message.REQUEST_URL, uri.toASCIIString());
-        message.put(Message.REQUEST_URI, uri.getPath());
-        message.put(Message.PATH_INFO, uri.getPath());
-      }
-    } catch (UnsupportedEncodingException ignore) {
-      // ignore
+      message.put(Message.REQUEST_URL, uri.toASCIIString());
+      message.put(Message.REQUEST_URI, uri.getPath());
+      message.put(Message.PATH_INFO, uri.getPath());
     }
   }
 }

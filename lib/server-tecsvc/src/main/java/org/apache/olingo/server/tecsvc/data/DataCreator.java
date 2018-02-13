@@ -91,13 +91,46 @@ public class DataCreator {
     data.put("ESPeople", createESPeople(edm, odata));
     data.put("SINav", createSINav(edm, odata));
     data.put("SI", createESTwoPrim(edm, odata));
-
+    data.put("ESCompCollDerived", createESCompCollDerived(edm, odata));
+    data.put("ESTwoPrimDerived", createESTwoPrimDerived(edm, odata));
+    data.put("ESAllPrimDerived", createESAllPrimDerived(edm, odata));
+    data.put("ESDelta", createESDelta(edm, odata)); 
+    
     linkSINav(data);
     linkESTwoPrim(data);
     linkESAllPrim(data);
+    linkESAllPrimDerived(data);
     linkESKeyNav(data);
     linkESTwoKeyNav(data);
     linkESPeople(data);
+    linkESDelta(data);
+  }
+  
+
+  private EntityCollection createESDelta(final Edm edm, final OData odata) {
+   EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Number:" + Short.MAX_VALUE)));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Number:" + Short.MIN_VALUE)));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 0))
+        .addProperty(createPrimitive("PropertyString", "Number:" + 0)));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 100))
+        .addProperty(createPrimitive("PropertyString", "Number:" + 100)));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", -1))
+        .addProperty(createPrimitive("PropertyString", "Number:" + -1)));
+  
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETDelta));
+    createEntityId(edm, odata, "ESDelta", entityCollection);
+    createOperations("ESDelta", entityCollection, EntityTypeProvider.nameETDelta);
+    return entityCollection;
   }
   
   private EntityCollection createSINav(Edm edm, OData odata) {
@@ -110,6 +143,79 @@ public class DataCreator {
   createOperations("ESTwoKeyNav", entityCollection, EntityTypeProvider.nameETTwoKeyNav);
   return entityCollection;
 }
+  
+  
+  @SuppressWarnings("unchecked")
+  private EntityCollection createESCompCollDerived(final Edm edm, final OData odata) {
+    final EntityCollection entityCollection = new EntityCollection();
+    Property derivedComplexProperty = 
+        createComplex("PropertyCompAno",
+            ComplexTypeProvider.nameCTBaseAno.getFullQualifiedNameAsString(),
+            createPrimitive("PropertyString", "Num111"),
+            createPrimitive("AdditionalPropString", "Test123")
+        );
+    ((ComplexValue)derivedComplexProperty.getValue()).setTypeName( 
+        ComplexTypeProvider.nameCTBaseAno.getFullQualifiedNameAsString());
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(
+            createComplexCollection("CollPropertyCompAno",
+                ComplexTypeProvider.nameCTTwoPrimAno.getFullQualifiedNameAsString(),
+                Arrays.asList(new Property[] {
+                    createDerived("PropertyString", 
+                        ComplexTypeProvider.nameCTTwoPrimAno.getFullQualifiedNameAsString(),
+                        "TEST9876")
+                }))
+            )
+        );
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", 12345))
+        .addProperty(derivedComplexProperty)
+        .addProperty(createComplexDerievedCollection("CollPropertyCompAno",
+                ComplexTypeProvider.nameCTTwoPrimAno.getFullQualifiedNameAsString(),
+                Arrays.asList(new ComplexValue[] {
+                createComplexValue(ComplexTypeProvider.nameCTBaseAno.getFullQualifiedNameAsString(),
+                    Arrays.asList(new Property[] {
+                        createDerived("AdditionalPropString",
+                            ComplexTypeProvider.nameCTBaseAno.getFullQualifiedNameAsString(),
+                            "Additional12345"),
+                        createDerived("PropertyString", 
+                            ComplexTypeProvider.nameCTBaseAno.getFullQualifiedNameAsString(),
+                            "TEST12345")
+                    }
+              )),
+                createComplexValue(ComplexTypeProvider.nameCTTwoPrimAno.getFullQualifiedNameAsString(),
+                    Arrays.asList(new Property[] {
+                        createDerived("PropertyString", 
+                            ComplexTypeProvider.nameCTTwoPrimAno.getFullQualifiedNameAsString(),
+                            "TESTabcd")
+                    }
+              ))}
+        
+     ))));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETDeriveCollComp));
+    createEntityId(edm, odata, "ESCompCollDerived", entityCollection);
+    createOperations("ESCompCollDerived", entityCollection, EntityTypeProvider.nameETDeriveCollComp);
+    return entityCollection;
+  }
+
+  private ComplexValue createComplexValue(String type, List<Property> properties) {
+    ComplexValue complexValue = new ComplexValue();
+    complexValue.getValue().addAll(properties);
+    complexValue.setTypeName(type);  
+    return complexValue;
+  }
+
+  private Property createComplexDerievedCollection(final String name,
+      String type, final List<ComplexValue> list) {
+    List<ComplexValue> complexCollection = new ArrayList<ComplexValue>(); 
+    complexCollection.addAll(list);
+    Property property =  new Property(type, name, ValueType.COLLECTION_COMPLEX, complexCollection);
+    createOperations(name, type, property);
+    return property;
+  
+  }
 
   private EntityCollection createESMixEnumDefCollComp(Edm edm, OData odata) {
     final EntityCollection entityCollection = new EntityCollection();
@@ -726,6 +832,35 @@ public class DataCreator {
     createOperations("ESTwoPrim", entityCollection, EntityTypeProvider.nameETTwoPrim);
     return entityCollection;
   }
+  
+  private EntityCollection createESTwoPrimDerived(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) -365))
+        .addProperty(createPrimitive("PropertyString", "Test String2")));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) -32766))
+        .addProperty(createPrimitive("PropertyString", null)));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Test String4")));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETTwoPrim));
+    
+    Entity derivedEntity = new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 32766))
+        .addProperty(createPrimitive("PropertyString", "Test String1"))
+        .addProperty(createPrimitive("AdditionalPropertyString_5", "Additional String1"));
+        derivedEntity.setType(EntityTypeProvider.nameETBase.getFullQualifiedNameAsString());
+        entityCollection.getEntities().add(derivedEntity);
+        
+    createEntityId(edm, odata, "ESTwoPrimDerived", entityCollection);
+    createOperations("ESTwoPrimDerived", entityCollection, EntityTypeProvider.nameETTwoPrim);
+    return entityCollection;
+  }
 
   private void setEntityType(EntityCollection entityCollection, final EdmEntityType type) {
     for (Entity entity : entityCollection.getEntities()) {
@@ -734,6 +869,71 @@ public class DataCreator {
   }
 
   private EntityCollection createESAllPrim(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyString", "First Resource - positive values"))
+        .addProperty(createPrimitive("PropertyBoolean", true))
+        .addProperty(createPrimitive("PropertyByte", (short) 255))
+        .addProperty(createPrimitive("PropertySByte", Byte.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyInt64", Long.MAX_VALUE))
+        .addProperty(createPrimitive("PropertySingle", (float) 1.79000000E+20))
+        .addProperty(createPrimitive("PropertyDouble", -1.7900000000000000E+19))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(34)))
+        .addProperty(createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
+        .addProperty(createPrimitive("PropertyDate", getDate(2012, 12, 3)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2012, 12, 3, 7, 16, 23)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(6)))
+        .addProperty(createPrimitive("PropertyGuid", GUID))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(3, 26, 5))));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyString", "Second Resource - negative values"))
+        .addProperty(createPrimitive("PropertyBoolean", false))
+        .addProperty(createPrimitive("PropertyByte", (short) 0))
+        .addProperty(createPrimitive("PropertySByte", Byte.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MIN_VALUE))
+        .addProperty(createPrimitive("PropertyInt64", Long.MIN_VALUE))
+        .addProperty(createPrimitive("PropertySingle", (float) -1.79000000E+08))
+        .addProperty(createPrimitive("PropertyDouble", -1.7900000000000000E+05))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(-34)))
+        .addProperty(createPrimitive("PropertyBinary",
+            new byte[] { 0x01, 0x23, 0x45, 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF }))
+        .addProperty(createPrimitive("PropertyDate", getDate(2015, 11, 5)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 7, 17, 8)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(9)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789dddfff")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(23, 49, 14))));
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 0))
+        .addProperty(createPrimitive("PropertyString", ""))
+        .addProperty(createPrimitive("PropertyBoolean", false))
+        .addProperty(createPrimitive("PropertyByte", (short) 0))
+        .addProperty(createPrimitive("PropertySByte", 0))
+        .addProperty(createPrimitive("PropertyInt32", 0))
+        .addProperty(createPrimitive("PropertyInt64", 0L))
+        .addProperty(createPrimitive("PropertySingle", (float) 0))
+        .addProperty(createPrimitive("PropertyDouble", 0D))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyBinary", new byte[] {}))
+        .addProperty(createPrimitive("PropertyDate", getDate(1970, 1, 1)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETAllPrim));
+    createEntityId(edm, odata, "ESAllPrim", entityCollection);
+    createOperations("ESAllPrim", entityCollection, EntityTypeProvider.nameETAllPrim);
+    return entityCollection;
+  }
+  
+  private EntityCollection createESAllPrimDerived(final Edm edm, final OData odata) {
     EntityCollection entityCollection = new EntityCollection();
 
     entityCollection.getEntities().add(new Entity()
@@ -1200,19 +1400,29 @@ public class DataCreator {
       return entityCollection;
     }  
   
-  @SuppressWarnings("unchecked")
   private Property createCollPropertyComp() {
-    return createComplexCollection("CollPropertyComp",
+    return createComplexDerievedCollection("CollPropertyComp",
         ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
-        Arrays.asList(
-            createPrimitive("PropertyInt16", (short) 123),
-            createPrimitive("PropertyString", "TEST 1")),
-        Arrays.asList(
-            createPrimitive("PropertyInt16", (short) 456),
-            createPrimitive("PropertyString", "TEST 2")),
-        Arrays.asList(
-            createPrimitive("PropertyInt16", (short) 789),
-            createPrimitive("PropertyString", "TEST 3")));
+        Arrays.asList(new ComplexValue[] {
+            createComplexValue(ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+                Arrays.asList(new Property[] {
+                    createPrimitive("PropertyInt16", (short) 123),
+                    createPrimitive("PropertyString", "TEST 1")
+                }
+          )),
+            createComplexValue(ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+                Arrays.asList(new Property[] {
+                    createPrimitive("PropertyInt16", (short) 456),
+                    createPrimitive("PropertyString", "TEST 2")
+                }
+          )),
+            createComplexValue(ComplexTypeProvider.nameCTBase.getFullQualifiedNameAsString(),
+                Arrays.asList(new Property[] {
+                    createPrimitive("PropertyInt16", (short) 789),
+                    createPrimitive("PropertyString", "TEST 3"),
+                    createPrimitive("AdditionalPropString", "ADD TEST")
+                }
+          ))}));
   }
 
   private EntityCollection createESAllKey(final Edm edm, final OData odata) {
@@ -1330,6 +1540,16 @@ public class DataCreator {
         + "  <g stroke=\"darkmagenta\" stroke-width=\"16\" fill=\"" + color + "\">\n"
         + "    <circle cx=\"50\" cy=\"50\" r=\"42\"/>\n" + "  </g>\n" + "</svg>\n").getBytes(Charset.forName("UTF-8"));
   }
+  
+  
+  private void linkESDelta(final Map<String, EntityCollection> data) {
+    final EntityCollection entityCollection = data.get("ESDelta");
+    final List<Entity> targetEntities = data.get("ESAllPrim").getEntities();
+
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETAllPrimMany", targetEntities.get(1),
+        targetEntities.get(2));
+    setLink(entityCollection.getEntities().get(3), "NavPropertyETAllPrimOne", targetEntities.get(0));
+  }
 
   private void linkESPeople(final Map<String, EntityCollection> data) {
       final EntityCollection entityCollection = data.get("ESPeople");
@@ -1355,6 +1575,21 @@ public class DataCreator {
   private void linkESAllPrim(final Map<String, EntityCollection> data) {
     final EntityCollection entityCollection = data.get("ESAllPrim");
     final List<Entity> targetEntities = data.get("ESTwoPrim").getEntities();
+    final List<Entity> targetESBaseEntities = data.get("ESBase").getEntities();
+
+    setLinks(entityCollection.getEntities().get(0), "NavPropertyETTwoPrimMany", targetEntities.get(1));
+    setLink(entityCollection.getEntities().get(0), "NavPropertyETTwoPrimOne", targetEntities.get(3));
+
+    setLinks(entityCollection.getEntities().get(2), "NavPropertyETTwoPrimMany", targetEntities.get(0),
+        targetEntities.get(2),
+        targetEntities.get(3));
+    
+    setLink(entityCollection.getEntities().get(2), "NavPropertyETTwoPrimOne", targetESBaseEntities.get(0));
+  }
+  
+  private void linkESAllPrimDerived(final Map<String, EntityCollection> data) {
+    final EntityCollection entityCollection = data.get("ESAllPrimDerived");
+    final List<Entity> targetEntities = data.get("ESTwoPrimDerived").getEntities();
 
     setLinks(entityCollection.getEntities().get(0), "NavPropertyETTwoPrimMany", targetEntities.get(1));
     setLink(entityCollection.getEntities().get(0), "NavPropertyETTwoPrimOne", targetEntities.get(3));
@@ -1467,6 +1702,10 @@ public class DataCreator {
       propertyValues.add(value);
     }
     return new Property(null, name, ValueType.COLLECTION_PRIMITIVE, propertyValues);
+  }
+  
+  protected static Property createDerived(final String name, final String type, final Object value) {
+    return new Property(type, name, ValueType.PRIMITIVE, value);
   }
   
   protected static Property createComplex(final String name, final String type, final Property... properties) {
