@@ -85,6 +85,28 @@ public abstract class ExpandSelectHelper {
     return selectedPaths.isEmpty() ? null : selectedPaths;
   }
 
+  public static Set<List<String>> getSelectedPaths(final List<SelectItem> selectItems) {
+    Set<List<String>> selectedPaths = new HashSet<List<String>>();
+    for (final SelectItem item : selectItems) {
+      final List<UriResource> parts = item.getResourcePath().getUriResourceParts();
+      final UriResource resource = parts.get(0);
+      if (resource instanceof UriResourceProperty) {
+        if (parts.size() > 0) {
+          List<String> path = new ArrayList<String>();
+          for (final UriResource part : parts.subList(0, parts.size())) {
+            if (part instanceof UriResourceProperty) {
+              path.add(((UriResourceProperty) part).getProperty().getName());
+            }
+          }
+          selectedPaths.add(path);
+        } else {
+          return null;
+        }
+      }
+    }
+    return selectedPaths.isEmpty() ? null : selectedPaths;
+  }
+  
   public static boolean isSelected(final Set<List<String>> selectedPaths, final String propertyName) {
     for (final List<String> path : selectedPaths) {
       if (propertyName.equals(path.get(0))) {

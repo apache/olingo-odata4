@@ -87,4 +87,28 @@ public final class ExpandSelectMock {
     Mockito.when(expand.getExpandItems()).thenReturn(expandItems);
     return expand;
   }
+  
+  /**
+   * @param resource
+   * @return
+   */
+  public static SelectItem mockSelectItemForColComplexProperty(final UriInfoResource resource) {
+    SelectItem selectItem = Mockito.mock(SelectItem.class);
+    Mockito.when(selectItem.getResourcePath()).thenReturn(resource);
+    return selectItem;
+  }
+
+  /**
+   * @param propertyWithinCT
+   * @return
+   */
+  public static UriInfoResource mockComplexTypeResource(final EdmProperty propertyWithinCT) {
+    final UriInfoResource resource = Mockito.mock(UriInfoResource.class);
+    final List<UriResource> elements = new ArrayList<UriResource>();
+    final UriResourceProperty element = Mockito.mock(UriResourceProperty.class);
+    Mockito.when(element.getProperty()).thenReturn(propertyWithinCT);
+    elements.add(element);
+    Mockito.when(resource.getUriResourceParts()).thenReturn(elements);
+    return resource;
+  }
 }

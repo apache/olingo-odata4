@@ -1176,7 +1176,13 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
       writer.writeAttribute(METADATA, NS_METADATA, Constants.CONTEXT,
           ContextURLBuilder.create(contextURL).toASCIIString());
       writeMetadataETag(metadata, writer);
-      writeComplexCollection(metadata, type, property, null, 
+      Set<List<String>> selectedPaths = null;
+      if (null != options && null != options.getSelect()) {
+        final boolean all = ExpandSelectHelper.isAll(options.getSelect());
+        selectedPaths = all || property.isPrimitive() ? null : ExpandSelectHelper
+            .getSelectedPaths(options.getSelect().getSelectItems());
+      }
+      writeComplexCollection(metadata, type, property, selectedPaths, 
           options == null ? null:options.xml10InvalidCharReplacement(), writer);
       writer.writeEndElement();
       writer.writeEndDocument();

@@ -42,6 +42,7 @@ import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
@@ -56,6 +57,7 @@ import org.apache.olingo.server.api.serializer.ReferenceSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriHelper;
+import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -3176,4 +3178,37 @@ public class ODataXmlSerializerTest {
     public void skippedComparison(Node control, Node test) { }
   };
   
+  @Test
+  public void complexCollectionWithSelectProperty() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESKeyNav");
+    final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("CollPropertyComp");
+    final Property property = data.readAll(edmEntitySet).getEntities().get(0).getProperty(edmProperty.getName());
+    final EdmComplexType complexType = metadata.getEdm().getComplexType(
+        new FullQualifiedName("olingo.odata.test1", "CTPrimComp"));
+    final EdmProperty propertyWithinCT = (EdmProperty) complexType.getProperty("PropertyInt16"); 
+    
+    final UriInfoResource resource = ExpandSelectMock.mockComplexTypeResource(propertyWithinCT);
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemForColComplexProperty(resource);
+    final SelectOption selectOption = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
+    
+    final String resultString = IOUtils.toString(serializer
+        .complexCollection(metadata, (EdmComplexType) edmProperty.getType(), property,
+            ComplexSerializerOptions.with()
+                .contextURL(ContextURL.with()
+                    .entitySet(edmEntitySet).keyPath("1")
+                    .navOrPropertyPath("CollPropertyComp")
+                    .build()).select(selectOption)
+                .build()).getContent());
+    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>"
+        + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+        + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+        + "m:type=\"#Collection(olingo.odata.test1.CTPrimComp)\" "
+        + "m:context=\"$metadata#ESKeyNav(1)/CollPropertyComp\" "
+        + "m:metadata-etag=\"metadataETag\">"
+        + "<m:element><d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>"
+        + "</m:element><m:element><d:PropertyInt16 m:type=\"Int16\">2</d:PropertyInt16>"
+        + "</m:element><m:element><d:PropertyInt16 m:type=\"Int16\">3</d:PropertyInt16>"
+        + "</m:element></m:value>";
+    Assert.assertEquals(expectedResult, resultString);
+  }
 }
