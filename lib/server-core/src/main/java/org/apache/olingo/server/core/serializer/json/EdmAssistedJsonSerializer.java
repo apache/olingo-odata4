@@ -66,10 +66,12 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
 
   protected final boolean isIEEE754Compatible;
   protected final boolean isODataMetadataNone;
+  protected final boolean isODataMetadataFull;
 
   public EdmAssistedJsonSerializer(final ContentType contentType) {
     this.isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
     this.isODataMetadataNone = ContentTypeHelper.isODataMetadataNone(contentType);
+    this.isODataMetadataFull = ContentTypeHelper.isODataMetadataFull(contentType);
   }
 
   @Override
@@ -207,15 +209,17 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
       if (eTag != null) {
         json.writeStringField(Constants.JSON_ETAG, eTag);
       }
-      if (type != null) {
-        json.writeStringField(Constants.JSON_TYPE, type);
-      }
-      if (id == null) {
-        if (writeNullId) {
-          json.writeNullField(Constants.JSON_ID);
+      if(isODataMetadataFull){
+        if (type != null) {
+          json.writeStringField(Constants.JSON_TYPE, type);
         }
-      } else {
-        json.writeStringField(Constants.JSON_ID, id.toASCIIString());
+        if (id == null) {
+          if (writeNullId) {
+            json.writeNullField(Constants.JSON_ID);
+          }
+        } else {
+          json.writeStringField(Constants.JSON_ID, id.toASCIIString());
+        }
       }
     }
   }
@@ -326,7 +330,7 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
       final ComplexValue value) throws IOException, SerializerException {
     json.writeStartObject();
 
-    if (typeName != null && !isODataMetadataNone) {
+    if (typeName != null && isODataMetadataFull) {
       json.writeStringField(Constants.JSON_TYPE, typeName);
     }
 
@@ -362,7 +366,7 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
   protected void valuable(JsonGenerator json, final Valuable valuable, final String name, final EdmType type,
       final EdmProperty edmProperty) throws IOException, SerializerException {
 
-    if (!isODataMetadataNone
+    if (isODataMetadataFull
         && !(valuable instanceof Annotation) && !valuable.isComplex()) {
 
       String typeName = valuable.getType();
