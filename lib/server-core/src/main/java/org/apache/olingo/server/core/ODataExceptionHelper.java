@@ -83,6 +83,13 @@ public class ODataExceptionHelper {
     return serverError;
   }
 
+  public static ODataServerError createServerErrorObject(final AcceptHeaderContentNegotiatorException e,
+      final Locale requestedLocale) {
+    ODataServerError serverError = basicTranslatedError(e, requestedLocale);
+    serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
+    return serverError;
+  }
+  
   public static ODataServerError createServerErrorObject(final ODataHandlerException e, final Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     if (ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED.equals(e.getMessageKey())

@@ -63,9 +63,6 @@ public final class AcceptType {
   }
 
   private AcceptType(final String type) {
-    if (type == null) {
-      throw new IllegalArgumentException("Type parameter MUST NOT be null.");
-    }
     List<String> typeSubtype = new ArrayList<String>();
     parameters = TypeUtil.createParameterMap();
 
@@ -119,13 +116,24 @@ public final class AcceptType {
    * @throws IllegalArgumentException if input string is not parseable
    */
   public static List<AcceptType> create(final String acceptTypes) {
+    if (acceptTypes == null) {
+      throw new IllegalArgumentException("Type parameter MUST NOT be null.");
+    }
     List<AcceptType> result = new ArrayList<AcceptType>();
+    List<IllegalArgumentException> exceptionList = new ArrayList<IllegalArgumentException>();
 
     String[] values = acceptTypes.split(",");
     for (String value : values) {
-      result.add(new AcceptType(value.trim()));
+      try {
+        result.add(new AcceptType(value.trim()));
+      } catch (IllegalArgumentException e) {
+        exceptionList.add(e);
+      }
     }
 
+    if (result.isEmpty()) {
+      throw exceptionList.get(0);
+    }
     sort(result);
 
     return result;
@@ -198,13 +206,18 @@ public final class AcceptType {
     }
     Map<String, String> compareParameters = contentType.getParameters();
     for (final Map.Entry<String, String> entry : parameters.entrySet()) {
-      if (compareParameters.containsKey(entry.getKey()) || TypeUtil.PARAMETER_Q.equalsIgnoreCase(entry.getKey())) {
-        String compare = compareParameters.get(entry.getKey());
-        if (!entry.getValue().equalsIgnoreCase(compare) && !TypeUtil.PARAMETER_Q.equalsIgnoreCase(entry.getKey())) {
+      if (entry.getKey().equalsIgnoreCase(ContentType.PARAMETER_CHARSET) && 
+          compareParameters.containsKey(entry.getKey())) {
+        continue;
+      } else {
+        if (compareParameters.containsKey(entry.getKey()) || TypeUtil.PARAMETER_Q.equalsIgnoreCase(entry.getKey())) {
+          String compare = compareParameters.get(entry.getKey());
+          if (!entry.getValue().equalsIgnoreCase(compare) && !TypeUtil.PARAMETER_Q.equalsIgnoreCase(entry.getKey())) {
+            return false;
+          }
+        } else {
           return false;
         }
-      } else {
-        return false;
       }
     }
     return true;

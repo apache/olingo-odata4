@@ -171,4 +171,95 @@ public class AcceptTypeTest {
       assertNotNull(e);
     }
   }
-}
+  
+  @Test
+  public void multipleTypeswithQParameter() {
+    List<AcceptType> acceptTypes = AcceptType.create("application/json;q=0.2,application/json;q=0.2");
+
+    assertEquals(2, acceptTypes.size());
+    final AcceptType acceptType = acceptTypes.get(0);
+    assertEquals("application", acceptType.getType());
+    assertEquals("json", acceptType.getSubtype());
+    assertEquals("0.2", acceptType.getParameters().get(TypeUtil.PARAMETER_Q));
+    assertEquals("0.2", acceptType.getParameter(TypeUtil.PARAMETER_Q));
+    assertEquals(Float.valueOf(0.2F), acceptType.getQuality());
+    assertEquals("application/json;q=0.2", acceptType.toString());
+  }
+  
+  @Test
+  public void multipleTypeswithIllegalTypes() {
+    List<AcceptType> acceptTypes = AcceptType.create("application/json;q=0.2,abc");
+
+    assertEquals(1, acceptTypes.size());
+    final AcceptType acceptType = acceptTypes.get(0);
+    assertEquals("application", acceptType.getType());
+    assertEquals("json", acceptType.getSubtype());
+    assertEquals("0.2", acceptType.getParameters().get(TypeUtil.PARAMETER_Q));
+    assertEquals("0.2", acceptType.getParameter(TypeUtil.PARAMETER_Q));
+    assertEquals(Float.valueOf(0.2F), acceptType.getQuality());
+    assertEquals("application/json;q=0.2", acceptType.toString());
+  }
+  
+  @Test
+  public void multipleFormatErrors() {
+    expectCreateError("/,abc,a/a;parameter=");
+  }
+  
+  @Test
+  public void nullAcceptType() {
+    expectCreateError(null);
+  }
+  
+  @Test
+  public void emptyAcceptType() {
+    expectCreateError("");
+  }
+  
+  @Test
+  public void noTypeAcceptType() {
+    expectCreateError("/json");
+  }
+  
+  @Test
+  public void withCharset() {
+    List<AcceptType> acceptTypes = AcceptType.create("application/json;charset=utf-8");
+    assertEquals(1, acceptTypes.size());
+    final AcceptType acceptType = acceptTypes.get(0);
+    assertEquals("application", acceptType.getType());
+    assertEquals("json", acceptType.getSubtype());
+    assertEquals("utf-8", acceptType.getParameter(ContentType.PARAMETER_CHARSET));
+    
+    assertTrue(acceptType.matches(ContentType.create("application/json;"
+        + "odata.metadata=minimal;charset=utf-8")));
+    assertFalse(acceptType.matches(ContentType.create("application/atom+xml;"
+        + "odata.metadata=minimal;charset=utf-8")));
+    assertFalse(acceptType.matches(ContentType.create("application/json;"
+        + "odata.metadata=minimal")));
+  }
+  
+  @Test
+  public void withSubtypeStar1() {
+    List<AcceptType> acceptTypes = AcceptType.create("application/json,application/*");
+    assertEquals(2, acceptTypes.size());
+    final AcceptType acceptType1 = acceptTypes.get(0);
+    assertEquals("application", acceptType1.getType());
+    assertEquals("json", acceptType1.getSubtype());
+    
+    final AcceptType acceptType2 = acceptTypes.get(1);
+    assertEquals("application", acceptType2.getType());
+    assertEquals("*", acceptType2.getSubtype());
+  }
+  
+  @Test
+  public void withSubtypeStar2() {
+    List<AcceptType> acceptTypes = AcceptType.create("application/*,application/json");
+    assertEquals(2, acceptTypes.size());
+    final AcceptType acceptType1 = acceptTypes.get(0);
+    assertEquals("application", acceptType1.getType());
+    assertEquals("json", acceptType1.getSubtype());
+    
+    final AcceptType acceptType2 = acceptTypes.get(1);
+    assertEquals("application", acceptType2.getType());
+    assertEquals("*", acceptType2.getSubtype());
+  }
+ }

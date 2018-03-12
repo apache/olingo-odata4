@@ -95,6 +95,9 @@ public class ODataHandlerImpl implements ODataHandler {
     } catch (final UriParserException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError, e);
+    } catch (AcceptHeaderContentNegotiatorException e) {
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      handleException(request, response, serverError, e);
     } catch (ContentNegotiatorException e) {
       ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
       handleException(request, response, serverError, e);
@@ -126,6 +129,7 @@ public class ODataHandlerImpl implements ODataHandler {
     final int measurementHandle = debugger.startRuntimeMeasurement("ODataHandler", "processInternal");
 
     response.setHeader(HttpHeader.ODATA_VERSION, ODataServiceVersion.V40.toString());
+    
     try {
       validateODataVersion(request);
     } catch (final ODataHandlerException e) {
@@ -180,6 +184,8 @@ public class ODataHandlerImpl implements ODataHandler {
       final FormatOption formatOption = getFormatOption(request, uriInfo);
       requestedContentType = ContentNegotiator.doContentNegotiation(formatOption, request,
           getCustomContentTypeSupport(), RepresentationType.ERROR);
+    } catch (final AcceptHeaderContentNegotiatorException e) {
+      requestedContentType = ContentType.JSON;
     } catch (final ContentNegotiatorException e) {
       requestedContentType = ContentType.JSON;
     }
@@ -221,11 +227,17 @@ public class ODataHandlerImpl implements ODataHandler {
   }
 
   private void validateODataVersion(final ODataRequest request) throws ODataHandlerException {
-    final String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
-    if (maxVersion != null && ODataServiceVersion.isBiggerThan(ODataServiceVersion.V40.toString(), maxVersion)) {
-      throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,
-          ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
+    final String odataVersion = request.getHeader(HttpHeader.ODATA_VERSION);
+   if (odataVersion != null && !ODataServiceVersion.isValidODataVersion(odataVersion)) {
+      throw new ODataHandlerException("ODataVersion not supported: " + odataVersion,
+          ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, odataVersion);
     }
+    
+    final String maxVersion = request.getHeader(HttpHeader.ODATA_MAX_VERSION);
+    if (maxVersion != null && !ODataServiceVersion.isValidMaxODataVersion(maxVersion)) {
+        throw new ODataHandlerException("ODataVersion not supported: " + maxVersion,
+            ODataHandlerException.MessageKeys.ODATA_VERSION_NOT_SUPPORTED, maxVersion);
+      }
   }
 
   <T extends Processor> T selectProcessor(final Class<T> cls) throws ODataHandlerException {

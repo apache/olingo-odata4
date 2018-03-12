@@ -87,6 +87,21 @@ public enum ODataServiceVersion {
     return me > other;
   }
 
+  public static boolean isValidODataVersion(String value) {
+    final double version4 = Double.parseDouble(extractDataServiceVersionString(ODataServiceVersion.V40.toString()));
+    final double version401 = Double.parseDouble(extractDataServiceVersionString(ODataServiceVersion.V401.toString()));
+    final double other = Double.parseDouble(extractDataServiceVersionString(value));
+    
+    return (other == version4) || (other == version401);
+  }
+  
+  public static boolean isValidMaxODataVersion(String value) {
+    final double version4 = Double.parseDouble(extractDataServiceVersionString(ODataServiceVersion.V40.toString()));
+    final double other = Double.parseDouble(extractDataServiceVersionString(value));
+    
+    return other >= version4;
+  }
+  
   /**
    * Extract data service version and return it.
    *

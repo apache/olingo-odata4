@@ -18,24 +18,16 @@
  */
 package org.apache.olingo.server.core;
 
-import org.apache.olingo.server.api.ODataLibraryException;
-
-public class ContentNegotiatorException extends ODataLibraryException {
+public class AcceptHeaderContentNegotiatorException extends ContentNegotiatorException {
   private static final long serialVersionUID = -8112658467394158700L;
 
   public static enum MessageKeys implements MessageKey {
     /** parameter: list of content-type ranges */
     UNSUPPORTED_ACCEPT_TYPES,
-    /** parameter: content type */
-    UNSUPPORTED_CONTENT_TYPE,
-    /** no parameter */
-    NO_CONTENT_TYPE_SUPPORTED,
     /** parameter: format string */
     UNSUPPORTED_FORMAT_OPTION,
-    /**parameter: accept charset */
-    UNSUPPORTED_ACCEPT_CHARSET,
-    /** parameter: accept header charset */
-    UNSUPPORTED_ACCEPT_HEADER_CHARSET;
+    /** parameter: accept charset header*/
+     UNSUPPORTED_ACCEPT_CHARSET_HEADER_OPTIONS;
 
     @Override
     public String getKey() {
@@ -43,12 +35,12 @@ public class ContentNegotiatorException extends ODataLibraryException {
     }
   }
 
-  public ContentNegotiatorException(final String developmentMessage, final MessageKey messageKey,
+  public AcceptHeaderContentNegotiatorException(final String developmentMessage, final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, messageKey, parameters);
   }
 
-  public ContentNegotiatorException(final String developmentMessage, final Throwable cause,
+  public AcceptHeaderContentNegotiatorException(final String developmentMessage, final Throwable cause,
       final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, cause, messageKey, parameters);
