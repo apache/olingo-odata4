@@ -25,6 +25,10 @@ import java.util.Set;
 
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceAction;
+import org.apache.olingo.server.api.uri.UriResourceComplexProperty;
+import org.apache.olingo.server.api.uri.UriResourceEntitySet;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
@@ -57,9 +61,86 @@ public abstract class ExpandSelectHelper {
       final UriResource resource = item.getResourcePath().getUriResourceParts().get(0);
       if (resource instanceof UriResourceProperty) {
         selected.add(((UriResourceProperty) resource).getProperty().getName());
+      } else if (resource instanceof UriResourceNavigation) {
+        selected.add(((UriResourceNavigation) resource).getProperty().getName());
+      } else if (resource instanceof UriResourceAction) {
+        selected.add(((UriResourceAction) resource).getAction().getName());
+      } else if (resource instanceof UriResourceFunction) {
+        selected.add(((UriResourceFunction) resource).getFunction().getName());
       }
     }
     return selected;
+  }
+  
+  /**
+   * This method creates selectedPath list checking if the resource has entity type filter,
+   * complex type filter, or if resource is navigation property and if it has type filter
+   * @param selectItems
+   * @param propertyName
+   * @return
+   */
+  public static Set<List<String>> getSelectedPathsWithTypeCasts(
+      final List<SelectItem> selectItems, final String propertyName) {
+    Set<List<String>> selectedPaths = new HashSet<List<String>>();
+    for (final SelectItem item : selectItems) {
+      final List<UriResource> parts = item.getResourcePath().getUriResourceParts();
+      final UriResource resource = parts.get(0);
+      if (resource instanceof UriResourceProperty
+          && propertyName.equals(((UriResourceProperty) resource).getProperty().getName())) {
+        List<String> path = new ArrayList<String>();
+        if (item.getStartTypeFilter() != null) {
+          path.add(item.getStartTypeFilter().getFullQualifiedName().getFullQualifiedNameAsString());
+        }
+        if (resource instanceof UriResourceComplexProperty && 
+            ((UriResourceComplexProperty) resource).getComplexTypeFilter() != null) {
+          path.add(((UriResourceComplexProperty) resource).getComplexTypeFilter().
+              getFullQualifiedName().getFullQualifiedNameAsString());
+        } else if (resource instanceof UriResourceEntitySet && 
+            ((UriResourceEntitySet) resource).getTypeFilterOnCollection() != null) {
+          path.add(((UriResourceEntitySet) resource).getTypeFilterOnCollection().
+              getFullQualifiedName().getFullQualifiedNameAsString());
+        }
+        extractPathsFromResourceParts(selectedPaths, parts, path);
+      } else if (resource instanceof UriResourceNavigation
+          && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName()) ) {
+        List<String> path = new ArrayList<String>();
+        if (item.getStartTypeFilter() != null) {
+          path.add(item.getStartTypeFilter().getFullQualifiedName().getFullQualifiedNameAsString());
+        }
+        extractPathsFromResourceParts(selectedPaths, parts, path);
+      }
+    }
+    return selectedPaths.isEmpty() ? null : selectedPaths;
+  }
+
+  /**
+   * @param selectedPaths
+   * @param parts
+   * @param path
+   */
+  private static Set<List<String>> extractPathsFromResourceParts(
+      Set<List<String>> selectedPaths, final List<UriResource> parts,
+      List<String> path) {
+    if (parts.size() > 1) {
+      for (final UriResource part : parts.subList(1, parts.size())) {
+        if (part instanceof UriResourceProperty) {
+          path.add(((UriResourceProperty) part).getProperty().getName());
+        } else if (part instanceof UriResourceNavigation) {
+          path.add(((UriResourceNavigation) part).getProperty().getName());
+        }
+        if (part instanceof UriResourceComplexProperty &&
+            ((UriResourceComplexProperty) part).getComplexTypeFilter() != null) {
+          path.add(((UriResourceComplexProperty) part).getComplexTypeFilter().
+              getFullQualifiedName().getFullQualifiedNameAsString());
+        }
+      }
+      selectedPaths.add(path);
+    } else if (!path.isEmpty()) {
+      selectedPaths.add(path);
+    } else {
+      return null;
+    }
+    return selectedPaths.isEmpty() ? null : selectedPaths;
   }
 
   public static Set<List<String>> getSelectedPaths(final List<SelectItem> selectItems, final String propertyName) {
@@ -74,6 +155,8 @@ public abstract class ExpandSelectHelper {
           for (final UriResource part : parts.subList(1, parts.size())) {
             if (part instanceof UriResourceProperty) {
               path.add(((UriResourceProperty) part).getProperty().getName());
+            } else if (part instanceof UriResourceNavigation) {
+              path.add(((UriResourceNavigation) part).getProperty().getName());
             }
           }
           selectedPaths.add(path);

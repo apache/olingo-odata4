@@ -25,11 +25,15 @@ import java.util.Collections;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -181,7 +185,8 @@ public class ContextURLHelperTest {
         ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETAllPrimOne")));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
-    assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
+    assertEquals("$metadata#ESTwoPrim(NavPropertyETAllPrimOne())", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
   @Test
@@ -215,7 +220,8 @@ public class ContextURLHelperTest {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, select)).build();
-    assertEquals("$metadata#ESTwoPrim(PropertyString,NavPropertyETAllPrimMany(PropertyInt32))",
+    assertEquals("$metadata#ESTwoPrim(PropertyString,NavPropertyETAllPrimOne(),"
+        + "NavPropertyETAllPrimMany(PropertyInt32))",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
@@ -230,7 +236,8 @@ public class ContextURLHelperTest {
     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
-    assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
+    assertEquals("$metadata#ESTwoPrim(NavPropertyETAllPrimOne(NavPropertyETTwoPrimOne()))", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
   @Test
@@ -244,7 +251,8 @@ public class ContextURLHelperTest {
     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
-    assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
+    assertEquals("$metadata#ESTwoPrim(NavPropertyETAllPrimOne())", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
   @Test
@@ -318,6 +326,134 @@ public class ContextURLHelperTest {
         .navOrPropertyPath(edmProperty.getName()).build();
     assertEquals("$metadata#ESFourKeyAlias"
             + "(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')/PropertyComp",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildComplexDerivedTypeInSelect() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESCompCollDerived");
+    final EdmComplexType derivedComplexType = edm.getComplexType(
+        new FullQualifiedName("olingo.odata.test1.CTBaseAno"));
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemOnDerivedComplexTypes(entitySet, 
+        "PropertyCompAno", derivedComplexType, "AdditionalPropString");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESCompCollDerived(PropertyCompAno/olingo.odata.test1.CTBaseAno/AdditionalPropString)", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildMultiLevelComplexDerivedTypeInSelect() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESCompCollComp");
+    final EdmComplexType derivedComplexType = edm.getComplexType(
+        new FullQualifiedName("olingo.odata.test1.CTBase"));
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemMultiLevelOnDerivedComplexTypes(
+        entitySet, "PropertyComp", "CollPropertyComp", derivedComplexType, "AdditionalPropString");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESCompCollComp(PropertyComp/CollPropertyComp/"
+        + "olingo.odata.test1.CTBase/AdditionalPropString)", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildEntityTypeCastInSelect1() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final EdmEntityType derivedEntityType = edm.getEntityType(
+        new FullQualifiedName("olingo.odata.test1.ETBaseTwoKeyNav"));
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemOnDerivedEntityTypes( 
+        "NavPropertyETBaseTwoKeyNavOne", derivedEntityType);
+    Mockito.when(selectItem.getStartTypeFilter()).thenReturn(derivedEntityType);
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETBaseTwoKeyNavOne)", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildEntityTypeCastInSelect2() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final EdmEntityType derivedEntityType = edm.getEntityType(
+        new FullQualifiedName("olingo.odata.test1.ETBaseTwoKeyNav"));
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemOnDerivedEntityTypes( 
+        "PropertyDate", derivedEntityType);
+    Mockito.when(selectItem.getStartTypeFilter()).thenReturn(derivedEntityType);
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate)", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildMultipleSelectWithEntityTypeCastInSelect() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final EdmEntityType derivedEntityType = edm.getEntityType(
+        new FullQualifiedName("olingo.odata.test1.ETBaseTwoKeyNav"));
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(entitySet, "CollPropertyComp");
+    final SelectItem selectItem2 = ExpandSelectMock.mockSelectItemOnDerivedEntityTypes( 
+        "NavPropertyETTwoBaseTwoKeyNavOne", derivedEntityType);
+    Mockito.when(selectItem2.getStartTypeFilter()).thenReturn(derivedEntityType);
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem1, selectItem2));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESTwoKeyNav(CollPropertyComp,olingo.odata.test1.ETBaseTwoKeyNav/"
+        + "NavPropertyETTwoBaseTwoKeyNavOne)", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildEntityTypeCastAndComplexTypeCastInSelect() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final EdmEntityType derivedEntityType = edm.getEntityType(
+        new FullQualifiedName("olingo.odata.test1.ETBaseTwoKeyNav"));
+    final EdmComplexType derivedComplexType = edm.getComplexType(
+        new FullQualifiedName("olingo.odata.test1.CTBasePrimCompNav"));
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemOnDerivedEntityAndComplexTypes( 
+        "CollPropertyComp", derivedEntityType, derivedComplexType, "NavPropertyETTwoKeyNavOne");
+    Mockito.when(selectItem.getStartTypeFilter()).thenReturn(derivedEntityType);
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.ETBaseTwoKeyNav/CollPropertyComp/"
+        + "olingo.odata.test1.CTBasePrimCompNav/NavPropertyETTwoKeyNavOne)", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildExpandWithSelectHavingDerivedEntityType() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESKeyNavCont");
+    final EdmEntityType derivedEntityType = edm.getEntityType(
+        new FullQualifiedName("olingo.odata.test1.ETBaseTwoKeyNav"));
+    final EdmProperty edmProperty = derivedEntityType.getStructuralProperty("PropertyDate");
+    ExpandItem expandItem = ExpandSelectMock.mockExpandItem(entitySet, "NavPropertyETTwoKeyNavContOne");
+    SelectItem selectItem = Mockito.mock(SelectItem.class);
+    Mockito.when(selectItem.getStartTypeFilter()).thenReturn(derivedEntityType);
+    final UriInfoResource resource = ExpandSelectMock.mockComplexTypeResource(edmProperty);
+    Mockito.when(selectItem.getResourcePath()).thenReturn(resource);
+    final SelectOption selectOption = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
+    Mockito.when(expandItem.getSelectOption()).thenReturn(selectOption);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
+    assertEquals("$metadata#ESKeyNavCont(NavPropertyETTwoKeyNavContOne("
+        + "olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate))", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildSelectWithComplexPropertyWithNav() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemOnComplexTypesWithNav(
+        entitySet, "CollPropertyCompNav", "NavPropertyETTwoKeyNavMany");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        selectItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESTwoKeyNav(CollPropertyCompNav/NavPropertyETTwoKeyNavMany)",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 }

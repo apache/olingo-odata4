@@ -212,4 +212,42 @@ public class ContextURLBuilderTest {
     assertEquals("$metadata#Entit%C3%A4ten/Namensr%C3%A4umchen.Un%C3%BCblicherName",
         ContextURLBuilder.create(contextURL).toString());
   }
+  
+  @Test
+  public void buildWithComplexDerivedTypeInSelect1() {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn("ESCompCollDerived");
+    ContextURL contextURL = ContextURL.with().serviceRoot(serviceRoot)
+        .entitySet(entitySet)
+        .selectList("PropertyCompAno/olingo.odata.test1.CTBaseAno/AdditionalPropString")
+        .build();
+    assertEquals(serviceRoot + "$metadata#ESCompCollDerived(PropertyCompAno/"
+        + "olingo.odata.test1.CTBaseAno/AdditionalPropString)",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildWithComplexDerivedTypeInSelect2() {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn("ESCompCollComp");
+    ContextURL contextURL = ContextURL.with().serviceRoot(serviceRoot)
+        .entitySet(entitySet)
+        .selectList("PropertyComp/CollPropertyComp/olingo.odata.test1.CTBase/AdditionalPropString")
+        .build();
+    assertEquals(serviceRoot + "$metadata#ESCompCollComp(PropertyComp/CollPropertyComp/"
+        + "olingo.odata.test1.CTBase/AdditionalPropString)",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildWithNavPropertyInSelect() {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn("ESTwoKeyNav");
+    ContextURL contextURL = ContextURL.with().serviceRoot(serviceRoot)
+        .entitySet(entitySet)
+        .selectList("CollPropertyCompNav/NavPropertyETTwoKeyNavMany")
+        .build();
+    assertEquals(serviceRoot + "$metadata#ESTwoKeyNav(CollPropertyCompNav/NavPropertyETTwoKeyNavMany)",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
 }
