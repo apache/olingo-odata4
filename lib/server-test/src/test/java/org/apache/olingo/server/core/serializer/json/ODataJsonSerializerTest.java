@@ -2676,4 +2676,24 @@ public class ODataJsonSerializerTest {
         + "{\"@odata.type\":\"#olingo.odata.test1.CTPrimComp\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":3}]"));
   }
+  
+  @Test
+  public void selectNavigationProperty() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItem(edmEntitySet, 
+        "CollPropertyCompNav", "NavPropertyETTwoKeyNavOne");
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
+    InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .select(select)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoKeyNav/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@odata.id\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='1')\","
+        + "\"CollPropertyCompNav\":[{}]}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
 }

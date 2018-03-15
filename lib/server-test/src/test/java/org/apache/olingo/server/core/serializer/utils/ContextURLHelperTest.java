@@ -20,15 +20,18 @@ package org.apache.olingo.server.core.serializer.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
@@ -454,6 +457,56 @@ public class ContextURLHelperTest {
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
     assertEquals("$metadata#ESTwoKeyNav(CollPropertyCompNav/NavPropertyETTwoKeyNavMany)",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildSelectWithAction() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final EdmAction action = edm.getBoundAction(
+        new FullQualifiedName("olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav"), 
+        new FullQualifiedName("olingo.odata.test1.ETTwoKeyNav"), true);
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemHavingAction(
+        entitySet, action);
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        selectItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav)",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildSelectWithPropertyAndAction() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final EdmAction action = edm.getBoundAction(
+        new FullQualifiedName("olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav"), 
+        new FullQualifiedName("olingo.odata.test1.ETTwoKeyNav"), true);
+    final SelectItem selectItem1 = ExpandSelectMock.mockSelectItem(
+        entitySet, "PropertyString");
+    final SelectItem selectItem2 = ExpandSelectMock.mockSelectItemHavingAction(
+        entitySet, action);
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        selectItem1, selectItem2));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESTwoKeyNav(PropertyString,olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav)",
+        ContextURLBuilder.create(contextURL).toASCIIString());
+  }
+  
+  @Test
+  public void buildSelectWithFunction() throws Exception {
+    final EdmEntitySet entitySet = entityContainer.getEntitySet("ESTwoKeyNav");
+    final EdmFunction function = edm.getBoundFunction(
+        new FullQualifiedName("olingo.odata.test1.BFCESTwoKeyNavRTString"), 
+        new FullQualifiedName("olingo.odata.test1.ETTwoKeyNav"), true, new ArrayList<String>());
+    final SelectItem selectItem = ExpandSelectMock.mockSelectItemHavingFunction(
+        entitySet, function);
+    final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(
+        selectItem));
+    final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
+        .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
+    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.BFCESTwoKeyNavRTString)",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 }

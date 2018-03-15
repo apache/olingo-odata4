@@ -40,12 +40,6 @@ public class AcceptHeaderContentNegotiatorException extends ContentNegotiatorExc
     super(developmentMessage, messageKey, parameters);
   }
 
-  public AcceptHeaderContentNegotiatorException(final String developmentMessage, final Throwable cause,
-      final MessageKey messageKey,
-      final String... parameters) {
-    super(developmentMessage, cause, messageKey, parameters);
-  }
-
   @Override
   protected String getBundleName() {
     return DEFAULT_SERVER_BUNDLE_NAME;

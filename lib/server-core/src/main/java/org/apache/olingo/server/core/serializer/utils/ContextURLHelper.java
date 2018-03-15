@@ -85,7 +85,7 @@ public final class ContextURLHelper {
       for (final String propertyName : type.getNavigationPropertyNames()) {
         constructSelectItemList(type, result, selectItems, selectedPropertyNames, propertyName);
       }
-      if ((result.toString().length() == 0 && selectItems.size() > 0) ||
+      if ((result.toString().length() == 0 && !selectItems.isEmpty()) ||
           (result.toString().split(",").length < selectItems.size())) {
         constructSelectItemListForActionsAndFunctions(type, result, selectItems);
       }
@@ -113,7 +113,7 @@ public final class ContextURLHelper {
             if (result.length() > 0) {
               result.append(',');
             }
-            result.append(Encoder.encode(action.getName()));
+            result.append(Encoder.encode(action.getFullQualifiedName().getFullQualifiedNameAsString()));
           }
         }
       } else if (resource instanceof UriResourceFunction) {
@@ -126,7 +126,7 @@ public final class ContextURLHelper {
             if (result.length() > 0) {
               result.append(',');
             }
-            result.append(Encoder.encode(function.getName()));
+            result.append(Encoder.encode(function.getFullQualifiedName().getFullQualifiedNameAsString()));
           }
         }
       }
@@ -229,41 +229,9 @@ public final class ContextURLHelper {
           }
         } else if (part instanceof UriResourceNavigation &&
             ((UriResourceNavigation) part).getProperty().getName().equalsIgnoreCase(propertyName)) {
-          return getNavigationPropertyPosition(selectedPaths, (UriResourceNavigation)part);
+          return -1;
         }
         i++;
-      }
-    }
-    return -1;
-  }
-
-  /**
-   * @param selectedPaths
-   * @param part
-   * @return
-   */
-  private static int getNavigationPropertyPosition(Set<List<String>> selectedPaths, UriResourceNavigation part) {
-    if (part.getTypeFilterOnCollection() != null) {
-      for (List<String> pathSel : selectedPaths) {
-        int i = 0;
-        for (String sel : pathSel) {
-          if (sel.equalsIgnoreCase(part.getTypeFilterOnCollection().
-              getFullQualifiedName().getFullQualifiedNameAsString())) {
-            return i;
-          }
-          i++;
-        }
-      }
-    } else if (part.getTypeFilterOnEntry() != null) {
-      for (List<String> pathSel : selectedPaths) {
-        int i = 0;
-        for (String sel : pathSel) {
-          if (sel.equalsIgnoreCase(part.getTypeFilterOnEntry().
-              getFullQualifiedName().getFullQualifiedNameAsString())) {
-            return i;
-          }
-          i++;
-        }
       }
     }
     return -1;

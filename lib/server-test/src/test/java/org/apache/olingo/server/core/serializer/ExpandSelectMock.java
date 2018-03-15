@@ -22,9 +22,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
@@ -32,7 +34,9 @@ import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriResource;
+import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceComplexProperty;
+import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
@@ -89,6 +93,47 @@ public final class ExpandSelectMock {
     elements.add(element);
     
     mockNavPropertyOnEdmType(navProperty, elements, property);
+    
+    UriInfoResource resource = Mockito.mock(UriInfoResource.class);
+    Mockito.when(resource.getUriResourceParts()).thenReturn(elements);
+    return resource;
+  }
+
+  public static SelectItem mockSelectItemHavingAction(final EdmEntitySet edmEntitySet, 
+      final EdmAction action) {
+    final UriInfoResource resource = mockResourceOnAction(
+        edmEntitySet, action);
+    SelectItem selectItem = Mockito.mock(SelectItem.class);
+    Mockito.when(selectItem.getResourcePath()).thenReturn(resource);
+    return selectItem;
+  }
+  
+  public static SelectItem mockSelectItemHavingFunction(final EdmEntitySet edmEntitySet, 
+      final EdmFunction function) {
+    final UriInfoResource resource = mockResourceOnFunction(
+        edmEntitySet, function);
+    SelectItem selectItem = Mockito.mock(SelectItem.class);
+    Mockito.when(selectItem.getResourcePath()).thenReturn(resource);
+    return selectItem;
+  }
+  
+  private static UriInfoResource mockResourceOnAction(
+      EdmEntitySet edmEntitySet, EdmAction action) {
+    List<UriResource> elements = new ArrayList<UriResource>();
+    UriResourceAction element = Mockito.mock(UriResourceAction.class);
+    Mockito.when(element.getAction()).thenReturn(action);
+    elements.add(element);
+    
+    UriInfoResource resource = Mockito.mock(UriInfoResource.class);
+    Mockito.when(resource.getUriResourceParts()).thenReturn(elements);
+    return resource;
+  }
+  
+  private static UriInfoResource mockResourceOnFunction(EdmEntitySet edmEntitySet, EdmFunction function) {
+    UriResourceFunction element = Mockito.mock(UriResourceFunction.class);
+    Mockito.when(element.getFunction()).thenReturn(function);
+    List<UriResource> elements = new ArrayList<UriResource>();
+    elements.add(element);
     
     UriInfoResource resource = Mockito.mock(UriInfoResource.class);
     Mockito.when(resource.getUriResourceParts()).thenReturn(elements);

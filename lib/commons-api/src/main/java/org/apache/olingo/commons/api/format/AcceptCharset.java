@@ -34,6 +34,8 @@ public class AcceptCharset {
   private final String charset;
   private final Map<String, String> parameters;
   private final Float quality;
+  private static final String UTF8_CHARSET = "utf8";
+  private static final String UTF8_CHARSET1 = "utf-8";
   
   private AcceptCharset(final String charset) {
     parameters = TypeUtil.createParameterMap();
@@ -47,7 +49,8 @@ public class AcceptCharset {
       } catch (UnsupportedCharsetException e) {
         throw new UnsupportedCharsetException("Illegal charset in accept charset header:" + this.charset);
       }
-      if (!(this.charset.equalsIgnoreCase("utf8")) && !(this.charset.equalsIgnoreCase("utf-8"))) {
+      if (!(UTF8_CHARSET.equalsIgnoreCase(this.charset)) && 
+          !(UTF8_CHARSET1.equalsIgnoreCase(this.charset))) {
         throw new IllegalArgumentException("Unsupported charset in accept charset header:" + this.charset);
       }
     }
