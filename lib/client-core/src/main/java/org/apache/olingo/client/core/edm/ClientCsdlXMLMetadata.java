@@ -37,10 +37,24 @@ public class ClientCsdlXMLMetadata extends CsdlAbstractEdmItem implements Serial
 
   private static final long serialVersionUID = 6025723060298454901L;
   protected final Edmx edmx;
+  private  List<List<String>> schemaNameSpaces = null;
 
   public ClientCsdlXMLMetadata(final Edmx edmx) {
     this.edmx = edmx;
   }
+  public ClientCsdlXMLMetadata(final Edmx edmx,final List<List<String>> schemaNameSpaces) {
+	    this.edmx = edmx;
+	    this.schemaNameSpaces = schemaNameSpaces;
+  }
+  
+ 
+  
+  @Override
+  public List<List<String>> getSchemaNamespaces() {
+		return schemaNameSpaces;
+	}
+	
+
 
   @Override
   public List<CsdlSchema> getSchemas() {

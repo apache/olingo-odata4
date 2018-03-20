@@ -626,6 +626,61 @@ public class MetadataValidationTest extends AbstractTest {
               + "EntityType=\"Namespace2_Alias.ODataWebExperimentalETKeyNav\"/>"
               + "</EntityContainer></Schema></edmx:DataServices></edmx:Edmx>";
   
+  public static final String V4MetadataWithNoEntityContainer ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+			+"<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"
+			+	"<edmx:Reference Uri=\"../VOC_Core/$metadata\">"
+			+		"<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\" />"
+			+	"</edmx:Reference>"
+			+	"<edmx:DataServices>"
+			+"<Schema Namespace=\"EPMSample2\" xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"/>"
+			+	"</edmx:DataServices>"
+			+"</edmx:Edmx>";
+  
+  public static final String invalidV4MetadataWithNoSchema ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+			+"<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"
+			+	"<edmx:Reference Uri=\"../VOC_Core/$metadata\">"
+			+		"<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\" />"
+			+	"</edmx:Reference>"
+			+	"<edmx:DataServices>"
+			+	"</edmx:DataServices>"
+			+"</edmx:Edmx>";
+  
+  public static final String validMetadataWithMultipleSchemaNamespaces ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+			+"<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"  >"
+			+	"<edmx:Reference Uri=\"../VOC_Core/$metadata\">"
+			+		"<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\" />"
+			+	"</edmx:Reference>"
+			+	"<edmx:DataServices>"
+			+"<Schema Namespace=\"EPMSample41\" xmlns:abc=\"http://docs.oasis-open.org/odata/ns/edm\" "
+			+ "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"/>"
+			+"<Schema Namespace=\"EPMSample42\" xmlns:xyz=\"http://docs.oasis-open.org/odata/ns/edm\""
+			+ " xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"/>"
+			+"<Schema Namespace=\"EPMSample43\" xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" "
+			+ "xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"/>"
+			+	"</edmx:DataServices>"
+			+"</edmx:Edmx>";
+ 
+  public static final String invalidV4MetadataWithV2Schemas ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+			+"<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"
+			+	"<edmx:Reference Uri=\"../VOC_Core/$metadata\">"
+			+		"<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\" />"
+			+	"</edmx:Reference>"
+			+	"<edmx:DataServices>"
+			+"<Schema Namespace=\"EPMSample2\" xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\"/>"
+			+"<Schema Namespace=\"EPM2\" xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\"/>"
+			+	"</edmx:DataServices>"
+			+"</edmx:Edmx>";
+  public static final String invalidV4MetadataWithV2AndV4Schemas ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+			+"<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"
+			+	"<edmx:Reference Uri=\"../VOC_Core/$metadata\">"
+			+		"<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\" />"
+			+	"</edmx:Reference>"
+			+	"<edmx:DataServices>"
+			+"<Schema Namespace=\"EPMSample4\" xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"/>"
+			+"<Schema Namespace=\"EPM2\" xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\"/>"
+			+	"</edmx:DataServices>"
+			+"</edmx:Edmx>";
+  
   @Test
   public void testXMLMetadataWithOneSchema() {
     final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).
@@ -644,6 +699,121 @@ public class MetadataValidationTest extends AbstractTest {
     metadataValidator.validateMetadata(metadata);
   }
   
+  @Test
+  public void checkValidV4XMLMetadataWithTwoSchemas() {
+    final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).
+        toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
+    assertNotNull(metadata);
+    ODataMetadataValidation metadataValidator = client.metadataValidation();
+    try {
+		assertEquals(true,metadataValidator.isV4Metadata(metadata));
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+  }
+  
+  @Test
+  public void checkInValidV4XMLMetadataWithTwoSchemas() {
+    
+    boolean checkException = false;
+    try {
+        InputStream stream = new ByteArrayInputStream(invalidV4MetadataWithV2AndV4Schemas.getBytes("UTF-8"));
+        final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).
+            toMetadata(stream);
+        assertNotNull(metadata);
+        ODataMetadataValidation metadataValidator = client.metadataValidation();
+        assertEquals(false,metadataValidator.isV4Metadata(metadata));
+        
+      } catch (Exception e) {
+      	checkException = true;
+      	 
+      } 
+      assertEquals(false,checkException);
+  }
+  
+  @Test
+  public void checkInValidV4XMLMetadataWithNoSchemas() {
+	  boolean checkException = false;
+    try {
+      InputStream stream = new ByteArrayInputStream(invalidV4MetadataWithNoSchema.getBytes("UTF-8"));
+      final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).
+          toMetadata(stream);
+      assertNotNull(metadata);
+      ODataMetadataValidation metadataValidator = client.metadataValidation();
+      metadataValidator.isV4Metadata(metadata);
+      
+    } catch (Exception e) {
+    	checkException = true;
+    	 assertEquals(e.getMessage(), "Cannot determine if v4 metadata," 
+ 				+ "No schemanamespaces found in XMLMetadata");
+    } 
+    assertEquals(true,checkException);
+  }
+  
+  
+  @Test
+  public void checkInValidV4XMLMetadataWithNoSchemasample() {
+	  boolean checkException = false;
+    try {
+      InputStream stream = new ByteArrayInputStream(validMetadataWithMultipleSchemaNamespaces.getBytes("UTF-8"));
+      final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).
+          toMetadata(stream);
+      assertNotNull(metadata);
+      ODataMetadataValidation metadataValidator = client.metadataValidation();
+      assertEquals(true,metadataValidator.isV4Metadata(metadata));
+      
+    } catch (Exception e) {
+    	checkException = true;
+    	 
+    } 
+    assertEquals(false,checkException);
+  }
+  
+  @Test
+  public void checkInValidV4XMLMetadataWithV2Schemas() {
+	
+    try {
+      InputStream stream = new ByteArrayInputStream(invalidV4MetadataWithV2Schemas.getBytes("UTF-8"));
+      final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).
+          toMetadata(stream);
+      assertNotNull(metadata);
+      ODataMetadataValidation metadataValidator = client.metadataValidation();
+      assertEquals(false,metadataValidator.isV4Metadata(metadata));
+      
+    } catch (Exception e) {
+    
+    	assertEquals(false, true);
+    } 
+  }
+  
+  
+  
+  @Test
+  public void testIfV4Service() {
+    final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).
+        toMetadata(getClass().getResourceAsStream("northwind-metadata.xml"));
+    assertNotNull(metadata);
+    ODataMetadataValidation metadataValidator = client.metadataValidation();
+    assertEquals(true,metadataValidator.isServiceDocument(metadata));
+  }
+
+  @Test
+  public void testIfV4ServiceWithNoEntityContainer() {
+	  try{
+		  InputStream stream = new ByteArrayInputStream(V4MetadataWithNoEntityContainer.getBytes("UTF-8"));
+	      final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).
+	          toMetadata(stream);
+	      assertNotNull(metadata);
+	    ODataMetadataValidation metadataValidator = client.metadataValidation();
+	    boolean isservice = metadataValidator.isServiceDocument(metadata);
+	    assertEquals(false,isservice);
+	  }catch (Exception e) {
+		    
+	    	assertEquals(false, true);
+	    } 
+
+  }
   @Test
   public void testXMLMetadataWithTripInService() {
     final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).

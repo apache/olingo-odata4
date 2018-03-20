@@ -19,10 +19,13 @@
 package org.apache.olingo.client.core.metadatavalidator;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
@@ -34,6 +37,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlStructuralType;
 
 public class CsdlTypeValidator {
@@ -49,7 +53,12 @@ public class CsdlTypeValidator {
       new HashMap<FullQualifiedName, CsdlAction>();
   private Map<FullQualifiedName, CsdlFunction> csdlFunctionsMap = 
       new HashMap<FullQualifiedName, CsdlFunction>();
+  private static final String V4_SCHEMA_XMLNS = 
+		  "http://docs.oasis-open.org/odata/ns/edm";
   
+  public CsdlTypeValidator(){
+	  
+  }
   /**
    * 
    * @param aliasNamespaceMap
@@ -491,5 +500,43 @@ public class CsdlTypeValidator {
       throw new RuntimeException("Invalid Function " + aliasName);
     }
     return fqName;
+  }
+  /**
+   * This checks if XmlMetadata is V4 OData version.
+   * @param xmlMetadata
+   * @return boolean
+   * @throws Exception
+   */
+  public boolean isV4MetaData(XMLMetadata xmlMetadata) throws Exception {
+	boolean isV4doc = true;
+	List<List<String>>schemaNameSpaces = xmlMetadata.getSchemaNamespaces();
+	if (schemaNameSpaces == null || schemaNameSpaces.isEmpty()) {
+		throw new Exception("Cannot determine if v4 metadata," 
+				+ "No schemanamespaces found in XMLMetadata");
+	}
+	for(List<String> nameSpaces:schemaNameSpaces){
+		if(!nameSpaces.contains(V4_SCHEMA_XMLNS)){
+			isV4doc = false;
+		}
+	}
+	return isV4doc;
+}
+  /**
+   * This checks if XMLMetadata is a service document.
+   * @param xmlMetadata
+   * @return boolean
+   */
+  public boolean isServiceDocument(XMLMetadata xmlMetadata){
+	boolean isServDoc = false;
+	List<CsdlSchema> schemas = xmlMetadata.getSchemas();
+	for (CsdlSchema schema : schemas) {
+		// for metadata to be a service document it should have an entity
+		// container
+		if (schema.getEntityContainer() != null) {
+			isServDoc = true;
+			break;
+		}
+	}
+	return isServDoc;  
   }
 }

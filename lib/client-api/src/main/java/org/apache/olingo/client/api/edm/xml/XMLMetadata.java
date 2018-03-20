@@ -54,4 +54,7 @@ public interface XMLMetadata {
   Map<String, CsdlSchema> getSchemaByNsOrAlias();
   
   List<Reference> getReferences();
+  
+  List<List<String>> getSchemaNamespaces();
+
 }

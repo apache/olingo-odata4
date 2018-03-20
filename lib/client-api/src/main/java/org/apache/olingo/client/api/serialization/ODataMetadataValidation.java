@@ -34,4 +34,16 @@ public interface ODataMetadataValidation {
    * @param xmlMetadata
    */
   void validateMetadata(XMLMetadata xmlMetadata);
+  
+  /**
+   * This method checks if if its a V4 metadata based on the XMLMetadata provided
+   * @param xmlMetadata
+   */
+  boolean isV4Metadata(XMLMetadata xmlMetadata)throws Exception;
+  
+  /**
+   * This method checks if if its a service document based on the XMLMetadata provided
+   * @param xmlMetadata
+   */
+  boolean isServiceDocument(XMLMetadata xmlMetadata);
 }

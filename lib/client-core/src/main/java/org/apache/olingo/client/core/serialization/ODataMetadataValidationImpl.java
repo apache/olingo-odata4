@@ -114,4 +114,14 @@ public class ODataMetadataValidationImpl implements ODataMetadataValidation {
         csdlEntityTypesMap, csdlComplexTypesMap, csdlActionsMap, csdlFunctionsMap);
     csdlTypeValidator.validateMetadataXML();
   }
+  
+ @Override
+  public boolean isV4Metadata(XMLMetadata xmlMetadata) throws Exception{
+	return  new CsdlTypeValidator().isV4MetaData(xmlMetadata);
+  }
+ 
+  @Override
+  public boolean isServiceDocument(XMLMetadata xmlMetadata){
+	  return  new CsdlTypeValidator().isServiceDocument(xmlMetadata);
+  }
 }

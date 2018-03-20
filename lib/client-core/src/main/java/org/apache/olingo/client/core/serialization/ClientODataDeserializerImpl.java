@@ -18,15 +18,21 @@
  */
 package org.apache.olingo.client.core.serialization;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.data.ServiceDocument;
+import org.apache.olingo.client.api.edm.xml.Edmx;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataDeserializer;
@@ -43,6 +49,12 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 import com.fasterxml.aalto.stax.OutputFactoryImpl;
@@ -59,6 +71,8 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
   private final ODataDeserializer deserializer;
   private final ContentType contentType;
+  private static final String SCHEMA = "Schema";
+  private static final String XMLNS = "xmlns";
 
   public ClientODataDeserializerImpl(final boolean serverMode, final ContentType contentType) {
     this.contentType = contentType;
@@ -115,11 +129,74 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
   @Override
   public XMLMetadata toMetadata(final InputStream input) {
     try {
-      return new ClientCsdlXMLMetadata(getXmlMapper().readValue(input, ClientCsdlEdmx.class));
+    	
+    	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    	org.apache.commons.io.IOUtils.copy(input, byteArrayOutputStream);
+    	// copy the content of input stream to reuse it
+    	byte[] inputContent = byteArrayOutputStream.toByteArray();
+    	
+    	InputStream inputStream1 = new ByteArrayInputStream(inputContent);
+    	Edmx edmx = getXmlMapper().readValue(inputStream1, ClientCsdlEdmx.class);
+    	
+    	InputStream inputStream2 = new ByteArrayInputStream(inputContent);
+    	List<List<String>> schemaNameSpaces = getAllSchemaNameSpace(inputStream2);
+ 
+      return new ClientCsdlXMLMetadata(edmx,schemaNameSpaces);
     } catch (Exception e) {
       throw new IllegalArgumentException("Could not parse as Edmx document", e);
     }
   }
+
+	private List<List<String>> getAllSchemaNameSpace(InputStream inputStream)
+			throws ParserConfigurationException, SAXException, IOException{
+		List<List<String>> schemaNameSpaces = new ArrayList <List<String>>();
+		
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		dbFactory.setFeature(
+	                "http://xml.org/sax/features/namespaces", true);
+		dbFactory.setFeature(
+	                "http://apache.org/xml/features/validation/schema",
+	                false);
+		dbFactory.setFeature(
+	                "http://apache.org/xml/features/validation/schema-full-checking",
+	                true);
+		dbFactory.setFeature(
+	                "http://xml.org/sax/features/external-general-entities",
+	                false);
+		dbFactory.setFeature(
+	                "http://xml.org/sax/features/external-parameter-entities",
+	                false);
+		dbFactory.setFeature(
+	                "http://apache.org/xml/features/disallow-doctype-decl",
+	                true);
+		dbFactory.setFeature(
+	                "http://javax.xml.XMLConstants/feature/secure-processing",
+	                true);
+		
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(inputStream);
+		doc.getDocumentElement().normalize();
+		NodeList nList = doc.getElementsByTagName(SCHEMA);
+		
+		for (int temp = 0; temp < nList.getLength(); temp++) {
+			Node nNode = nList.item(temp);
+			List<String> nameSpaces = new ArrayList <String>();
+			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) nNode;
+				NamedNodeMap attributes = eElement.getAttributes();
+				int len = attributes.getLength();
+				for(int i =0;i<len;i++){
+					// check for all atributes begining with name xmlns or xmlns:
+					String attrName = attributes.item(i).getNodeName();
+					if( XMLNS.equals(attrName) || attrName.startsWith(XMLNS+":")){
+						nameSpaces.add(attributes.item(i).getNodeValue());
+					}
+				}
+			}
+			schemaNameSpaces.add(nameSpaces);
+		}
+	return schemaNameSpaces;
+	}
 
   @Override
   public ResWrap<ServiceDocument> toServiceDocument(final InputStream input) throws ODataDeserializerException {
