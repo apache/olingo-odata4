@@ -530,6 +530,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     final boolean all = ExpandSelectHelper.isAll(select);
     final Set<String> selected = all ? new HashSet<String>() :
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
+    addKeyPropertiesToSelected(selected, type);
     for (final String propertyName : type.getPropertyNames()) {
       if (all || selected.contains(propertyName)) {
         final EdmProperty edmProperty = type.getStructuralProperty(propertyName);
@@ -537,6 +538,17 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         final Set<List<String>> selectedPaths = all || edmProperty.isPrimitive() ? null :
             ExpandSelectHelper.getSelectedPaths(select.getSelectItems(), propertyName);
         writeProperty(metadata, edmProperty, property, selectedPaths, json);
+      }
+    }
+  }
+  
+  private void addKeyPropertiesToSelected(Set<String> selected, EdmStructuredType type) {
+    if (!selected.isEmpty() && type instanceof EdmEntityType) {
+      List<String> keyNames = ((EdmEntityType) type).getKeyPredicateNames();
+      for (String key : keyNames) {
+        if (!selected.contains(key)) {
+          selected.add(key);
+        }
       }
     }
   }

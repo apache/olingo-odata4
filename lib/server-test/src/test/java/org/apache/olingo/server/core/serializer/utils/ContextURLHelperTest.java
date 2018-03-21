@@ -223,8 +223,8 @@ public class ContextURLHelperTest {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, select)).build();
-    assertEquals("$metadata#ESTwoPrim(PropertyString,NavPropertyETAllPrimOne(),"
-        + "NavPropertyETAllPrimMany(PropertyInt32))",
+    assertEquals("$metadata#ESTwoPrim(PropertyInt16,PropertyString,NavPropertyETAllPrimOne(),"
+        + "NavPropertyETAllPrimMany(PropertyInt16,PropertyInt32))",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
@@ -342,7 +342,8 @@ public class ContextURLHelperTest {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESCompCollDerived(PropertyCompAno/olingo.odata.test1.CTBaseAno/AdditionalPropString)", 
+    assertEquals("$metadata#ESCompCollDerived(PropertyInt16,PropertyCompAno/"
+        + "olingo.odata.test1.CTBaseAno/AdditionalPropString)", 
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
   
@@ -356,7 +357,7 @@ public class ContextURLHelperTest {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESCompCollComp(PropertyComp/CollPropertyComp/"
+    assertEquals("$metadata#ESCompCollComp(PropertyInt16,PropertyComp/CollPropertyComp/"
         + "olingo.odata.test1.CTBase/AdditionalPropString)", 
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
@@ -372,7 +373,9 @@ public class ContextURLHelperTest {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.ETBaseTwoKeyNav/NavPropertyETBaseTwoKeyNavOne)", 
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16,PropertyString,"
+        + "olingo.odata.test1.ETBaseTwoKeyNav/"
+        + "NavPropertyETBaseTwoKeyNavOne)", 
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
   
@@ -387,7 +390,8 @@ public class ContextURLHelperTest {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate)", 
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16,PropertyString,"
+        + "olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate)", 
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
   
@@ -403,7 +407,8 @@ public class ContextURLHelperTest {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem1, selectItem2));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESTwoKeyNav(CollPropertyComp,olingo.odata.test1.ETBaseTwoKeyNav/"
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16,PropertyString,"
+        + "CollPropertyComp,olingo.odata.test1.ETBaseTwoKeyNav/"
         + "NavPropertyETTwoBaseTwoKeyNavOne)", 
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
@@ -421,7 +426,8 @@ public class ContextURLHelperTest {
     final SelectOption select = ExpandSelectMock.mockSelectOption(Arrays.asList(selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.ETBaseTwoKeyNav/CollPropertyComp/"
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16,PropertyString,"
+        + "olingo.odata.test1.ETBaseTwoKeyNav/CollPropertyComp/"
         + "olingo.odata.test1.CTBasePrimCompNav/NavPropertyETTwoKeyNavOne)", 
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
@@ -443,7 +449,7 @@ public class ContextURLHelperTest {
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
     assertEquals("$metadata#ESKeyNavCont(NavPropertyETTwoKeyNavContOne("
-        + "olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate))", 
+        + "PropertyInt16,PropertyString,olingo.odata.test1.ETBaseTwoKeyNav/PropertyDate))", 
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
   
@@ -456,7 +462,8 @@ public class ContextURLHelperTest {
         selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESTwoKeyNav(CollPropertyCompNav/NavPropertyETTwoKeyNavMany)",
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16,PropertyString,"
+        + "CollPropertyCompNav/NavPropertyETTwoKeyNavMany)",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
   
@@ -472,7 +479,8 @@ public class ContextURLHelperTest {
         selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav)",
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16,PropertyString,"
+        + "olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav)",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
   
@@ -490,7 +498,8 @@ public class ContextURLHelperTest {
         selectItem1, selectItem2));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESTwoKeyNav(PropertyString,olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav)",
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16,PropertyString,"
+        + "olingo.odata.test1.BAESTwoKeyNavRTESTwoKeyNav)",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
   
@@ -506,7 +515,8 @@ public class ContextURLHelperTest {
         selectItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), null, select)).build();
-    assertEquals("$metadata#ESTwoKeyNav(olingo.odata.test1.BFCESTwoKeyNavRTString)",
+    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16,PropertyString,"
+        + "olingo.odata.test1.BFCESTwoKeyNavRTString)",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 }

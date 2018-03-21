@@ -1162,9 +1162,9 @@ public class ODataJsonSerializerTest {
                 .build()).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","
+        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyInt16,PropertyBoolean,PropertyDate)/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.id\":\"ESAllPrim(32767)\","
+        + "\"@odata.id\":\"ESAllPrim(32767)\",\"PropertyInt16\":32767,"
         + "\"PropertyBoolean\":true,\"PropertyDate\":\"2012-12-03\"}";
     Assert.assertEquals(expectedResult, resultString);
   }
@@ -1275,11 +1275,11 @@ public class ODataJsonSerializerTest {
     
     String expected = "{"
             + "\"@odata.context\":\"$metadata#ESFourKeyAlias"
-            +   "(PropertyComp/PropertyString,PropertyCompComp/PropertyComp)\","
+            +   "(PropertyInt16,PropertyComp/PropertyString,PropertyCompComp/PropertyComp)\","
             + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
             + "\"value\":[{"
                 + "\"@odata.id\":\"ESFourKeyAlias(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')\","
-                + "\"PropertyComp\":{"
+                + "\"PropertyInt16\":1,\"PropertyComp\":{"
                     + "\"PropertyString\":\"Num11\""
                 + "},"
                 + "\"PropertyCompComp\":{"
@@ -1433,9 +1433,10 @@ public class ODataJsonSerializerTest {
                 .build()).getContent();
           Assert.assertNotNull(result);   
           final String resultString = IOUtils.toString(result);
-           Assert.assertEquals(  "{\"@odata.context\":\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\","+
+           Assert.assertEquals(  "{\"@odata.context\":\"$metadata#ESAllPrim(PropertyInt16,"
+		   + "PropertyBoolean,PropertyDate)/$entity\","+
            "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\",\"@odata.id\":\"ESAllPrim(32767)\","+
-            "\"PropertyBoolean\":true,\"PropertyDate\":\"2012-12-03\"}",
+            "\"PropertyInt16\":32767,\"PropertyBoolean\":true,\"PropertyDate\":\"2012-12-03\"}",
           resultString);   
   }
 
@@ -1493,10 +1494,12 @@ public class ODataJsonSerializerTest {
                 .expand(expand)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\","
+        + "\"@odata.context\":\"$metadata#ESTwoPrim(PropertyInt16,"
+		+ "NavPropertyETAllPrimOne(PropertyInt16,PropertyDate))/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\","
-        + "\"NavPropertyETAllPrimOne\":{\"@odata.id\":\"ESAllPrim(32767)\",\"PropertyDate\":\"2012-12-03\"}}",
+        + "\"NavPropertyETAllPrimOne\":{\"@odata.id\":\"ESAllPrim(32767)\","
+		+ "\"PropertyInt16\":32767,\"PropertyDate\":\"2012-12-03\"}}",
         resultString);
   }
 
@@ -1522,9 +1525,9 @@ public class ODataJsonSerializerTest {
                 .select(select)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertySByte)/$entity\","
+        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyInt16,PropertySByte)/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.id\":\"ESAllPrim(32767)\","
+        + "\"@odata.id\":\"ESAllPrim(32767)\",\"PropertyInt16\":32767,"
         + "\"PropertySByte\":127,"
         + "\"NavPropertyETTwoPrimOne\":{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"},"
         + "\"NavPropertyETTwoPrimMany\":[{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"}]}",
@@ -1551,9 +1554,9 @@ public class ODataJsonSerializerTest {
                 .select(select)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\","
+        + "\"@odata.context\":\"$metadata#ESAllPrim(PropertyInt16,PropertyTimeOfDay)/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
-        + "\"@odata.id\":\"ESAllPrim(-32768)\","
+        + "\"@odata.id\":\"ESAllPrim(-32768)\",\"PropertyInt16\":-32768,"
         + "\"PropertyTimeOfDay\":\"23:49:14\","
         + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]}",
         resultString);
@@ -1583,13 +1586,14 @@ public class ODataJsonSerializerTest {
                 .expand(expand)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@odata.context\":\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\","
+        + "\"@odata.context\":\"$metadata#ESTwoPrim(PropertyInt16,"
+		+ "NavPropertyETAllPrimMany(PropertyInt16,PropertyInt32))/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
         + "\"NavPropertyETAllPrimMany\":["
-        + "{\"@odata.id\":\"ESAllPrim(-32768)\",\"PropertyInt32\":-2147483648,"
+        + "{\"@odata.id\":\"ESAllPrim(-32768)\",\"PropertyInt16\":-32768,\"PropertyInt32\":-2147483648,"
         + "\"NavPropertyETTwoPrimOne\":null,\"NavPropertyETTwoPrimMany\":[]},"
-        + "{\"@odata.id\":\"ESAllPrim(0)\",\"PropertyInt32\":0,\"NavPropertyETTwoPrimOne\":{"
+        + "{\"@odata.id\":\"ESAllPrim(0)\",\"PropertyInt16\":0,\"PropertyInt32\":0,\"NavPropertyETTwoPrimOne\":{"
         + "\"@odata.type\":\"#olingo.odata.test1.ETBase\",\"PropertyInt16\":111,"
         + "\"PropertyString\":\"TEST A\",\"AdditionalPropertyString_5\":\"TEST A 0815\"},"
         + "\"NavPropertyETTwoPrimMany\":["
@@ -1621,7 +1625,7 @@ public class ODataJsonSerializerTest {
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .build()).getContent());
-    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim/$entity\","
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESTwoPrim(PropertyInt16)/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
         + "\"NavPropertyETAllPrimOne\":null,"
@@ -2693,7 +2697,7 @@ public class ODataJsonSerializerTest {
     final String expectedResult = "{\"@odata.context\":\"$metadata#ESTwoKeyNav/$entity\","
         + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@odata.id\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='1')\","
-        + "\"CollPropertyCompNav\":[{}]}";
+        + "\"PropertyInt16\":1,\"PropertyString\":\"1\",\"CollPropertyCompNav\":[{}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
 }

@@ -357,7 +357,7 @@ public class TripPinServiceTest {
   public void testSelectOption() throws Exception {
     HttpResponse response = httpGET(baseURL + "/People('russellwhyte')?$select=FirstName,LastName", 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People(FirstName,LastName)/$entity", node.get("@odata.context").asText());
+    assertEquals("$metadata#People(UserName,FirstName,LastName)/$entity", node.get("@odata.context").asText());
     assertEquals("Russell", node.get("FirstName").asText());
   }
 
@@ -432,13 +432,13 @@ public class TripPinServiceTest {
     HttpResponse response = httpGET(baseURL+"/$entity?$id="+baseURL 
         + "/People('kristakemp')&$select=FirstName", 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People(FirstName)/$entity", node.get("@odata.context").asText());
+    assertEquals("$metadata#People(UserName,FirstName)/$entity", node.get("@odata.context").asText());
     assertEquals("Krista", node.get("FirstName").asText());
 
     // using relative URL
     response = httpGET(baseURL+"/$entity?$id="+"People('kristakemp')&$select=FirstName", 200);
     node = getJSONNode(response);
-    assertEquals("$metadata#People(FirstName)/$entity", node.get("@odata.context").asText());
+    assertEquals("$metadata#People(UserName,FirstName)/$entity", node.get("@odata.context").asText());
     assertEquals("Krista", node.get("FirstName").asText());
   }
 

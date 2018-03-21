@@ -630,6 +630,7 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     final boolean all = ExpandSelectHelper.isAll(select);
     final Set<String> selected = all ? new HashSet<String>() :
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
+    addKeyPropertiesToSelected(selected, type);
     for (final String propertyName : type.getPropertyNames()) {
       if (all || selected.contains(propertyName)) {
         final EdmProperty edmProperty = type.getStructuralProperty(propertyName);
@@ -641,6 +642,17 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
     }
   }
 
+  private void addKeyPropertiesToSelected(Set<String> selected, EdmStructuredType type) {
+    if (!selected.isEmpty() && type instanceof EdmEntityType) {
+      List<String> keyNames = ((EdmEntityType) type).getKeyPredicateNames();
+      for (String key : keyNames) {
+        if (!selected.contains(key)) {
+          selected.add(key);
+        }
+      }
+    }
+  }
+  
   protected void writeNavigationProperties(final ServiceMetadata metadata,
       final EdmStructuredType type, final Linked linked, final ExpandOption expand, final Integer toDepth,
       final String xml10InvalidCharReplacement, final Set<String> ancestors, String name, final XMLStreamWriter writer) 

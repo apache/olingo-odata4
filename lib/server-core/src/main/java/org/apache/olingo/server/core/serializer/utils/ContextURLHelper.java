@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
@@ -85,10 +86,7 @@ public final class ContextURLHelper {
       for (final String propertyName : type.getNavigationPropertyNames()) {
         constructSelectItemList(type, result, selectItems, selectedPropertyNames, propertyName);
       }
-      if ((result.toString().length() == 0 && !selectItems.isEmpty()) ||
-          (result.toString().split(",").length < selectItems.size())) {
-        constructSelectItemListForActionsAndFunctions(type, result, selectItems);
-      }
+      constructSelectItemListForActionsAndFunctions(type, result, selectItems);
     }
   }
 
@@ -200,6 +198,16 @@ public final class ContextURLHelper {
             }
             result.append(Encoder.encode(name));
           }
+        }
+      }
+    } else {
+      if (type instanceof EdmEntityType) {
+        final List<String> keyNames = ((EdmEntityType) type).getKeyPredicateNames();
+        if (keyNames.contains(propertyName)) {
+          if (result.length() > 0) {
+            result.append(',');
+          }
+          result.append(Encoder.encode(propertyName));
         }
       }
     }

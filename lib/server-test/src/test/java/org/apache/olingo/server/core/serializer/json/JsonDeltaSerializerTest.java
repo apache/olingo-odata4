@@ -453,7 +453,7 @@ public class JsonDeltaSerializerTest {
            .select(select).build()).getContent();
           String jsonString = IOUtils.toString(stream);
     Assert.assertEquals("{"
-        +"\"@odata.context\":\"$metadata#ESDelta(PropertyString)/$entity/$delta\","
+        +"\"@odata.context\":\"$metadata#ESDelta(PropertyInt16,PropertyString)/$entity/$delta\","
         + "\"value\":[{\"@odata.id\":\"ESDelta(32767)\",\"PropertyString\":\"Number:32767\"},"
         + "{\"@odata.id\":\"ESDelta(-32768)\",\"PropertyString\":\"Number:-32768\"}]}",
         jsonString);

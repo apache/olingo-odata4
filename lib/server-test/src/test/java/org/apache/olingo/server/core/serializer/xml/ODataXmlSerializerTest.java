@@ -1521,7 +1521,7 @@ public class ODataXmlSerializerTest {
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" " +
-        "  m:context=\"$metadata#ESAllPrim(PropertyBoolean,PropertyDate)/$entity\"\n" +
+        "  m:context=\"$metadata#ESAllPrim(PropertyInt16,PropertyBoolean,PropertyDate)/$entity\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
@@ -1543,6 +1543,7 @@ public class ODataXmlSerializerTest {
         "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
         "  <a:content type=\"application/xml\">\n" +
         "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>" +
         "      <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" +
         "      <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" +
         "    </m:properties>\n" +
@@ -1685,7 +1686,7 @@ public class ODataXmlSerializerTest {
             "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
             "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" \n" +
             "m:context=\"$metadata#ESFourKeyAlias" + 
-            "(PropertyComp/PropertyString,PropertyCompComp/PropertyComp)\"\n" +
+            "(PropertyInt16,PropertyComp/PropertyString,PropertyCompComp/PropertyComp)\"\n" +
             "m:metadata-etag=\"metadataETag\">\n" +
             "<a:id>http://host/svc/ESFourKeyAlias</a:id>\n" +
             "<a:entry>\n" +
@@ -1702,6 +1703,7 @@ public class ODataXmlSerializerTest {
                  "term=\"#olingo.odata.test1.ETFourKeyAlias\"/>\n" +
                 "<a:content type=\"application/xml\">\n" +
                     "<m:properties>\n" +
+                "        <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>" +
                         "<d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
                             "<d:PropertyString>Num11</d:PropertyString>\n" +
                         "</d:PropertyComp>\n" +
@@ -1951,7 +1953,8 @@ public class ODataXmlSerializerTest {
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
-        "  m:context=\"$metadata#ESTwoPrim(NavPropertyETAllPrimOne(PropertyDate))/$entity\"\n" +
+        "  m:context=\"$metadata#ESTwoPrim(PropertyInt16,"
+        + "NavPropertyETAllPrimOne(PropertyInt16,PropertyDate))/$entity\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESTwoPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
@@ -1987,6 +1990,7 @@ public class ODataXmlSerializerTest {
         "          term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
         "        <a:content type=\"application/xml\">\n" +
         "          <m:properties>\n" +
+        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>" +
         "            <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n" +
         "          </m:properties>\n" +
         "        </a:content>\n" +
@@ -2051,7 +2055,7 @@ public class ODataXmlSerializerTest {
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESAllPrim(PropertySByte)/$entity\"\n" +
+        + "m:context=\"$metadata#ESAllPrim(PropertyInt16,PropertySByte)/$entity\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
@@ -2159,6 +2163,7 @@ public class ODataXmlSerializerTest {
         "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
         "  <a:content type=\"application/xml\">\n" +
         "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>" +
         "      <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" +
         "    </m:properties>\n" +
         "  </a:content>\n" +
@@ -2195,7 +2200,7 @@ public class ODataXmlSerializerTest {
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESAllPrim(PropertyTimeOfDay)/$entity\"\n" +
+        + "m:context=\"$metadata#ESAllPrim(PropertyInt16,PropertyTimeOfDay)/$entity\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(-32768)</a:id>\n" +
         "  <a:title />\n" +
@@ -2223,6 +2228,7 @@ public class ODataXmlSerializerTest {
         "    term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
         "  <a:content type=\"application/xml\">\n" +
         "    <m:properties>\n" +
+        "      <d:PropertyInt16 m:type=\"Int16\">-32768</d:PropertyInt16>" +
         "      <d:PropertyTimeOfDay m:type=\"TimeOfDay\">23:49:14\n" +
         "      </d:PropertyTimeOfDay>\n" +
         "    </m:properties>\n" +
@@ -2263,7 +2269,8 @@ public class ODataXmlSerializerTest {
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
-        "  m:context=\"$metadata#ESTwoPrim(NavPropertyETAllPrimMany(PropertyInt32))/$entity\"\n" +
+        "  m:context=\"$metadata#ESTwoPrim(PropertyInt16,"
+        + "NavPropertyETAllPrimMany(PropertyInt16,PropertyInt32))/$entity\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESTwoPrim(-365)</a:id>\n" +
         "  <a:title />\n" +
@@ -2311,6 +2318,7 @@ public class ODataXmlSerializerTest {
         "            term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
         "          <a:content type=\"application/xml\">\n" +
         "            <m:properties>\n" +
+        "              <d:PropertyInt16 m:type=\"Int16\">-32768</d:PropertyInt16>" +
         "              <d:PropertyInt32 m:type=\"Int32\">-2147483648</d:PropertyInt32>\n" +
         "            </m:properties>\n" +
         "          </a:content>\n" +
@@ -2494,6 +2502,7 @@ public class ODataXmlSerializerTest {
         "            term=\"#olingo.odata.test1.ETAllPrim\" />\n" +
         "          <a:content type=\"application/xml\">\n" +
         "            <m:properties>\n" +
+        "              <d:PropertyInt16 m:type=\"Int16\">0</d:PropertyInt16>" +
         "              <d:PropertyInt32 m:type=\"Int32\">0</d:PropertyInt32>\n" +
         "            </m:properties>\n" +
         "          </a:content>\n" +

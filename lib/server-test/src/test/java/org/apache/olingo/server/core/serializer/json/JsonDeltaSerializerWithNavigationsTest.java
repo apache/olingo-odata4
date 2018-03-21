@@ -608,7 +608,8 @@ public class JsonDeltaSerializerWithNavigationsTest {
            .build()).getContent();
           String jsonString = IOUtils.toString(stream);
     Assert.assertEquals("{"
-        + "\"@context\":\"$metadata#ESDelta(PropertyString,NavPropertyETAllPrimOne(PropertyString))/$delta\","
+        + "\"@context\":\"$metadata#ESDelta(PropertyInt16,PropertyString,NavPropertyETAllPrimOne("
+        + "PropertyInt16,PropertyString))/$delta\","
         + "\"value\":[{\"@id\":\"ESDelta(100)\",\"PropertyInt16\":100,\"PropertyString\":\"Number:100\","
         + "\"NavPropertyETAllPrimOne@delta\":{\"@id\":\"ESAllPrim(32767)\","
         + "\"PropertyString\":\"First Resource - positive values\"}}]}",
@@ -642,7 +643,7 @@ public class JsonDeltaSerializerWithNavigationsTest {
            .select(select).build()).getContent();
           String jsonString = IOUtils.toString(stream);
     Assert.assertEquals("{"
-        +"\"@context\":\"$metadata#ESDelta(PropertyString)/$entity/$delta\","
+        +"\"@context\":\"$metadata#ESDelta(PropertyInt16,PropertyString)/$entity/$delta\","
         + "\"value\":[{\"@id\":\"ESDelta(32767)\",\"PropertyString\":\"Number:32767\"},"
         + "{\"@id\":\"ESDelta(-32768)\",\"PropertyString\":\"Number:-32768\"}]}",
         jsonString);

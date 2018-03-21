@@ -90,7 +90,7 @@ public class ExpandSelectITCase extends AbstractParamTecSvcITCase {
     final ClientEntity entity = response.getBody();
     assertNotNull(entity);
 
-    assertNull(entity.getProperty("PropertyInt16"));
+    assertNotNull(entity.getProperty("PropertyInt16"));
 
     final ClientProperty property = entity.getProperty("PropertyString");
     assertNotNull(property);
@@ -114,7 +114,7 @@ public class ExpandSelectITCase extends AbstractParamTecSvcITCase {
     assertNotNull(entities);
     assertEquals(2, entities.size());
     final ClientEntity inlineEntity = entities.get(0);
-    assertEquals(2, inlineEntity.getProperties().size());
+    assertEquals(3, inlineEntity.getProperties().size());
     assertShortOrInt(-128, inlineEntity.getProperty("PropertySByte").getPrimitiveValue().toValue());
     Calendar time = Calendar.getInstance();
     time.clear();
