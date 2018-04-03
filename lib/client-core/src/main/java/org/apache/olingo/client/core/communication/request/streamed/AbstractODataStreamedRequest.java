@@ -104,8 +104,11 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
         public HttpResponse call() throws Exception { //NOSONAR
           ((HttpEntityEnclosingRequestBase) request).setEntity(
                   URIUtils.buildInputStreamEntity(odataClient, payloadManager.getBody()));
-
-          return doExecute();
+          try {
+            return doExecute();
+          } finally {
+            payloadManager.finalizeBody();
+          }
         }
       }));
     } else {
@@ -115,7 +118,11 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
       futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
         @Override
         public HttpResponse call() throws Exception { //NOSONAR
-          return doExecute();
+          try {
+            return doExecute();
+          } finally {
+            payloadManager.finalizeBody();
+          }
         }
       }));
     }
