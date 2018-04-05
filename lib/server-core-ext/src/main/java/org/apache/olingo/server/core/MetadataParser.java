@@ -27,6 +27,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -100,7 +102,8 @@ public class MetadataParser {
   private ReferenceResolver referenceResolver = new DefaultReferenceResolver();
   private boolean useLocalCoreVocabularies = true;
   private boolean implicitlyLoadCoreVocabularies = false;
-  private boolean recusivelyLoadReferences = false;
+  private boolean recursivelyLoadReferences = false;
+  private Map<String, SchemaBasedEdmProvider> globalReferenceMap = new HashMap<String, SchemaBasedEdmProvider>();
   
   /**
    * Avoid reading the annotations in the $metadata 
@@ -138,7 +141,7 @@ public class MetadataParser {
    * @return
    */
   public MetadataParser recursivelyLoadReferences(boolean load) {
-    this.recusivelyLoadReferences = load;
+    this.recursivelyLoadReferences = load;
     return this;
   }  
   
@@ -154,35 +157,37 @@ public class MetadataParser {
   
   public ServiceMetadata buildServiceMetadata(Reader csdl) throws XMLStreamException {
     SchemaBasedEdmProvider provider = buildEdmProvider(csdl, this.referenceResolver,
-        this.implicitlyLoadCoreVocabularies, this.useLocalCoreVocabularies, true);
+            this.implicitlyLoadCoreVocabularies, this.useLocalCoreVocabularies, true, null);
     return new ServiceMetadataImpl(provider, provider.getReferences(), null);
   }
 
   public SchemaBasedEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);    
-    return buildEdmProvider(reader, this.referenceResolver,
-        this.implicitlyLoadCoreVocabularies, this.useLocalCoreVocabularies, true);
+    return buildEdmProvider(reader, this.referenceResolver, this.implicitlyLoadCoreVocabularies,
+            this.useLocalCoreVocabularies, true, null);
   }
   
-  protected SchemaBasedEdmProvider buildEdmProvider(Reader csdl,
-      ReferenceResolver resolver, boolean loadCore, boolean useLocal, boolean loadReferenceSchemas)
-      throws XMLStreamException {
-    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-    XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);    
-    return buildEdmProvider(reader, resolver, loadCore, useLocal, loadReferenceSchemas);
-  }
-    
-  protected SchemaBasedEdmProvider buildEdmProvider(InputStream csdl,
-      ReferenceResolver resolver, boolean loadCore, boolean useLocal, boolean loadReferenceSchemas)
-      throws XMLStreamException {
+  protected SchemaBasedEdmProvider buildEdmProvider(Reader csdl, ReferenceResolver resolver,
+                                                    boolean loadCore, boolean useLocal,
+                                                    boolean loadReferenceSchemas, String namespace)
+          throws XMLStreamException {
     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
-    return buildEdmProvider(reader, resolver, loadCore, useLocal, loadReferenceSchemas);
+    return buildEdmProvider(reader, resolver, loadCore, useLocal, loadReferenceSchemas, namespace);
+  }
+
+  protected SchemaBasedEdmProvider buildEdmProvider(InputStream csdl, ReferenceResolver resolver,
+                                                    boolean loadCore, boolean useLocal,
+                                                    boolean loadReferenceSchemas, String namespace)
+          throws XMLStreamException {
+    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
+    return buildEdmProvider(reader, resolver, loadCore, useLocal, loadReferenceSchemas, namespace);
   } 
   
   protected SchemaBasedEdmProvider buildEdmProvider(XMLEventReader reader,
-      ReferenceResolver resolver, boolean loadCore, boolean useLocal, boolean loadReferenceSchemas)
+      ReferenceResolver resolver, boolean loadCore, boolean useLocal, boolean loadReferenceSchemas, String namespace)
       throws XMLStreamException {
     SchemaBasedEdmProvider provider = new SchemaBasedEdmProvider();
     
@@ -220,7 +225,11 @@ public class MetadataParser {
       loadCoreVocabulary(provider, "Org.OData.Capabilities.V1");
       loadCoreVocabulary(provider, "Org.OData.Measures.V1");
     }
-    
+
+    if (namespace != null && !namespace.equals("") && !globalReferenceMap.containsKey(namespace)) {
+      globalReferenceMap.put(namespace, provider);
+    }
+
     // load all the reference schemas
     if (resolver != null && loadReferenceSchemas) {
       loadReferencesSchemas(provider, xmlBase.length() == 0 ? null
@@ -239,8 +248,8 @@ public class MetadataParser {
 
         for (EdmxReferenceInclude include : reference.getIncludes()) {
 
-          // check if the schema is already loaded before.
-          if (provider.getSchema(include.getNamespace()) != null) {
+          // check if the schema is already loaded before in current provider.
+          if (provider.getSchemaDirectly(include.getNamespace()) != null) {
             continue;
           }
           
@@ -248,15 +257,19 @@ public class MetadataParser {
             loadCoreVocabulary(provider, include.getNamespace());
             continue;
           }
-                    
+
+          // check if the schema is already loaded before in parent providers
+          refProvider = this.globalReferenceMap.get(include.getNamespace());
+
           if (refProvider == null) {
             InputStream is = this.referenceResolver.resolveReference(reference.getUri(), xmlBase);
             if (is == null) {
               throw new EdmException("Failed to load Reference "+reference.getUri()+" loading failed");
             } else {
               // do not implicitly load core vocabularies any more. But if the
-              // references loading the core vocabularies try to use local if we can 
-              refProvider = buildEdmProvider(is, resolver, false, useLocal, this.recusivelyLoadReferences);
+              // references loading the core vocabularies try to use local if we can
+              refProvider = buildEdmProvider(is, resolver, false, useLocal,
+                      this.recursivelyLoadReferences, include.getNamespace());
             }
           }
           
@@ -308,7 +321,7 @@ public class MetadataParser {
     if (schema == null) {
       InputStream is = this.getClass().getClassLoader().getResourceAsStream(resource);
       if (is != null) {
-        SchemaBasedEdmProvider childProvider = buildEdmProvider(is, null, false, false, true);
+        SchemaBasedEdmProvider childProvider = buildEdmProvider(is, null, false, false, true, "");
         provider.addVocabularySchema(namespace, childProvider);
       } else {
         throw new XMLStreamException("failed to load "+resource+" core vocabulary");

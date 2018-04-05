@@ -19,8 +19,10 @@
 package org.apache.olingo.server.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -88,38 +90,44 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   }  
   
   CsdlSchema getSchema(String ns, boolean checkReferences) {
+    if (checkReferences) {
+      return getSchemaRecursively(ns, new HashSet<String>());
+    } else {
+      return getSchemaDirectly(ns);
+    }
+  }
+
+  CsdlSchema getSchemaDirectly(String ns) {
     for (CsdlSchema s : this.edmSchemas) {
       if (s.getNamespace().equals(ns)) {
         return s;
       }
     }
-    CsdlSchema s = null; 
-    if (checkReferences) {
-      s = getReferenceSchema(ns);
-      if (s == null) {
-        s = getVocabularySchema(ns);
-      }
-    }
-    return s;
+    return null;
   }
 
-  CsdlSchema getReferenceSchema(String ns) {
-    if (ns == null) {
-      return null;
+  CsdlSchema getSchemaRecursively(String ns, Set<String> parsedPath) {
+    // find the schema by namespace in current provider
+    CsdlSchema schema = getSchemaDirectly(ns);
+    if (schema != null) {
+      return schema;
     }
-    
-    if (this.referenceSchemas.get(ns) != null) {
-      return this.referenceSchemas.get(ns).getSchema(ns);  
-    }
-    
-    // it is possible that we may be looking for Reference schema of Reference
-    for (SchemaBasedEdmProvider provider:this.referenceSchemas.values()) {
-      CsdlSchema schema = provider.getSchema(ns);
+
+    // find the schema by namespace in the reference schema provider
+    for (Map.Entry<String, SchemaBasedEdmProvider> entry : this.referenceSchemas.entrySet()) {
+      String namespace = entry.getKey();
+      if (parsedPath.contains(namespace)) {
+        continue;
+      }
+      SchemaBasedEdmProvider provider = entry.getValue();
+      parsedPath.add(namespace);
+      schema = provider.getSchemaRecursively(ns, parsedPath);
       if (schema != null) {
         return schema;
       }
     }
-    return null;
+
+    return getVocabularySchema(ns);
   }
   
   @Override

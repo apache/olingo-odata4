@@ -46,6 +46,7 @@ import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,6 +56,21 @@ public class MetadataParserTest {
   final FullQualifiedName EC = new FullQualifiedName(NS, "DefaultContainer");
 
   CsdlEdmProvider provider = null;
+
+  ReferenceResolver testReferenceResolver = new ReferenceResolver() {
+    @Override
+    public InputStream resolveReference(URI uri, String xmlBase) {
+      String str = uri.toASCIIString();
+      if (str.startsWith("http://localhost/")) {
+        try {
+          return new FileInputStream("src/test/resources/"+str.substring(17));
+        } catch (FileNotFoundException e) {
+          return null;
+        }
+      }
+      return null;
+    }
+  };
 
   @Before
   public void setUp() throws Exception {
@@ -197,20 +213,47 @@ public class MetadataParserTest {
   public void testReferenceLoad() throws Exception {
     MetadataParser parser = new MetadataParser();
     parser.recursivelyLoadReferences(false);
-    parser.referenceResolver(new ReferenceResolver() {
-      @Override
-      public InputStream resolveReference(URI uri, String xmlBase) {
-        String str = uri.toASCIIString();
-        if (str.startsWith("http://localhost/")) {
-          try {
-            return new FileInputStream("src/test/resources/"+str.substring(17));
-          } catch (FileNotFoundException e) {
-            return null;
-          }
-        }
-        return null;
-      }
-    });
+    parser.referenceResolver(this.testReferenceResolver);
     provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/test.xml"));
-  }   
+  }
+
+  @Test
+  public void testReferenceLoadRecursively() throws Exception {
+    MetadataParser parser = new MetadataParser();
+    parser.recursivelyLoadReferences(true);
+    parser.referenceResolver(testReferenceResolver);
+    SchemaBasedEdmProvider providerTest = parser.buildEdmProvider(new FileReader("src/test/resources/test.xml"));
+
+    Assert.assertNotNull(providerTest.getSchema("Microsoft.OData.SampleService.Models.TripPin", false));
+
+    Assert.assertNull(providerTest.getSchema("org.apache.olingo.a", false));
+    Assert.assertNull(providerTest.getSchema("org.apache.olingo.b", false));
+
+    Assert.assertNotNull(providerTest.getSchema("org.apache.olingo.a", true));
+    Assert.assertNotNull(providerTest.getSchema("org.apache.olingo.b", true));
+  }
+
+  @Test
+  public void testCircleReferenceShouldNotStackOverflow() throws Exception {
+    MetadataParser parser = new MetadataParser();
+    parser.recursivelyLoadReferences(true);
+    parser.referenceResolver(testReferenceResolver);
+    SchemaBasedEdmProvider providerTest = parser.buildEdmProvider(new FileReader("src/test/resources/test.xml"));
+
+    Assert.assertNull(providerTest.getSchema("Not Found", true));
+
+
+  }
+
+  @Test
+  public void testLoadCoreVocabulary() throws Exception {
+    MetadataParser parser = new MetadataParser();
+    parser.implicitlyLoadCoreVocabularies(true);
+    parser.referenceResolver(testReferenceResolver);
+    SchemaBasedEdmProvider provider = parser.buildEdmProvider(new FileReader("src/test/resources/test.xml"));
+
+    Assert.assertNotNull(provider.getVocabularySchema("Org.OData.Core.V1"));
+    Assert.assertNotNull(provider.getSchema("Org.OData.Core.V1"));
+
+  }
 }
