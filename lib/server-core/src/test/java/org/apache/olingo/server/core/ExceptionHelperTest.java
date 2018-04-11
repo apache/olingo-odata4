@@ -79,6 +79,16 @@ public class ExceptionHelperTest {
       checkStatusCode(serverError, HttpStatusCode.BAD_REQUEST, e);
     }
   }
+  
+  @Test
+  public void libraryExceptionLeadToBadRequest() {
+      ODataLibraryException e = new SerializerException(DEV_MSG, SerializerException.MessageKeys.MISSING_PROPERTY);
+      ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      checkStatusCode(serverError, HttpStatusCode.BAD_REQUEST, e);
+      e = new SerializerException(DEV_MSG, DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
+      serverError = ODataExceptionHelper.createServerErrorObject(e, null);
+      checkStatusCode(serverError, HttpStatusCode.BAD_REQUEST, e);
+  }
 
   @Test
   public void contentNegotiatorExceptionMustLeadToNotAcceptable() {

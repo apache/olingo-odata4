@@ -132,7 +132,11 @@ public class ODataExceptionHelper {
   }
 
   public static ODataServerError createServerErrorObject(final ODataLibraryException e, final Locale requestedLocale) {
-    return basicTranslatedError(e, requestedLocale);
+    ODataServerError serverError = basicTranslatedError(e, requestedLocale);
+    if(e instanceof SerializerException || e instanceof DeserializerException){
+      serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
+    }
+    return serverError;
   }
 
   public static ODataServerError createServerErrorObject(final ODataApplicationException e) {
