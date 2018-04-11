@@ -115,8 +115,12 @@ public class ComplexTypeProvider {
       return new CsdlComplexType()
           .setName("CTTwoPrim")
           .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable,
-              PropertyProvider.propertyString_NotNullable));
-
+              PropertyProvider.propertyString_NotNullable))
+          .setNavigationProperties((Arrays.asList(
+              PropertyProvider.collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav,
+              new CsdlNavigationProperty()
+                  .setName("NavPropertyETMediaOne")
+                  .setType(EntityTypeProvider.nameETMedia))));
     } else if (complexTypeName.equals(nameCTCompNav)) {
       return new CsdlComplexType()
           .setName("CTCompNav")
@@ -128,7 +132,10 @@ public class ComplexTypeProvider {
           .setName("CTMixPrimCollComp")
           .setProperties(
               Arrays.asList(PropertyProvider.propertyInt16, PropertyProvider.collPropertyString,
-                  PropertyProvider.propertyComp_CTTwoPrim, PropertyProvider.collPropertyComp_CTTwoPrim));
+                  PropertyProvider.propertyComp_CTTwoPrim, PropertyProvider.collPropertyComp_CTTwoPrim))
+          .setNavigationProperties((Arrays.asList(
+              PropertyProvider.collectionNavPropertyETTwoKeyNavOne_ETTwoKeyNav,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav)));
 
     } else if (complexTypeName.equals(nameCTBase)) {
       return new CsdlComplexType()

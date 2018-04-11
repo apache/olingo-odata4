@@ -1813,7 +1813,8 @@ public class ODataJsonSerializerTest {
                 "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\"," +
                 "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\"," +
                 "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":111," +
-                "\"PropertyString\":\"TEST A\"}",resultString);
+                "\"PropertyString\":\"TEST A\",\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":"
+                + "\"ESTwoKeyNav(PropertyInt16=1,PropertyString='1')\"}",resultString);
   }
 
   @Test
@@ -1870,13 +1871,16 @@ public class ODataJsonSerializerTest {
         + "\"@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
         + "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":123,"
-        + "\"PropertyString\":\"TEST 1\"},"
+        + "\"PropertyString\":\"TEST 1\","
+        + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"},"
         + "{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":456,"
-        + "\"PropertyString\":\"TEST 2\"},"
+        + "\"PropertyString\":\"TEST 2\","
+        + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"},"
         + "{\"@odata.type\":\"#olingo.odata.test1.CTBase\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":789,"
-        + "\"PropertyString\":\"TEST 3\",\"AdditionalPropString\":\"ADD TEST\"}]}";
+        + "\"PropertyString\":\"TEST 3\",\"AdditionalPropString\":\"ADD TEST\","
+        + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
   
@@ -2699,5 +2703,77 @@ public class ODataJsonSerializerTest {
         + "\"@odata.id\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='1')\","
         + "\"PropertyInt16\":1,\"PropertyString\":\"1\",\"CollPropertyCompNav\":[{}]}";
     Assert.assertEquals(expectedResult, resultString);
+  }
+  
+  @Test
+  public void entityWithExtendedComplexTypeWithMetadata() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompMixPrimCollComp");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final String resultString = IOUtils.toString(serializerFullMetadata
+        .entity(metadata, edmEntitySet.getEntityType(), entity, 
+            EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .build()).getContent());
+    final String expectedResult = "{\"@odata.context\":\"$metadata#ESCompMixPrimCollComp/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@odata.type\":\"#olingo.odata.test1.ETCompMixPrimCollComp\","
+        + "\"@odata.id\":\"ESCompMixPrimCollComp(1)\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":1,"
+        + "\"PropertyMixedPrimCollComp\":"
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTMixPrimCollComp\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":1,"
+        + "\"CollPropertyString@odata.type\":\"#Collection(String)\","
+        + "\"CollPropertyString\":[\"Employee1@company.example\","
+        + "\"Employee2@company.example\",\"Employee3@company.example\"],"
+        + "\"PropertyComp\":{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":333,"
+        + "\"PropertyString\":\"TEST123\","
+        + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":"
+        + "\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\","
+        + "\"NavPropertyETMediaOne@odata.navigationLink\":\"ESMedia(2)\"},"
+        + "\"CollPropertyComp@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
+        + "\"CollPropertyComp\":[{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":222,"
+        + "\"PropertyString\":\"TEST9876\","
+        + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"},"
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":333,"
+        + "\"PropertyString\":\"TEST123\","
+        + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"}],"
+        + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":"
+        + "\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\","
+        + "\"NavPropertyETTwoKeyNavMany@odata.navigationLink\":"
+        + "\"ESCompMixPrimCollComp(1)/PropertyMixedPrimCollComp/NavPropertyETTwoKeyNavMany\"}}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+  
+  @Test
+  public void extendedcomplexPropertyWithNavWithMetadataFull() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompMixPrimCollComp");
+    final EdmProperty edmComplexType = (EdmProperty) edmEntitySet.getEntityType().
+        getProperty("PropertyMixedPrimCollComp");
+    
+    final EdmComplexType complexType = metadata.getEdm().getComplexType(
+        new FullQualifiedName("olingo.odata.test1", "CTMixPrimCollComp"));
+    
+    EdmProperty edmProperty = (EdmProperty) complexType.getProperty("PropertyComp");
+    final ComplexValue complexValue = data.readAll(edmEntitySet).getEntities().get(0).
+        getProperty("PropertyMixedPrimCollComp").asComplex();
+    final Property property = complexValue.getValue().get(2);
+    final String resultString = IOUtils.toString(serializerFullMetadata
+             .complex(metadata, (EdmComplexType) edmProperty.getType(), property,
+                    ComplexSerializerOptions.with()
+                            .contextURL(ContextURL.with()
+                                    .entitySet(edmEntitySet).keyPath("1")
+                                    .navOrPropertyPath(edmComplexType.getName()+"/"+property.getName())
+                                        .build()).build()).getContent());
+    Assert.assertEquals("{\"@odata.context\":\"$metadata#ESCompMixPrimCollComp(1)/"
+        + "PropertyMixedPrimCollComp/PropertyComp\",\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\","
+        + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":333,"
+        + "\"PropertyString\":\"TEST123\","
+        + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":"
+        + "\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\","
+        + "\"NavPropertyETMediaOne@odata.navigationLink\":\"ESMedia(2)\"}",resultString);
   }
 }

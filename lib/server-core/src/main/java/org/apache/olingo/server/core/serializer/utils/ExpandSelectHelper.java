@@ -23,14 +23,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceAction;
 import org.apache.olingo.server.api.uri.UriResourceComplexProperty;
+import org.apache.olingo.server.api.uri.UriResourceCount;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
+import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectItem;
@@ -222,7 +225,7 @@ public abstract class ExpandSelectHelper {
       for (final ExpandItem item : expand.getExpandItems()) {
         if (item.isStar()) {
           return item;
-        }
+        } 
       }
       return null;
     }
@@ -245,7 +248,8 @@ public abstract class ExpandSelectHelper {
       if (item.isStar()) {
           continue;
       }
-      final UriResource resource = item.getResourcePath().getUriResourceParts().get(0);
+      final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
+      final UriResource resource = resourceParts.get(0);
       if ((resource instanceof UriResourceNavigation
           && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName())) ||
           resource instanceof UriResourceProperty
@@ -256,4 +260,126 @@ public abstract class ExpandSelectHelper {
     return null;
   }
 
+  public static Set<List<String>> getExpandedItemsPath(ExpandOption expand) {
+    Set<List<String>> expandPaths = new HashSet<List<String>>();
+    if (expand != null) {
+      List<ExpandItem> expandItems = expand.getExpandItems();
+      for (ExpandItem item : expandItems) {
+        if (item.isStar()) {
+          continue;
+        }
+        List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
+        if (resourceParts.get(0) instanceof UriResourceComplexProperty) {
+          List<String> path = new ArrayList<String>();
+          for (UriResource resource : resourceParts) {
+            if (resource instanceof UriResourceNavigation) {
+              path.add(((UriResourceNavigation) resource).getProperty().getName());
+            } else if (resource instanceof UriResourceProperty) {
+              path.add(((UriResourceProperty) resource).getProperty().getName());
+            }
+          }
+          expandPaths.add(path); 
+        }
+      }
+    }
+    return expandPaths;
+  }
+  
+  public static Set<List<String>> getReducedExpandItemsPaths(final Set<List<String>> expandItemsPaths,
+      final String propertyName) {
+    Set<List<String>> reducedPaths = new HashSet<List<String>>();
+    for (final List<String> path : expandItemsPaths) {
+      if (propertyName.equals(path.get(0))) {
+        if (path.size() > 1) {
+          reducedPaths.add(path.subList(1, path.size()));
+        }
+      } else {
+        reducedPaths.add(path);
+      }
+    }
+    return reducedPaths.isEmpty() ? null : reducedPaths;
+  }
+  
+  /**
+   * Fetches the expand Item depending upon the type
+   * @param expandItems
+   * @param propertyName
+   * @param type
+   * @param resourceName
+   * @return
+   */
+  public static ExpandItem getExpandItemBasedOnType(final List<ExpandItem> expandItems, 
+      final String propertyName, final EdmStructuredType type, String resourceName) {
+    ExpandItem expandItem = null;
+    for (final ExpandItem item : expandItems) {
+      boolean matched = false;
+      if (item.isStar()) {
+          continue;
+      }
+      final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
+      UriResource resource = null;
+      if (resourceParts.size() == 1) {
+        resource = resourceParts.get(0);
+        matched = true;
+        expandItem = getMatchedExpandItem(propertyName, item, matched, resource);
+      } else if (resourceParts.get(resourceParts.size() - 1) instanceof UriResourceRef ||
+          resourceParts.get(resourceParts.size() - 1) instanceof UriResourceCount) {
+        if (resourceParts.size() == 2) {
+          resource = resourceParts.get(0);
+          matched = true;
+          expandItem = getMatchedExpandItem(propertyName, item, matched, resource);
+        } else {
+          resource = resourceParts.get(resourceParts.size() - 3);
+          matched = resource.getSegmentValue().equalsIgnoreCase(resourceName) ? 
+              isFoundExpandItem(type, matched, resource) : false;
+          expandItem = getMatchedExpandItem(propertyName, item, matched, resourceParts.get(resourceParts.size() - 2));
+        }
+      } else {
+        resource = resourceParts.get(resourceParts.size() - 2);
+        matched = resource.getSegmentValue().equalsIgnoreCase(resourceName) ? 
+            isFoundExpandItem(type, matched, resource) : false;
+        expandItem = getMatchedExpandItem(propertyName, item, matched, resourceParts.get(resourceParts.size() - 1));
+      }
+      if (expandItem != null) {
+        return expandItem;
+      }
+    }
+    return expandItem;
+  }
+
+  /**
+   * @param propertyName
+   * @param item
+   * @param matched
+   * @param resource
+   */
+  private static ExpandItem getMatchedExpandItem(final String propertyName, final ExpandItem item, boolean matched,
+      UriResource resource) {
+    if (matched && ((resource instanceof UriResourceNavigation
+        && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName())) ||
+        resource instanceof UriResourceProperty
+        && propertyName.equals(((UriResourceProperty) resource).getProperty().getName()))) {
+      return item;
+    }
+    return null;
+  }
+
+  /**
+   * @param type
+   * @param matched
+   * @param resource
+   * @return
+   */
+  private static boolean isFoundExpandItem(final EdmStructuredType type, 
+      boolean matched, UriResource resource) {
+    if (!matched) {
+      if ((resource instanceof UriResourceProperty && 
+              type.compatibleTo(((UriResourceProperty) resource).getType())) ||
+          (resource instanceof UriResourceNavigation && 
+              type.compatibleTo(((UriResourceNavigation) resource).getType()))) {
+        matched = true;
+      }
+    }
+    return matched;
+  }
 }

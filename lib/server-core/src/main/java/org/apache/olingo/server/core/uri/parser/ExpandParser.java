@@ -194,7 +194,7 @@ public class ExpandParser {
     String name = null;
     while (tokenizer.next(TokenKind.ODataIdentifier)) {
       name = tokenizer.getText();
-      final EdmProperty property = referencedType.getStructuralProperty(name);
+      final EdmProperty property = type.getStructuralProperty(name);
       if (property != null && property.getType().getKind() == EdmTypeKind.COMPLEX) {
         type = (EdmStructuredType) property.getType();
         UriResourceComplexPropertyImpl complexResource = new UriResourceComplexPropertyImpl(property);

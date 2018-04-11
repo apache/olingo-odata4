@@ -110,8 +110,122 @@ public class DataCreator {
     linkESDelta(data);
     linkESKeyNavCont(data);
     linkETBaseCont(data);
+    linkPropCompInESCompMixPrimCollCompToETTwoKeyNav(data);
+    linkCollPropCompInESCompMixPrimCollCompToETTwoKeyNav(data);
+    linkPropCompInESCompMixPrimCollCompToETMedia(data);
+    linkPropMixPrimCompInESCompMixPrimCollCompToETTwoKeyNav(data);
+    linkPropMixPrimCompInESCompMixPrimCollCompToCollETTwoKeyNav(data);
+    linkColPropCompInESMixPrimCollCompToETTwoKeyNav(data);
   }
   
+  @SuppressWarnings("unchecked")
+  private void linkCollPropCompInESCompMixPrimCollCompToETTwoKeyNav(Map<String, EntityCollection> data2) {
+    EntityCollection collection = data.get("ESCompMixPrimCollComp");
+    Entity entity = collection.getEntities().get(0);
+    ComplexValue complexValue = entity.getProperties().get(1).asComplex();
+    List<ComplexValue> innerComplexValue = (List<ComplexValue>) complexValue.getValue().get(3).asCollection();
+    final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
+    for (ComplexValue innerValue : innerComplexValue) {
+      Link link = new Link();
+      link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETTwoKeyNavOne");
+      link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+      link.setTitle("NavPropertyETTwoKeyNavOne");
+      link.setHref(esTwoKeyNavTargets.get(1).getId().toASCIIString());
+      innerValue.getNavigationLinks().add(link);
+      link.setInlineEntity(esTwoKeyNavTargets.get(1));
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void linkColPropCompInESMixPrimCollCompToETTwoKeyNav(Map<String, EntityCollection> data2) {
+    EntityCollection collection = data.get("ESMixPrimCollComp");
+    Entity entity = collection.getEntities().get(0);
+    List<ComplexValue> list = (List<ComplexValue>) entity.getProperties().get(3).asCollection();
+    final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
+    for (ComplexValue complexValue : list) {
+      Link link = new Link();
+      link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETTwoKeyNavOne");
+      link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+      link.setTitle("NavPropertyETTwoKeyNavOne");
+      link.setHref(esTwoKeyNavTargets.get(1).getId().toASCIIString());
+      complexValue.getNavigationLinks().add(link);
+      link.setInlineEntity(esTwoKeyNavTargets.get(1)); 
+    }
+    
+    ComplexValue complexValue = (ComplexValue) entity.getProperties().get(2).asComplex();
+    Link link = new Link();
+    link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETTwoKeyNavOne");
+    link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+    link.setTitle("NavPropertyETTwoKeyNavOne");
+    link.setHref(esTwoKeyNavTargets.get(0).getId().toASCIIString());
+    complexValue.getNavigationLinks().add(link);
+    link.setInlineEntity(esTwoKeyNavTargets.get(0)); 
+  }
+
+  private void linkPropMixPrimCompInESCompMixPrimCollCompToETTwoKeyNav(
+      Map<String, EntityCollection> data) {
+    EntityCollection collection = data.get("ESCompMixPrimCollComp");
+    Entity entity = collection.getEntities().get(0);
+    ComplexValue complexValue = entity.getProperties().get(1).asComplex();
+    final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
+    Link link = new Link();
+    link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETTwoKeyNavOne");
+    link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+    link.setTitle("NavPropertyETTwoKeyNavOne");
+    link.setInlineEntity(esTwoKeyNavTargets.get(1));
+    link.setHref(esTwoKeyNavTargets.get(1).getId().toASCIIString());
+    complexValue.getNavigationLinks().add(link);
+  }
+  
+  private void linkPropMixPrimCompInESCompMixPrimCollCompToCollETTwoKeyNav(
+      Map<String, EntityCollection> data) {
+    EntityCollection collection = data.get("ESCompMixPrimCollComp");
+    Entity entity = collection.getEntities().get(0);
+    ComplexValue complexValue = entity.getProperties().get(1).asComplex();
+    final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
+    Link link = new Link();
+    link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETTwoKeyNavMany");
+    link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
+    link.setTitle("NavPropertyETTwoKeyNavMany");
+    EntityCollection target = new EntityCollection();
+    target.setCount(2);
+    target.getEntities().addAll(Arrays.asList(esTwoKeyNavTargets.get(0), esTwoKeyNavTargets.get(2)));
+    link.setInlineEntitySet(target);
+    link.setHref(entity.getId().toASCIIString() + "/" + 
+    entity.getProperties().get(1).getName() + "/"
+        + "NavPropertyETTwoKeyNavMany");
+    complexValue.getNavigationLinks().add(link);
+  }
+
+  private void linkPropCompInESCompMixPrimCollCompToETMedia(Map<String, EntityCollection> data) {
+    EntityCollection collection = data.get("ESCompMixPrimCollComp");
+    Entity entity = collection.getEntities().get(0);
+    ComplexValue complexValue = entity.getProperties().get(1).asComplex();
+    ComplexValue innerComplexValue = complexValue.getValue().get(2).asComplex();
+    final List<Entity> esMediaTargets = data.get("ESMedia").getEntities();
+    Link link = new Link();
+    link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETMediaOne");
+    link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+    link.setTitle("NavPropertyETMediaOne");
+    link.setHref(esMediaTargets.get(1).getId().toASCIIString());
+    innerComplexValue.getNavigationLinks().add(link);
+    link.setInlineEntity(esMediaTargets.get(1));
+  }
+
+  private void linkPropCompInESCompMixPrimCollCompToETTwoKeyNav(Map<String, EntityCollection> data) {
+    EntityCollection collection = data.get("ESCompMixPrimCollComp");
+    Entity entity = collection.getEntities().get(0);
+    ComplexValue complexValue = entity.getProperties().get(1).asComplex();
+    ComplexValue innerComplexValue = complexValue.getValue().get(2).asComplex();
+    final List<Entity> esTwoKeyNavTargets = data.get("ESTwoKeyNav").getEntities();
+    Link link = new Link();
+    link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETTwoKeyNavOne");
+    link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+    link.setTitle("NavPropertyETTwoKeyNavOne");
+    link.setHref(esTwoKeyNavTargets.get(1).getId().toASCIIString());
+    innerComplexValue.getNavigationLinks().add(link);
+    link.setInlineEntity(esTwoKeyNavTargets.get(1));
+   }
 
   private EntityCollection createESDelta(final Edm edm, final OData odata) {
    EntityCollection entityCollection = new EntityCollection();
@@ -181,7 +295,7 @@ public class DataCreator {
                 ComplexTypeProvider.nameCTTwoPrimAno.getFullQualifiedNameAsString(),
                 Arrays.asList(new ComplexValue[] {
                 createComplexValue(ComplexTypeProvider.nameCTBaseAno.getFullQualifiedNameAsString(),
-                    Arrays.asList(new Property[] {
+                    "CollPropertyCompAno", Arrays.asList(new Property[] {
                         createDerived("AdditionalPropString",
                             ComplexTypeProvider.nameCTBaseAno.getFullQualifiedNameAsString(),
                             "Additional12345"),
@@ -191,7 +305,7 @@ public class DataCreator {
                     }
               )),
                 createComplexValue(ComplexTypeProvider.nameCTTwoPrimAno.getFullQualifiedNameAsString(),
-                    Arrays.asList(new Property[] {
+                    "CollPropertyCompAno", Arrays.asList(new Property[] {
                         createDerived("PropertyString", 
                             ComplexTypeProvider.nameCTTwoPrimAno.getFullQualifiedNameAsString(),
                             "TESTabcd")
@@ -206,10 +320,11 @@ public class DataCreator {
     return entityCollection;
   }
 
-  private ComplexValue createComplexValue(String type, List<Property> properties) {
+  private ComplexValue createComplexValue(String type, String name, List<Property> properties) {
     ComplexValue complexValue = new ComplexValue();
     complexValue.getValue().addAll(properties);
     complexValue.setTypeName(type);  
+    complexValue.setId(URI.create(name));
     return complexValue;
   }
 
@@ -1416,19 +1531,19 @@ public class DataCreator {
         ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
         Arrays.asList(new ComplexValue[] {
             createComplexValue(ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
-                Arrays.asList(new Property[] {
+                "CollPropertyComp", Arrays.asList(new Property[] {
                     createPrimitive("PropertyInt16", (short) 123),
                     createPrimitive("PropertyString", "TEST 1")
                 }
           )),
             createComplexValue(ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
-                Arrays.asList(new Property[] {
+                "CollPropertyComp", Arrays.asList(new Property[] {
                     createPrimitive("PropertyInt16", (short) 456),
                     createPrimitive("PropertyString", "TEST 2")
                 }
           )),
             createComplexValue(ComplexTypeProvider.nameCTBase.getFullQualifiedNameAsString(),
-                Arrays.asList(new Property[] {
+                "CollPropertyComp", Arrays.asList(new Property[] {
                     createPrimitive("PropertyInt16", (short) 789),
                     createPrimitive("PropertyString", "TEST 3"),
                     createPrimitive("AdditionalPropString", "ADD TEST")
@@ -1753,6 +1868,9 @@ public class DataCreator {
     for (final Property property : properties) {
       complexValue.getValue().add(property);
     }
+    if (null != name) {
+      complexValue.setId(URI.create(name));
+    }
     Property property = new Property(type, name, ValueType.COMPLEX, complexValue);
     createOperations(name, type, property);
     return property;
@@ -1784,6 +1902,9 @@ public class DataCreator {
     for (final List<Property> properties : propertiesList) {
       ComplexValue complexValue = new ComplexValue();
       complexValue.getValue().addAll(properties);
+      if (null != name) {
+        complexValue.setId(URI.create(name));
+      }
       complexCollection.add(complexValue);
     }
     Property property =  new Property(type, name, ValueType.COLLECTION_COMPLEX, complexCollection);

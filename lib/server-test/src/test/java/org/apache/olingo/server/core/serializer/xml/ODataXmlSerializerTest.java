@@ -662,20 +662,44 @@ public class ODataXmlSerializerTest {
         "      <d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
         "        <d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>\n" +
         "        <d:PropertyString>TEST A</d:PropertyString>\n" +
+        "        <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoKeyNavOne\" "
+        + "href=\"ESTwoKeyNav(PropertyInt16=1,PropertyString='1')\"/>\n" +
+        "        <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+        + "href=\"PropertyComp/NavPropertyETMediaOne\"/>\n" +
         "      </d:PropertyComp>\n" +
         "        <d:CollPropertyComp m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\">\n" +
         "          <m:element>\n" +
         "            <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
         "            <d:PropertyString>TEST 1</d:PropertyString>\n" +
+        "           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoKeyNavOne\" "
+        + "href=\"ESTwoKeyNav(PropertyInt16=1,PropertyString=&apos;2&apos;)\"/>\n" +
+        "           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+        + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
         "          </m:element>\n" +
         "          <m:element>\n" +
         "            <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" +
         "            <d:PropertyString>TEST 2</d:PropertyString>\n" +
+        "           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoKeyNavOne\" "
+        + "href=\"ESTwoKeyNav(PropertyInt16=1,PropertyString=&apos;2&apos;)\"/>\n" +
+        "           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+        + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
         "          </m:element>\n" +
         "          <m:element m:type=\"olingo.odata.test1.CTBase\">\n" +
         "            <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" +
         "            <d:PropertyString>TEST 3</d:PropertyString>\n" +
         "            <d:AdditionalPropString>ADD TEST</d:AdditionalPropString>\n" +
+        "           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoKeyNavOne\" "
+        + "href=\"ESTwoKeyNav(PropertyInt16=1,PropertyString=&apos;2&apos;)\"/>\n" +
+        "           <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+        + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
         "          </m:element>\n" +
         "        </d:CollPropertyComp>\n" +
         "    </m:properties>\n" +
@@ -1600,6 +1624,12 @@ public class ODataXmlSerializerTest {
                     "<d:PropertyCompComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
                     "<d:PropertyComp m:type=\"#olingo.odata.test1.CTBase\">\n" +
                         "<d:PropertyString>Num111</d:PropertyString>\n" +
+                        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+                        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+                        + "href=\"PropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+                        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+                        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+                        + "href=\"PropertyComp/NavPropertyETMediaOne\"/>\n" +
                         "</d:PropertyComp>\n" +
                         "</d:PropertyCompComp>\n" +
                     "</m:properties>\n" +
@@ -1647,12 +1677,24 @@ public class ODataXmlSerializerTest {
                     "<d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
                         "<d:PropertyInt16 m:type=\"Int16\">11</d:PropertyInt16>\n" +
                         "<d:PropertyString>Num11</d:PropertyString>\n" +
+                        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+                        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+                        + "href=\"PropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+                        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+                        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+                        + "href=\"PropertyComp/NavPropertyETMediaOne\"/>\n" +
                     "</d:PropertyComp>\n" +
                     "<d:PropertyCompComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
                         "<d:PropertyComp m:type=\"#olingo.odata.test1.CTBase\">\n" +
                             "<d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>\n" +
                             "<d:PropertyString>Num111</d:PropertyString>\n" +
                             "<d:AdditionalPropString>Test123</d:AdditionalPropString>\n" +
+                            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+                            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+                            + "href=\"PropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+                            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+                            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+                            + "href=\"PropertyComp/NavPropertyETMediaOne\"/>\n" +
                         "</d:PropertyComp>\n" +
                     "</d:PropertyCompComp>\n" +
                     "</m:properties>\n" +
@@ -1706,12 +1748,24 @@ public class ODataXmlSerializerTest {
                 "        <d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>" +
                         "<d:PropertyComp m:type=\"#olingo.odata.test1.CTTwoPrim\">\n" +
                             "<d:PropertyString>Num11</d:PropertyString>\n" +
+                        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+                        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+                        + "href=\"PropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+                         "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+                         + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+                         + "href=\"PropertyComp/NavPropertyETMediaOne\"/>\n" +
                         "</d:PropertyComp>\n" +
                         "<d:PropertyCompComp m:type=\"#olingo.odata.test1.CTCompComp\">\n" +
                             "<d:PropertyComp m:type=\"#olingo.odata.test1.CTBase\">\n" +
                                 "<d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>\n" +
                                 "<d:PropertyString>Num111</d:PropertyString>\n" +
                                 "<d:AdditionalPropString>Test123</d:AdditionalPropString>\n" +
+                                "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+                                + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+                                + "href=\"PropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+                                "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+                                + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+                                + "href=\"PropertyComp/NavPropertyETMediaOne\"/>\n" +
                             "</d:PropertyComp>\n" +
                         "</d:PropertyCompComp>\n" +
                     "</m:properties>\n" +
@@ -1761,14 +1815,32 @@ public class ODataXmlSerializerTest {
             "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
             "<d:PropertyInt16 m:type=\"Int16\">555</d:PropertyInt16>\n" +
             "<d:PropertyString>1 Test Complex in Complex Property</d:PropertyString>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
             "</m:element>\n" +
             "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
             "<d:PropertyInt16 m:type=\"Int16\">666</d:PropertyInt16>\n" +
             "<d:PropertyString>2 Test Complex in Complex Property</d:PropertyString>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
             "</m:element>\n" +
             "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
             "<d:PropertyInt16 m:type=\"Int16\">777</d:PropertyInt16>\n" +
             "<d:PropertyString>3 Test Complex in Complex Property</d:PropertyString>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
             "</m:element>\n" +
             "</d:CollPropertyComp>\n" +
             "</d:PropertyComp>\n" +
@@ -1794,14 +1866,32 @@ public class ODataXmlSerializerTest {
             "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
             "<d:PropertyInt16 m:type=\"Int16\">888</d:PropertyInt16>\n" +
             "<d:PropertyString>11 Test Complex in Complex Property</d:PropertyString>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
             "</m:element>\n" +
             "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
             "<d:PropertyInt16 m:type=\"Int16\">999</d:PropertyInt16>\n" +
             "<d:PropertyString>12 Test Complex in Complex Property</d:PropertyString>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
             "</m:element>\n" +
             "<m:element m:type=\"olingo.odata.test1.CTCompCollComp\">\n" +
             "<d:PropertyInt16 m:type=\"Int16\">0</d:PropertyInt16>\n" +
             "<d:PropertyString>13 Test Complex in Complex Property</d:PropertyString>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoKeyNavOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETTwoKeyNavOne\"/>\n" +
+            "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+            + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+            + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
             "</m:element>\n" +
             "</d:CollPropertyComp>\n" +
             "</d:PropertyComp>\n" +
@@ -2666,22 +2756,40 @@ public class ODataXmlSerializerTest {
                 .build()).getContent());
     String expected = "<?xml version='1.0' encoding='UTF-8'?>\n"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
-        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+        "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\"\n" +
         "  m:context=\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <m:element>\n" +
         "    <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
         "    <d:PropertyString>TEST 1</d:PropertyString>\n" +
+        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoKeyNavOne\" "
+        + "href=\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"/>\n" +
+        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+        + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
         "  </m:element>\n" +
         "  <m:element>\n" +
         "    <d:PropertyInt16 m:type=\"Int16\">456</d:PropertyInt16>\n" +
         "    <d:PropertyString>TEST 2</d:PropertyString>\n" +
+        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoKeyNavOne\" "
+        + "href=\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"/>\n" +
+        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+        + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
         "  </m:element>\n" +
         "  <m:element m:type=\"olingo.odata.test1.CTBase\">\n" +
         "    <d:PropertyInt16 m:type=\"Int16\">789</d:PropertyInt16>\n" +
         "    <d:PropertyString>TEST 3</d:PropertyString>\n" +
         "    <d:AdditionalPropString>ADD TEST</d:AdditionalPropString>\n" +
+        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoKeyNavOne\" "
+        + "type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoKeyNavOne\" "
+        + "href=\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"/>\n" +
+        "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETMediaOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETMediaOne\" "
+        + "href=\"CollPropertyComp/NavPropertyETMediaOne\"/>\n" +
         "  </m:element>\n" +
         "</m:value>";
     checkXMLEqual(expected, resultString);
@@ -3210,7 +3318,7 @@ public class ODataXmlSerializerTest {
                 .build()).getContent());
     final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
-        + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+        + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "m:type=\"#Collection(olingo.odata.test1.CTPrimComp)\" "
         + "m:context=\"$metadata#ESKeyNav(1)/CollPropertyComp\" "
         + "m:metadata-etag=\"metadataETag\">"

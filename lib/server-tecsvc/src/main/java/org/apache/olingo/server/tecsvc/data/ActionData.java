@@ -203,15 +203,15 @@ public class ActionData {
       final Parameter paramInt16 = parameters.get("ParameterInt16");
       final Short number = paramInt16 == null || paramInt16.isNull() ? 0 : (Short) paramInt16.asPrimitive();
       if (number >= 1) {
-        complexCollection.add(createCTTwoPrimComplexProperty(null, (short) 16, "Test123").asComplex());
+        complexCollection.add(createCTTwoPrimComplexProperty("PropertyComp", (short) 16, "Test123").asComplex());
       }
       if (number >= 2) {
-        complexCollection.add(createCTTwoPrimComplexProperty(null, (short) 17, "Test456").asComplex());
+        complexCollection.add(createCTTwoPrimComplexProperty("PropertyComp", (short) 17, "Test456").asComplex());
       }
       if (number >= 3) {
-        complexCollection.add(createCTTwoPrimComplexProperty(null, (short) 18, "Test678").asComplex());
+        complexCollection.add(createCTTwoPrimComplexProperty("PropertyComp", (short) 18, "Test678").asComplex());
       }
-      return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexCollection);
+      return new Property("PropertyCollComp", name, ValueType.COLLECTION_COMPLEX, complexCollection);
     }
     throw new DataProviderException("Action " + name + " is not yet implemented.",
         HttpStatusCode.NOT_IMPLEMENTED);

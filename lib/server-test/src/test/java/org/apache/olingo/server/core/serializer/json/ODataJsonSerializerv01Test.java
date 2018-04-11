@@ -1826,7 +1826,8 @@ public class ODataJsonSerializerv01Test {
                 "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\"," +
                 "\"@type\":\"#olingo.odata.test1.CTTwoPrim\"," +
                 "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":111," +
-                "\"PropertyString\":\"TEST A\"}",resultString);
+                "\"PropertyString\":\"TEST A\",\"NavPropertyETTwoKeyNavOne@navigationLink\":"
+                + "\"ESTwoKeyNav(PropertyInt16=1,PropertyString='1')\"}",resultString);
   }
 
   @Test
@@ -1883,13 +1884,16 @@ public class ODataJsonSerializerv01Test {
         + "\"@type\":\"#Collection(olingo.odata.test1.CTTwoPrim)\","
         + "\"value\":[{\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
         + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":123,"
-        + "\"PropertyString\":\"TEST 1\"},"
+        + "\"PropertyString\":\"TEST 1\","
+        + "\"NavPropertyETTwoKeyNavOne@navigationLink\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"},"
         + "{\"@type\":\"#olingo.odata.test1.CTTwoPrim\","
         + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":456,"
-        + "\"PropertyString\":\"TEST 2\"},"
+        + "\"PropertyString\":\"TEST 2\","
+        + "\"NavPropertyETTwoKeyNavOne@navigationLink\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"},"
         + "{\"@type\":\"#olingo.odata.test1.CTBase\","
         + "\"PropertyInt16@type\":\"#Int16\",\"PropertyInt16\":789,"
-        + "\"PropertyString\":\"TEST 3\",\"AdditionalPropString\":\"ADD TEST\"}]}";
+        + "\"PropertyString\":\"TEST 3\",\"AdditionalPropString\":\"ADD TEST\","
+        + "\"NavPropertyETTwoKeyNavOne@navigationLink\":\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\"}]}";
     Assert.assertEquals(expectedResult, resultString);
   }
   

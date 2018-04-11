@@ -19,6 +19,7 @@
 package org.apache.olingo.server.tecsvc.data;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -164,6 +165,7 @@ public class FunctionData {
           complexValue.getValue().add(new Property(null, "PropertyInt16", ValueType.PRIMITIVE, counter++));
           complexValue.getValue().add(new Property(null, "PropertyString", ValueType.PRIMITIVE, 
               name + " string value: " + parameterString));
+          complexValue.setId(URI.create(""));
           complexValues.add(complexValue);
         }
         return new Property(null, name, ValueType.COLLECTION_COMPLEX, complexValues);
