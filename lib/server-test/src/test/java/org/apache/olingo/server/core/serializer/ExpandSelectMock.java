@@ -55,13 +55,17 @@ public final class ExpandSelectMock {
       if (edmElement.getType().getKind() == EdmTypeKind.ENTITY) {
         UriResourceNavigation element = Mockito.mock(UriResourceNavigation.class);
         Mockito.when(element.getProperty()).thenReturn((EdmNavigationProperty) edmElement);
+        Mockito.when(element.getSegmentValue()).thenReturn(((EdmNavigationProperty) edmElement).getName());
+        Mockito.when(element.getType()).thenReturn(((EdmNavigationProperty) edmElement).getType());
         elements.add(element);
       } else {
         final EdmProperty property = (EdmProperty) edmElement;
         UriResourceProperty element = Mockito.mock(UriResourceProperty.class);
         Mockito.when(element.getProperty()).thenReturn(property);
+        Mockito.when(element.getSegmentValue()).thenReturn(property.getName());
         elements.add(element);
         type = property.isPrimitive() ? null : (EdmStructuredType) property.getType();
+        Mockito.when(element.getType()).thenReturn(type);
       }
     }
     UriInfoResource resource = Mockito.mock(UriInfoResource.class);

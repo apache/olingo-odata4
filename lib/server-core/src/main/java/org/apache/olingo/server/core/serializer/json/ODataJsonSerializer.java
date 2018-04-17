@@ -451,7 +451,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         }
         
         writeProperties(metadata, resolvedType, entity.getProperties(), select, json, entity, expand);
-        writeExpandedStreamProperties(metadata, resolvedType, entity, expand, toDepth, ancestors, name, json);
         writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, ancestors, name, json);
         writeOperations(entity.getOperations(), json);      
       }
@@ -612,22 +611,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     }
   }
 
-  protected void writeExpandedStreamProperties(final ServiceMetadata metadata,
-      final EdmStructuredType type, final Linked linked, final ExpandOption expand, final Integer toDepth,
-      final Set<String> ancestors, final String name, final JsonGenerator json) 
-          throws SerializerException, IOException, DecoderException {
-
-    if (ExpandSelectHelper.hasExpand(expand)) {
-      final ExpandItem expandAll = ExpandSelectHelper.getExpandAll(expand);
-      for (final String propertyName : type.getPropertyNames()) {
-        EdmProperty edmProperty = (EdmProperty) type.getProperty(propertyName);
-        if(isStreamProperty(edmProperty) ){
-          writeExpandedStreamProperty(expand, propertyName, edmProperty, linked, expandAll, json);
-        }
-      }
-    }
-  }
-  
   private void writeExpandedStreamProperty(ExpandOption expand, String propertyName, EdmProperty edmProperty, 
       Linked linked, ExpandItem expandAll, JsonGenerator json) throws SerializerException, 
       DecoderException, IOException {
@@ -637,8 +620,20 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         throw new SerializerException("Expand not supported for Stream Property Type!",
             SerializerException.MessageKeys.UNSUPPORTED_OPERATION_TYPE, "expand", edmProperty.getName());
       }
-      Entity entity = (Entity) linked;
-      final Property property = (Property) entity.getProperty(propertyName);
+      Property property = null;
+      if (linked instanceof Entity) {
+        Entity entity = (Entity) linked;
+        property = (Property) entity.getProperty(propertyName);
+      } else if (linked instanceof ComplexValue) {
+        List<Property> properties = ((ComplexValue) linked).getValue();
+        for (Property prop : properties) {
+          if (prop.getName().equals(propertyName)) {
+            property = prop;
+            break;
+          }
+        }
+      }
+       
       if((property == null || property.isNull()) && edmProperty.isNullable() == Boolean.FALSE ){
         throw new SerializerException("Non-nullable property not present!",
             SerializerException.MessageKeys.MISSING_PROPERTY, edmProperty.getName());
@@ -781,6 +776,15 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           writePrimitive((EdmPrimitiveType) type, property,
               edmProperty.isNullable(), edmProperty.getMaxLength(),
               edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(), json);
+          // If there is expand on a stream property
+          if (isStreamProperty(edmProperty) && null != expand) {
+            final ExpandItem expandAll = ExpandSelectHelper.getExpandAll(expand);
+            try {
+              writeExpandedStreamProperty(expand, property.getName(), edmProperty, linked, expandAll, json);
+            } catch (DecoderException e) {
+              throw new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
+            }
+          }
         }
       } else if (property.isComplex()) {
         if (edmProperty.isCollection()) {
@@ -1091,6 +1095,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       throw new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
     }
   }
+    
 
   private Property findProperty(final String propertyName, final List<Property> properties) {
     for (final Property property : properties) {

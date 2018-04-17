@@ -98,6 +98,9 @@ public class EntityTypeProvider {
   
   public static final FullQualifiedName nameETTwoCont = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoCont");
   
+  public static final FullQualifiedName nameETStreamOnComplexProp = 
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETStreamOnComplexProp");
+  
   public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if(entityTypeName.equals(nameETAllPrimDefaultValues)){        
         return new CsdlEntityType()
@@ -559,6 +562,16 @@ public class EntityTypeProvider {
               PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDecimal_Scale,
               PropertyProvider.propertyBinary, PropertyProvider.propertyDate, PropertyProvider.propertyDateTimeOffset,
               PropertyProvider.propertyDuration, PropertyProvider.propertyGuid, PropertyProvider.propertyTimeOfDay
+              ));
+    } else if (entityTypeName.equals(nameETStreamOnComplexProp)) {
+      return new CsdlEntityType()
+          .setName("ETStreamOnComplexProp")
+          .setKey(Arrays.asList(
+              new CsdlPropertyRef().setName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable, 
+              PropertyProvider.propertyInt32, PropertyProvider.propertyEntityStream,
+              PropertyProvider.propertyCompWithStream_CTWithStreamProp
               ));
     }
     return null;

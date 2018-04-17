@@ -705,7 +705,11 @@ public class ContainerProvider {
                   .setPath("NavPropertyETAllPrimMany")
                   .setTarget("ESAllPrim")));
 
-    } 
+    } else if (name.equals("ESStreamOnComplexProp")) {
+      return new CsdlEntitySet()
+          .setName("ESStreamOnComplexProp")
+          .setType(EntityTypeProvider.nameETStreamOnComplexProp);
+      } 
     }
     return null;
   }

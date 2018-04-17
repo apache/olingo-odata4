@@ -667,6 +667,11 @@ public class PropertyProvider {
       .setType(nameStream)
       .setNullable(true);
   
+  public static final CsdlProperty propertyEntityStream = new CsdlProperty()
+      .setName("PropertyEntityStream")
+      .setType(nameStream)
+      .setNullable(true);
+  
   // Complex Properties ----------------------------------------------------------------------------------------------
   public static final CsdlProperty collPropertyComp_CTPrimComp = new CsdlProperty()
       .setName("CollPropertyComp")
@@ -1018,4 +1023,17 @@ public class PropertyProvider {
           .setCollection(true)
           .setType(EntityTypeProvider.nameETBaseCont);
   
+  public static final CsdlProperty propertyCompWithStream_CTWithStreamProp = new CsdlProperty()
+      .setName("PropertyCompWithStream")
+      .setType(ComplexTypeProvider.nameCTWithStreamProp);
+  
+  public static final CsdlNavigationProperty navPropertyETStreamOnComplexProp_ETStreamNav = new CsdlNavigationProperty()
+      .setName("NavPropertyETStreamOnComplexPropOne")
+      .setType(EntityTypeProvider.nameETStream);
+  
+  public static final CsdlNavigationProperty 
+  navPropertyETStreamOnComplexPropMany_ETStreamNav = new CsdlNavigationProperty()
+      .setName("NavPropertyETStreamOnComplexPropMany")
+      .setType(EntityTypeProvider.nameETStream)
+      .setCollection(true);
 }

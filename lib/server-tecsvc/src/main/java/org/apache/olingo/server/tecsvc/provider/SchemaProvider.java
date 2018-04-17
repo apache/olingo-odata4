@@ -90,6 +90,7 @@ public class SchemaProvider {
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETCont)); 
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETBaseCont)); 
     entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETTwoCont)); 
+    entityTypes.add(prov.getEntityType(EntityTypeProvider.nameETStreamOnComplexProp)); 
     
     // ComplexTypes
     List<CsdlComplexType> complexTypes = new ArrayList<CsdlComplexType>();
@@ -113,6 +114,7 @@ public class SchemaProvider {
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTCompCollCompAno));
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTTwoPrimAno));
     complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTBaseAno));
+    complexTypes.add(prov.getComplexType(ComplexTypeProvider.nameCTWithStreamProp));
     
     // Actions
     List<CsdlAction> actions = new ArrayList<CsdlAction>();

@@ -58,6 +58,8 @@ public class ComplexTypeProvider {
   public static final FullQualifiedName nameCTMixEnumDef = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "CTMixEnumDef");
   public static final FullQualifiedName nameCTNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTNavCont");
+  public static final FullQualifiedName nameCTWithStreamProp = 
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "CTWithStreamProp");
 
   public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
 
@@ -217,6 +219,14 @@ public class ComplexTypeProvider {
               PropertyProvider.collPropertyEnumString_ENString,
               PropertyProvider.propertyTypeDefinition_TDString,
               PropertyProvider.collPropertyTypeDefinition_TDString));
+    } else if (complexTypeName.equals(nameCTWithStreamProp)) {
+      return new CsdlComplexType()
+          .setName("CTWithStreamProp")
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyStream,
+              PropertyProvider.propertyComp_CTTwoPrim))
+          .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyETStreamOnComplexProp_ETStreamNav,
+              PropertyProvider.navPropertyETStreamOnComplexPropMany_ETStreamNav));
     }
 
     return null;

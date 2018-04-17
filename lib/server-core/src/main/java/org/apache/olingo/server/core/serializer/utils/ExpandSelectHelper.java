@@ -249,7 +249,13 @@ public abstract class ExpandSelectHelper {
           continue;
       }
       final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
-      final UriResource resource = resourceParts.get(0);
+      UriResource resource = null;
+      if (resourceParts.get(resourceParts.size() - 1) instanceof UriResourceRef ||
+          resourceParts.get(resourceParts.size() - 1) instanceof UriResourceCount) {
+        resource = resourceParts.get(resourceParts.size() - 2);
+      } else {
+        resource = resourceParts.get(resourceParts.size() - 1);
+      }
       if ((resource instanceof UriResourceNavigation
           && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName())) ||
           resource instanceof UriResourceProperty

@@ -99,6 +99,7 @@ public class DataCreator {
     data.put("ETCont", createETCont(edm, odata));
     data.put("ETBaseCont", createETBaseCont(edm, odata));
     data.put("ETTwoCont", createETTwoCont(edm, odata));
+    data.put("ESStreamOnComplexProp", createETStreamOnComplexProp(edm, odata));
     
     linkSINav(data);
     linkESTwoPrim(data);
@@ -116,8 +117,109 @@ public class DataCreator {
     linkPropMixPrimCompInESCompMixPrimCollCompToETTwoKeyNav(data);
     linkPropMixPrimCompInESCompMixPrimCollCompToCollETTwoKeyNav(data);
     linkColPropCompInESMixPrimCollCompToETTwoKeyNav(data);
+    linkETStreamOnComplexPropWithNavigationProperty(data);
+    linkETStreamOnComplexPropWithNavigationPropertyMany(data);
+  }
+
+  private void linkETStreamOnComplexPropWithNavigationProperty(Map<String, EntityCollection> data) {
+    EntityCollection collection = data.get("ESStreamOnComplexProp");
+    Entity entity = collection.getEntities().get(1);
+    ComplexValue complexValue = entity.getProperties().get(3).asComplex();
+    final List<Entity> esStreamTargets = data.get("ESWithStream").getEntities();
+    Link link = new Link();
+    link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETStreamOnComplexPropOne");
+    link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+    link.setTitle("NavPropertyETStreamOnComplexPropOne");
+    link.setInlineEntity(esStreamTargets.get(1));
+    link.setHref(esStreamTargets.get(1).getId().toASCIIString());
+    complexValue.getNavigationLinks().add(link);
   }
   
+  private void linkETStreamOnComplexPropWithNavigationPropertyMany(
+      Map<String, EntityCollection> data) {
+    EntityCollection collection = data.get("ESStreamOnComplexProp");
+    Entity entity = collection.getEntities().get(1);
+    ComplexValue complexValue = entity.getProperties().get(3).asComplex();
+    final List<Entity> esStreamTargets = data.get("ESWithStream").getEntities();
+    Link link = new Link();
+    link.setRel(Constants.NS_NAVIGATION_LINK_REL + "NavPropertyETStreamOnComplexPropMany");
+    link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
+    link.setTitle("NavPropertyETStreamOnComplexPropMany");
+    EntityCollection target = new EntityCollection();
+    target.setCount(2);
+    target.getEntities().addAll(Arrays.asList(esStreamTargets.get(0), esStreamTargets.get(1)));
+    link.setInlineEntitySet(target);
+    link.setHref(entity.getId().toASCIIString() + "/" + 
+    entity.getProperties().get(3).getName() + "/"
+        + "NavPropertyETStreamOnComplexPropMany");
+    complexValue.getNavigationLinks().add(link);
+  }
+
+  private EntityCollection createETStreamOnComplexProp(Edm edm, OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    Link readLink = new Link();
+    readLink.setRel(Constants.NS_MEDIA_READ_LINK_REL);
+    readLink.setHref("readLink");
+    Entity entity = new Entity();
+    entity.addProperty(createPrimitive("PropertyStream", createImage("darkturquoise")));
+    readLink.setInlineEntity(entity);
+    
+    Link readLink1 = new Link();
+    readLink1.setRel(Constants.NS_MEDIA_READ_LINK_REL);
+    readLink1.setHref("readLink");
+    entity = new Entity();
+    entity.addProperty(createPrimitive("PropertyEntityStream", createImage("darkturquoise")));
+    readLink1.setInlineEntity(entity);
+    
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
+        .addProperty(createPrimitive("PropertyInt32", Integer.MAX_VALUE))
+        .addProperty(new Property(null, "PropertyEntityStream", ValueType.PRIMITIVE, readLink1))
+        .addProperty(createComplex("PropertyCompWithStream",
+            ComplexTypeProvider.nameCTWithStreamProp.getFullQualifiedNameAsString(),
+            new Property(null, "PropertyStream", ValueType.PRIMITIVE, readLink),
+            createComplex("PropertyComp", 
+                ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+                createPrimitive("PropertyInt16", (short) 333),
+                createPrimitive("PropertyString", "TEST123")))));
+    
+    Link editLink = new Link();
+    editLink.setRel(Constants.NS_MEDIA_EDIT_LINK_REL);
+    editLink.setHref("http://mediaserver:1234/editLink");
+    editLink.setMediaETag("eTag");
+    editLink.setType("image/jpeg");
+    entity = new Entity();
+    entity.addProperty(createPrimitive("PropertyStream", createImage("royalblue")));
+    editLink.setInlineEntity(entity);
+    
+    Link editLink2 = new Link();
+    editLink2.setRel(Constants.NS_MEDIA_EDIT_LINK_REL);
+    editLink2.setHref("http://mediaserver:1234/editLink");
+    editLink2.setMediaETag("eTag");
+    editLink2.setType("image/jpeg");
+    entity = new Entity();
+    entity.addProperty(createPrimitive("PropertyEntityStream", createImage("royalblue")));
+    editLink2.setInlineEntity(entity);
+
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 7))
+        .addProperty(createPrimitive("PropertyInt32", (Integer) 10))
+        .addProperty(new Property(null, "PropertyEntityStream", ValueType.PRIMITIVE, editLink2))
+        .addProperty(createComplex("PropertyCompWithStream",
+            ComplexTypeProvider.nameCTWithStreamProp.getFullQualifiedNameAsString(),
+            new Property(null, "PropertyStream", ValueType.PRIMITIVE, editLink),
+            createComplex("PropertyComp", 
+                ComplexTypeProvider.nameCTTwoPrim.getFullQualifiedNameAsString(),
+                createPrimitive("PropertyInt16", (short) 333),
+                createPrimitive("PropertyString", "TEST123")))));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETStreamOnComplexProp));
+    createEntityId(edm, odata, "ESStreamOnComplexProp", entityCollection);
+    createOperations("ESStreamOnComplexProp", entityCollection, EntityTypeProvider.nameETStreamOnComplexProp);
+    return entityCollection;
+  }
+
   @SuppressWarnings("unchecked")
   private void linkCollPropCompInESCompMixPrimCollCompToETTwoKeyNav(Map<String, EntityCollection> data2) {
     EntityCollection collection = data.get("ESCompMixPrimCollComp");

@@ -34,6 +34,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.olingo.commons.api.constants.Constantsv01;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.ContextURL.Suffix;
@@ -106,6 +107,12 @@ public class ODataJsonSerializerTest {
   private final ODataSerializer serializerIEEECompatible =
       new ODataJsonSerializer(ContentType.create(ContentType.JSON, ContentType.PARAMETER_IEEE754_COMPATIBLE, "true"));
   private final UriHelper helper = odata.createUriHelper();
+  private final ODataSerializer serializerV401 = new ODataJsonSerializer(ContentType.JSON, new Constantsv01());
+  private final ODataSerializer serializerNoMetadataV401 = 
+      new ODataJsonSerializer(ContentType.JSON_NO_METADATA, new Constantsv01());
+  private final ODataSerializer serializerFullMetadataV401 = 
+      new ODataJsonSerializer(ContentType.JSON_FULL_METADATA, new Constantsv01());
+  
 
   @Test
   public void entitySimple() throws Exception {
@@ -2775,5 +2782,85 @@ public class ODataJsonSerializerTest {
         + "\"NavPropertyETTwoKeyNavOne@odata.navigationLink\":"
         + "\"ESTwoKeyNav(PropertyInt16=1,PropertyString='2')\","
         + "\"NavPropertyETMediaOne@odata.navigationLink\":\"ESMedia(2)\"}",resultString);
+  }
+  
+  @Test
+  public void expandStreamPropertyOnComplex() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESStreamOnComplexProp");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    final ExpandItem expandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, 
+        "PropertyCompWithStream", "PropertyStream");
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
+    InputStream result = serializerV401.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult = "{\"@context\":\"$metadata#ESStreamOnComplexProp/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\",\"PropertyInt16\":7,"
+            + "\"PropertyInt32\":10,\"PropertyEntityStream@mediaEtag\":\"eTag\","
+            + "\"PropertyEntityStream@mediaContentType\":\"image/jpeg\","
+            + "\"PropertyCompWithStream\":{\"PropertyStream@mediaEtag\":\"eTag\","
+            + "\"PropertyStream@mediaContentType\":\"image/jpeg\",\"PropertyStream\":"
+            + "\"\ufffdioz\ufffd\\\"\ufffd\",\"PropertyComp\":{\"PropertyInt16\":333,"
+                + "\"PropertyString\":\"TEST123\"}}}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+  
+  @Test
+  public void expandStreamPropertyOnComplexWithFullMetadata() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESStreamOnComplexProp");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    final ExpandItem expandItem1 = ExpandSelectMock.mockExpandItem(edmEntitySet, 
+        "PropertyCompWithStream", "PropertyStream");
+    final ExpandItem expandItem2 = ExpandSelectMock.mockExpandItem(edmEntitySet, 
+        "PropertyEntityStream");
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem1, expandItem2));
+    InputStream result = serializerFullMetadataV401.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult = "{\"@context\":\"$metadata#ESStreamOnComplexProp/$entity\","
+        + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"@type\":\"#olingo.odata.test1.ETStreamOnComplexProp\","
+        + "\"@id\":\"ESStreamOnComplexProp(7)\",\"PropertyInt16@type\":\"#Int16\","
+        + "\"PropertyInt16\":7,\"PropertyInt32@type\":\"#Int32\",\"PropertyInt32\":10,"
+        + "\"PropertyEntityStream@type\":\"#Stream\",\"PropertyEntityStream@mediaEtag\":\"eTag\","
+        + "\"PropertyEntityStream@mediaContentType\":\"image/jpeg\","
+        + "\"PropertyEntityStream@mediaEditLink\":\"http://mediaserver:1234/editLink\","
+        + "\"PropertyEntityStream\":\"\ufffdioz\ufffd\\\"\ufffd\","
+            + "\"PropertyCompWithStream\":{\"@type\":\"#olingo.odata.test1.CTWithStreamProp\","
+            + "\"PropertyStream@type\":\"#Stream\",\"PropertyStream@mediaEtag\":\"eTag\","
+            + "\"PropertyStream@mediaContentType\":\"image/jpeg\","
+            + "\"PropertyStream@mediaEditLink\":\"http://mediaserver:1234/editLink\","
+            + "\"PropertyStream\":\"\ufffdioz\ufffd\\\"\ufffd\",\"PropertyComp\":"
+                + "{\"@type\":\"#olingo.odata.test1.CTTwoPrim\",\"PropertyInt16@type\":\"#Int16\","
+                + "\"PropertyInt16\":333,\"PropertyString\":\"TEST123\"},"
+                + "\"NavPropertyETStreamOnComplexPropOne@navigationLink\":\"ESWithStream(7)\","
+                + "\"NavPropertyETStreamOnComplexPropMany@navigationLink\":"
+                + "\"ESStreamOnComplexProp(7)/PropertyCompWithStream/NavPropertyETStreamOnComplexPropMany\"}}";
+    Assert.assertEquals(expectedResult, resultString);
+  }
+  
+  @Test
+  public void expandStreamPropertyOnComplexWithNoMetadata() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESStreamOnComplexProp");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    final ExpandItem expandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, 
+        "PropertyCompWithStream", "PropertyStream");
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
+    InputStream result = serializerNoMetadataV401.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .expand(expand)
+            .build()).getContent();
+    final String resultString = IOUtils.toString(result);
+    final String expectedResult = "{\"PropertyInt16\":7,\"PropertyInt32\":10,"
+        + "\"PropertyCompWithStream\":{\"PropertyStream\":\"\ufffdioz\ufffd\\\"\ufffd\","
+            + "\"PropertyComp\":{\"PropertyInt16\":333,\"PropertyString\":\"TEST123\"}}}";
+    Assert.assertEquals(expectedResult, resultString);
   }
 }
