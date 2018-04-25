@@ -71,7 +71,8 @@ public final class AcceptType {
     subtype = typeSubtype.get(1);
 
     if (TypeUtil.MEDIA_TYPE_WILDCARD.equals(this.type) && !TypeUtil.MEDIA_TYPE_WILDCARD.equals(subtype)) {
-      throw new IllegalArgumentException("Illegal combination of WILDCARD type with NONE WILDCARD subtype.");
+      throw new IllegalArgumentException("Illegal combination of WILDCARD type with NONE WILDCARD "
+          + "subtype in accept header:" + type);
     }
 
     final String q = parameters.get(TypeUtil.PARAMETER_Q);
@@ -80,7 +81,7 @@ public final class AcceptType {
     } else if (Q_PATTERN.matcher(q).matches()) {
         quality = Float.valueOf(q);
     } else {
-      throw new IllegalArgumentException("Illegal quality parameter '" + q + "'.");
+      throw new IllegalArgumentException("Illegal quality parameter '" + q + "' in accept header:" + type);
     }
   }
 
@@ -94,16 +95,16 @@ public final class AcceptType {
     String[] tokens = types.split(TypeUtil.TYPE_SUBTYPE_SEPARATOR);
     if (tokens.length == 2) {
       if (tokens[0] == null || tokens[0].isEmpty()) {
-        throw new IllegalArgumentException("No type found in format '" + format + "'.");
+        throw new IllegalArgumentException("No type found in format: '" + format + "'.");
       } else if (tokens[1] == null || tokens[1].isEmpty()) {
-        throw new IllegalArgumentException("No subtype found in format '" + format + "'.");
+        throw new IllegalArgumentException("No subtype found in format: '" + format + "'.");
       } else {
         typeSubtype.add(tokens[0]);
         typeSubtype.add(tokens[1]);
       }
     } else {
       throw new IllegalArgumentException("Not exactly one '" + TypeUtil.TYPE_SUBTYPE_SEPARATOR +
-          "' in format '" + format + "', or it is at the beginning or at the end.");
+          " at the beginning or at the end in format: " + format);
     }
 
     TypeUtil.parseParameters(params, parameters);
@@ -131,9 +132,10 @@ public final class AcceptType {
       }
     }
 
-    if (result.isEmpty()) {
+    if (!exceptionList.isEmpty() || result.isEmpty()) {
       throw exceptionList.get(0);
     }
+    
     sort(result);
 
     return result;

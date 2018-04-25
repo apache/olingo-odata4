@@ -20,10 +20,11 @@ package org.apache.olingo.server.core;
 
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.olingo.commons.api.format.AcceptCharset;
 import org.apache.olingo.commons.api.format.AcceptType;
@@ -42,6 +43,7 @@ public final class ContentNegotiator {
   private static final String XML = "xml";
   private static final String METADATA = "METADATA";
   private static final String COLON = ":";
+  private static final Pattern CHARSET_PATTERN = Pattern.compile("([^,][\\w!#$%&'*+-._`|~;^]*)");
 
   private static final List<ContentType> DEFAULT_SUPPORTED_CONTENT_TYPES =
       Collections.unmodifiableList(Arrays.asList(
@@ -94,48 +96,60 @@ public final class ContentNegotiator {
     final String acceptHeaderValue = request.getHeader(HttpHeader.ACCEPT);
     String acceptCharset = request.getHeader(HttpHeader.ACCEPT_CHARSET);
     List<AcceptCharset> charsets = null;
-    if (acceptCharset != null) {
-      try {
-        charsets = AcceptCharset.create(acceptCharset); 
-      } catch (UnsupportedCharsetException e) {
-        throw new AcceptHeaderContentNegotiatorException(e.getMessage(),
-            AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_CHARSET_HEADER_OPTIONS, 
-            e.getMessage().substring(e.getMessage().lastIndexOf(COLON) + 1));
-      } catch (IllegalArgumentException e) {
-        throw new ContentNegotiatorException(e.getMessage(),
-            ContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_CHARSET, 
-            e.getMessage().substring(e.getMessage().lastIndexOf(COLON) + 1));
-      }
-    }
       
     ContentType result = null;
 
     if (formatOption != null && formatOption.getFormat() != null) {
       final String formatString = formatOption.getFormat().trim();
       final ContentType contentType = mapContentType(formatString, representationType);
-
+      boolean isCharsetInFormat = false;
+      List<AcceptType> formatTypes = null;
       try {
-        result = getAcceptedType(
-            AcceptType.fromContentType(contentType == null ?
-                ContentType.create(formatOption.getFormat()) : contentType),
-                supportedContentTypes, charsets);
+      formatTypes = AcceptType.fromContentType(contentType == null ?
+          ContentType.create(formatOption.getFormat()) : contentType);
       } catch (final IllegalArgumentException e) {
         throw new AcceptHeaderContentNegotiatorException(
-            "Unsupported $format=" + formatString,
+            "Unsupported $format=" + formatString, e,
             AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);
+      }
+      Map<String, String> formatParameters = formatTypes.get(0).getParameters();
+      if (!formatParameters.isEmpty() && null != formatParameters.get(ContentType.PARAMETER_CHARSET)) {
+        isCharsetInFormat = true;
+      } else {
+        isCharsetInFormat = false;
+        charsets = getAcceptCharset(acceptCharset);
+      }
+      try {
+        if (isCharsetInFormat) {
+          charsets = getAcceptCharset(formatParameters.get(ContentType.PARAMETER_CHARSET));
+        }
+        result = getAcceptedType(formatTypes, supportedContentTypes, charsets);
+      } catch (final IllegalArgumentException e) {
+        throw new AcceptHeaderContentNegotiatorException(
+            "Unsupported $format=" + formatString, e,
+            AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);
+      } catch (final AcceptHeaderContentNegotiatorException e) {
+        throw new AcceptHeaderContentNegotiatorException (
+            "Unsupported $format=" + formatString, e,
+            AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);
+      } catch (final ContentNegotiatorException e) {
+        throw new ContentNegotiatorException (
+            "Unsupported $format=" + formatString, e, 
+            ContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);
       }
       if (result == null) {
         throw new ContentNegotiatorException("Unsupported $format = " + formatString,
             ContentNegotiatorException.MessageKeys.UNSUPPORTED_FORMAT_OPTION, formatString);
       }
     } else if (acceptHeaderValue != null) {
+      charsets = getAcceptCharset(acceptCharset);
       try {
         result = getAcceptedType(AcceptType.create(acceptHeaderValue), 
             supportedContentTypes, charsets);
       } catch (final IllegalArgumentException e) {
-        throw new AcceptHeaderContentNegotiatorException(
-            "Unsupported or illegal Accept header value: " + acceptHeaderValue + " != " + supportedContentTypes,
-            AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_TYPES, acceptHeaderValue);
+        throw new AcceptHeaderContentNegotiatorException(e.getMessage(), e,
+            AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_TYPES, 
+            e.getMessage().substring(e.getMessage().lastIndexOf(COLON) + 1));
       } 
       if (result == null) {
         List<AcceptType> types = AcceptType.create(acceptHeaderValue);
@@ -145,6 +159,7 @@ public final class ContentNegotiator {
             ContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_TYPES, acceptHeaderValue);
       }
     } else {
+      charsets = getAcceptCharset(acceptCharset);
       final ContentType requestedContentType = getDefaultSupportedContentTypes(representationType).get(0);
       result = getAcceptedType(AcceptType.fromContentType(requestedContentType), 
           supportedContentTypes, charsets);
@@ -157,6 +172,31 @@ public final class ContentNegotiator {
       }
     }
     return result;
+  }
+  
+  /**
+   * @param acceptCharset
+   * @return
+   * @throws ContentNegotiatorException
+   * @throws AcceptHeaderContentNegotiatorException
+   */
+  private static List<AcceptCharset> getAcceptCharset(String acceptCharset)
+      throws ContentNegotiatorException, AcceptHeaderContentNegotiatorException {
+    List<AcceptCharset> charsets = null;
+    if (acceptCharset != null) {
+      try {
+        charsets = AcceptCharset.create(acceptCharset); 
+      } catch (UnsupportedCharsetException e) {
+        throw new ContentNegotiatorException(e.getMessage(), e,
+            ContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_CHARSET, 
+            e.getMessage().substring(e.getMessage().lastIndexOf(COLON) + 1));
+      } catch (IllegalArgumentException e) {
+        throw new AcceptHeaderContentNegotiatorException(e.getMessage(), e, 
+            AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_CHARSET_HEADER_OPTIONS, 
+            e.getMessage().substring(e.getMessage().lastIndexOf(COLON) + 1));
+      }
+    }
+    return charsets;
   }
 
   private static ContentType mapContentType(final String formatString, 
@@ -193,21 +233,24 @@ public final class ContentNegotiator {
         ContentType contentType = supportedContentType;
         final String charSetValue = acceptedType.getParameter(ContentType.PARAMETER_CHARSET);
         if (charset != null) {
-          contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET, charset.toString());
-        } else if (charSetValue != null) {
-          try {
-            Charset.forName(charSetValue);
-          } catch (UnsupportedCharsetException e) {
-            throw new AcceptHeaderContentNegotiatorException(
-                "Illegal charset in Accept header: " + charSetValue,
-                AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_CHARSET_HEADER_OPTIONS, 
-                charSetValue);
+          if ("*".equals(charset.toString())) {
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET, "utf-8");
+          } else {
+            contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET, charset.toString());
           }
+        } else if (charSetValue != null) {
           if ("utf8".equalsIgnoreCase(charSetValue) || "utf-8".equalsIgnoreCase(charSetValue)) {
             contentType = ContentType.create(contentType, ContentType.PARAMETER_CHARSET, "utf-8");
           } else {
-            throw new ContentNegotiatorException("Unsupported accept-header-charset = " + charSetValue,
-                ContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_HEADER_CHARSET, acceptedType.toString());
+            if (CHARSET_PATTERN.matcher(charSetValue).matches()) {
+              throw new ContentNegotiatorException("Unsupported accept-header-charset = " + charSetValue,
+                  ContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_HEADER_CHARSET, acceptedType.toString());
+            } else {
+              throw new AcceptHeaderContentNegotiatorException(
+                  "Illegal charset in Accept header: " + charSetValue,
+                  AcceptHeaderContentNegotiatorException.MessageKeys.UNSUPPORTED_ACCEPT_HEADER_CHARSET, 
+                  acceptedType.toString());
+            }
           }
         }
 
@@ -217,7 +260,8 @@ public final class ContentNegotiator {
         } else if ("false".equalsIgnoreCase(ieee754compatibleValue)) {
           contentType = ContentType.create(contentType, ContentType.PARAMETER_IEEE754_COMPATIBLE, "false");
         } else if (ieee754compatibleValue != null) {
-          throw new IllegalArgumentException("Invalid IEEE754Compatible value " + ieee754compatibleValue);
+          throw new IllegalArgumentException("Invalid IEEE754Compatible value in accept header:" + 
+              acceptedType.toString());
         }
 
         if (acceptedType.matches(contentType)) {

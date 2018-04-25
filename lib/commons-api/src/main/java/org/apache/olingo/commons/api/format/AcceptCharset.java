@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.commons.api.format;
 
-import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,11 +25,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 public class AcceptCharset {
 
   private static final Pattern Q_PATTERN = Pattern.compile("\\A(?:0(?:\\.\\d{0,3})?)|(?:1(?:\\.0{0,3})?)\\Z");
+  private static final Pattern CHARSET_PATTERN = Pattern.compile("([^,][\\w!#$%&'*+-._`|~;^]*)");
   private final String charset;
   private final Map<String, String> parameters;
   private final Float quality;
@@ -41,17 +42,17 @@ public class AcceptCharset {
     parameters = TypeUtil.createParameterMap();
     this.charset = parse(charset, parameters);
     
-    if (TypeUtil.MEDIA_TYPE_WILDCARD.equals(this.charset)) {
-      throw new IllegalArgumentException("Unsupported charset in accept charset header:" + this.charset);
-    } else {
-      try {
-        Charset.forName(this.charset);
-      } catch (UnsupportedCharsetException e) {
-        throw new UnsupportedCharsetException("Illegal charset in accept charset header:" + this.charset);
+    if (!(UTF8_CHARSET.equalsIgnoreCase(this.charset)) && 
+        !(UTF8_CHARSET1.equalsIgnoreCase(this.charset)) && !(TypeUtil.MEDIA_TYPE_WILDCARD.equals(this.charset))) {
+      if (CHARSET_PATTERN.matcher(this.charset).matches()) {
+        throw new UnsupportedCharsetException("Unsupported charset in accept charset header:" + charset);
+      } else {
+        throw new IllegalArgumentException("Illegal charset in accept charset header:" + charset);
       }
-      if (!(UTF8_CHARSET.equalsIgnoreCase(this.charset)) && 
-          !(UTF8_CHARSET1.equalsIgnoreCase(this.charset))) {
-        throw new IllegalArgumentException("Unsupported charset in accept charset header:" + this.charset);
+    }
+    for (Entry<String, String> param : parameters.entrySet()) {
+      if (!param.getKey().equals(TypeUtil.PARAMETER_Q)) {
+        throw new IllegalArgumentException("Illegal parameters in accept charset header:" + charset);
       }
     }
     final String q = parameters.get(TypeUtil.PARAMETER_Q);
@@ -60,7 +61,7 @@ public class AcceptCharset {
     } else if (Q_PATTERN.matcher(q).matches()) {
         quality = Float.valueOf(q);
     } else {
-      throw new IllegalArgumentException("Illegal quality parameter '" + q + "'.");
+      throw new IllegalArgumentException("Illegal quality parameter '" + q + "' in accept charset header:" + charset);
     }
   }
 
@@ -87,6 +88,10 @@ public class AcceptCharset {
     List<Exception> exceptionList = new ArrayList<Exception>();
 
     String[] values = acceptCharsets.split(",");
+    if (values.length == 0) {
+      values = new String[1];
+      values[0] = acceptCharsets;
+    }
     for (String value : values) {
       try {
         result.add(new AcceptCharset(value.trim()));
@@ -102,6 +107,13 @@ public class AcceptCharset {
         throw new UnsupportedCharsetException(exceptionList.get(0).getMessage());
       } else if (exceptionList.get(0) instanceof IllegalArgumentException) {
         throw new IllegalArgumentException(exceptionList.get(0).getMessage());
+      }
+    }
+    for (Exception ex : exceptionList) {
+      if (ex instanceof UnsupportedCharsetException) {
+        continue;
+      } else {
+        throw new IllegalArgumentException(ex.getMessage());
       }
     }
     sort(result);

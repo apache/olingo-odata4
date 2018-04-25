@@ -66,8 +66,8 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
     final String content = IOUtils.toString(connection.getErrorStream());
-    assertTrue(content.contains("The content-type range 'abc' is not supported "
-        + "as value of the Accept header."));
+    assertTrue(content.contains("The content-type range ' abc' is not supported as "
+        + "value of the Accept header."));
   }
   
   @Test
@@ -135,7 +135,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "abc");
     connection.connect();
 
-    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+    assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
     
     final String content = IOUtils.toString(connection.getErrorStream());
     assertTrue(content.contains("The charset specified in Accept charset header 'abc' is not supported."));
@@ -230,7 +230,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "abc");
     connection.connect();
 
-    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+    assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
 
     final String content = IOUtils.toString(connection.getErrorStream());
     assertTrue(content.contains("The charset specified in Accept charset "
@@ -307,7 +307,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
   }
   
   @Test
-  public void multipleValuesInAcceptHeader2() throws Exception {
+  public void multipleValuesInAcceptHeaderWithOneIncorrectValue() throws Exception {
     URL url = new URL(SERVICE_URI + "ESAllPrim");
 
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -316,13 +316,213 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
         + "application/json;q=0.1,application/json;q=0.8,abc");
     connection.connect();
 
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The content-type range ' abc' is not supported as value of the Accept header."));
+  }
+  
+  @Test
+  public void multipleValuesInAcceptHeaderWithIncorrectParam() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json,"
+        + "application/json;q=0.1,application/json;q=<1");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The content-type range 'application/json;q=<1' is not "
+        + "supported as value of the Accept header."));
+  }
+  
+  @Test
+  public void multipleValuesInAcceptHeaderWithIncorrectCharset() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json,"
+        + "application/json;q=0.1,application/json;charset=utf<8");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The charset specified in Accept header "
+        + "'application/json;charset=utf<8' is not supported."));
+  }
+  
+  @Test
+  public void acceptHeaderWithIncorrectParams() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;abc=xyz");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The content-type range 'application/json;abc=xyz' is not "
+        + "supported as value of the Accept header."));
+  }
+  
+  @Test
+  public void formatWithIllegalCharset1() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=application/json;charset=abc");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The $format option 'application/json;charset=abc' is not supported."));
+  }
+  
+  @Test
+  public void formatWithWrongParams() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=application/json;abc=xyz");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The $format option 'application/json;abc=xyz' is not supported."));
+  }
+  
+  @Test
+  public void validFormatWithIncorrectParamsInAcceptCharsetHeader() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "utf-8;abc=xyz");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The Accept charset header 'utf-8;abc=xyz' is not supported."));
+  }
+  
+  @Test
+  public void validFormatWithIncorrectAcceptCharsetHeader() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "utf<8");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The Accept charset header 'utf<8' is not supported."));
+  }
+  
+  @Test
+  public void validFormatWithIncorrectMultipleAcceptCharsetHeader1() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "utf<8,utf-8;q=0.8");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The Accept charset header 'utf<8' is not supported."));
+  }
+  
+  @Test
+  public void validFormatWithIncorrectMultipleAcceptCharsetHeader2() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "utf-8;q=0.8,utf-8;q=<");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The Accept charset header 'utf-8;q=<' is not supported."));
+  }
+  
+  @Test
+  public void validFormatWithIncorrectQParamInAcceptCharsetHeader() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "utf-8;q=<");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The Accept charset header 'utf-8;q=<' is not supported."));
+  }
+  
+  @Test
+  public void validFormatWithIncorrectParamInAcceptCharsetHeader() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "utf-8;abc=xyz");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The Accept charset header 'utf-8;abc=xyz' is not supported."));
+  }
+  
+  @Test
+  public void validFormatWithIncorrectCharset() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=application/json;charset=utf<8");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;charset=utf-8");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+
+    final String content = IOUtils.toString(connection.getErrorStream());
+    assertTrue(content.contains("The $format option 'application/json;charset=utf<8' is not supported."));
+  }
+  
+  @Test
+  public void formatWithAcceptCharset() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$format=application/json;charset=utf-8");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT_CHARSET, "abc");
+    connection.connect();
+
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+
     assertNotNull(connection.getHeaderField(HttpHeader.CONTENT_TYPE));
     ContentType contentType = ContentType.parse(connection.getHeaderField(HttpHeader.CONTENT_TYPE));
     assertEquals("application", contentType.getType());
     assertEquals("json", contentType.getSubtype());
-    assertEquals(1, contentType.getParameters().size());
+    assertEquals(2, contentType.getParameters().size());
     assertEquals("minimal", contentType.getParameter("odata.metadata"));
+    assertEquals("utf-8", contentType.getParameter("charset"));
 
     final String content = IOUtils.toString(connection.getInputStream());
     assertNotNull(content);

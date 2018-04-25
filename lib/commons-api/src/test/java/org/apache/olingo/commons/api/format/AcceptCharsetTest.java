@@ -30,12 +30,34 @@ import org.junit.Test;
 public class AcceptCharsetTest {
   @Test
   public void wildcard() {
-    expectCreateError("*");
+    List<AcceptCharset> charsets = AcceptCharset.create("*");
+    assertEquals("*", charsets.get(0).getCharset());
   }
   
   @Test
   public void illegalCharset() {
     expectCreateError("abc");
+  }
+  
+  @Test
+  public void illegalCharsetWithDelimiters() {
+    expectCreateError("utf<8");
+    expectCreateError(",,,,");
+    expectCreateError(", , , ");
+    expectCreateError("utf 8");
+    expectCreateError("utf=8");
+    expectCreateError("utf-8;<");
+    expectCreateError("utf-8;q<");
+    expectCreateError("utf-8;q=<");
+    expectCreateError("utf-8;q=1<");
+    expectCreateError("utf-8;abc=xyz");
+    expectCreateError("utf-8;");
+    expectCreateError("utf-8;q='");
+    expectCreateError("utf-8;q=0.1, utf8;q=0.8, iso-8859-1, abc, xyz<");
+    expectCreateError("utf-8;q=0.1, utf8;q=0.8<, iso-8859-1, abc");
+    expectCreateError("utf-8;abc=xyz");
+    expectCreateError("utf-8;q=0.8;abc=xyz");
+    expectCreateError("utf-8;q=xyz");
   }
   
   @Test

@@ -139,6 +139,8 @@ public class AcceptTypeTest {
     expectCreateError(" a/a;q=z ");
     expectCreateError("a/a;q=42");
     expectCreateError("a/a;q=0.0001");
+    expectCreateError("a/a;q='");
+    expectCreateError("a/a;q=0.8,abc");
   }
 
   @Test
@@ -188,10 +190,10 @@ public class AcceptTypeTest {
   
   @Test
   public void multipleTypeswithIllegalTypes() {
-    List<AcceptType> acceptTypes = AcceptType.create("application/json;q=0.2,abc");
+    List<AcceptType> acceptTypes = AcceptType.create("application/json;q=0.2,abc/xyz");
 
-    assertEquals(1, acceptTypes.size());
-    final AcceptType acceptType = acceptTypes.get(0);
+    assertEquals(2, acceptTypes.size());
+    final AcceptType acceptType = acceptTypes.get(1);
     assertEquals("application", acceptType.getType());
     assertEquals("json", acceptType.getSubtype());
     assertEquals("0.2", acceptType.getParameters().get(TypeUtil.PARAMETER_Q));

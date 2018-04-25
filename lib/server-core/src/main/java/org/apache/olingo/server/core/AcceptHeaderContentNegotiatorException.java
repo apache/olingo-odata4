@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core;
 
+import org.apache.olingo.server.api.ODataLibraryException.MessageKey;
+
 public class AcceptHeaderContentNegotiatorException extends ContentNegotiatorException {
   private static final long serialVersionUID = -8112658467394158700L;
 
@@ -27,8 +29,10 @@ public class AcceptHeaderContentNegotiatorException extends ContentNegotiatorExc
     /** parameter: format string */
     UNSUPPORTED_FORMAT_OPTION,
     /** parameter: accept charset header*/
-     UNSUPPORTED_ACCEPT_CHARSET_HEADER_OPTIONS;
-
+     UNSUPPORTED_ACCEPT_CHARSET_HEADER_OPTIONS,
+     /** parameter: charset option in accept header*/
+     UNSUPPORTED_ACCEPT_HEADER_CHARSET;
+    
     @Override
     public String getKey() {
       return name();
@@ -38,6 +42,12 @@ public class AcceptHeaderContentNegotiatorException extends ContentNegotiatorExc
   public AcceptHeaderContentNegotiatorException(final String developmentMessage, final MessageKey messageKey,
       final String... parameters) {
     super(developmentMessage, messageKey, parameters);
+  }
+  
+  public AcceptHeaderContentNegotiatorException(final String developmentMessage, final Throwable cause,
+      final MessageKey messageKey,
+      final String... parameters) {
+    super(developmentMessage, cause, messageKey, parameters);
   }
 
   @Override
