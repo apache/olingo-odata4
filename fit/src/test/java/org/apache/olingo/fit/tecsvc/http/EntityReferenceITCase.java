@@ -36,8 +36,8 @@ import org.junit.Test;
 
 public class EntityReferenceITCase extends AbstractBaseTestITCase {
 
-  private static final String CONTEXT_ENTITY_REFERENCE = "\"@odata.context\":\"$metadata#$ref\"";
-  private static final String CONTEXT_COLLECTION_REFERENCE = "\"@odata.context\":\"$metadata#Collection($ref)";
+  private static final String CONTEXT_ENTITY_REFERENCE = "\"@odata.context\":\"../$metadata#$ref\"";
+  private static final String CONTEXT_COLLECTION_REFERENCE = "\"@odata.context\":\"../$metadata#Collection($ref)";
   private static final String SERVICE_URI = TecSvcConst.BASE_URI;
 
   @Test

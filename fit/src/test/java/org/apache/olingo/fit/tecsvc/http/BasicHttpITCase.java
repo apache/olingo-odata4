@@ -392,4 +392,17 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
   }
+  
+  @Test
+  public void testCountWithSearch() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESTwoPrim/$count?$search=%2232%22");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals("3", IOUtils.toString(connection.getInputStream()));
+    connection.disconnect();
+  }
 }

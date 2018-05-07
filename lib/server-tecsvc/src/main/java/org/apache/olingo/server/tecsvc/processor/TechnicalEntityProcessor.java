@@ -122,6 +122,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
     EntityCollection entitySet = new EntityCollection();
     entitySet.getEntities().addAll(entitySetInitial.getEntities());
     FilterHandler.applyFilterSystemQuery(uriInfo.getFilterOption(), entitySet, uriInfo, serviceMetadata.getEdm());
+    SearchHandler.applySearchSystemQueryOption(uriInfo.getSearchOption(), entitySet);
     int count =  entitySet.getEntities().size();
     for (SystemQueryOption systemQueryOption : uriInfo.getSystemQueryOptions()) {
       if (systemQueryOption.getName().contains(DELTATOKEN)) {

@@ -283,7 +283,11 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   @Override
   public VisitorOperand visitAlias(final String aliasName) throws ExpressionVisitException, ODataApplicationException {
-    return new UntypedOperand(uriInfo.getValueForAlias(aliasName));
+    if (entity.getProperty(uriInfo.getValueForAlias(aliasName)) != null) {
+      return new UntypedOperand(String.valueOf(entity.getProperty(uriInfo.getValueForAlias(aliasName)).getValue()));
+    } else {
+      return new UntypedOperand(uriInfo.getValueForAlias(aliasName));
+    }
   }
 
   @Override

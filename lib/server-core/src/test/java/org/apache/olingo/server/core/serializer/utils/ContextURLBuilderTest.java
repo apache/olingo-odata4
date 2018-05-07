@@ -191,7 +191,7 @@ public class ContextURLBuilderTest {
   @Test
   public void buildReference() {
     final ContextURL contextURL = ContextURL.with().suffix(Suffix.REFERENCE).build();
-    assertEquals("$metadata#$ref", ContextURLBuilder.create(contextURL).toASCIIString());
+    assertEquals("../$metadata#$ref", ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
   @Test(expected = IllegalArgumentException.class)

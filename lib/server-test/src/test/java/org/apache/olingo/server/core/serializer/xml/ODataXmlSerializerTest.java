@@ -2642,7 +2642,7 @@ public class ODataXmlSerializerTest {
 
     String expected = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
-        + "m:context=\"$metadata#ESAllPrim(32767)/PropertyString\" "
+        + "m:context=\"../$metadata#ESAllPrim(32767)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\">"
         + "First Resource - positive values</m:value>";
     Assert.assertEquals(expected, resultString);
@@ -2666,7 +2666,7 @@ public class ODataXmlSerializerTest {
 
     String expected = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
-        + "m:context=\"$metadata#ESAllPrim(32767)/PropertyString\" "
+        + "m:context=\"../$metadata#ESAllPrim(32767)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\">"
         + "abXXcdXX</m:value>";
     Assert.assertEquals(expected, resultString);
@@ -2686,7 +2686,7 @@ public class ODataXmlSerializerTest {
             .build()).getContent());
     String expected = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
-        + "m:context=\"$metadata#ESAllPrim(4242)/PropertyString\" "
+        + "m:context=\"../$metadata#ESAllPrim(4242)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\" "
         + "m:null=\"true\"/>";
     Assert.assertEquals(expected, response);
@@ -2707,7 +2707,7 @@ public class ODataXmlSerializerTest {
                 .build()).getContent());
     String expected = "<?xml version='1.0' encoding='UTF-8'?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
-        + "m:context=\"$metadata#ESCollAllPrim(1)/CollPropertyString\" "
+        + "m:context=\"../$metadata#ESCollAllPrim(1)/CollPropertyString\" "
         + "m:metadata-etag=\"metadataETag\"  m:type=\"#Collection(String)\">"
         + "<m:element>Employee1@company.example</m:element>"
         + "<m:element>Employee2@company.example</m:element>"
@@ -2733,7 +2733,7 @@ public class ODataXmlSerializerTest {
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
         + "m:type=\"#olingo.odata.test1.CTTwoPrim\" "
-        + "m:context=\"$metadata#ESMixPrimCollComp(32767)/PropertyComp\" "
+        + "m:context=\"../$metadata#ESMixPrimCollComp(32767)/PropertyComp\" "
         + "m:metadata-etag=\"metadataETag\">"
         + "<d:PropertyInt16 m:type=\"Int16\">111</d:PropertyInt16>"
         + "<d:PropertyString>TEST A</d:PropertyString>"
@@ -2758,7 +2758,7 @@ public class ODataXmlSerializerTest {
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "m:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\"\n" +
-        "  m:context=\"$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\"\n" +
+        "  m:context=\"../$metadata#ESMixPrimCollComp(32767)/CollPropertyComp\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <m:element>\n" +
         "    <d:PropertyInt16 m:type=\"Int16\">123</d:PropertyInt16>\n" +
@@ -2807,7 +2807,7 @@ public class ODataXmlSerializerTest {
     final String resultString = IOUtils.toString(serializerResult.getContent());
     String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<m:ref xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
-        "  m:context=\"$metadata#$ref\" id=\"ESAllPrim(32767)\" />";
+        "  m:context=\"../$metadata#$ref\" id=\"ESAllPrim(32767)\" />";
     checkXMLEqual(expected, resultString);
   }
 
@@ -2827,7 +2827,7 @@ public class ODataXmlSerializerTest {
     String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
-        "  m:context=\"$metadata#Collection($ref)\">\n" +
+        "  m:context=\"../$metadata#Collection($ref)\">\n" +
         "  <m:ref id=\"ESAllPrim(32767)\" />\n" +
         "  <m:ref id=\"ESAllPrim(-32768)\" />\n" +
         "  <m:ref id=\"ESAllPrim(0)\" />\n" +
@@ -2852,7 +2852,7 @@ public class ODataXmlSerializerTest {
     String expected = "<?xml version='1.0' encoding='UTF-8'?>\n" +
         "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
-        "  m:context=\"$metadata#Collection($ref)\">\n" +
+        "  m:context=\"../$metadata#Collection($ref)\">\n" +
         "</a:feed>";
     checkXMLEqual(expected, resultString);
   }
@@ -3320,7 +3320,7 @@ public class ODataXmlSerializerTest {
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "m:type=\"#Collection(olingo.odata.test1.CTPrimComp)\" "
-        + "m:context=\"$metadata#ESKeyNav(1)/CollPropertyComp\" "
+        + "m:context=\"../$metadata#ESKeyNav(1)/CollPropertyComp\" "
         + "m:metadata-etag=\"metadataETag\">"
         + "<m:element><d:PropertyInt16 m:type=\"Int16\">1</d:PropertyInt16>"
         + "</m:element><m:element><d:PropertyInt16 m:type=\"Int16\">2</d:PropertyInt16>"

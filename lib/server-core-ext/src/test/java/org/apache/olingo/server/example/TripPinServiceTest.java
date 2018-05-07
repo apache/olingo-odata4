@@ -211,7 +211,7 @@ public class TripPinServiceTest {
   public void testReadPrimitiveProperty() throws Exception {
     HttpResponse response = httpGET(baseURL + "/Airlines('AA')/Name", 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#Airlines('AA')/Name", node.get("@odata.context").asText());
+    assertEquals("../$metadata#Airlines('AA')/Name", node.get("@odata.context").asText());
     assertEquals("American Airlines", node.get("value").asText());
   }
 
@@ -225,7 +225,7 @@ public class TripPinServiceTest {
   public void testReadPrimitiveArrayProperty() throws Exception {
     HttpResponse response = httpGET(baseURL + "/People('russellwhyte')/Emails", 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/Emails", node.get("@odata.context").asText());
+    assertEquals("../$metadata#People('russellwhyte')/Emails", node.get("@odata.context").asText());
     assertTrue(node.get("value").isArray());
     assertEquals("Russell@example.com", ((ArrayNode)node.get("value")).get(0).asText());
     assertEquals("Russell@contoso.com", ((ArrayNode)node.get("value")).get(1).asText());
@@ -262,7 +262,7 @@ public class TripPinServiceTest {
   public void testReadComplexArrayProperty() throws Exception {
     HttpResponse response = httpGET(baseURL + "/People('russellwhyte')/AddressInfo", 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/AddressInfo", node.get("@odata.context").asText());
+    assertEquals("../$metadata#People('russellwhyte')/AddressInfo", node.get("@odata.context").asText());
     assertTrue(node.get("value").isArray());
     assertEquals("187 Suffolk Ln.", ((ArrayNode)node.get("value")).get(0).get("Address").asText());
   }
@@ -393,7 +393,7 @@ public class TripPinServiceTest {
   public void testReadReferences() throws Exception {
     HttpResponse response = httpGET(baseURL + "/People('russellwhyte')/Friends/$ref", 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#Collection($ref)", node.get("@odata.context").asText());
+    assertEquals("../$metadata#Collection($ref)", node.get("@odata.context").asText());
     assertTrue(node.get("value").isArray());
     assertEquals("/People('scottketchum')", ((ArrayNode)node.get("value")).get(0).get("@odata.id").asText());
   }
@@ -565,7 +565,7 @@ public class TripPinServiceTest {
     
     response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/FirstName", node.get("@odata.context").asText());
+    assertEquals("../$metadata#People('russellwhyte')/FirstName", node.get("@odata.context").asText());
     assertEquals("Pilar Ackerman", node.get("value").asText());
   }
 
@@ -585,7 +585,7 @@ public class TripPinServiceTest {
 
     response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/Emails", node.get("@odata.context").asText());
+    assertEquals("../$metadata#People('russellwhyte')/Emails", node.get("@odata.context").asText());
     assertTrue(node.get("value").isArray());
     assertEquals("olingo@apache.com", ((ArrayNode)node.get("value")).get(0).asText());
   }
@@ -637,7 +637,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/People('russellwhyte')/Friends('scottketchum')/Trips";
     HttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/Friends('scottketchum')/Trips",
+    assertEquals("../../$metadata#People('russellwhyte')/Friends('scottketchum')/Trips",
         node.get("@odata.context").asText());
     assertTrue(node.get("value").isArray());
     assertEquals("1001", ((ArrayNode)node.get("value")).get(0).get("TripId").asText());
@@ -648,7 +648,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/People('russellwhyte')/Trips(1003)";
     HttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/Trips/$entity",
+    assertEquals("../$metadata#People('russellwhyte')/Trips/$entity",
         node.get("@odata.context").asText());
     assertEquals("f94e9116-8bdd-4dac-ab61-08438d0d9a71", node.get("ShareId").asText());
   }
@@ -665,7 +665,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/People('jhondoe')/Trips";
     HttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('jhondoe')/Trips",
+    assertEquals("../$metadata#People('jhondoe')/Trips",
         node.get("@odata.context").asText());
     assertEquals(0, ((ArrayNode)node.get("value")).size());
   }
@@ -682,7 +682,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/People('russellwhyte')/Trips(1003)/PlanItems(5)/ConfirmationCode";
     HttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/Trips(1003)/PlanItems(5)/ConfirmationCode",
+    assertEquals("../../../$metadata#People('russellwhyte')/Trips(1003)/PlanItems(5)/ConfirmationCode",
         node.get("@odata.context").asText());
     assertEquals("JH58494", node.get("value").asText());
   }
@@ -692,7 +692,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/People('russellwhyte')/Trips(1003)/PlanItems";
     HttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/Trips(1003)/PlanItems",
+    assertEquals("../../$metadata#People('russellwhyte')/Trips(1003)/PlanItems",
         node.get("@odata.context").asText());
     assertEquals("#Microsoft.OData.SampleService.Models.TripPin.Flight",
         ((ArrayNode) node.get("value")).get(0).get("@odata.type").asText());
@@ -705,7 +705,7 @@ public class TripPinServiceTest {
     HttpResponse response = httpGET(editUrl, 200);
 
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/Trips(1003)/PlanItems/"
+    assertEquals("../../../$metadata#People('russellwhyte')/Trips(1003)/PlanItems/"
         + "Microsoft.OData.SampleService.Models.TripPin.Event",
         node.get("@odata.context").asText());
 
@@ -719,7 +719,7 @@ public class TripPinServiceTest {
         + "Microsoft.OData.SampleService.Models.TripPin.Event";
     HttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
-    assertEquals("$metadata#People('russellwhyte')/Trips(1003)/PlanItems/"
+    assertEquals("../../../$metadata#People('russellwhyte')/Trips(1003)/PlanItems/"
         + "Microsoft.OData.SampleService.Models.TripPin.Event/$entity",
         node.get("@odata.context").asText());
     assertEquals("#Microsoft.OData.SampleService.Models.TripPin.Event", node.get("@odata.type").asText());

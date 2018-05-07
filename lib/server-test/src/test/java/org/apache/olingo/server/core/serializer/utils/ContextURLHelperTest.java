@@ -271,7 +271,7 @@ public class ContextURLHelperTest {
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .keyPath(ContextURLHelper.buildKeyPredicate(Arrays.asList(key)))
         .navOrPropertyPath(edmProperty.getName()).build();
-    assertEquals("$metadata#ESTwoPrim(42)/PropertyInt16",
+    assertEquals("../$metadata#ESTwoPrim(42)/PropertyInt16",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
@@ -288,7 +288,7 @@ public class ContextURLHelperTest {
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .keyPath(ContextURLHelper.buildKeyPredicate(Arrays.asList(key1, key2)))
         .navOrPropertyPath(edmProperty.getName()).build();
-    assertEquals("$metadata#ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyInt16",
+    assertEquals("../$metadata#ESTwoKeyNav(PropertyInt16=1,PropertyString='2')/PropertyInt16",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
   
@@ -311,7 +311,7 @@ public class ContextURLHelperTest {
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .keyPath(ContextURLHelper.buildKeyPredicate(Arrays.asList(key1, key2, key3, key4)))
         .navOrPropertyPath(edmProperty.getName()).build();
-    assertEquals("$metadata#ESFourKeyAlias"
+    assertEquals("../$metadata#ESFourKeyAlias"
             + "(PropertyInt16=1,KeyAlias1=11,KeyAlias2='Num11',KeyAlias3='Num111')/PropertyComp",
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
