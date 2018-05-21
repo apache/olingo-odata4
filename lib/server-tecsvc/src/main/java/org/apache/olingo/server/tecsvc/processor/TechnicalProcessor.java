@@ -189,6 +189,8 @@ public abstract class TechnicalProcessor implements Processor {
     }
 
     int navigationCount = 0;
+	int navigationResCount = getNavigationResourceCount(resourcePaths);
+    Link previous = null;
     while (++navigationCount < readAtMostNavigations
         && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
       final UriResourceNavigation uriNavigationResource = (UriResourceNavigation) resourcePaths.get(navigationCount);
@@ -205,11 +207,26 @@ public abstract class TechnicalProcessor implements Processor {
       EdmEntityType edmEntityType = getEntityTypeBasedOnNavPropertyTypeCast(uriNavigationResource);
       entity = edmEntityType != null ? dataProvider.readDataFromEntity(edmEntityType, key) : entity;
       if (entity == null) {
-        throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+        if (key.isEmpty() && (previous != null || navigationResCount == 1)) {
+          throw new ODataApplicationException("No Content", HttpStatusCode.NO_CONTENT.getStatusCode(), Locale.ROOT);
+        } else {
+          throw new ODataApplicationException("Not Found", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+        }
       }
+	  previous = link;
     }
 
     return entity;
+  }
+  
+  private int getNavigationResourceCount(List<UriResource> resourcePaths) {
+    int count = 0;
+    for (UriResource resource : resourcePaths) {
+      if (resource instanceof UriResourceNavigation) {
+        count ++;
+      }
+    }
+    return count;
   }
   
   private EdmEntityType getEntityTypeBasedOnNavPropertyTypeCast(UriResourceNavigation uriNavigationResource) {

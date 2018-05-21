@@ -175,9 +175,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       getClient().getRetrieveRequestFactory()
             .getEntityRequest(uri)
             .execute();
-      fail();
     } catch (ODataClientErrorException e) {
-      assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
+      assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
     
