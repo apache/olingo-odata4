@@ -18,14 +18,16 @@
  */
 package org.apache.olingo.server.core;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmReturnType;
+import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
-import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -69,15 +71,17 @@ import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
+import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.core.batchhandler.BatchHandler;
 import org.apache.olingo.server.core.etag.PreconditionsValidator;
-import org.apache.olingo.server.api.uri.UriResourceSingleton;
 
 public class ODataDispatcher {
 
   private static final String NOT_IMPLEMENTED_MESSAGE = "not implemented";
   private final UriInfo uriInfo;
   private final ODataHandlerImpl handler;
+  private static final String RETURN_MINIMAL = "return=minimal";
+  private static final String RETURN_REPRESENTATION = "return=representation";
 
   public ODataDispatcher(final UriInfo uriInfo, final ODataHandlerImpl handler) {
     this.uriInfo = uriInfo;
@@ -277,6 +281,7 @@ public class ODataDispatcher {
             .isCollection();
 
     if (isCollection && httpMethod == HttpMethod.GET) {
+      validatePreferHeader(request);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.COLLECTION_REFERENCE);
       handler.selectProcessor(ReferenceCollectionProcessor.class)
@@ -289,6 +294,7 @@ public class ODataDispatcher {
           .createReference(request, response, uriInfo, requestFormat);
 
     } else if (!isCollection && httpMethod == HttpMethod.GET) {
+      validatePreferHeader(request);
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.REFERENCE);
       handler.selectProcessor(ReferenceProcessor.class).readReference(request, response, uriInfo, responseFormat);
@@ -300,6 +306,7 @@ public class ODataDispatcher {
           .updateReference(request, response, uriInfo, requestFormat);
 
     } else if (httpMethod == HttpMethod.DELETE) {
+      validatePreferHeader(request);
       handler.selectProcessor(ReferenceProcessor.class)
           .deleteReference(request, response, uriInfo);
 
@@ -326,6 +333,7 @@ public class ODataDispatcher {
      ODataApplicationException, ODataLibraryException,
       ODataHandlerException, PreconditionException {
     final HttpMethod method = request.getMethod();
+    validatePreferHeader(request);
     if (method == HttpMethod.GET) {
       // This can be a GET on an EntitySet, Navigation or Function
       final ContentType requestedContentType = ContentNegotiator.
@@ -362,6 +370,7 @@ public class ODataDispatcher {
         type == EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Binary) ?
             RepresentationType.BINARY : RepresentationType.VALUE;
     if (method == HttpMethod.GET) {
+      validatePreferHeader(request);
       final ContentType requestedContentType = ContentNegotiator.
           doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), valueRepresentationType);
@@ -377,6 +386,7 @@ public class ODataDispatcher {
       handler.selectProcessor(PrimitiveValueProcessor.class)
           .updatePrimitiveValue(request, response, uriInfo, requestFormat, responseFormat);
     } else if (method == HttpMethod.DELETE && resource instanceof UriResourceProperty) {
+      validatePreferHeader(request);
       validatePreconditions(request, false);
       handler.selectProcessor(PrimitiveValueProcessor.class)
           .deletePrimitiveValue(request, response, uriInfo);
@@ -391,6 +401,7 @@ public class ODataDispatcher {
     final RepresentationType complexRepresentationType = isCollection ? RepresentationType.COLLECTION_COMPLEX
         : RepresentationType.COMPLEX;
     if (method == HttpMethod.GET) {
+      validatePreferHeader(request);
       final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), complexRepresentationType);
       if (isCollection) {
@@ -414,6 +425,7 @@ public class ODataDispatcher {
             .updateComplex(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
+      validatePreferHeader(request);
       validatePreconditions(request, false);
       if (isCollection) {
         handler.selectProcessor(ComplexCollectionProcessor.class)
@@ -433,6 +445,7 @@ public class ODataDispatcher {
     final RepresentationType representationType = isCollection ? RepresentationType.COLLECTION_PRIMITIVE
         : RepresentationType.PRIMITIVE;
     if (method == HttpMethod.GET) {
+      validatePreferHeader(request);
       final ContentType requestedContentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), representationType);
       if (isCollection) {
@@ -456,6 +469,7 @@ public class ODataDispatcher {
             .updatePrimitive(request, response, uriInfo, requestFormat, responseFormat);
       }
     } else if (method == HttpMethod.DELETE) {
+      validatePreferHeader(request);
       validatePreconditions(request, false);
       if (isCollection) {
         handler.selectProcessor(PrimitiveCollectionProcessor.class)
@@ -471,6 +485,7 @@ public class ODataDispatcher {
 
   private void handleCountDispatching(final ODataRequest request, final ODataResponse response,
       final int lastPathSegmentIndex) throws ODataApplicationException, ODataLibraryException {
+    validatePreferHeader(request);
     final UriResource resource = uriInfo.getUriResourceParts().get(lastPathSegmentIndex - 1);
     if (resource instanceof UriResourceEntitySet
         || resource instanceof UriResourceNavigation
@@ -505,6 +520,7 @@ public class ODataDispatcher {
           ODataHandlerException {
     final HttpMethod method = request.getMethod();
     if (method == HttpMethod.GET) {
+      validatePreferHeader(request);
       final ContentType requestedContentType = ContentNegotiator.
           doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.COLLECTION_ENTITY);
@@ -515,6 +531,7 @@ public class ODataDispatcher {
           doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), RepresentationType.ENTITY);
       if (isMedia) {
+        validatePreferHeader(request);
         final ContentType requestFormat = ContentType.parse(
             request.getHeader(HttpHeader.CONTENT_TYPE));
         handler.selectProcessor(MediaEntityProcessor.class)
@@ -528,6 +545,23 @@ public class ODataDispatcher {
       }
     } else {
       throwMethodNotAllowed(method);
+    }
+  }
+
+  /**Checks if Prefer header is set with return=minimal or 
+   * return=representation for GET and DELETE requests
+   * @param request
+   * @throws ODataHandlerException
+   */
+  private void validatePreferHeader(final ODataRequest request) throws ODataHandlerException {
+    final List<String> returnPreference = request.getHeaders(HttpHeader.PREFER);
+    if (null != returnPreference) {
+      for (String preference : returnPreference) {
+        if (preference.equals(RETURN_MINIMAL) || preference.equals(RETURN_REPRESENTATION)) {
+          throw new ODataHandlerException("Prefer Header not supported: " + preference,
+              ODataHandlerException.MessageKeys.INVALID_PREFER_HEADER, preference);
+        } 
+      }
     }
   }
   
@@ -544,12 +578,16 @@ public class ODataDispatcher {
         ODataLibraryException, ODataHandlerException, PreconditionException {
       final HttpMethod method = request.getMethod();
       if (method == HttpMethod.GET) {
+        validatePreferHeader(request);
         final ContentType requestedContentType = ContentNegotiator.
             doContentNegotiation(uriInfo.getFormatOption(),
             request, handler.getCustomContentTypeSupport(), RepresentationType.ENTITY);
         handler.selectProcessor(EntityProcessor.class)
             .readEntity(request, response, uriInfo, requestedContentType);
       } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+        if (isMedia) {
+          validatePreferHeader(request);
+        }
         validatePreconditions(request, false);
         final ContentType requestFormat = getSupportedContentType(
             request.getHeader(HttpHeader.CONTENT_TYPE),
@@ -562,6 +600,7 @@ public class ODataDispatcher {
       } else if (method == HttpMethod.DELETE && !isSingleton) {
         validateIsSingleton(method);
         validatePreconditions(request, false);
+        validatePreferHeader(request);
         handler.selectProcessor(isMedia ? MediaEntityProcessor.class : EntityProcessor.class)
             .deleteEntity(request, response, uriInfo);
       } else {

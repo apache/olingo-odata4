@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core.batchhandler;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -29,12 +31,15 @@ import org.apache.olingo.server.api.batch.BatchFacade;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException.MessageKeys;
 import org.apache.olingo.server.api.processor.BatchProcessor;
+import org.apache.olingo.server.core.ODataHandlerException;
 import org.apache.olingo.server.core.ODataHandlerImpl;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
 
 public class BatchHandler {
   private final BatchProcessor batchProcessor;
   private final ODataHandlerImpl oDataHandler;
+  private static final String RETURN_MINIMAL = "return=minimal";
+  private static final String RETURN_REPRESENTATION = "return=representation";
 
   public BatchHandler(final ODataHandlerImpl oDataHandler, final BatchProcessor batchProcessor) {
 
@@ -45,9 +50,27 @@ public class BatchHandler {
   public void process(final ODataRequest request, final ODataResponse response, final boolean isStrict)
       throws ODataApplicationException, ODataLibraryException {
     validateRequest(request);
+    validatePreferHeader(request);
 
     final BatchFacade operation = new BatchFacadeImpl(oDataHandler, batchProcessor, isStrict);
     batchProcessor.processBatch(operation, request, response);
+  }
+  
+  /** Checks if Prefer header is set with return=minimal or 
+   * return=representation for batch requests
+   * @param request
+   * @throws ODataHandlerException
+   */
+  private void validatePreferHeader(final ODataRequest request) throws ODataHandlerException {
+    final List<String> returnPreference = request.getHeaders(HttpHeader.PREFER);
+    if (null != returnPreference) {
+      for (String preference : returnPreference) {
+        if (preference.equals(RETURN_MINIMAL) || preference.equals(RETURN_REPRESENTATION)) {
+          throw new ODataHandlerException("Prefer Header not supported: " + preference,
+              ODataHandlerException.MessageKeys.INVALID_PREFER_HEADER, preference);
+        } 
+      }
+    }
   }
 
   private void validateRequest(final ODataRequest request) throws BatchDeserializerException {
