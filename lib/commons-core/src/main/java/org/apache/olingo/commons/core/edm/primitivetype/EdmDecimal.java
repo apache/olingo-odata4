@@ -74,8 +74,13 @@ public final class EdmDecimal extends SingletonPrimitiveType {
   private static boolean validatePrecisionAndScale(final String value, final Integer precision,
       final Integer scale) {
 
-    final Matcher matcher = PATTERN.matcher(value);
+    Matcher matcher = PATTERN.matcher(value);
     matcher.matches();
+	if (matcher.group(3) != null) {
+		String plainValue = new BigDecimal(value).toPlainString();
+		matcher = PATTERN.matcher(plainValue);
+		matcher.matches();
+	}
     final int significantIntegerDigits = "0".equals(matcher.group(1)) ? 0 : matcher.group(1).length();
     final int decimals = matcher.group(2) == null ? 0 : matcher.group(2).length();
     return (precision == null || precision >= significantIntegerDigits + decimals)
