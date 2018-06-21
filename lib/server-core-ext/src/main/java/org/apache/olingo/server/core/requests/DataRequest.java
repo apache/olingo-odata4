@@ -50,6 +50,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ODataRequest;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -362,7 +363,7 @@ public class DataRequest extends ServiceRequest {
       // EntitySet based return
       final UriHelper helper = odata.createUriHelper();
       ContextURL.Builder builder = buildEntitySetContextURL(helper, getEntitySet(),
-          getKeyPredicates(), getUriInfo(), getNavigations(), isCollection(), false);
+          getKeyPredicates(), getUriInfo(), getNavigations(), isCollection(), false, getODataRequest());
       return builder.build();
     }
   }
@@ -502,6 +503,7 @@ public class DataRequest extends ServiceRequest {
       if (isCollection()) {
         builder.asCollection();
       }
+      setServiceRoot(builder, getODataRequest());
       return builder.build();
     }
   }
@@ -609,6 +611,7 @@ public class DataRequest extends ServiceRequest {
       } else {
         builder.navOrPropertyPath(edmProperty.getName());
       }
+      setServiceRoot(builder, getODataRequest());      
       if (isPropertyComplex()) {
         EdmComplexType complexType = ((UriResourceComplexProperty) uriResourceProperty).getComplexType();
         String select = helper.buildContextURLSelectList(complexType, getUriInfo().getExpandOption(),
@@ -711,7 +714,8 @@ public class DataRequest extends ServiceRequest {
     public ContextURL getContextURL(OData odata) throws SerializerException {
       final UriHelper helper = odata.createUriHelper();
       ContextURL.Builder builder = buildEntitySetContextURL(helper,
-          uriResourceSingleton.getSingleton(), null, getUriInfo(), getNavigations(), isCollection(), true);
+          uriResourceSingleton.getSingleton(), null, getUriInfo(), getNavigations(), isCollection(), true, 
+          getODataRequest());
       return builder.build();
     }
 
@@ -789,7 +793,7 @@ public class DataRequest extends ServiceRequest {
 
   static ContextURL.Builder buildEntitySetContextURL(UriHelper helper,
       EdmBindingTarget edmEntitySet, List<UriParameter> keyPredicates, UriInfo uriInfo,
-      LinkedList<UriResourceNavigation> navigations, boolean collectionReturn, boolean singleton)
+      LinkedList<UriResourceNavigation> navigations, boolean collectionReturn, boolean singleton, ODataRequest request)
       throws SerializerException {
 
     ContextURL.Builder builder =
@@ -800,6 +804,7 @@ public class DataRequest extends ServiceRequest {
       builder.suffix(collectionReturn ? null : Suffix.ENTITY);
     }
 
+    setServiceRoot(builder, request);    
     builder.selectList(select);
 
     final UriInfoResource resource = uriInfo.asUriInfoResource();
@@ -819,6 +824,20 @@ public class DataRequest extends ServiceRequest {
     }
     builder.navOrPropertyPath(propertyPath);
     return builder;
+  }
+
+  private static void setServiceRoot(ContextURL.Builder builder, ODataRequest request) {
+    String serviceRoot = request.getRawBaseUri();
+    if (serviceRoot != null) {
+      try {
+        if (!serviceRoot.endsWith("/")) {
+          serviceRoot = serviceRoot + "/";
+        }
+        builder.serviceRoot(URI.create(serviceRoot));
+      } catch (IllegalArgumentException e) {
+        // ignore
+      }
+    }
   }
 
   private static List<String> getPropertyPath(final List<UriResource> path) {
