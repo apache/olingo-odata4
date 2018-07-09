@@ -1,0 +1,5 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Products(5)/SkinColor",
+  "@odata.type": "String",
+  "value": null
+}

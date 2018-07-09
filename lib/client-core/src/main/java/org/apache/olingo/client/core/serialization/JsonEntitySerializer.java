@@ -55,7 +55,7 @@ public class JsonEntitySerializer extends JsonSerializer {
 
     jgen.writeStartObject();
 
-    if (serverMode) {
+    if (serverMode && !isODataMetadataNone) {
       if (container.getContextURL() != null) {
         jgen.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
       }
@@ -68,12 +68,12 @@ public class JsonEntitySerializer extends JsonSerializer {
       }
     }
 
-    if (entity.getType() != null && !isODataMetadataNone) {
+    if (entity.getType() != null && isODataMetadataFull) {
       jgen.writeStringField(Constants.JSON_TYPE,
           new EdmTypeInfo.Builder().setTypeExpression(entity.getType()).build().external());
     }
 
-    if (entity.getId() != null && !isODataMetadataNone) {
+    if (entity.getId() != null && isODataMetadataFull) {
       jgen.writeStringField(Constants.JSON_ID, entity.getId().toASCIIString());
     }
 
@@ -85,10 +85,11 @@ public class JsonEntitySerializer extends JsonSerializer {
       valuable(jgen, property, property.getName());
     }
 
-    if (serverMode && entity.getEditLink() != null && entity.getEditLink().getHref() != null) {
+    if (serverMode && entity.getEditLink() != null && 
+        entity.getEditLink().getHref() != null && isODataMetadataFull) {
       jgen.writeStringField(Constants.JSON_EDIT_LINK, entity.getEditLink().getHref());
 
-      if (entity.isMediaEntity()) {
+      if (entity.isMediaEntity() && isODataMetadataFull) {
         jgen.writeStringField(Constants.JSON_MEDIA_READ_LINK,
             entity.getEditLink().getHref() + "/$value");
       }
@@ -98,24 +99,26 @@ public class JsonEntitySerializer extends JsonSerializer {
       links(entity, jgen);
     }
 
-    for (Link link : entity.getMediaEditLinks()) {
-      if (link.getTitle() == null) {
-        jgen.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, link.getHref());
-      }
-
-      if (link.getInlineEntity() != null) {
-        jgen.writeObjectField(link.getTitle(), link.getInlineEntity());
-      }
-      if (link.getInlineEntitySet() != null) {
-        jgen.writeArrayFieldStart(link.getTitle());
-        for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
-          jgen.writeObject(subEntry);
+    if (isODataMetadataFull) {
+      for (Link link : entity.getMediaEditLinks()) {
+        if (link.getTitle() == null) {
+          jgen.writeStringField(Constants.JSON_MEDIA_EDIT_LINK, link.getHref());
         }
-        jgen.writeEndArray();
+
+        if (link.getInlineEntity() != null) {
+          jgen.writeObjectField(link.getTitle(), link.getInlineEntity());
+        }
+        if (link.getInlineEntitySet() != null) {
+          jgen.writeArrayFieldStart(link.getTitle());
+          for (Entity subEntry : link.getInlineEntitySet().getEntities()) {
+            jgen.writeObject(subEntry);
+          }
+          jgen.writeEndArray();
+        }
       }
     }
 
-    if (serverMode) {
+    if (serverMode && isODataMetadataFull) {
       for (Operation operation : entity.getOperations()) {
         final String anchor = operation.getMetadataAnchor();
         final int index = anchor.lastIndexOf('#');

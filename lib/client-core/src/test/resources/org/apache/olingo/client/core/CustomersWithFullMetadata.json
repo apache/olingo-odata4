@@ -1,0 +1,75 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Customers",
+  "@odata.count": 2,
+  "value": [{
+      "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)",
+      "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)",
+      "PersonID@odata.type": "Int16",
+      "PersonID": 1,
+      "FirstName@odata.type": "String",
+      "FirstName": "Bob",
+      "LastName@odata.type": "String",
+      "LastName": "Cat",
+      "MiddleName@odata.type": "String",
+      "MiddleName": null,
+      "HomeAddress": {
+        "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.HomeAddress",
+        "Street": "1 Microsoft Way",
+        "City": "London",
+        "PostalCode": "98052",
+        "FamilyName": "Cats"
+      },
+      "Home": {
+        "type": "Point",
+        "coordinates": [23.1, 32.1],
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        }
+      },
+      "Numbers@odata.type": "#Collection(String)",
+      "Numbers": ["111-111-1111"],
+      "Emails@odata.type": "#Collection(String)",
+      "Emails": ["abc@abc.com"],
+      "City@odata.type": "String",
+      "City": "London",
+      "Birthday@odata.type": "DateTimeOffset",
+      "Birthday": "1957-04-03T00:00:00Z",
+      "TimeBetweenLastTwoOrders@odata.type": "Duration",
+      "TimeBetweenLastTwoOrders": "PT0.0000001S"
+    }, {
+      "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=2)",
+      "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=2)",
+      "PersonID@odata.type": "Int16",
+      "PersonID": 2,
+      "FirstName@odata.type": "String",
+      "FirstName": "Jill",
+      "LastName@odata.type": "String",
+      "LastName": "Jones",
+      "MiddleName@odata.type": "String",
+      "MiddleName": null,
+      "HomeAddress": null,
+      "Home": {
+        "type": "Point",
+        "coordinates": [161.8, 15.0],
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        }
+      },
+      "Numbers@odata.type": "#Collection(String)",
+      "Numbers": [],
+      "Emails@odata.type": "#Collection(String)",
+      "Emails": [],
+      "City@odata.type": "String",
+      "City": "Sydney",
+      "Birthday@odata.type": "DateTimeOffset",
+      "Birthday": "1983-01-15T00:00:00Z",
+      "TimeBetweenLastTwoOrders@odata.type": "Duration",
+      "TimeBetweenLastTwoOrders": "PT0.0000002S"
+    }]
+}

@@ -53,11 +53,11 @@ public class JsonPropertySerializer extends JsonSerializer {
 
     jgen.writeStartObject();
 
-    if (serverMode && container.getContextURL() != null) {
+    if (serverMode && container.getContextURL() != null && !isODataMetadataNone) {
       jgen.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
     }
 
-    if (StringUtils.isNotBlank(property.getType())) {
+    if (StringUtils.isNotBlank(property.getType()) && isODataMetadataFull) {
       jgen.writeStringField(Constants.JSON_TYPE,
           new EdmTypeInfo.Builder().setTypeExpression(property.getType()).build().external());
     }

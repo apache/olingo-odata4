@@ -1,0 +1,13 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Employees(3)/HomeAddress",
+  "@com.contoso.display.highlight": true,
+  "@com.contoso.PersonalInfo.PhoneNumbers": ["(203)555-1718", "(203)555-1719"],
+  "Street@odata.type":"String",
+  "Street": "1 Microsoft Way",
+  "City@odata.type":"String",
+  "City": "Sydney",
+  "PostalCode@odata.type":"String",
+  "PostalCode": "98052",
+  "PinCode@odata.type":"String",
+  "PinCode": null
+}

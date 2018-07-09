@@ -65,12 +65,14 @@ public class JsonSerializer implements ODataSerializer {
   protected ContentType contentType;
   protected final boolean isIEEE754Compatible;
   protected final boolean isODataMetadataNone;
+  protected final boolean isODataMetadataFull;
 
   public JsonSerializer(final boolean serverMode, final ContentType contentType) {
     this.serverMode = serverMode;
     this.contentType = contentType;
     this.isIEEE754Compatible = isIEEE754Compatible();
     this.isODataMetadataNone = isODataMetadataNone();
+    this.isODataMetadataFull = isODataMetadataFull();
   }
 
   @Override
@@ -97,7 +99,9 @@ public class JsonSerializer implements ODataSerializer {
   private void reference(final ResWrap<URI> container, final JsonGenerator json) throws IOException {
     json.writeStartObject();
 
-    json.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
+    if (!isODataMetadataNone) {
+      json.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
+    }
     json.writeStringField(Constants.JSON_ID, container.getPayload().toASCIIString());
 
     json.writeEndObject();
@@ -200,7 +204,7 @@ public class JsonSerializer implements ODataSerializer {
 
   protected void serverLinks(final Linked linked, final JsonGenerator jgen)
       throws IOException, EdmPrimitiveTypeException {
-    if (linked instanceof Entity) {
+    if (linked instanceof Entity && isODataMetadataFull) {
       for (Link link : ((Entity) linked).getMediaEditLinks()) {
         if (link.getHref() != null && !link.getHref().isEmpty()) {
           jgen.writeStringField(link.getTitle() + Constants.JSON_MEDIA_EDIT_LINK, link.getHref());
@@ -208,9 +212,11 @@ public class JsonSerializer implements ODataSerializer {
       }
     }
 
-    for (Link link : linked.getAssociationLinks()) {
-      if (link.getHref() != null && !link.getHref().isEmpty()) {
-        jgen.writeStringField(link.getTitle() + Constants.JSON_ASSOCIATION_LINK, link.getHref());
+    if (isODataMetadataFull) {
+      for (Link link : linked.getAssociationLinks()) {
+        if (link.getHref() != null && !link.getHref().isEmpty()) {
+          jgen.writeStringField(link.getTitle() + Constants.JSON_ASSOCIATION_LINK, link.getHref());
+        }
       }
     }
 
@@ -219,7 +225,7 @@ public class JsonSerializer implements ODataSerializer {
         valuable(jgen, annotation, link.getTitle() + "@" + annotation.getTerm());
       }
 
-      if (link.getHref() != null && !link.getHref().isEmpty()) {
+      if (link.getHref() != null && !link.getHref().isEmpty() && isODataMetadataFull) {
         jgen.writeStringField(link.getTitle() + Constants.JSON_NAVIGATION_LINK, link.getHref());
       }
 
@@ -313,7 +319,7 @@ public class JsonSerializer implements ODataSerializer {
       throws IOException, EdmPrimitiveTypeException {
     jgen.writeStartObject();
 
-    if (typeInfo != null && !isODataMetadataNone) {
+    if (typeInfo != null && isODataMetadataFull) {
       jgen.writeStringField(Constants.JSON_TYPE, typeInfo.external());
     }
 
@@ -360,7 +366,7 @@ public class JsonSerializer implements ODataSerializer {
           valuable.isPrimitive()) || valuable.isNull()) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
-      if (type != null && !type.isEmpty() && !isODataMetadataNone) {
+      if (type != null && !type.isEmpty() && isODataMetadataFull) {
         jgen.writeStringField(
             name + Constants.JSON_TYPE,
             new EdmTypeInfo.Builder().setTypeExpression(type).build().external());
@@ -383,6 +389,12 @@ public class JsonSerializer implements ODataSerializer {
   private boolean isODataMetadataNone() {
     return contentType.isCompatible(ContentType.APPLICATION_JSON)
         && ContentType.VALUE_ODATA_METADATA_NONE.equalsIgnoreCase(
+            contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
+  }
+  
+  private boolean isODataMetadataFull() {
+    return contentType.isCompatible(ContentType.APPLICATION_JSON)
+        && ContentType.VALUE_ODATA_METADATA_FULL.equalsIgnoreCase(
             contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA));
   }
 }

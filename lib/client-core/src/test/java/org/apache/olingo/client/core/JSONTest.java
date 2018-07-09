@@ -45,6 +45,7 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.domain.ClientAnnotationImpl;
 import org.apache.olingo.client.core.serialization.JsonDeserializer;
+import org.apache.olingo.client.core.serialization.JsonSerializer;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Delta;
@@ -75,13 +76,26 @@ public class JSONTest extends AbstractTest {
   protected ContentType getODataFormat() {
     return ContentType.JSON;
   }
+  
+  protected ContentType getODataMetadataFullFormat() {
+    return ContentType.JSON_FULL_METADATA;
+  }
+  
+  protected ContentType getODataMetadataNoneFormat() {
+    return ContentType.JSON_NO_METADATA;
+  }
 
-  private void cleanup(final ObjectNode node) {
-    if (node.has(Constants.JSON_CONTEXT)) {
-      node.remove(Constants.JSON_CONTEXT);
-    }
-    if (node.has(Constants.JSON_ETAG)) {
-      node.remove(Constants.JSON_ETAG);
+  private void cleanup(final ObjectNode node, boolean isServerMode) {
+    if (!isServerMode) {
+      if (node.has(Constants.JSON_CONTEXT)) {
+        node.remove(Constants.JSON_CONTEXT);
+      }
+      if (node.has(Constants.JSON_ETAG)) {
+        node.remove(Constants.JSON_ETAG);
+      }
+      if (node.has(Constants.JSON_COUNT)) {
+        node.remove(Constants.JSON_COUNT);
+      }
     }
     if (node.has(Constants.JSON_TYPE)) {
       node.remove(Constants.JSON_TYPE);
@@ -101,8 +115,8 @@ public class JSONTest extends AbstractTest {
     if (node.has(Constants.JSON_MEDIA_CONTENT_TYPE)) {
       node.remove(Constants.JSON_MEDIA_CONTENT_TYPE);
     }
-    if (node.has(Constants.JSON_COUNT)) {
-      node.remove(Constants.JSON_COUNT);
+    if (node.has(Constants.JSON_ID)) {
+      node.remove(Constants.JSON_ID);
     }
     final List<String> toRemove = new ArrayList<String>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
@@ -114,16 +128,17 @@ public class JSONTest extends AbstractTest {
           || key.endsWith(Constants.JSON_MEDIA_EDIT_LINK)
           || key.endsWith(Constants.JSON_MEDIA_CONTENT_TYPE)
           || key.endsWith(Constants.JSON_ASSOCIATION_LINK)
-          || key.endsWith(Constants.JSON_MEDIA_ETAG)) {
+          || key.endsWith(Constants.JSON_MEDIA_ETAG)
+          || key.endsWith(Constants.JSON_BIND_LINK_SUFFIX)) {
 
         toRemove.add(key);
       } else if (field.getValue().isObject()) {
-        cleanup((ObjectNode) field.getValue());
+        cleanup((ObjectNode) field.getValue(), false);
       } else if (field.getValue().isArray()) {
         for (final Iterator<JsonNode> arrayItems = field.getValue().elements(); arrayItems.hasNext();) {
           final JsonNode arrayItem = arrayItems.next();
           if (arrayItem.isObject()) {
-            cleanup((ObjectNode) arrayItem);
+            cleanup((ObjectNode) arrayItem, false);
           }
         }
       }
@@ -131,21 +146,153 @@ public class JSONTest extends AbstractTest {
     node.remove(toRemove);
   }
 
-  protected void assertSimilar(final String filename, final String actual) throws Exception {
+  private void cleanupWithFullMetadata(final ObjectNode node, boolean isServerMode) {
+    if (!isServerMode) {
+      if (node.has(Constants.JSON_CONTEXT)) {
+        node.remove(Constants.JSON_CONTEXT);
+      }
+      if (node.has(Constants.JSON_ETAG)) {
+        node.remove(Constants.JSON_ETAG);
+      }
+      if (node.has(Constants.JSON_COUNT)) {
+        node.remove(Constants.JSON_COUNT);
+      }
+      if (node.has(Constants.JSON_EDIT_LINK)) {
+        node.remove(Constants.JSON_EDIT_LINK);
+      }
+      if (node.has(Constants.JSON_MEDIA_READ_LINK)) {
+        node.remove(Constants.JSON_MEDIA_READ_LINK);
+      }
+    }
+    
+    if (node.has(Constants.JSON_READ_LINK)) {
+      node.remove(Constants.JSON_READ_LINK);
+    }
+    
+    if (node.has(Constants.JSON_MEDIA_CONTENT_TYPE)) {
+      node.remove(Constants.JSON_MEDIA_CONTENT_TYPE);
+    }
+    if (node.has(Constants.JSON_MEDIA_ETAG)) {
+      node.remove(Constants.JSON_MEDIA_ETAG);
+    }
+    final List<String> toRemove = new ArrayList<String>();
+    for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
+      final Map.Entry<String, JsonNode> field = itor.next();
+
+      final String key = field.getKey();
+      if (key.charAt(0) == '#'
+          || (!isServerMode && key.endsWith(Constants.JSON_TYPE))
+          || (!isServerMode && key.endsWith(Constants.JSON_MEDIA_EDIT_LINK))
+          || key.endsWith(Constants.JSON_MEDIA_CONTENT_TYPE)
+          || (!isServerMode && key.endsWith(Constants.JSON_ASSOCIATION_LINK))
+          || key.endsWith(Constants.JSON_MEDIA_ETAG)) {
+
+        toRemove.add(key);
+      } else if (field.getValue().isObject()) {
+        cleanup((ObjectNode) field.getValue(), false);
+      } else if (field.getValue().isArray()) {
+        for (final Iterator<JsonNode> arrayItems = field.getValue().elements(); arrayItems.hasNext();) {
+          final JsonNode arrayItem = arrayItems.next();
+          if (arrayItem.isObject()) {
+            cleanup((ObjectNode) arrayItem, false);
+          }
+        }
+      }
+    }
+    node.remove(toRemove);
+  }
+
+  
+  private void cleanupWithNoMetadata(final ObjectNode node, boolean isServerMode) {
+    if (node.has(Constants.JSON_CONTEXT)) {
+      node.remove(Constants.JSON_CONTEXT);
+    }
+    if (node.has(Constants.JSON_ETAG)) {
+      node.remove(Constants.JSON_ETAG);
+    }
+    if (node.has(Constants.JSON_ID)) {
+      node.remove(Constants.JSON_ID);
+    }
+    if (node.has(Constants.JSON_EDIT_LINK)) {
+      node.remove(Constants.JSON_EDIT_LINK);
+    }
+    if (node.has(Constants.JSON_MEDIA_READ_LINK)) {
+      node.remove(Constants.JSON_MEDIA_READ_LINK);
+    }
+    if (node.has(Constants.JSON_READ_LINK)) {
+      node.remove(Constants.JSON_READ_LINK);
+    }
+    
+    if (node.has(Constants.JSON_MEDIA_CONTENT_TYPE)) {
+      node.remove(Constants.JSON_MEDIA_CONTENT_TYPE);
+    }
+    final List<String> toRemove = new ArrayList<String>();
+    for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
+      final Map.Entry<String, JsonNode> field = itor.next();
+
+      final String key = field.getKey();
+      if (key.charAt(0) == '#'
+          || key.endsWith(Constants.JSON_TYPE)
+          || key.endsWith(Constants.JSON_MEDIA_EDIT_LINK)
+          || key.endsWith(Constants.JSON_MEDIA_CONTENT_TYPE)
+          || key.endsWith(Constants.JSON_ASSOCIATION_LINK)
+          || key.endsWith(Constants.JSON_MEDIA_ETAG)
+          || key.endsWith(Constants.JSON_BIND_LINK_SUFFIX)) {
+
+        toRemove.add(key);
+      } else if (field.getValue().isObject()) {
+        cleanup((ObjectNode) field.getValue(), false);
+      } else if (field.getValue().isArray()) {
+        for (final Iterator<JsonNode> arrayItems = field.getValue().elements(); arrayItems.hasNext();) {
+          final JsonNode arrayItem = arrayItems.next();
+          if (arrayItem.isObject()) {
+            cleanup((ObjectNode) arrayItem, false);
+          }
+        }
+      }
+    }
+    node.remove(toRemove);
+  }
+  
+  protected void assertSimilar(final String filename, final String actual, 
+      boolean isServerMode) throws Exception {
     final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
         replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
-    cleanup((ObjectNode) expected);
+    cleanup((ObjectNode) expected, isServerMode);
     final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
-    cleanup(actualNode);
+    cleanup(actualNode, isServerMode);
+    assertEquals(expected, actualNode);
+  }
+  
+  protected void assertSimilarWithFullMetadata(final String filename, final String actual, 
+      boolean isServerMode) throws Exception {
+    String value = IOUtils.toString(getClass().getResourceAsStream(filename));
+    final JsonNode expected = isServerMode ? OBJECT_MAPPER.readTree(value.
+        replace(Constants.JSON_MEDIA_EDIT_LINK, Constants.JSON_MEDIA_READ_LINK)) :
+    OBJECT_MAPPER.readTree(value.
+        replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
+    cleanupWithFullMetadata((ObjectNode) expected, isServerMode);
+    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    cleanupWithFullMetadata(actualNode, isServerMode);
+    assertEquals(expected, actualNode);
+  }
+  
+  protected void assertSimilarWithNoMetadata(final String filename, final String actual, 
+      boolean isServerMode) throws Exception {
+    final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
+        replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
+    cleanupWithNoMetadata((ObjectNode) expected, isServerMode);
+    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    cleanupWithNoMetadata(actualNode, isServerMode);
     assertEquals(expected, actualNode);
   }
 
   private void assertJSONSimilar(final String filename, final String actual) throws Exception {
     final JsonNode expected = OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream(filename)).
         replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
-    cleanup((ObjectNode) expected);
+    cleanup((ObjectNode) expected, false);
     final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
-    cleanup(actualNode);
+    cleanup(actualNode, false);
     assertEquals(expected, actualNode);
   }
   
@@ -154,22 +301,134 @@ public class JSONTest extends AbstractTest {
     client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
         getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
 
-    assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString(), false);
   }
 
+  protected void entitySetWithFullMetadata(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+
+    assertSimilarWithFullMetadata(filename + "." + getSuffix(contentType), writer.toString(), false);
+  }
+  
+  protected void entitySetWithNoMetadata(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+
+    assertSimilarWithNoMetadata(filename + "." + getSuffix(contentType), writer.toString(), false);
+  }
+  
+  protected void entitySetInServerModeWithFullMetadata(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+
+    assertSimilarWithFullMetadata(filename + "." + getSuffix(contentType), writer.toString(), true);
+  }
+  
+  protected void entitySetInServerModeWithNoMetadata(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+
+    assertSimilarWithNoMetadata(filename + "." + getSuffix(contentType), writer.toString(), true);
+  }
+  
+  protected void entitySetInServerMode(final String filename, final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    if (contentType == ContentType.JSON) {
+      new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
+          getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+    } else {
+      client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntitySet(
+          getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+    }
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString(), true);
+  }
+  
   @Test
   public void entitySets() throws Exception {
     entitySet("Customers", getODataPubFormat());
+	entitySetInServerMode("Customers", getODataPubFormat());
     entitySet("collectionOfEntityReferences", getODataPubFormat());
+	entitySetInServerMode("collectionOfEntityReferences", getODataPubFormat());
+  }
+  
+  @Test
+  public void entitySetsWithFullMetadata() throws Exception {
+    entitySetWithFullMetadata("Customers", getODataMetadataFullFormat());
+    entitySetWithFullMetadata("collectionOfEntityReferences", getODataMetadataFullFormat());
+  }
+  
+  @Test
+  public void entitySetsWithFullMetadataInServerMode() throws Exception {
+    entitySetInServerModeWithFullMetadata("Customers_InServerMode", getODataMetadataFullFormat());
+  }
+  
+  @Test
+  public void entitySetsWithNoMetadata() throws Exception {
+    entitySetWithNoMetadata("Customers", getODataMetadataFullFormat());
+    entitySetInServerModeWithNoMetadata("Customers", getODataMetadataFullFormat());
+    entitySetWithNoMetadata("collectionOfEntityReferences", getODataMetadataFullFormat());
+    entitySetInServerModeWithNoMetadata("collectionOfEntityReferences", getODataMetadataFullFormat());
   }
 
   protected void entity(final String filename, final ContentType contentType) throws Exception {
     final StringWriter writer = new StringWriter();
     client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntity(
         getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
-    assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString(), false);
   }
 
+  protected void entityWithFullMetadata(final String filename, final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntity(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+    assertSimilarWithFullMetadata(filename + "." + getSuffix(contentType), writer.toString(), false);
+  }
+  
+  protected void entityWithNoMetadata(final String filename, final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntity(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+    assertSimilarWithNoMetadata(filename + "." + getSuffix(contentType), writer.toString(), false);
+  }
+
+  
+  protected void entityInServerMode(final String filename, final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    if (contentType == ContentType.JSON) {
+      new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).toEntity(
+          getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+    } else {
+      client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).toEntity(
+          getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+    }
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString(), true);
+  }
+  
+  protected void entityWithFullMetadataInServerMode(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).toEntity(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+    assertSimilarWithFullMetadata(filename + "." + getSuffix(contentType), writer.toString(), true);
+  }
+  
+  protected void entityWithNoMetadataInServerMode(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).toEntity(
+        getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+    assertSimilarWithNoMetadata(filename + "." + getSuffix(contentType), writer.toString(), true);
+  }
+  
   @Test
   public void additionalEntities() throws Exception {
     entity("entity.minimal", getODataPubFormat());
@@ -182,11 +441,49 @@ public class JSONTest extends AbstractTest {
   @Test
   public void entities() throws Exception {
     entity("Products_5", getODataPubFormat());
+    entityInServerMode("Products_5", getODataPubFormat());
     entity("VipCustomer", getODataPubFormat());
+    entityInServerMode("VipCustomer", getODataPubFormat());
     entity("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7", getODataPubFormat());
+    entityInServerMode("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7", getODataPubFormat());
     entity("entityReference", getODataPubFormat());
+    entityInServerMode("entityReference", getODataPubFormat());
     entity("entity.withcomplexnavigation", getODataPubFormat());
+    entityInServerMode("entity.withcomplexnavigation", getODataPubFormat());
     entity("annotated", getODataPubFormat());
+    entityInServerMode("annotated", getODataPubFormat());
+  }
+  
+  @Test
+  public void entitiesWithMetadataFull() throws Exception {
+    entityWithFullMetadata("Products_5", getODataMetadataFullFormat());
+    entityWithFullMetadata("VipCustomer", getODataMetadataFullFormat());
+    entityWithFullMetadata("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7", 
+        getODataMetadataFullFormat());
+    entityWithFullMetadata("entityReference", getODataMetadataFullFormat());
+    entityWithFullMetadata("entity.withcomplexnavigation", getODataMetadataFullFormat());
+    entityWithFullMetadata("annotated", getODataMetadataFullFormat());
+  }
+  
+  @Test
+  public void entitiesWithMetadataFullInServerMode() throws Exception {
+    entityWithFullMetadataInServerMode("Products_5_InServerMode", getODataMetadataFullFormat());
+  }
+  
+  @Test
+  public void entitiesWithMetadataNone() throws Exception {
+    entityWithNoMetadata("Products_5", getODataMetadataNoneFormat());
+    entityWithNoMetadataInServerMode("Products_5", getODataMetadataNoneFormat());
+    entityWithNoMetadata("VipCustomer", getODataMetadataNoneFormat());
+    entityWithNoMetadataInServerMode("VipCustomer", getODataMetadataNoneFormat());
+    entityWithNoMetadata("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7", 
+        getODataMetadataNoneFormat());
+    entityWithNoMetadataInServerMode("Advertisements_f89dee73-af9f-4cd4-b330-db93c25ff3c7", 
+        getODataMetadataNoneFormat());
+    entityWithNoMetadata("entityReference", getODataMetadataNoneFormat());
+    entityWithNoMetadataInServerMode("entityReference", getODataMetadataNoneFormat());
+    entityWithNoMetadata("entity.withcomplexnavigation", getODataMetadataNoneFormat());
+    entityWithNoMetadataInServerMode("entity.withcomplexnavigation", getODataMetadataNoneFormat());
   }
 
   protected void property(final String filename, final ContentType contentType) throws Exception {
@@ -194,15 +491,98 @@ public class JSONTest extends AbstractTest {
     client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).
         toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
 
-    assertSimilar(filename + "." + getSuffix(contentType), writer.toString());
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString(), false);
   }
 
+  protected void propertyWithNoMetadata(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).
+        toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+
+    assertSimilarWithNoMetadata(filename + "." + getSuffix(contentType), writer.toString(), false);
+  }
+  
+  protected void propertyWithFullMetadata(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).
+        toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+
+    assertSimilarWithFullMetadata(filename + "." + getSuffix(contentType), writer.toString(), false);
+  }
+  
+  protected void propertyInServerModeWithNoMetadata(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).
+        toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+
+    assertSimilarWithNoMetadata(filename + "." + getSuffix(contentType), writer.toString(), true);
+  }
+  
+  protected void propertyInServerModeWithFullMetadata(final String filename, 
+      final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).
+        toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+
+    if (filename.equals("Products_5_SkinColor_NullType")) {
+      assertEquals(writer.toString(), "{\"@odata.context\":"
+          + "\"http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Products(5)/SkinColor\","
+          + "\"@odata.type\":\"String\",\"odata.null\":true}");
+    } else {
+      assertSimilarWithFullMetadata(filename + "." + getSuffix(contentType), writer.toString(), true);
+    }
+  }
+  
+  protected void propertyInServerMode(final String filename, final ContentType contentType) throws Exception {
+    final StringWriter writer = new StringWriter();
+    if (contentType == ContentType.JSON) {
+      new JsonSerializer(true, contentType).write(writer, client.getDeserializer(contentType).
+          toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))));
+    } else {
+      client.getSerializer(contentType).write(writer, client.getDeserializer(contentType).
+          toProperty(getClass().getResourceAsStream(filename + "." + getSuffix(contentType))).getPayload());
+    }
+
+    assertSimilar(filename + "." + getSuffix(contentType), writer.toString(), true);
+  }
+  
   @Test
   public void properties() throws Exception {
     property("Products_5_SkinColor", getODataFormat());
+    propertyInServerMode("Products_5_SkinColor", getODataFormat());
     property("Products_5_CoverColors", getODataFormat());
+    propertyInServerMode("Products_5_CoverColors", getODataFormat());
     property("Employees_3_HomeAddress", getODataFormat());
-    property("Employees_3_HomeAddress", getODataFormat());
+    propertyInServerMode("Employees_3_HomeAddress", getODataFormat());
+  }
+  
+  @Test
+  public void propertiesWithNoMetadata() throws Exception {
+    propertyWithNoMetadata("Products_5_SkinColor", getODataMetadataNoneFormat());
+    propertyInServerModeWithNoMetadata("Products_5_SkinColor", getODataMetadataNoneFormat());
+    propertyWithNoMetadata("Products_5_CoverColors", getODataMetadataNoneFormat());
+    propertyInServerModeWithNoMetadata("Products_5_CoverColors", getODataMetadataNoneFormat());
+    propertyWithNoMetadata("Employees_3_HomeAddress", getODataMetadataNoneFormat());
+    propertyInServerModeWithNoMetadata("Employees_3_HomeAddress", getODataMetadataNoneFormat());
+  }
+  
+  @Test
+  public void propertiesWithFullMetadata() throws Exception {
+    propertyWithFullMetadata("Products_5_SkinColor", getODataMetadataFullFormat());    
+    propertyWithFullMetadata("Products_5_CoverColors", getODataMetadataFullFormat());
+    propertyInServerModeWithFullMetadata("Products_5_CoverColors", getODataMetadataFullFormat());
+    propertyWithFullMetadata("Employees_3_HomeAddress", getODataMetadataFullFormat());
+  }
+  
+  @Test
+  public void propertiesWithFullMetadataInServerMode() throws Exception {
+    propertyInServerModeWithFullMetadata("Employees_3_HomeAddress_InServerMode", getODataMetadataFullFormat());
+    propertyInServerModeWithFullMetadata("Products_5_SkinColor_Null", getODataMetadataFullFormat());
+    propertyInServerModeWithFullMetadata("Products_5_SkinColor_NullType", getODataMetadataFullFormat());
+    propertyInServerModeWithFullMetadata("Products_5_SkinColor_PrimitiveType", getODataMetadataFullFormat());
   }
 
   @Test
@@ -268,11 +648,19 @@ public class JSONTest extends AbstractTest {
         client.getObjectFactory().newEnumValue("Microsoft.Exchange.Services.OData.Model.BodyType", "text")));
     message.getProperties().add(client.getObjectFactory().newComplexProperty("Body", body));
 
-    final String actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON));
-    final JsonNode expected =
+    String actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON));
+    JsonNode expected =
         OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo390.json")).
             replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
-    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    cleanup((ObjectNode) expected, false);
+    ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    assertEquals(expected, actualNode);
+    
+    actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON_FULL_METADATA));
+    expected =
+        OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo390.json")).
+            replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
+    actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
     assertEquals(expected, actualNode);
   }
   
@@ -300,12 +688,19 @@ public class JSONTest extends AbstractTest {
     toRecipients.add(complType2);
     message.getProperties().add(client.getObjectFactory().newCollectionProperty("ToRecipients", toRecipients));
 
-
-    final String actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON));
-    final JsonNode expected =
+	String actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON));
+    JsonNode expected =
         OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo1073.json")).
             replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
-    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    cleanup((ObjectNode) expected, false);
+    ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    assertEquals(expected, actualNode);
+    
+    actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON_FULL_METADATA));
+    expected =
+        OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo1073.json")).
+            replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
+    actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
     assertEquals(expected, actualNode);
   }
   
@@ -366,11 +761,19 @@ public class JSONTest extends AbstractTest {
     message.setEditLink(URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
         + "TripPinServiceRW/People('russellwhyte')"));
 
-    final String actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON));
-    final JsonNode expected =
+    String actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON));
+    JsonNode expected =
         OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo1073_1.json")).
             replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
-    final ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    cleanup((ObjectNode) expected, false);
+    ObjectNode actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
+    assertEquals(expected, actualNode);
+    
+    actual = IOUtils.toString(client.getWriter().writeEntity(message, ContentType.JSON_FULL_METADATA));
+    expected =
+        OBJECT_MAPPER.readTree(IOUtils.toString(getClass().getResourceAsStream("olingo1073_1.json")).
+            replace(Constants.JSON_NAVIGATION_LINK, Constants.JSON_BIND_LINK_SUFFIX));
+    actualNode = (ObjectNode) OBJECT_MAPPER.readTree(new ByteArrayInputStream(actual.getBytes()));
     assertEquals(expected, actualNode);
   }
   
@@ -448,7 +851,7 @@ public class JSONTest extends AbstractTest {
     message.setEditLink(URI.create("http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/"
         + "TripPinServiceRW/People('russellwhyte')"));
 
-    InputStream inputStream = client.getWriter().writeEntity(message, ContentType.APPLICATION_JSON);
+    InputStream inputStream = client.getWriter().writeEntity(message, ContentType.JSON_FULL_METADATA);
     ResWrap<Entity> entity = new JsonDeserializer(true).toEntity(inputStream);
     assertNotNull(entity);
     assertEquals(7, entity.getPayload().getProperties().size());

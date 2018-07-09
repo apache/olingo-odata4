@@ -1,5 +1,6 @@
 {
   "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Collection($ref)",
+  "@odata.count":2,
   "value": [
     {
       "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/OrderDetails(OrderID=7,ProductID=5)"

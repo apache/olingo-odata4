@@ -40,7 +40,7 @@ public class JsonEntitySetSerializer extends JsonSerializer {
       throws IOException, EdmPrimitiveTypeException {
     doContainerSerialize(new ResWrap<EntityCollection>(null, null, entitySet), jgen);
   }
-
+  
   protected void doContainerSerialize(final ResWrap<EntityCollection> container, final JsonGenerator jgen)
       throws IOException, EdmPrimitiveTypeException {
 
@@ -48,7 +48,7 @@ public class JsonEntitySetSerializer extends JsonSerializer {
 
     jgen.writeStartObject();
 
-    if (serverMode) {
+    if (serverMode && !isODataMetadataNone) {
       if (container.getContextURL() != null) {
         jgen.writeStringField(Constants.JSON_CONTEXT, container.getContextURL().toASCIIString());
       }
@@ -58,7 +58,7 @@ public class JsonEntitySetSerializer extends JsonSerializer {
       }
     }
 
-    if (entitySet.getId() != null) {
+    if (entitySet.getId() != null && isODataMetadataFull) {
       jgen.writeStringField(Constants.JSON_ID, entitySet.getId().toASCIIString());
     }
     final Integer count = entitySet.getCount() == null ? entitySet.getEntities().size() : entitySet.getCount();
@@ -72,7 +72,7 @@ public class JsonEntitySetSerializer extends JsonSerializer {
         jgen.writeStringField(Constants.JSON_NEXT_LINK,
             entitySet.getNext().toASCIIString());
       }
-      if (entitySet.getDeltaLink() != null) {
+      if (entitySet.getDeltaLink() != null && !isODataMetadataNone) {
         jgen.writeStringField(Constants.JSON_DELTA_LINK,
             entitySet.getDeltaLink().toASCIIString());
       }
