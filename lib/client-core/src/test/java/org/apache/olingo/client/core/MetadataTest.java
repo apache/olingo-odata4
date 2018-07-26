@@ -499,4 +499,30 @@ public class MetadataTest extends AbstractTest {
     assertEquals("Value", record.getPropertyValues().get(0).getProperty());
     assertEquals("image", record.getPropertyValues().get(0).getValue().asDynamic().asPath().getValue());
   }
+  
+  @Test
+  public void readPropertyAnnotationsTest() {
+    List<InputStream> streams = new ArrayList<InputStream>();
+    streams.add(getClass().getResourceAsStream("VOC_Core.xml"));
+    final Edm edm = client.getReader().readMetadata(getClass().getResourceAsStream("edmxWithCsdlAnnotationPath.xml"),
+        streams);
+    assertNotNull(edm);
+    
+    final EdmEntityType person = edm.getEntityType(
+        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Person"));
+    assertNotNull(person);
+    EdmProperty userName = (EdmProperty) person.getProperty("UserName");
+    List<EdmAnnotation> userNameAnnotations = userName.getAnnotations();
+    for (EdmAnnotation annotation : userNameAnnotations) {
+      EdmTerm term = annotation.getTerm();
+      assertNotNull(term);
+      assertEquals("Permissions", term.getName());
+      assertEquals("Org.OData.Core.V1.Permissions",
+          term.getFullQualifiedName().getFullQualifiedNameAsString());
+      EdmExpression expression = annotation.getExpression();
+      assertNotNull(expression);
+      assertTrue(expression.isDynamic());
+      assertEquals("AnnotationPath", expression.asDynamic().getExpressionName());
+    }
+  }
 }
