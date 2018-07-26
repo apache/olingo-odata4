@@ -155,10 +155,29 @@ public abstract class OData {
    * Deserializers are used in Processor implementations.
    *
    * @param contentType any content type supported by Olingo (XML, JSON ...)
+   */
+  public abstract ODataDeserializer createDeserializer(ContentType contentType, 
+      final List<String> versions) throws DeserializerException;
+
+  /**
+   * Creates a new deserializer object for reading content in the specified format.
+   * Deserializers are used in Processor implementations.
+   *
+   * @param contentType any content type supported by Olingo (XML, JSON ...)
    * @param metadata ServiceMetada of the service
    */
   public abstract ODataDeserializer createDeserializer(ContentType contentType,
       ServiceMetadata metadata) throws DeserializerException;
+  
+  /**
+   * Creates a new deserializer object for reading content in the specified format.
+   * Deserializers are used in Processor implementations.
+   *
+   * @param contentType any content type supported by Olingo (XML, JSON ...)
+   * @param metadata ServiceMetada of the service
+   */
+  public abstract ODataDeserializer createDeserializer(ContentType contentType,
+      ServiceMetadata metadata, final List<String> versions) throws DeserializerException;
   
   /**
    * Creates a primitive-type instance.

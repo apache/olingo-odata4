@@ -140,13 +140,13 @@ public class RequestValidator {
     if (edmProperty.isCollection()) {
       final EntityCollection inlineEntitySet = navigationLink.getInlineEntitySet();
       if (inlineEntitySet != null) {
-        if (!isInsert && inlineEntitySet.getEntities().size() > 0) {
+        /*if (!isInsert && inlineEntitySet.getEntities().size() > 0) {
           throw new DataProvider.DataProviderException("Deep update is not allowed", HttpStatusCode.BAD_REQUEST);
-        } else {
+        } else {*/
           for (final Entity entity : navigationLink.getInlineEntitySet().getEntities()) {
             validate(edmBindingTarget, entity);
           }
-        }
+       // }
       }
     } else {
       final Entity inlineEntity = navigationLink.getInlineEntity();
