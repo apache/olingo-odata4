@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.olingo.commons.api.Constants;
-import org.apache.olingo.commons.api.IConstants;
-import org.apache.olingo.commons.api.constants.Constantsv00;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
@@ -107,27 +105,14 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private final boolean isIEEE754Compatible;
   private ServiceMetadata serviceMetadata;
-  private IConstants constants;
 
   public ODataJsonDeserializer(final ContentType contentType) {
-    this(contentType, null, new Constantsv00());
+    this(contentType, null);
   }
 
   public ODataJsonDeserializer(final ContentType contentType, final ServiceMetadata serviceMetadata) {
     isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
     this.serviceMetadata = serviceMetadata;
-    this.constants = new Constantsv00();
-  }
-
-  public ODataJsonDeserializer(ContentType contentType, ServiceMetadata serviceMetadata, IConstants constants) {
-    isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
-    this.serviceMetadata = serviceMetadata;
-    this.constants = constants;
-  }
-
-  public ODataJsonDeserializer(ContentType contentType, IConstants constants) {
-    isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
-    this.constants = constants;
   }
 
   @Override
@@ -352,7 +337,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     while (fieldsIterator.hasNext()) {
       Entry<String, JsonNode> field = fieldsIterator.next();
 
-      if (field.getKey().contains(constants.getBind())) {
+      if (field.getKey().contains(Constants.JSON_BIND_LINK_SUFFIX)) {
         Link bindingLink = consumeBindingLink(field.getKey(), field.getValue(), edmEntityType);
         entity.getNavigationBindings().add(bindingLink);
         toRemove.add(field.getKey());
@@ -952,7 +937,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     try {
       List<URI> parsedValues = new ArrayList<URI>();
       final ObjectNode tree = parseJsonTree(stream);
-      final String key = constants.getId();
+      final String key = Constants.JSON_ID;
       JsonNode jsonNode = tree.get(Constants.VALUE);
       if (jsonNode != null) {
         if (jsonNode.isArray()) {
@@ -999,7 +984,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private EdmType getDerivedType(final EdmStructuredType edmType, final JsonNode jsonNode)
       throws DeserializerException {
-    JsonNode odataTypeNode = jsonNode.get(constants.getType());
+    JsonNode odataTypeNode = jsonNode.get(Constants.JSON_TYPE);
     if (odataTypeNode != null) {
       String odataType = odataTypeNode.asText();
       if (!odataType.isEmpty()) {

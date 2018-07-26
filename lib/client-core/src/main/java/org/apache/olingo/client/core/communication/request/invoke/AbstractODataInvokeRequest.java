@@ -55,7 +55,7 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
     extends AbstractODataBasicRequest<ODataInvokeResponse<T>>
     implements ODataInvokeRequest<T>, ODataBatchableRequest {
 
-  protected final Class<T> reference;
+  private final Class<T> reference;
 
   /**
    * Function parameters.

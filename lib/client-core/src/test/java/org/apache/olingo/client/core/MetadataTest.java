@@ -60,7 +60,6 @@ import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlAnnotationPath;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlApply;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlCollection;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
@@ -458,33 +457,6 @@ public class MetadataTest extends AbstractTest {
       assertEquals("EnumMember", expression.getExpressionName());
     }
   }
-  
-  @Test
-  public void readPropertyAnnotationsTest() {
-    List<InputStream> streams = new ArrayList<InputStream>();
-    streams.add(getClass().getResourceAsStream("VOC_Core.xml"));
-    final Edm edm = client.getReader().readMetadata(getClass().getResourceAsStream("edmxWithCsdlAnnotationPath.xml"),
-        streams);
-    assertNotNull(edm);
-    
-    final EdmEntityType person = edm.getEntityType(
-        new FullQualifiedName("Microsoft.Exchange.Services.OData.Model", "Person"));
-    assertNotNull(person);
-    EdmProperty userName = (EdmProperty) person.getProperty("UserName");
-    List<EdmAnnotation> userNameAnnotations = userName.getAnnotations();
-    for (EdmAnnotation annotation : userNameAnnotations) {
-      EdmTerm term = annotation.getTerm();
-      assertNotNull(term);
-      assertEquals("Permissions", term.getName());
-      assertEquals("Org.OData.Core.V1.Permissions",
-          term.getFullQualifiedName().getFullQualifiedNameAsString());
-      EdmExpression expression = annotation.getExpression();
-      assertNotNull(expression);
-      assertTrue(expression.isDynamic());
-      assertEquals("AnnotationPath", expression.asDynamic().getExpressionName());
-    }
-  }
-  
   @Test
   public void testOLINGO1100() {
     final Edm edm = client.getReader().readMetadata(getClass().getResourceAsStream("olingo1100.xml"));

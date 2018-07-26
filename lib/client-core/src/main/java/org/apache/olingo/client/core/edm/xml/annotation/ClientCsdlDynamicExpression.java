@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.olingo.client.core.edm.xml.AbstractClientCsdlEdmDeserializer;
-import org.apache.olingo.commons.api.edm.provider.annotation.CsdlAnnotationPath;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlDynamicExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlIf;
@@ -121,7 +120,7 @@ public abstract class ClientCsdlDynamicExpression extends CsdlDynamicExpression 
       } else if (PROPERTY_PATH.equals(jp.getCurrentName())) {
         expression = new CsdlPropertyPath().setValue(jp.nextTextValue());
       } else if (ANNOTATION_PATH.equals(jp.getCurrentName())) {
-        expression = new CsdlAnnotationPath().setValue(jp.nextTextValue());
+        expression = new CsdlPath().setValue(jp.nextTextValue());
       } else if (APPLY.equals(jp.getCurrentName())) {
         jp.nextToken();
         expression = jp.readValueAs(ClientCsdlApply.class);
