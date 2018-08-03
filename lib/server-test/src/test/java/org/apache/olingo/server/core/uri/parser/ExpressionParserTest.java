@@ -171,7 +171,9 @@ public class ExpressionParserTest {
   @Test
   public void filterUnaryOperators() throws Exception {
     testFilter.runOnETAllPrim("not PropertyBoolean").is("<not <PropertyBoolean>>");
+    testFilter.runOnETAllPrim("not (PropertyBoolean)").is("<not <PropertyBoolean>>");
     testFilter.runOnETAllPrim("-PropertyInt16 eq PropertyInt16").is("<<- <PropertyInt16>> eq <PropertyInt16>>");
+    testFilter.runOnETAllPrim("not (PropertyString eq null)").is("<not <<PropertyString> eq <null>>>");
   }
 
   @Test

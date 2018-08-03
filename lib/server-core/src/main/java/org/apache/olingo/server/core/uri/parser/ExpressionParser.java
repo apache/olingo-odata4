@@ -313,7 +313,7 @@ public class ExpressionParser {
       }
       return new UnaryImpl(UnaryOperatorKind.MINUS, expression, getType(expression));
     } else if (tokenizer.next(TokenKind.NotOperator)) {
-      final Expression expression = parseExprPrimary();
+      final Expression expression = parseExprValue();
       checkType(expression, EdmPrimitiveTypeKind.Boolean);
       checkNoCollection(expression);
       return new UnaryImpl(UnaryOperatorKind.NOT, expression, getType(expression));
