@@ -450,7 +450,7 @@ public class MetadataDocumentXmlSerializerTest {
 
     InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
     String metadata = IOUtils.toString(metadataStream);
-    assertTrue(metadata.contains("<ComplexType Name=\"ComplexType\" Abstract=\"true\">"
+    assertTrue(metadata.contains("<ComplexType Name=\"ComplexType\" Abstract=\"true\" OpenType=\"true\">"
         + "<Property Name=\"prop1\" Type=\"Edm.String\"/>"
         + "<Property Name=\"prop2\" Type=\"Edm.String\"/>"
         + "</ComplexType>"));
