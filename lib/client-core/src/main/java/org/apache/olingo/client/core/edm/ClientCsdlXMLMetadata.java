@@ -87,4 +87,9 @@ public class ClientCsdlXMLMetadata extends CsdlAbstractEdmItem implements Serial
   public List<Reference> getReferences() {
     return this.edmx.getReferences();
   }
+  
+  @Override
+  public String getEdmVersion() {
+	return this.edmx.getVersion();
+  }
 }

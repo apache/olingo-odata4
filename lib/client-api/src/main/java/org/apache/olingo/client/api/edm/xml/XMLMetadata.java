@@ -57,4 +57,5 @@ public interface XMLMetadata {
   
   List<List<String>> getSchemaNamespaces();
 
+  String getEdmVersion();
 }
