@@ -1876,4 +1876,11 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
       assertEquals(messageKey, e.getMessageKey());
     }
   }
+
+  public static DeserializerResult deserializeWithResultv401(InputStream stream, EdmEntityType entityType,
+      ContentType contentType) throws DeserializerException {
+    List<String> version = new ArrayList<String>();
+    version.add("4.01");
+    return odata.createDeserializer(contentType, metadata, version).entity(stream, entityType);
+  }
 }

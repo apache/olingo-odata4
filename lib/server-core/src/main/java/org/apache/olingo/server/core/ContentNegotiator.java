@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.server.core;
 
-import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 import java.util.Collections;
