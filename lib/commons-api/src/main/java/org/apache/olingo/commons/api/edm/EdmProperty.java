@@ -75,4 +75,11 @@ public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotatable {
    * @return the default value as a String or null if not specified
    */
   String getDefaultValue();
+  
+  /**
+   * See {@link EdmType} for more information about possible types.
+   *
+   * @return {@link EdmType}
+   */
+  EdmType getTypeWithAnnotations();
 }

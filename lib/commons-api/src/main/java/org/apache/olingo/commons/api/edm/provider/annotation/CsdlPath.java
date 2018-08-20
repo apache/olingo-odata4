@@ -40,4 +40,25 @@ public class CsdlPath extends CsdlDynamicExpression {
     this.value = value;
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlPath)) {
+      return false;
+    }
+    CsdlPath csdlPath = (CsdlPath) obj;
+    return (this.getValue() == null ? csdlPath.getValue() == null :
+      this.getValue().equals(csdlPath.getValue()));
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    return result;
+  }
 }

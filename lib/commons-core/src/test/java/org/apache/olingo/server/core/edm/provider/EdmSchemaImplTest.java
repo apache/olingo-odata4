@@ -246,7 +246,7 @@ public class EdmSchemaImplTest {
 
     @Override
     public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
-      throw new RuntimeException("Provider must not be called in the schema case");
+      return null;
     }
 
     @Override

@@ -126,4 +126,59 @@ public class CsdlCast extends CsdlDynamicExpression implements CsdlAnnotatable {
     this.value = value;
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlCast)) {
+      return false;
+    }
+    CsdlCast csdlCast = (CsdlCast) obj;
+    return (this.getValue() == null ? csdlCast.getValue() == null :
+      this.getValue().equals(csdlCast.getValue()))
+        && (this.getType() == null ? csdlCast.getType() == null :
+        this.getType().equals(csdlCast.getType()))
+        && (this.getMaxLength() == null ? csdlCast.getMaxLength() == null :
+          this.getMaxLength().equals(csdlCast.getMaxLength()))
+        && (this.getPrecision() == null ? csdlCast.getPrecision() == null :
+          this.getPrecision().equals(csdlCast.getPrecision()))
+        && (this.getScale() == null ? csdlCast.getScale() == null :
+         this.getScale().equals(csdlCast.getScale()))
+        && (this.getSrid() == null ? csdlCast.getSrid() == null :
+          String.valueOf(this.getSrid()).equals(String.valueOf(csdlCast.getSrid())))
+        && (this.getAnnotations() == null ? csdlCast.getAnnotations() == null :
+          checkAnnotations(csdlCast.getAnnotations()));
+  }
+  
+  private boolean checkAnnotations(List<CsdlAnnotation> csdlCastAnnotations) {
+    if (csdlCastAnnotations == null) {
+      return false;
+    }
+    if (this.getAnnotations().size() == csdlCastAnnotations.size()) {
+      for (int i = 0; i < this.getAnnotations().size(); i++) {
+        if (!this.getAnnotations().get(i).equals(csdlCastAnnotations.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    result = prime * result + ((maxLength == null) ? 0 : maxLength.hashCode());
+    result = prime * result + ((precision == null) ? 0 : precision.hashCode());
+    result = prime * result + ((scale == null) ? 0 : scale.hashCode());
+    result = prime * result + ((srid == null) ? 0 : srid.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    return result;
+  }
 }

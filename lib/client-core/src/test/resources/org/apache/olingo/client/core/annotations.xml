@@ -1,0 +1,1276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+  <edmx:Reference Uri="../v4.0/cs02/vocabularies/Org.OData.Common.V1.xml">
+    <edmx:Include Namespace="Org.OData.Common.V1" Alias="Common"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="../v4.0/cs02/vocabularies/Org.OData.UI.V1.xml">
+    <edmx:Include Namespace="Org.OData.UI.V1" Alias="UI"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="../v4.0/cs02/vocabularies/Org.OData.Communication.V1.xml">
+    <edmx:Include Namespace="Org.OData.Communication.V1" Alias="Communication"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="sepmra_so_man2_anno_mdl.v1">
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/ComplexProperty/PropertyInt16">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/ComplexProperty/NavPropertyDraftAdministrativeDataType">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SINav/ComplexProperty/NavPropertyDraftAdministrativeDataType">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderCustCntctVH/to_Customer">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderCustCntctVH/to_Customer">
+        <Annotation Term="UI.HeaderInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/DraftUUID">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/DraftUUID">
+        <Annotation Term="UI.HeaderInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/DraftUUID">
+        <Annotation Term="UI.HeaderInfo"/>
+      </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.BA_RTCountryVHType">
+        <Annotation Term="UI.HeaderInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.BA_RTCountryVHType/ParameterCTPrim">
+        <Annotation Term="UI.HeaderInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2._FC_RTTimeOfDay_">
+        <Annotation Term="UI.HeaderInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2._FC_RTTimeOfDay_/ParameterTimeOfDay">
+        <Annotation Term="UI.HeaderInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/AIRTString">
+        <Annotation Term="UI.HeaderInfo"/>
+      </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SINav">
+      <Annotation Term="UI.HeaderInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.TDString">
+        <Annotation Term="UI.HeaderInfo"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.CTPrim">
+        <Annotation Term="UI.HeaderInfo"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.CTPrim/PropertyInt16">
+        <Annotation Term="UI.HeaderInfo"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.CTPrim/NavPropertyDraftAdministrativeDataType">
+        <Annotation Term="UI.HeaderInfo"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData">
+        <Annotation Term="UI.HeaderInfo"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities">
+        <Annotation Term="UI.HeaderInfo"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/DraftEntityType">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/DraftAccessType">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/ProcessingStartDateTime">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/DraftIsKeptByUser">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/EnqueueStartDateTime">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/DraftIsCreatedByMe">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/DraftIsLastChangedByMe">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/DraftIsProcessedByMe">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/CreatedByUserDescription">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/LastChangedByUserDescription">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/InProcessByUserDescription">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_CountryVHType">
+        <Annotation Term="UI.HeaderInfo">
+          <Record>
+            <PropertyValue Property="TypeName" String="Country"/>
+            <PropertyValue Property="TypeNamePlural" String="Countries"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="Country"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType/"/>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType/EmailAddress">
+        <Annotation Term="Common.IsEmailAddress"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType/Customer">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType/to_Customer">
+        <Annotation Term="UI.ThingPerspective"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType">
+        <Annotation Term="UI.FieldGroup" Qualifier="ContactPerson">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="ContactPerson"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="FirstName"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="LastName"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="EmailAddress"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="Label" String="Contact Person"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.HeaderInfo">
+          <Record>
+            <PropertyValue Property="TypeName" String="Contact Person"/>
+            <PropertyValue Property="TypeNamePlural" String="Contact Persons"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="ContactPerson"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="ContactPerson"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="ContactPerson"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+          <Annotation Term="UI.Criticality" Path="abc"/>
+        </Annotation>
+        <Annotation Term="Communication.Contact">
+          <Record>
+            <PropertyValue Property="n">
+              <Record>
+                <PropertyValue Property="given" Path="FirstName"/>
+                <PropertyValue Property="surname" Path="LastName"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustContactType/"/>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustContactType/EmailAddress">
+        <Annotation Term="Common.IsEmailAddress"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustContactType">
+        <Annotation Term="UI.FieldGroup" Qualifier="ContactDetails">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataFieldForAnnotation">
+                  <PropertyValue Property="Target" AnnotationPath="@Communication.Contact"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="PhoneNumber"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="EmailAddress"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="Label" String="Contact"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.HeaderInfo">
+          <Record>
+            <PropertyValue Property="TypeName" String="Contact"/>
+            <PropertyValue Property="TypeNamePlural" String="Contacts"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="FullName"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="ContactPerson"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="Communication.Contact">
+          <Record>
+            <PropertyValue Property="fn" Path="FullName"/>
+            <PropertyValue Property="n">
+              <Record>
+                <PropertyValue Property="given" Path="FirstName"/>
+                <PropertyValue Property="surname" Path="LastName"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="adr">
+              <Collection>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+                  <PropertyValue Property="label" Path="Address"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="tel">
+              <Collection>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/fax"/>
+                  <PropertyValue Property="uri" Path="FaxNumber"/>
+                </Record>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/cell"/>
+                  <PropertyValue Property="uri" Path="MobilePhoneNumber"/>
+                </Record>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/preferred Communication.PhoneType/work"/>
+                  <PropertyValue Property="uri" Path="PhoneNumber"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Communication.Address">
+          <Record>
+            <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+            <PropertyValue Property="label" Path="Address"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustomerType/"/>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustomerType/EmailAddress">
+        <Annotation Term="Common.IsEmailAddress"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustomerType/Customer">
+        <Annotation Term="Common.Text" Path="CompanyName">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustomerType">
+        <Annotation Term="Communication.Contact">
+          <Record>
+            <PropertyValue Property="fn" Path="CompanyName"/>
+            <PropertyValue Property="adr">
+              <Collection>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+                  <PropertyValue Property="label" Path="Address"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="tel">
+              <Collection>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/fax"/>
+                  <PropertyValue Property="uri" Path="FaxNumber"/>
+                </Record>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/preferred Communication.PhoneType/work"/>
+                  <PropertyValue Property="uri" Path="PhoneNumber"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Communication.Address">
+          <Record>
+            <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+            <PropertyValue Property="label" Path="Address"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustomerVHType/Country">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustomerVHType/CountryT">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustomerVHType">
+        <Annotation Term="Communication.Contact">
+          <Record>
+            <PropertyValue Property="adr">
+              <Collection>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+                  <PropertyValue Property="locality" Path="CityName"/>
+                  <PropertyValue Property="country" Path="Country"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Communication.Address">
+          <Record>
+            <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+            <PropertyValue Property="locality" Path="CityName"/>
+            <PropertyValue Property="country" Path="Country"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/DraftUUID">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/HasActiveEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/HasDraftEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/IsActiveEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/DraftEntityCreationDateTime">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/DraftEntityLastChangeDateTime">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/ParentDraftUUID">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/Preparation_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/Validation_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType/Product">
+        <Annotation Term="Common.SemanticObject" String="EPMProduct"/>
+        <Annotation Term="Common.SemanticObjectMapping">
+          <Collection>
+            <Record>
+              <PropertyValue Property="LocalProperty" PropertyPath="Product"/>
+              <PropertyValue Property="SemanticObjectProperty" String="Product"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderItemTPType">
+        <Annotation Term="UI.DataPoint" Qualifier="NetAmountInTransactionCurrency">
+          <Record>
+            <PropertyValue Property="Value" Path="NetAmountInTransactionCurrency"/>
+            <PropertyValue Property="Title" String="Net Amount"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.HeaderFacets">
+          <Collection>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#NetAmountInTransactionCurrency"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.Facets">
+          <Collection>
+            <Record Type="UI.CollectionFacet">
+              <PropertyValue Property="Label" String="Sales Order Item"/>
+              <PropertyValue Property="ID" String="SalesOrderItemStableID"/>
+              <PropertyValue Property="Facets">
+                <Collection>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="General Information"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.Identification"/>
+                    <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                  </Record>
+                </Collection>
+              </PropertyValue>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.HeaderInfo">
+          <Record>
+            <PropertyValue Property="TypeName" String="Sales Order Item"/>
+            <PropertyValue Property="TypeNamePlural" String="Sales Order Items"/>
+            <PropertyValue Property="ImageUrl" Path="to_Product/ProductPictureURL"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="Product"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="Description">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="SalesOrderItem"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="SalesOrderItem"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Product"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="to_ScheduleLine/Quantity"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="to_ScheduleLine/DeliveryDate"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="to_Product/ProductPictureURL"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Product"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="to_ScheduleLine/DeliveryDate"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="to_ScheduleLine/Quantity"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="to_Product/Price"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="NetAmountInTransactionCurrency"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+          <Annotation Term="UI.Criticality" Path="abc"/>
+        </Annotation>
+        <Annotation Term="UI.LineItem" Qualifier="QuickCreate">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Product"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="to_ScheduleLine/Quantity"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.LineItem" Qualifier="QuickView">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Product"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="to_ScheduleLine/Quantity"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderPartyType/HouseNumber">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderPartyType">
+        <Annotation Term="UI.HeaderInfo">
+          <Record>
+            <PropertyValue Property="TypeName" String="Party"/>
+            <PropertyValue Property="TypeNamePlural" String="Parties"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="PartyName"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Party"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Address"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="Communication.Contact">
+          <Record>
+            <PropertyValue Property="fn" Path="PartyName"/>
+            <PropertyValue Property="adr">
+              <Collection>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+                  <PropertyValue Property="locality" Path="CityName"/>
+                  <PropertyValue Property="street" Path="StreetName"/>
+                  <PropertyValue Property="country" Path="Country"/>
+                  <PropertyValue Property="code" Path="PostalCode"/>
+                  <PropertyValue Property="label" Path="Address"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Communication.Address">
+          <Record>
+            <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+            <PropertyValue Property="locality" Path="CityName"/>
+            <PropertyValue Property="street" Path="StreetName"/>
+            <PropertyValue Property="country" Path="Country"/>
+            <PropertyValue Property="code" Path="PostalCode"/>
+            <PropertyValue Property="label" Path="Address"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderPartyVHType/Customer">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderPartyVHType/Country">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderPartyVHType/CountryT">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderPartyVHType">
+        <Annotation Term="UI.HeaderInfo">
+          <Record>
+            <PropertyValue Property="TypeName" String="Party"/>
+            <PropertyValue Property="TypeNamePlural" String="Parties"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="Party"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Party"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Party"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+          <Annotation Term="UI.Criticality" Path="abc"/>
+        </Annotation>
+        <Annotation Term="Communication.Contact">
+          <Record>
+            <PropertyValue Property="fn" Path="PartyName"/>
+            <PropertyValue Property="adr">
+              <Collection>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+                  <PropertyValue Property="locality" Path="CityName"/>
+                  <PropertyValue Property="country" Path="Country"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Communication.Address">
+          <Record>
+            <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+            <PropertyValue Property="locality" Path="CityName"/>
+            <PropertyValue Property="country" Path="Country"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductType/ProductPictureURL">
+        <Annotation Term="UI.IsImageURL"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductType/Product">
+        <Annotation Term="Common.SemanticObject" String="EPMProduct"/>
+        <Annotation Term="Common.Text" Path="Product_Text">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductType">
+        <Annotation Term="Common.SemanticObject" String="EPMProduct"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductVHType/Product">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="Common.SemanticObject" String="EPMProduct"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductVHType/Name">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductVHType/MainProductCategory">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductVHType/Supplier">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="Common.SemanticObject" String="EPMSupplier"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductVHType/SupplierName">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderProductVHType">
+        <Annotation Term="UI.FieldGroup" Qualifier="Product">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="Product"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="Name"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="MainProductCategory"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="Label" String="Product"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="Supplier">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="Supplier"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="SupplierName"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="Label" String="Supplier"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Communication.Contact">
+          <Record>
+            <PropertyValue Property="fn" Path="SupplierName"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderReviserType/"/>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderReviserType/EmailAddress">
+        <Annotation Term="Common.IsEmailAddress"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderReviserType">
+        <Annotation Term="Communication.Contact">
+          <Record>
+            <PropertyValue Property="fn" Path="FullName"/>
+            <PropertyValue Property="tel">
+              <Collection>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/cell"/>
+                  <PropertyValue Property="uri" Path="MobilePhoneNumber"/>
+                </Record>
+                <Record>
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/preferred Communication.PhoneType/work"/>
+                  <PropertyValue Property="uri" Path="PhoneNumber"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderStatusType/SalesOrderOverallStatus">
+        <Annotation Term="Common.Text" Path="SalesOrderOverallStatus_Text">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderStatusType">
+        <Annotation Term="UI.DataPoint" Qualifier="SalesOrderOverallStatus">
+          <Record>
+            <PropertyValue Property="Value" Path="SalesOrderOverallStatus"/>
+            <PropertyValue Property="Title" String="Status"/>
+            <PropertyValue Property="Criticality" Path="StatusCriticality"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/DraftUUID">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/HasActiveEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/HasDraftEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/IsActiveEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/DraftEntityCreationDateTime">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/DraftEntityLastChangeDateTime">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/Activation_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/Copy_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/Edit_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/Preparation_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/Validation_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/BillToParty_fc">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/CustomerContact_fc">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/ShipToParty_fc">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/SoldToParty_fc">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/Delete_mc">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/Update_mc">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/SalesOrder">
+        <Annotation Term="Common.SemanticObject" String="EPMSalesOrder"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/CustomerContact">
+        <Annotation Term="Common.Text" Path="to_CustomerContact/FullName">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType/SalesOrderOverallStatus">
+        <Annotation Term="Common.Text" Path="to_OverallStatus/SalesOrderOverallStatus_Text">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderTPType">
+        <Annotation Term="UI.DataPoint" Qualifier="NetAmountInTransactionCurrency">
+          <Record>
+            <PropertyValue Property="Value" Path="NetAmountInTransactionCurrency"/>
+            <PropertyValue Property="Title" String="Order Volume"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.QuickCreateFacets">
+          <Collection>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Create Sales Order"/>
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#QuickCreate"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Create Sales Order Item"/>
+              <PropertyValue Property="Target" AnnotationPath="to_SalesOrderItem/@UI.LineItem#QuickCreate"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.QuickViewFacets">
+          <Collection>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Sales Order"/>
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#QuickView"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Sales Order Item"/>
+              <PropertyValue Property="Target" AnnotationPath="to_SalesOrderItem/@UI.LineItem#QuickView"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.HeaderFacets">
+          <Collection>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#HeaderInfoCustomer"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#NetAmountInTransactionCurrency"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Target" AnnotationPath="to_OverallStatus/@UI.DataPoint#SalesOrderOverallStatus"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#AdminDataCreated"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.Facets">
+          <Collection>
+            <Record Type="UI.CollectionFacet">
+              <PropertyValue Property="Label" String="Customer Details"/>
+              <PropertyValue Property="ID" String="SalesOrderStableID"/>
+              <PropertyValue Property="Facets">
+                <Collection>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="Customer Details"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Customer"/>
+                    <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                  </Record>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="Contact Details"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#CustomerContact"/>
+                    <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                  </Record>
+                </Collection>
+              </PropertyValue>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.CollectionFacet">
+              <PropertyValue Property="Label" String="General Information"/>
+              <PropertyValue Property="ID" String="GeneralInformationFacetID"/>
+              <PropertyValue Property="Facets">
+                <Collection>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="Payment Details"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Payment"/>
+                    <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                  </Record>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="Billing Details"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#BillTo"/>
+                    <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                  </Record>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="Shipping Details"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#ShipTo"/>
+                    <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                  </Record>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="Modified"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#AdminDataLastChanged"/>
+                    <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                  </Record>
+                </Collection>
+              </PropertyValue>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Products"/>
+              <PropertyValue Property="ID" String="LineItemFacet"/>
+              <PropertyValue Property="Target" AnnotationPath="to_SalesOrderItem/@UI.LineItem"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="AdminDataCreated">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="CreationDateTime"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                </Record>
+                <Record Type="UI.DataFieldForAnnotation">
+                  <PropertyValue Property="Label" String="Created By"/>
+                  <PropertyValue Property="Target" AnnotationPath="to_CreatedByUser/@Communication.Contact"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="AdminDataLastChanged">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="LastChangedDateTime"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="LastChangedByUser"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="BillTo">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="BillToParty"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="to_BillToParty/Address"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="Customer">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="SoldToParty"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="to_Customer/Address"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="CustomerContact">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="CustomerContact"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="to_CustomerContact/PhoneNumber"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="to_CustomerContact/EmailAddress"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="HeaderInfoCustomer">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataFieldForAnnotation">
+                  <PropertyValue Property="Label" String="Customer"/>
+                  <PropertyValue Property="Target" AnnotationPath="to_Customer/@Communication.Contact"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="Payment">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="SalesOrderPaymentMethod"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="SalesOrderPaymentTerms"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="QuickCreate">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="SoldToParty"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Label" String="Customer Name"/>
+                  <PropertyValue Property="Value" Path="to_Customer/Customer"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="Label" String="Create Sales Order"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="QuickView">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="SoldToParty"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="CustomerContact"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="BillToParty"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="Label" String="Sales Order"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="ShipTo">
+          <Record>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="ShipToParty"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="to_ShipToParty/Address"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.HeaderInfo">
+          <Record>
+            <PropertyValue Property="TypeName" String="Sales Order"/>
+            <PropertyValue Property="TypeNamePlural" String="Sales Orders"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="SalesOrder"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="Description">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="to_Customer/CompanyName"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Label" String="Sales Order"/>
+              <PropertyValue Property="Value" Path="SalesOrder"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataFieldForAction">
+              <PropertyValue Property="Label" String="Copy"/>
+              <PropertyValue Property="Action" String="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderTPCopy"/>
+              <PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="SalesOrder"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="SalesOrderOverallStatus"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataFieldForAction">
+              <PropertyValue Property="Label" String="Copy"/>
+              <PropertyValue Property="Action" String="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderTPCopy"/>
+              <PropertyValue Property="InvocationGrouping" EnumMember="UI.OperationGroupingType/Isolated"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="LastChangedDateTime"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="SoldToParty"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="CustomerContact"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="Quantity"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="NetAmountInTransactionCurrency"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+          <Annotation Term="UI.Criticality" Path="abc"/>
+        </Annotation>
+        <Annotation Term="UI.PresentationVariant">
+          <Record>
+            <PropertyValue Property="SortOrder">
+              <Collection>
+                <Record Type="Common.SortOrderType">
+                  <PropertyValue Property="Property" PropertyPath="LastChangedDateTime"/>
+                  <PropertyValue Property="Descending" Bool="true"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="Visualizations">
+              <Collection>
+                <AnnotationPath>@UI.LineItem</AnnotationPath>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.SelectionFields">
+          <Collection>
+            <PropertyPath>SalesOrder</PropertyPath>
+            <PropertyPath>SalesOrderOverallStatus</PropertyPath>
+            <PropertyPath>LastChangedDateTime</PropertyPath>
+          </Collection>
+        </Annotation>
+        <Annotation Term="Common.SemanticObject" String="EPMSalesOrder"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/DraftUUID">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/HasActiveEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/HasDraftEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/IsActiveEntity">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/DraftEntityCreationDateTime">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/DraftEntityLastChangeDateTime">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/ParentDraftUUID">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/RootDraftUUID">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/Preparation_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_ScheduleLineTPType/Validation_ac">
+        <Annotation Term="UI.Hidden"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_I_QuantityUnitType/UnitOfMeasureISOCode">
+        <Annotation Term="UI.HiddenFilter"/>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_I_QuantityUnitType">
+        <Annotation Term="UI.HeaderInfo">
+          <Record>
+            <PropertyValue Property="TypeName" String="Quantity Unit"/>
+            <PropertyValue Property="TypeNamePlural" String="Quantity Units"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="UnitOfMeasure"/>
+              </Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="UnitOfMeasure"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="UnitOfMeasure"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+          <Annotation Term="UI.Criticality" Path="abc"/>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_I_SalesOrderAgeType/SalesOrder">
+        <Annotation Term="UI.HiddenFilter"/>
+        <Annotation Term="Common.SemanticObject" String="EPMSalesOrder"/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

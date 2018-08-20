@@ -40,4 +40,42 @@ public class CsdlNull extends CsdlDynamicExpression implements CsdlAnnotatable {
     this.annotations = annotations;
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlNull)) {
+      return false;
+    }
+    CsdlNull csdlNull = (CsdlNull) obj;
+    return (this.getAnnotations() == null ? csdlNull.getAnnotations() == null :
+        checkAnnotations(csdlNull.getAnnotations()));
+  }
+  
+  private boolean checkAnnotations(List<CsdlAnnotation> csdlNullAnnot) {
+    if (csdlNullAnnot == null) {
+      return false;
+    }
+    if (this.getAnnotations().size() == csdlNullAnnot.size()) {
+      for (int i = 0; i < this.getAnnotations().size() ; i++) {
+        if (!this.getAnnotations().get(i).equals(csdlNullAnnot.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((annotations == null) ? 0 : 
+      annotations.hashCode());
+    return result;
+  }
 }

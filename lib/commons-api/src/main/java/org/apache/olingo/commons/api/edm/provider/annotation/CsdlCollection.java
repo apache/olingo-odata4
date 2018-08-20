@@ -46,4 +46,41 @@ public class CsdlCollection extends CsdlDynamicExpression {
     this.items = items;
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlCollection)) {
+      return false;
+    }
+    CsdlCollection annotColl = (CsdlCollection) obj;
+    return (this.getItems() == null ? annotColl.getItems() == null :
+      checkItems(annotColl.getItems()));
+  }
+  
+  private boolean checkItems(List<CsdlExpression> annotCollItems) {
+    if (annotCollItems == null) {
+      return false;
+    }
+    if (this.getItems().size() == annotCollItems.size()) {
+      for (int i = 0; i < this.getItems().size(); i++) {
+        if (!this.getItems().get(i).equals(annotCollItems.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((items == null) ? 0 : items.hashCode());
+    return result;
+  }
 }

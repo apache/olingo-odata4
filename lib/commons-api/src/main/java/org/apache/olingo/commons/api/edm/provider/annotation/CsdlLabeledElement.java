@@ -69,4 +69,48 @@ public class CsdlLabeledElement extends CsdlDynamicExpression implements CsdlAnn
     this.value = value;
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlLabeledElement)) {
+      return false;
+    }
+    CsdlLabeledElement csdlLabelledEle = (CsdlLabeledElement) obj;
+    return (this.getName() == null ? csdlLabelledEle.getName() == null :
+      this.getName().equals(csdlLabelledEle.getName()))
+        && (this.getValue() == null ? csdlLabelledEle.getValue() == null :
+          this.getValue().equals(csdlLabelledEle.getValue()))
+        && (this.getAnnotations() == null ? csdlLabelledEle.getAnnotations() == null :
+            checkAnnotations(csdlLabelledEle.getAnnotations()));
+  }
+  
+  private boolean checkAnnotations(List<CsdlAnnotation> csdlLabelledEleAnnotations) {
+    if (csdlLabelledEleAnnotations == null) {
+      return false;
+    }
+    if (this.getAnnotations().size() == csdlLabelledEleAnnotations.size()) {
+      for (int i = 0; i < this.getAnnotations().size() ; i++) {
+        if (!this.getAnnotations().get(i).equals(
+            csdlLabelledEleAnnotations.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    return result;
+  }
 }

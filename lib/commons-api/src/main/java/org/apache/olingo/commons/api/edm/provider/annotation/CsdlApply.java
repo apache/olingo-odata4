@@ -73,4 +73,63 @@ public class CsdlApply extends CsdlDynamicExpression implements CsdlAnnotatable 
     this.parameters = parameters;
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlApply)) {
+      return false;
+    }
+    CsdlApply annotApply = (CsdlApply) obj;
+    return (this.getFunction() == null ? annotApply.getFunction() == null :
+      this.getFunction().equals(annotApply.getFunction()))
+      && (this.getParameters() == null ? annotApply.getParameters() == null :
+        checkParamaters(annotApply.getParameters()))
+        && (this.getAnnotations() == null ? annotApply.getAnnotations() == null :
+          checkAnnotations(annotApply.getAnnotations()));
+  }
+  
+  private boolean checkAnnotations(List<CsdlAnnotation> annotApplyannotations) {
+    if (annotApplyannotations == null) {
+      return false;
+    }
+    if (this.getAnnotations().size() == annotApplyannotations.size()) {
+      for (int i = 0; i < this.getAnnotations().size(); i++) {
+        if (!this.getAnnotations().get(i).equals(annotApplyannotations.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean checkParamaters(List<CsdlExpression> annotApplyParams) {
+    if (annotApplyParams == null) {
+      return false;
+    }
+    if (this.getParameters().size() == annotApplyParams.size()) {
+      for (int i = 0; i < this.getParameters().size(); i++) {
+        if (!this.getParameters().get(i).equals(annotApplyParams.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((function == null) ? 0 : function.hashCode());
+    result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
+    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
+    return result;
+  }
 }

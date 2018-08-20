@@ -115,4 +115,9 @@ public class DynamicProperty implements EdmProperty {
   public List<EdmAnnotation> getAnnotations() {
     return Collections.emptyList();
   }
+  
+  @Override
+  public EdmType getTypeWithAnnotations() {
+    return propertyType;
+  }
 }
