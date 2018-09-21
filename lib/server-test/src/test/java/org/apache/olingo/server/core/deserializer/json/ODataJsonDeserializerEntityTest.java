@@ -1036,13 +1036,13 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     Polygon polygon = (Polygon) entity.getProperties().get(0).getValue();
     assertEquals(Geospatial.Dimension.GEOMETRY, polygon.getDimension());
     assertEquals(0, polygon.getExterior().iterator().next().getX(), 0);
-    assertEquals(1, polygon.getInterior().iterator().next().getY(), 0);
+    assertEquals(1, polygon.getInterior(0).iterator().next().getY(), 0);
 
     entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
         + "\"type\":\"Polygon\",\"coordinates\":[[[0,0],[3,0],[3,3],[0,3],[0,0]]]}}",
         entityType);
     polygon = (Polygon) entity.getProperties().get(0).getValue();
-    assertTrue(polygon.getInterior().isEmpty());
+    assertEquals(0, polygon.getNumberOfInteriorRings());
 
     expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
         + "\"type\":\"Polygon\",\"coordinates\":{\"ext\":[[0,0],[3,0],[0,3],[0,0]]}}}", entityType,
@@ -1070,7 +1070,7 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "[[[0.0,0.0],[30.0,0.0],[0.0,30.0],[0.0,0.0]]]]}}",
         entityType);
     final MultiPolygon multiPolygon = (MultiPolygon) entity.getProperties().get(0).getValue();
-    assertEquals(1, multiPolygon.iterator().next().getInterior().iterator().next().getX(), 0);
+    assertEquals(1, multiPolygon.iterator().next().getInterior(0).iterator().next().getX(), 0);
 
     expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
         + "\"type\":\"MultiPolygon\",\"coordinates\":[{\"first\":[[[0,0],[3,0],[3,3],[0,3],[0,0]]]}]}}", entityType,

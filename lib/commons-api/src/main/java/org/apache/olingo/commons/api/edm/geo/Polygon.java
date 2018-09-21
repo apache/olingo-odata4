@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.commons.api.edm.geo;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -27,7 +28,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
  */
 public class Polygon extends Geospatial {
 
-  final ComposedGeospatial<Point> interior;
+  final ComposedGeospatial<LineString> interiorRings;
   final ComposedGeospatial<Point> exterior;
 
   /**
@@ -37,28 +38,78 @@ public class Polygon extends Geospatial {
    * @param srid        SRID values
    * @param interior    List of interior points
    * @param exterior    List of exterior point
+   * @deprecated
    */
   public Polygon(final Dimension dimension, final SRID srid,
       final List<Point> interior, final List<Point> exterior) {
 
     super(dimension, Type.POLYGON, srid);
-    this.interior = new MultiPoint(dimension, srid, interior);
-    this.exterior = new MultiPoint(dimension, srid, exterior);
+    if (interior != null) {
+		LineString lineString = new LineString(dimension, srid, interior);
+		this.interiorRings = new MultiLineString(dimension, srid, Arrays.asList(lineString));
+    } else {
+    	this.interiorRings = null;
+    }
+    this.exterior = new LineString(dimension, srid, exterior);
   }
+  
+  /**
+   * Creates a new polygon.
+   * 
+   * @param dimension   Dimension of the polygon
+   * @param srid        SRID values
+   * @param interiors    List of interior rings
+   * @param exterior    Ring of exterior point
+   */
+  public Polygon(final Dimension dimension, final SRID srid,
+      final List<LineString> interiors, LineString exterior) {
 
+    super(dimension, Type.POLYGON, srid);
+    if (interiors != null) {
+    	this.interiorRings = new MultiLineString(dimension, srid, interiors);
+    } else {
+    	this.interiorRings = null;
+    }
+    this.exterior = exterior;
+  }
   /**
    * Gets interior points.
    *
    * @return interior points.
+   * @deprecated
+   * @see #getInterior(int)
    */
   public ComposedGeospatial<Point> getInterior() {
-    return interior;
+	if (interiorRings == null || interiorRings.geospatials.isEmpty()) {
+		return null;
+	}
+    return getInterior(0);
+  }
+  
+  /**
+   * Get the number of interior rings
+   * @return number of interior rings
+   */
+  public int getNumberOfInteriorRings() {
+	  if (interiorRings == null) {
+		  return 0;
+	  }
+	  return interiorRings.geospatials.size();
+  }
+  
+  /**
+   * Gets the nth interior ring
+   * @param n
+   * @return the ring or an exception if no such ring exists
+   */
+  public ComposedGeospatial<Point> getInterior(int n) {
+	  return interiorRings.geospatials.get(n);
   }
 
   /**
    * Gets exterior points.
    *
-   * @return exterior points.I
+   * @return exterior points.
    */
   public ComposedGeospatial<Point> getExterior() {
     return exterior;
@@ -83,7 +134,7 @@ public class Polygon extends Geospatial {
     final Polygon polygon = (Polygon) o;
     return dimension == polygon.dimension
         && (srid == null ? polygon.srid == null : srid.equals(polygon.srid))
-        && (interior == null ? polygon.interior == null : interior.equals(polygon.interior))
+        && (interiorRings == null ? polygon.interiorRings == null : interiorRings.equals(polygon.interiorRings))
         && (exterior == null ? polygon.exterior == null : exterior.equals(polygon.exterior));
   }
 
@@ -91,7 +142,7 @@ public class Polygon extends Geospatial {
   public int hashCode() {
     int result = dimension == null ? 0 : dimension.hashCode();
     result = 31 * result + (srid == null ? 0 : srid.hashCode());
-    result = 31 * result + (interior == null ? 0 : interior.hashCode());
+    result = 31 * result + (interiorRings == null ? 0 : interiorRings.hashCode());
     result = 31 * result + (exterior == null ? 0 : exterior.hashCode());
     return result;
   }

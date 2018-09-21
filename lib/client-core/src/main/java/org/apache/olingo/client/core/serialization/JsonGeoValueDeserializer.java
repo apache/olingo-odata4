@@ -127,19 +127,21 @@ class JsonGeoValueDeserializer {
       }
     }
 
-    List<Point> intPoints = null;
-    if (itor.hasNext()) {
+    List<LineString> intRings = new ArrayList<LineString>();
+    while (itor.hasNext()) {
       final Iterator<JsonNode> intItor = itor.next().elements();
       if (intItor.hasNext()) {
-        intPoints = new ArrayList<Point>();
+        List<Point> intPoints = new ArrayList<Point>();
         while (intItor.hasNext()) {
           final Iterator<JsonNode> mpItor = intItor.next().elements();
           intPoints.add(point(mpItor, type, srid));
         }
+        intRings.add(new LineString(GeoUtils.getDimension(type), srid, intPoints));
       }
     }
 
-    return new Polygon(GeoUtils.getDimension(type), srid, intPoints, extPoints);
+    LineString exterior = new LineString(GeoUtils.getDimension(type), srid, extPoints);
+	return new Polygon(GeoUtils.getDimension(type), srid, intRings, exterior);
   }
 
   private MultiPolygon multiPolygon(final Iterator<JsonNode> itor, final EdmPrimitiveTypeKind type, final SRID srid) {

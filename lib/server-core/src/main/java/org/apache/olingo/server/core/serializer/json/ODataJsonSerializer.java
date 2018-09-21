@@ -1060,9 +1060,9 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     json.writeStartArray();
     writeGeoPoints(json, polygon.getExterior());
     json.writeEndArray();
-    if (!polygon.getInterior().isEmpty()) {
+    for (int i = 0; i < polygon.getNumberOfInteriorRings(); i++) {
       json.writeStartArray();
-      writeGeoPoints(json, polygon.getInterior());
+      writeGeoPoints(json, polygon.getInterior(i));
       json.writeEndArray();
     }
   }

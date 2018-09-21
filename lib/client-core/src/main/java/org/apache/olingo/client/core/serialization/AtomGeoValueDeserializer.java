@@ -113,8 +113,8 @@ class AtomGeoValueDeserializer {
   private Polygon polygon(final XMLEventReader reader, final StartElement start,
       final EdmPrimitiveTypeKind type, final SRID srid) throws XMLStreamException {
 
-    List<Point> extPoints = null;
-    List<Point> intPoints = null;
+	LineString extPoints = null;
+    List<LineString> intRings = new ArrayList<LineString>();
 
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
@@ -122,10 +122,12 @@ class AtomGeoValueDeserializer {
 
       if (event.isStartElement()) {
         if (event.asStartElement().getName().equals(Constants.QNAME_POLYGON_EXTERIOR)) {
-          extPoints = points(reader, event.asStartElement(), type, null);
+          List<Point> points = points(reader, event.asStartElement(), type, null);
+          extPoints = new LineString(GeoUtils.getDimension(type), srid, points);
         }
         if (event.asStartElement().getName().equals(Constants.QNAME_POLYGON_INTERIOR)) {
-          intPoints = points(reader, event.asStartElement(), type, null);
+          List<Point> points = points(reader, event.asStartElement(), type, null);
+          intRings.add(new LineString(GeoUtils.getDimension(type), srid, points));
         }
       }
 
@@ -134,7 +136,7 @@ class AtomGeoValueDeserializer {
       }
     }
 
-    return new Polygon(GeoUtils.getDimension(type), srid, intPoints, extPoints);
+    return new Polygon(GeoUtils.getDimension(type), srid, intRings, extPoints);
   }
 
   private MultiLineString multiLineString(final XMLEventReader reader, final StartElement start,

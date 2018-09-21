@@ -603,6 +603,11 @@ public class UriTokenizerTest {
   public void geoPolygon() {
     assertTrue(new UriTokenizer("geography'SRID=4326;Polygon((0 0,1 0,0 1,0 0))'").next(TokenKind.GeographyPolygon));
     assertTrue(new UriTokenizer("geometry'SRID=0;Polygon((0 0,1 0,0 1,0 0))'").next(TokenKind.GeometryPolygon));
+    assertTrue(new UriTokenizer("geometry'SRID=0;Polygon((1 1,2 1,2 2,1 2,1 1),(0 0,4 0,4 4,0 4,0 0))'")
+    	.next(TokenKind.GeometryPolygon));
+    assertTrue(new UriTokenizer(
+    	"geometry'SRID=0;Polygon((0 0,1 1,2 2,0 0),(1 1,2 1,2 2,1 2,1 1),(0 0,4 0,4 4,0 4,0 0))'")
+    	.next(TokenKind.GeometryPolygon));
     wrongToken(TokenKind.GeometryPolygon,
         "geometry'SRID=0;Polygon((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1))'",
         'x');
