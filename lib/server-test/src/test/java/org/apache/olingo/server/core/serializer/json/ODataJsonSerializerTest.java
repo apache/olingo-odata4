@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -2306,12 +2304,9 @@ public class ODataJsonSerializerTest {
     final Entity entity = new Entity()
         .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
             new Point(Dimension.GEOMETRY, SRID.valueOf("42"))));
-    try {
-      serializerNoMetadata.entity(metadata, entityType, entity, null);
-      fail("Expected exception not thrown.");
-    } catch (final SerializerException e) {
-      assertNotNull(e);
-    }
+    Assert.assertEquals("{\"PropertyGeometryPoint\":{\"type\":\"Point\",\"coordinates\":[0.0,0.0],"
+    		+ "\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"EPSG:42\"}}}}",
+            IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
   }
 
   private Point createPoint(final double x, final double y) {
