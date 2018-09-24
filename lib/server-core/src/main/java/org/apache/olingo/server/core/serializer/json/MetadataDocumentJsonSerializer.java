@@ -714,6 +714,10 @@ public class MetadataDocumentJsonSerializer {
       if (property.getScale() != null) {
         json.writeNumberField(SCALE, property.getScale());
       }
+      
+      if (property.getSrid() != null) {
+          json.writeStringField(SRID, "" + property.getSrid());
+      }
 
       appendAnnotations(json, property, null);
       json.writeEndObject();

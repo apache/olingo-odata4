@@ -96,6 +96,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_PROPERTY_REF = "PropertyRef";
   private static final String XML_KEY = "Key";
   private static final String XML_SCALE = "Scale";
+  private static final String XML_SRID = "SRID";
   private static final String XML_PRECISION = "Precision";
   private static final String XML_MAX_LENGTH = "MaxLength";
   private static final String XML_DEFAULT_VALUE = "DefaultValue";
@@ -904,6 +905,10 @@ public class MetadataDocumentXmlSerializer {
 
       if (property.getScale() != null) {
         writer.writeAttribute(XML_SCALE, "" + property.getScale());
+      }
+      
+      if (property.getSrid() != null) {
+          writer.writeAttribute(XML_SRID, "" + property.getSrid());
       }
 
       appendAnnotations(writer, property);
