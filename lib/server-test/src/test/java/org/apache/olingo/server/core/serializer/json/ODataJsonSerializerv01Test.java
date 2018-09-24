@@ -2312,12 +2312,9 @@ public class ODataJsonSerializerv01Test {
     final Entity entity = new Entity()
         .addProperty(new Property(null, entityType.getPropertyNames().get(0), ValueType.GEOSPATIAL,
             new Point(Dimension.GEOMETRY, SRID.valueOf("42"))));
-    try {
-      serializerNoMetadata.entity(metadata, entityType, entity, null);
-      fail("Expected exception not thrown.");
-    } catch (final SerializerException e) {
-      assertNotNull(e);
-    }
+    Assert.assertEquals("{\"PropertyGeometryPoint\":{\"type\":\"Point\",\"coordinates\":[0.0,0.0],"
+    		+ "\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"EPSG:42\"}}}}",
+            IOUtils.toString(serializerNoMetadata.entity(metadata, entityType, entity, null).getContent()));
   }
 
   private Point createPoint(final double x, final double y) {

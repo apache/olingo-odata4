@@ -70,6 +70,7 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -769,9 +770,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         final JsonNode topNode = jsonNode.remove(
             geoDataType.equals(GeospatialCollection.class) ? Constants.JSON_GEOMETRIES : Constants.JSON_COORDINATES);
 
-        // The "crs" member mentioned in some versions of the OData specification is not part of GeoJSON.
-        // It used to be used to specify the coordinate reference system.
-        // TODO: Is it OK to follow RFC 7946 strictly and not allow this element from its obsolete predecessor?
+        SRID srid = null;
+        if (jsonNode.has(Constants.JSON_CRS)) {
+          srid = SRID.valueOf(
+          jsonNode.remove(Constants.JSON_CRS).get(Constants.PROPERTIES).
+            get(Constants.JSON_NAME).asText().split(":")[1]);
+        }
+        
         assertJsonNodeIsEmpty(jsonNode);
 
         if (topNode != null && topNode.isArray()) {
@@ -779,29 +784,29 @@ public class ODataJsonDeserializer implements ODataDeserializer {
               Geospatial.Dimension.GEOMETRY :
               Geospatial.Dimension.GEOGRAPHY;
           if (geoDataType.equals(Point.class)) {
-            return readGeoPointValue(name, dimension, topNode);
+            return readGeoPointValue(name, dimension, topNode, srid);
           } else if (geoDataType.equals(MultiPoint.class)) {
-            return new MultiPoint(dimension, null, readGeoPointValues(name, dimension, 0, false, topNode));
+            return new MultiPoint(dimension, srid, readGeoPointValues(name, dimension, 0, false, topNode));
           } else if (geoDataType.equals(LineString.class)) {
             // Although a line string with less than two points is not really one, the OData specification says:
             // "The coordinates member of a LineString can have zero or more positions".
             // Therefore the required minimal size of the points array currently is zero.
-            return new LineString(dimension, null, readGeoPointValues(name, dimension, 0, false, topNode));
+            return new LineString(dimension, srid, readGeoPointValues(name, dimension, 0, false, topNode));
           } else if (geoDataType.equals(MultiLineString.class)) {
             List<LineString> lines = new ArrayList<LineString>();
             for (final JsonNode element : topNode) {
               // Line strings can be empty (see above).
-              lines.add(new LineString(dimension, null, readGeoPointValues(name, dimension, 0, false, element)));
+              lines.add(new LineString(dimension, srid, readGeoPointValues(name, dimension, 0, false, element)));
             }
-            return new MultiLineString(dimension, null, lines);
+            return new MultiLineString(dimension, srid, lines);
           } else if (geoDataType.equals(Polygon.class)) {
-            return readGeoPolygon(name, dimension, topNode);
+            return readGeoPolygon(name, dimension, topNode, srid);
           } else if (geoDataType.equals(MultiPolygon.class)) {
             List<Polygon> polygons = new ArrayList<Polygon>();
             for (final JsonNode element : topNode) {
-              polygons.add(readGeoPolygon(name, dimension, element));
+              polygons.add(readGeoPolygon(name, dimension, element, null));
             }
-            return new MultiPolygon(dimension, null, polygons);
+            return new MultiPolygon(dimension, srid, polygons);
           } else if (geoDataType.equals(GeospatialCollection.class)) {
             List<Geospatial> elements = new ArrayList<Geospatial>();
             for (final JsonNode element : topNode) {
@@ -812,7 +817,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
                     DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);
               }
             }
-            return new GeospatialCollection(dimension, null, elements);
+            return new GeospatialCollection(dimension, srid, elements);
           }
         }
       }
@@ -821,11 +826,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);
   }
 
-  private Point readGeoPointValue(final String name, final Geospatial.Dimension dimension, JsonNode node)
+  private Point readGeoPointValue(final String name, final Geospatial.Dimension dimension, JsonNode node, SRID srid)
       throws DeserializerException, EdmPrimitiveTypeException {
     if (node.isArray() && (node.size() ==2 || node.size() == 3)
         && node.get(0).isNumber() && node.get(1).isNumber() && (node.get(2) == null || node.get(2).isNumber())) {
-      Point point = new Point(dimension, null);
+      Point point = new Point(dimension, srid);
       point.setX(getDoubleValue(node.get(0).asText()));
       point.setY(getDoubleValue(node.get(1).asText()));
       if (node.get(2) != null) {
@@ -855,7 +860,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     if (node.isArray()) {
       List<Point> points = new ArrayList<Point>();
       for (final JsonNode element : node) {
-        points.add(readGeoPointValue(name, dimension, element));
+        points.add(readGeoPointValue(name, dimension, element, null));
       }
       if (points.size() >= minimalSize
           && (!closed || points.get(points.size() - 1).equals(points.get(0)))) {
@@ -866,13 +871,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);
   }
 
-  private Polygon readGeoPolygon(final String name, final Geospatial.Dimension dimension, JsonNode node)
+  private Polygon readGeoPolygon(final String name, final Geospatial.Dimension dimension, JsonNode node, SRID srid)
       throws DeserializerException, EdmPrimitiveTypeException {
     // GeoJSON would allow for more than one interior polygon (hole).
     // But there is no place in the data object to store this information so for now we throw an error.
     // There could be a more strict verification that the lines describe boundaries and have the correct winding order.
     if (node.isArray() && (node.size() == 1 || node.size() == 2)) {
-      return new Polygon(dimension, null,
+      return new Polygon(dimension, srid,
           node.size() > 1 ? readGeoPointValues(name, dimension, 4, true, node.get(1)) : null,
           readGeoPointValues(name, dimension, 4, true, node.get(0)));
     }

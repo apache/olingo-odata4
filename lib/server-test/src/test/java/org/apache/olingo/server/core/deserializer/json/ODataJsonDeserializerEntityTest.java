@@ -896,12 +896,14 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
   public void geoPoint() throws Exception {
     final EdmEntityType entityType = mockEntityType(EdmPrimitiveTypeKind.GeometryPoint);
     final String preamble = "{\"" + entityType.getPropertyNames().get(0) + "\":{";
-    final Entity entity = deserialize(preamble + "\"type\":\"Point\",\"coordinates\":[1.25,2.75]}}",
+    final Entity entity = deserialize(preamble + "\"type\":\"Point\",\"coordinates\":[1.25,2.75]," +
+    		"\"crs\":{\"type\":\"name\",\"properties\":{\"name\":\"EPSG:42\"}}}}",
         entityType);
     assertEquals(1, entity.getProperties().size());
     assertTrue(entity.getProperties().get(0).getValue() instanceof Point);
     final Point point = (Point) entity.getProperties().get(0).getValue();
     assertEquals(Geospatial.Dimension.GEOMETRY, point.getDimension());
+    assertEquals("42", point.getSrid().toString());
     assertEquals(1.25, point.getX(), 0);
     assertEquals(2.75, point.getY(), 0);
 
