@@ -30,7 +30,6 @@ import org.apache.olingo.client.api.serialization.ODataMetadataValidation;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MetadataValidationTest extends AbstractTest {
