@@ -13,4 +13,3 @@ nb-configuration.xml
 .externalToolBuilders
 maven-eclipse.xml
 dependency-reduced-pom.xml
-*.iml

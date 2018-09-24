@@ -734,7 +734,6 @@ public class MetadataValidationTest extends AbstractTest {
   }
   
   @Test
-  @Ignore
   public void checkInValidV4XMLMetadataWithNoSchemas() {
 	  boolean checkException = false;
     try {
