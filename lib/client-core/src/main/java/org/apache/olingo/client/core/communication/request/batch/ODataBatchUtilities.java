@@ -137,7 +137,7 @@ public class ODataBatchUtilities {
 
             notEndLine = isNotEndLine(controller, currentLine);
 
-            if (notEndLine && os != null) {
+            if (notEndLine && os != null && currentLine!=null) {
               os.write(currentLine.getBytes(Constants.UTF8));
               os.write(ODataStreamer.CRLF);
             }
@@ -256,11 +256,14 @@ public class ODataBatchUtilities {
   public static Map.Entry<Integer, String> readResponseLine(final ODataBatchLineIterator iterator) {
     final String line = readBatchPart(new ODataBatchController(iterator, null), 1);
     LOG.debug("Response line '{}'", line);
+    
+    if(line !=null){
 
-    final Matcher matcher = RESPONSE_PATTERN.matcher(line.trim());
+      final Matcher matcher = RESPONSE_PATTERN.matcher(line.trim());
 
-    if (matcher.matches()) {
-      return new AbstractMap.SimpleEntry<Integer, String>(Integer.valueOf(matcher.group(1)), matcher.group(2));
+      if (matcher.matches()) {
+        return new AbstractMap.SimpleEntry<Integer, String>(Integer.valueOf(matcher.group(1)), matcher.group(2));
+      }
     }
 
     throw new IllegalArgumentException("Invalid response line '" + line + "'");

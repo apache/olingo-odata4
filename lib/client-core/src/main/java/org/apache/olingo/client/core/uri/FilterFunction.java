@@ -35,10 +35,12 @@ public class FilterFunction implements FilterArg {
   @Override
   public String build() {
     final String[] strParams = params == null || params.length == 0 ? new String[0] : new String[params.length];
-    for (int i = 0; i < strParams.length; i++) {
-      strParams[i] = params[i].build();
+    if(params !=null){
+      for (int i = 0; i < strParams.length; i++) {
+        strParams[i] = params[i].build();
+      }
     }
-
+    
     return new StringBuilder(function).
             append('(').
             append(strParams.length == 0 ? StringUtils.EMPTY : StringUtils.join(strParams, ',')).
