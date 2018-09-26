@@ -63,15 +63,19 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     assertEquals("2012-02-29T01:02:03+11:00", instance.valueToString(dateTime, null, null, null, null, null));
 
     dateTime.set(Calendar.MILLISECOND, 503);
+    assertEquals("2012-02-29T01:02:03.503+11:00", instance.valueToString(dateTime, null, null, null, null, null));
     assertEquals("2012-02-29T01:02:03.503+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
 
     dateTime.set(Calendar.MILLISECOND, 530);
+    assertEquals("2012-02-29T01:02:03.53+11:00", instance.valueToString(dateTime, null, null, null, null, null));
     assertEquals("2012-02-29T01:02:03.53+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
 
     dateTime.set(Calendar.MILLISECOND, 53);
+    assertEquals("2012-02-29T01:02:03.053+11:00", instance.valueToString(dateTime, null, null, null, null, null));
     assertEquals("2012-02-29T01:02:03.053+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
 
     final Long millis = 1330558323007L;
+    assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(millis, null, null, null, null, null));
     assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(millis, null, null, 3, null, null));
     assertEquals("1969-12-31T23:59:59.9Z", instance.valueToString(-100L, null, null, 1, null, null));
     assertEquals("1969-12-31T23:59:59.98Z", instance.valueToString(-20L, null, null, 2, null, null));
@@ -81,13 +85,14 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     assertEquals("1969-12-31T23:59:59.98Z", instance.valueToString(new Time(-20L), null, null, 2, null, null));
 
     final Date date = new Date(millis);
+    assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(date, null, null, null, null, null));
     assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(date, null, null, 3, null, null));
 
     Timestamp timestamp = new Timestamp(0);
     timestamp.setNanos(120);
+    assertEquals("1970-01-01T00:00:00.00000012Z", instance.valueToString(timestamp, null, null, null, null, null));
     assertEquals("1970-01-01T00:00:00.00000012Z", instance.valueToString(timestamp, null, null, 8, null, null));
 
-    expectFacetsErrorInValueToString(instance, millis, null, null, null, null, null);
     expectFacetsErrorInValueToString(instance, 3L, null, null, 2, null, null);
     expectFacetsErrorInValueToString(instance, timestamp, null, null, 7, null, null);
 

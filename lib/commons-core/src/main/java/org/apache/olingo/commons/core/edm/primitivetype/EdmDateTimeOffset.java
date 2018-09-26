@@ -261,7 +261,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
         nonSignificant++;
       }
 
-      if (precision == null || precision < (isNano ? 9 : 3) - nonSignificant) {
+      if (precision != null && precision < (isNano ? 9 : 3) - nonSignificant) {
         throw new IllegalArgumentException();
       }
 
