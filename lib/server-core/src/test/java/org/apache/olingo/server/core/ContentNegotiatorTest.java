@@ -55,6 +55,7 @@ public class ContentNegotiatorTest {
   static final private String ACCEPT_CASE_WILDCARD1 = "*/*";
   static final private String ACCEPT_CASE_WILDCARD2 = "application/*";
   static final private String ACCEPT_CASE_JSON_IEEE754 = ACCEPT_CASE_JSON + ";IEEE754Compatible=true";
+  static final private String ACCEPT_CASE_MULTIPART_MIXED = ContentType.MULTIPART_MIXED.toContentTypeString();
 
   //@formatter:off (Eclipse formatter)
   //CHECKSTYLE:OFF (Maven checkstyle)
@@ -335,4 +336,11 @@ public class ContentNegotiatorTest {
     assertTrue(ContentNegotiator.isSupported(ContentType.create("a/b"), 
         createCustomContentTypeSupport("a/b"), RepresentationType.BINARY));
   }
+  
+  @Test
+  public void checBatchkSupport() throws Exception {
+    testContentNegotiation(new String[] { ACCEPT_CASE_MULTIPART_MIXED, null, ACCEPT_CASE_MULTIPART_MIXED, null },
+        RepresentationType.BATCH);
+  }
+  
 }

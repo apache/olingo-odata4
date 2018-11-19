@@ -51,6 +51,7 @@ import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.UriResourceValue;
+import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.core.requests.ActionRequest;
 import org.apache.olingo.server.core.requests.BatchRequest;
 import org.apache.olingo.server.core.requests.DataRequest;
@@ -79,11 +80,9 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
   }
 
   public void execute(ODataRequest odRequest, ODataResponse odResponse) {
-    ContentType contentType = ContentType.JSON;
+    FormatOption formatOption = null;
+    ODataException oDataException = null;
     try {
-      contentType = ContentNegotiator.doContentNegotiation(null,
-          odRequest, this.customContentSupport, RepresentationType.ERROR);
-      
       String path = odRequest.getRawODataPath();      
       String query = odRequest.getRawQueryPath();      
       if(path.indexOf("$entity") != -1) {
@@ -92,16 +91,24 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
         UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
           .parseUri(path, query, null, odRequest.getRawBaseUri());
         
-        contentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
-            odRequest, this.customContentSupport, RepresentationType.ERROR);      
+        formatOption = uriInfo.getFormatOption();
         
         internalExecute(uriInfo, odRequest, odResponse);
       }
+      return;
     } catch(ODataLibraryException e) {
-      handleException(e, contentType, odRequest, odResponse);
+    	oDataException = e;
     } catch(ODataApplicationException e) {
-      handleException(e, contentType, odRequest, odResponse);
+    	oDataException = e;
     }
+    ContentType contentType = ContentType.JSON;
+    try {
+      contentType = ContentNegotiator.doContentNegotiation(formatOption, 
+          odRequest, this.customContentSupport, RepresentationType.ERROR);
+    } catch (ContentNegotiatorException e) {
+      // ignore, default to JSON
+    }
+    handleException(oDataException, contentType, odRequest, odResponse);
   }
   
   protected void handleException(ODataException e, ContentType contentType,
