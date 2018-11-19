@@ -41,6 +41,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -439,7 +440,9 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         .build();
     final ODataEntityUpdateRequest<ClientEntity> request = getClient().getCUDRequestFactory().getEntityUpdateRequest(
         uri, UpdateType.REPLACE, newEntity);
+    HttpUriRequest req = request.getHttpRequest();
     final ODataEntityUpdateResponse<ClientEntity> response = request.execute();
+    assertNotNull(req);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     // Check that the updated properties have changed and that other properties have their default values.

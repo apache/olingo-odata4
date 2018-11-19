@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -39,6 +40,13 @@ public interface ODataRequest {
    * @return OData request target URI.
    */
   URI getURI();
+  
+  /**
+   * Returns Http request Object.
+   *
+   * @return HttpUriRequest.
+   */
+  HttpUriRequest getHttpRequest();
 
   /**
    * Sets OData request target URI.
