@@ -84,6 +84,7 @@ import org.apache.olingo.server.api.processor.ReferenceProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.debug.ServerCoreDebugger;
+import org.apache.olingo.server.tecsvc.processor.TechnicalActionProcessor;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
@@ -375,6 +376,29 @@ public class ODataHandlerImplTest {
         new ODataHandlerImpl(odata, serviceMetadata, new ServerCoreDebugger(odata)).process(request);
     assertNotNull(response);
     assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
+  }
+  
+  @Test
+  public void handlerExtTest() throws Exception {
+    final OData odata = OData.newInstance();
+    final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
+        new CsdlAbstractEdmProvider() {
+          @Override
+          public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+              throws ODataException {
+            throw new ODataException("msg");
+          }
+        },
+        Collections.<EdmxReference> emptyList());
+
+    ODataRequest request = new ODataRequest();
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("EdmException");
+    ODataHandlerImpl handler =  new ODataHandlerImpl(odata, serviceMetadata, new ServerCoreDebugger(odata));
+    Processor extension =  new TechnicalActionProcessor(null, serviceMetadata);
+    handler.register(extension);
+    assertNull(handler.getLastThrownException());
+    assertNull(handler.getUriInfo());
   }
 
   @Test

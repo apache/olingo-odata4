@@ -141,6 +141,18 @@ private EdmEnabledODataClient getEdmEnabledClient1() {
   }
   
   @Test
+  public void testClientEntitySet() throws Exception {
+    final EdmEnabledODataClientImpl client = new EdmEnabledODataClientImpl(null, 
+        getEdmEnabledClient1().getCachedEdm(), null);
+    assertNotNull(client);
+    assertNull(client.getServiceRoot());
+    client.newURIBuilder();
+    assertNotNull(client.getCachedEdm());
+    assertNotNull(client.getEdm(null));
+    assertNotNull(client.getInvokeRequestFactory());
+  }
+  
+  @Test
   public void testContainmentNavOnSingleton() throws Exception {
     final InputStream input = getClass().getResourceAsStream("containmentNav4." + 
   getSuffix(ContentType.JSON_FULL_METADATA));

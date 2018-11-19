@@ -20,6 +20,9 @@ package org.apache.olingo.server.core;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
@@ -36,7 +39,9 @@ public class ODataImplTest {
     assertNotNull(odata.createSerializer(ContentType.JSON));
     assertNotNull(odata.createSerializer(ContentType.APPLICATION_JSON));
     assertNotNull(odata.createSerializer(ContentType.JSON_FULL_METADATA));
-    
+    List<String> versions = new ArrayList<String>();
+    versions.add("4.01");
+    assertNotNull(odata.createSerializer(ContentType.JSON_FULL_METADATA, versions));
   }
 
   @Test
@@ -45,6 +50,9 @@ public class ODataImplTest {
     assertNotNull(odata.createDeserializer(ContentType.JSON));
     assertNotNull(odata.createDeserializer(ContentType.JSON_FULL_METADATA));
     assertNotNull(odata.createDeserializer(ContentType.APPLICATION_JSON));
+    List<String> versions = new ArrayList<String>();
+    versions.add("4.01");
+    assertNotNull(odata.createDeserializer(ContentType.APPLICATION_JSON, versions));
   }
 
   public void xmlDeserializer() throws DeserializerException {

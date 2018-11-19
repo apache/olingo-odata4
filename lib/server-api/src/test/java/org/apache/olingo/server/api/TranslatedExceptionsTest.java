@@ -25,6 +25,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Locale;
 
+import javax.management.RuntimeErrorException;
+
 import org.apache.olingo.server.api.ODataLibraryException.ODataErrorMessage;
 import org.junit.Test;
 
@@ -158,5 +160,19 @@ public class TranslatedExceptionsTest {
     assertNotNull(translatedMessage);
     assertEquals(expectedText, translatedMessage.getMessage());
     assertEquals(expectedLocale, translatedMessage.getLocale());
+  }
+  
+  @Test
+  public void testODataApplicationException1() {
+    ODataApplicationException exp = new ODataApplicationException("Exception", 500,
+        Locale.ENGLISH, new RuntimeException("Error"));
+    assertNotNull(exp);
+  }
+  
+  @Test
+  public void testODataApplicationException2() {
+    ODataApplicationException exp = new ODataApplicationException("Exception", 
+        500, Locale.ENGLISH, new RuntimeException("Error"), "500");
+    assertNotNull(exp);
   }
 }

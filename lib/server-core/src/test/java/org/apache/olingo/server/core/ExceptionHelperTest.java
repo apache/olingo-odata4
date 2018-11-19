@@ -21,6 +21,8 @@ package org.apache.olingo.server.core;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Locale;
+
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataLibraryException;
 import org.apache.olingo.server.api.ODataLibraryException.MessageKey;
@@ -28,6 +30,8 @@ import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.etag.PreconditionException;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.junit.Test;
 
@@ -133,6 +137,36 @@ public class ExceptionHelperTest {
     }
   }
 
+  @Test
+  public void withNotImplementedException() {
+    final UriParserSemanticException  e = new UriParserSemanticException("Exception", 
+        UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, "Method");
+    ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, Locale.ENGLISH);
+    assertEquals(HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), serverError.getStatusCode());
+    assertEquals("'Method' is not implemented!", serverError.getMessage());
+    assertEquals(e, serverError.getException());
+  }
+  
+  @Test
+  public void uriParserException() {
+    final UriParserException  e = new UriParserSemanticException("Exception", 
+        UriParserSemanticException.MessageKeys.NOT_IMPLEMENTED, "Method");
+    ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, Locale.ENGLISH);
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), serverError.getStatusCode());
+    assertEquals("'Method' is not implemented!", serverError.getMessage());
+    assertEquals(e, serverError.getException());
+  }
+  
+  @Test
+  public void acceptHeaderException() {
+    final AcceptHeaderContentNegotiatorException   e = new AcceptHeaderContentNegotiatorException ("Exception", 
+        UriParserSemanticException.MessageKeys.INVALID_KEY_VALUE, "Method");
+    ODataServerError serverError = ODataExceptionHelper.createServerErrorObject(e, Locale.ENGLISH);
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), serverError.getStatusCode());
+    assertEquals("Missing message for key 'INVALID_KEY_VALUE'!", serverError.getMessage());
+    assertEquals(e, serverError.getException());
+  }
+  
   private void checkStatusCode(final ODataServerError serverError, final HttpStatusCode statusCode,
       final ODataLibraryException exception) {
     assertEquals("FailedKey: " + exception.getMessageKey().getKey(),

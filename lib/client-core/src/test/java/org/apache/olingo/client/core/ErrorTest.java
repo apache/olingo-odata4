@@ -36,6 +36,7 @@ import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
@@ -111,6 +112,18 @@ public class ErrorTest extends AbstractTest {
         
     ODataServerErrorException exp = (ODataServerErrorException) ODataErrorResponseChecker.
         checkResponse(odataClient, statusLine, entity, "Json");
+    assertTrue(exp.getMessage().startsWith("Internal Server Error"));
+  }
+  
+  @Test
+  public void testWithNull() throws Exception {
+    ODataClient odataClient = ODataClientFactory.getClient();
+    StatusLine statusLine = mock(StatusLine.class);
+    when(statusLine.getStatusCode()).thenReturn(500);
+    when(statusLine.toString()).thenReturn("Internal Server Error");
+        
+    ODataRuntimeException exp = ODataErrorResponseChecker.
+        checkResponse(odataClient, statusLine, null, "Json");
     assertTrue(exp.getMessage().startsWith("Internal Server Error"));
   }
 }
