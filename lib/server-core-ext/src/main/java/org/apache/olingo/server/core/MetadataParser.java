@@ -288,7 +288,7 @@ public class MetadataParser {
     }
   }
   
-  private void loadCoreVocabulary(SchemaBasedEdmProvider provider,
+  public void loadCoreVocabulary(SchemaBasedEdmProvider provider,
       String namespace) throws XMLStreamException {
     if("Org.OData.Core.V1".equalsIgnoreCase(namespace)) {
       loadLocalVocabularySchema(provider, "Org.OData.Core.V1", "Org.OData.Core.V1.xml");
@@ -296,6 +296,8 @@ public class MetadataParser {
       loadLocalVocabularySchema(provider, "Org.OData.Capabilities.V1", "Org.OData.Capabilities.V1.xml");
     } else if ("Org.OData.Measures.V1".equalsIgnoreCase(namespace)) {
       loadLocalVocabularySchema(provider, "Org.OData.Measures.V1", "Org.OData.Measures.V1.xml");
+    } else {
+    	throw new XMLStreamException("Unknown namespace to load vocabulary");
     }
   }
 
