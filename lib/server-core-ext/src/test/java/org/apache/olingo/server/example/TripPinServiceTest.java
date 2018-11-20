@@ -63,6 +63,7 @@ public class TripPinServiceTest {
   private static String baseURL;
   private static DefaultHttpClient http = new DefaultHttpClient();
   private static final int TOMCAT_PORT = 9900;
+  private static final String CRLF = "\r\n";
 
   @BeforeClass
   public static void beforeTest() throws Exception {
@@ -808,4 +809,29 @@ public class TripPinServiceTest {
     HttpResponse response = httpSend(request, 412);
     EntityUtils.consumeQuietly(response.getEntity());
   }  
+  
+  @Test
+  public void batchAccept() throws Exception {
+  	final String batchtUrl = baseURL + "/$batch";
+  	
+  	final String content = ""
+        + "--batch_12345" + CRLF
+        + "Content-Type: application/http" + CRLF
+        + "Content-Transfer-Encoding: binary" + CRLF
+        + CRLF
+        + "GET Airlines('FM') HTTP/1.1" + CRLF
+        + CRLF
+        + CRLF
+        + "--batch_12345--";
+  	
+    HttpPost request = new HttpPost(batchtUrl);
+    StringEntity stringEntity = new StringEntity(content);
+    stringEntity.setContentType("multipart/mixed;boundary=batch_12345");
+    request.setEntity(stringEntity);
+    // multipart/mixed should work as an Accept value
+    request.setHeader("Accept", "multipart/mixed");
+    HttpResponse response = httpSend(request, 202);
+    EntityUtils.consumeQuietly(response.getEntity());
+  }
+  
 }
