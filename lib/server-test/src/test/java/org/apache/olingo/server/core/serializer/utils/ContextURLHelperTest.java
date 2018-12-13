@@ -178,7 +178,8 @@ public class ContextURLHelperTest {
     final ExpandOption expand = ExpandSelectMock.mockExpandOption(Arrays.asList(expandItem));
     final ContextURL contextURL = ContextURL.with().entitySet(entitySet)
         .selectList(ContextURLHelper.buildSelectList(entitySet.getEntityType(), expand, null)).build();
-    assertEquals("$metadata#ESTwoPrim", ContextURLBuilder.create(contextURL).toASCIIString());
+    assertEquals("$metadata#ESTwoPrim(NavPropertyETAllPrimOne(),NavPropertyETAllPrimMany())", 
+        ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
   @Test

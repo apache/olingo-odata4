@@ -1924,6 +1924,7 @@ public class DataCreator {
      final EntityCollection entityCollection = data.get("ESKeyNavCont");
      final List<Entity> targetEntities = data.get("ETCont").getEntities();
      final List<Entity> etBaseContEntities = data.get("ETBaseCont").getEntities();
+     final List<Entity> etTwoKeyNav = data.get("ESTwoKeyNav").getEntities();
      
      setLinks(entityCollection.getEntities().get(1), "NavPropertyETContMany", targetEntities.get(1),
          targetEntities.get(2));
@@ -1932,6 +1933,11 @@ public class DataCreator {
      
      setLinks(entityCollection.getEntities().get(2), "NavPropertyETBaseContMany", etBaseContEntities.get(1),
          etBaseContEntities.get(2));
+
+     setLinks(entityCollection.getEntities().get(4), "NavPropertyETTwoKeyNavMany", etTwoKeyNav.get(0),
+         etTwoKeyNav.get(2));
+     
+     setLinkForContNav(entityCollection.getEntities().get(4), "NavPropertyETTwoKeyNavOne", etTwoKeyNav.get(0));
    }
    
    protected static void setLinkForContNav(final Entity entity, 
@@ -2131,6 +2137,12 @@ public class DataCreator {
     entityCollection.getEntities().add(new Entity()
         .addProperty(createPrimitive("PropertyInt16", Short.MAX_VALUE))
         .addProperty(createPrimitive("PropertyString", "Test String4"))
+        .addProperty(createComplex("PropertyCompNavCont",
+            ComplexTypeProvider.nameCTNavCont.getFullQualifiedNameAsString())));
+    
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 1))
+        .addProperty(createPrimitive("PropertyString", "Test String1"))
         .addProperty(createComplex("PropertyCompNavCont",
             ComplexTypeProvider.nameCTNavCont.getFullQualifiedNameAsString())));
 

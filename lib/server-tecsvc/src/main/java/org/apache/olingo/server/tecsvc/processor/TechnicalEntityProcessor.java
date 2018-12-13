@@ -711,7 +711,7 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       response.setHeader(HttpHeader.PREFERENCE_APPLIED,
           PreferencesApplied.with().trackChanges().build().toValueString());
     }  
-    if(delta!=null){
+    if(delta!=null && request.getHeaders(HttpHeader.ODATA_MAX_VERSION) != null){
       response.setHeader(HttpHeader.ODATA_VERSION,request.getHeaders(HttpHeader.ODATA_MAX_VERSION).get(0));
     }
   }

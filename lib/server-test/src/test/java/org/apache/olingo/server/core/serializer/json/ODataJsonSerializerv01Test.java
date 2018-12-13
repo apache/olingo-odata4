@@ -18,9 +18,6 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -52,15 +49,15 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.edm.geo.Point;
-import org.apache.olingo.commons.api.edm.geo.Polygon;
-import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.geo.Geospatial.Dimension;
 import org.apache.olingo.commons.api.edm.geo.GeospatialCollection;
 import org.apache.olingo.commons.api.edm.geo.LineString;
 import org.apache.olingo.commons.api.edm.geo.MultiLineString;
 import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
+import org.apache.olingo.commons.api.edm.geo.Point;
+import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
@@ -1538,7 +1535,8 @@ public class ODataJsonSerializerv01Test {
                 .select(select)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@context\":\"$metadata#ESAllPrim(PropertyInt16,PropertySByte)/$entity\","
+        + "\"@context\":\"$metadata#ESAllPrim(PropertyInt16,PropertySByte,"
+        + "NavPropertyETTwoPrimOne(),NavPropertyETTwoPrimMany())/$entity\","
         + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@id\":\"ESAllPrim(32767)\",\"PropertyInt16\":32767,"
         + "\"PropertySByte\":127,"
@@ -1567,7 +1565,8 @@ public class ODataJsonSerializerv01Test {
                 .select(select)
                 .build()).getContent());
     Assert.assertEquals("{"
-        + "\"@context\":\"$metadata#ESAllPrim(PropertyInt16,PropertyTimeOfDay)/$entity\","
+        + "\"@context\":\"$metadata#ESAllPrim(PropertyInt16,PropertyTimeOfDay,"
+        + "NavPropertyETTwoPrimOne(),NavPropertyETTwoPrimMany())/$entity\","
         + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"@id\":\"ESAllPrim(-32768)\",\"PropertyInt16\":-32768,"
         + "\"PropertyTimeOfDay\":\"23:49:14\","
@@ -1600,7 +1599,8 @@ public class ODataJsonSerializerv01Test {
                 .build()).getContent());
     Assert.assertEquals("{"
         + "\"@context\":\"$metadata#ESTwoPrim(PropertyInt16,"
-        + "NavPropertyETAllPrimMany(PropertyInt16,PropertyInt32))/$entity\","
+        + "NavPropertyETAllPrimMany(PropertyInt16,PropertyInt32,"
+        + "NavPropertyETTwoPrimOne(),NavPropertyETTwoPrimMany()))/$entity\","
         + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
         + "\"NavPropertyETAllPrimMany\":["
@@ -1638,7 +1638,8 @@ public class ODataJsonSerializerv01Test {
                     .suffix(Suffix.ENTITY).build())
                 .expand(expand)
                 .build()).getContent());
-    Assert.assertEquals("{\"@context\":\"$metadata#ESTwoPrim(PropertyInt16)/$entity\","
+    Assert.assertEquals("{\"@context\":\"$metadata#ESTwoPrim(PropertyInt16,"
+        + "NavPropertyETAllPrimOne(),NavPropertyETAllPrimMany())/$entity\","
         + "\"@metadataEtag\":\"W/\\\"metadataETag\\\"\","
         + "\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\","
         + "\"NavPropertyETAllPrimOne\":null,"
@@ -1717,19 +1718,24 @@ public class ODataJsonSerializerv01Test {
         resultString);
   } 
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void primitivePropertyNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     final EdmProperty edmProperty = (EdmProperty) edmEntitySet.getEntityType().getProperty("PropertyString");
     final Property property = new Property("Edm.String", edmProperty.getName(), ValueType.PRIMITIVE, null);
-    serializer.primitive(metadata, (EdmPrimitiveType) edmProperty.getType(), property,
+    final String resultString = IOUtils
+        .toString(serializer.primitive(metadata, (EdmPrimitiveType) edmProperty.getType(), property,
         PrimitiveSerializerOptions.with()
             .contextURL(ContextURL.with()
                 .entitySet(edmEntitySet).keyPath("4242").navOrPropertyPath(edmProperty.getName())
                 .build())
-            .build());
+            .build()).getContent());
+    Assert.assertEquals(
+        "{\"@context\":\"../$metadata#ESAllPrim(4242)/PropertyString\","
+            +"\"@metadataEtag\":\"W/\\\"metadataETag\\\"\",\"value\":null}",
+        resultString);
   }
-
+  
   @Test
   public void primitiveCollectionProperty() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCollAllPrim");

@@ -1131,7 +1131,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
       writeOperations(property.getOperations(), json);
-      if (property.isNull()) {
+      if (property.isNull() && options!=null && options.isNullable() != null && !options.isNullable()) {
         throw new SerializerException("Property value can not be null.", SerializerException.MessageKeys.NULL_INPUT);
       } else {
         json.writeFieldName(Constants.VALUE);

@@ -67,6 +67,8 @@ public final class ContextURLHelper {
 
     if (ExpandSelectHelper.hasExpand(expand) && !(null != ExpandSelectHelper.getExpandAll(expand))) {
       handleExpand(type, expand, result);
+    }else if(expand != null && null != ExpandSelectHelper.getExpandAll(expand)){
+      handleExpandAll(type, expand, result);
     }
     return result.length() == 0 ? null : result.toString();
   }
@@ -267,6 +269,8 @@ public final class ContextURLHelper {
     final Set<String> expandedPropertyNames = ExpandSelectHelper.getExpandedPropertyNames(expand.getExpandItems());
     for (final String propertyName : type.getNavigationPropertyNames()) {
       if (expandedPropertyNames.contains(propertyName)) {
+
+
         final ExpandItem expandItem = ExpandSelectHelper.getExpandItem(expand.getExpandItems(), propertyName);
         if (ExpandSelectHelper.hasExpand(expandItem.getExpandOption())
             && !(null != ExpandSelectHelper.getExpandAll(expandItem.getExpandOption()))
@@ -290,14 +294,28 @@ public final class ContextURLHelper {
             result.append(Encoder.encode(propertyName));
             result.append("/").append(propertyPath);
           } else {
-            if (result.length() > 0) {
-              result.append(',');
-            }
-            result.append(Encoder.encode(propertyName) + "()");
+            appendExpandedProperty(result, propertyName);
           }
         }
+      
+      
       }
     }
+  }
+  
+  private static void handleExpandAll(final EdmStructuredType type,
+      final ExpandOption expand, final StringBuilder result) throws SerializerException {
+    for (final String propertyName : type.getNavigationPropertyNames()) {
+      appendExpandedProperty(result, propertyName);
+    }
+  }
+
+  private static void appendExpandedProperty(StringBuilder result, String propertyName)
+      throws SerializerException {
+    if (result.length() > 0) {
+      result.append(',');
+    }
+    result.append(Encoder.encode(propertyName) + "()");
   }
 
   private static List<String> getPropertyPath(final List<UriResource> path) {

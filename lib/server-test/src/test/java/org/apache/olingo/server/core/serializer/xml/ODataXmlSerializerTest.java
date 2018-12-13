@@ -2145,7 +2145,8 @@ public class ODataXmlSerializerTest {
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\"\n" +
         "  xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESAllPrim(PropertyInt16,PropertySByte)/$entity\"\n" +
+        + "m:context=\"$metadata#ESAllPrim(PropertyInt16,PropertySByte,"+
+        "NavPropertyETTwoPrimOne(),NavPropertyETTwoPrimMany())/$entity\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(32767)</a:id>\n" +
         "  <a:title />\n" +
@@ -2290,7 +2291,8 @@ public class ODataXmlSerializerTest {
         "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
-        + "m:context=\"$metadata#ESAllPrim(PropertyInt16,PropertyTimeOfDay)/$entity\"\n" +
+        + "m:context=\"$metadata#ESAllPrim(PropertyInt16,PropertyTimeOfDay,"+
+        "NavPropertyETTwoPrimOne(),NavPropertyETTwoPrimMany())/$entity\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESAllPrim(-32768)</a:id>\n" +
         "  <a:title />\n" +
@@ -2360,7 +2362,8 @@ public class ODataXmlSerializerTest {
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" +
         "  xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\"\n" +
         "  m:context=\"$metadata#ESTwoPrim(PropertyInt16,"
-        + "NavPropertyETAllPrimMany(PropertyInt16,PropertyInt32))/$entity\"\n" +
+        + "NavPropertyETAllPrimMany(PropertyInt16,PropertyInt32,"+
+        "NavPropertyETTwoPrimOne(),NavPropertyETTwoPrimMany()))/$entity\"\n" +
         "  m:metadata-etag=\"metadataETag\">\n" +
         "  <a:id>ESTwoPrim(-365)</a:id>\n" +
         "  <a:title />\n" +

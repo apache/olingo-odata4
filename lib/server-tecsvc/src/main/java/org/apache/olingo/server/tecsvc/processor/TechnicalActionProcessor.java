@@ -296,7 +296,8 @@ public class TechnicalActionProcessor extends TechnicalProcessor
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       final EdmPrimitiveType type = (EdmPrimitiveType) action.getReturnType().getType();
-      final ContextURL contextURL = ContextURL.with().type(type).asCollection().build();
+      final ContextURL contextURL = ContextURL.with().type(type).navOrPropertyPath(action.getName())
+          .asCollection().build();
       final PrimitiveSerializerOptions options = PrimitiveSerializerOptions.with().contextURL(contextURL).build();
       final SerializerResult result =
           odata.createSerializer(responseFormat).primitiveCollection(serviceMetadata, type, property, options);
