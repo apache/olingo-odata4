@@ -144,9 +144,9 @@ public class JsonDeltaSerializerTest {
        final String expectedResult = "{"
            +"\"@odata.context\":\"$metadata#ESDelta/$delta\",\"value\":[{"
            + "\"@odata.context\":\"#ESDelta(100)/$deletedEntity\","
-           + "\"@odata.id\":\"ESDelta(100)\",\"reason\":\"deleted\"},{"
+           + "\"id\":\"ESDelta(100)\",\"reason\":\"deleted\"},{"
            + "\"@odata.context\":\"#ESDelta(-32768)/$deletedEntity\","
-           + "\"@odata.id\":\"ESDelta(-32768)\",\"reason\":\"changed\"}]"
+           + "\"id\":\"ESDelta(-32768)\",\"reason\":\"changed\"}]"
            + "}";
        Assert.assertNotNull(jsonString);
        Assert.assertEquals(expectedResult, jsonString);
@@ -231,8 +231,8 @@ public class JsonDeltaSerializerTest {
          + "\"@odata.id\":\"ESDelta(32767)\",\"PropertyInt16\":32767,"
          + "\"PropertyString\":\"Number:32767\"},{\"@odata.id\":\"ESDelta(-32768)\","
          + "\"PropertyString\":\"Number:-32768\"},{\"@odata.context\":\"#ESDelta(100)/$deletedEntity\","
-         + "\"@odata.id\":\"ESDelta(100)\",\"reason\":\"deleted\"},"
-         + "{\"@odata.context\":\"#ESDelta(-32768)/$deletedEntity\",\"@odata.id\":\"ESDelta(-32768)\","
+         + "\"id\":\"ESDelta(100)\",\"reason\":\"deleted\"},"
+         + "{\"@odata.context\":\"#ESDelta(-32768)/$deletedEntity\",\"id\":\"ESDelta(-32768)\","
          + "\"reason\":\"changed\"},{\"@odata.context\":\"#ESDelta/$link\",\"source\":\"ESDelta(100)\","
          + "\"relationship\":\"NavPropertyETAllPrimOne\",\"target\":\"ESAllPrim(0)\"},{\"@odata.context\":"
          + "\"#ESDelta/$deletedLink\",\"source\":\"ESDelta(100)\",\"relationship\":\"NavPropertyETAllPrimOne\","

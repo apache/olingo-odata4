@@ -191,7 +191,7 @@ public class JsonDeltaSerializer implements EdmDeltaSerializer {
     }
     json.writeStartObject();
     json.writeStringField(Constants.JSON_CONTEXT, HASH + deletedEntity.getId().toASCIIString() + DELETEDENTITY);
-    json.writeStringField(Constants.JSON_ID, deletedEntity.getId().toASCIIString());
+    json.writeStringField(Constants.ATOM_ATTR_ID, deletedEntity.getId().toASCIIString());
     json.writeStringField(Constants.ELEM_REASON, deletedEntity.getReason().name());
     json.writeEndObject();
 

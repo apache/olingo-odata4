@@ -333,4 +333,5 @@ public interface Constants {
   String REMOVED = "removed";
   String ENTITY = "/$entity";
   String REASON = "Reason";
+  String ID = "@id";
 }

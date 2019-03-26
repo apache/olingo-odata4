@@ -225,7 +225,7 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
         json.writeStringField(property.getName(), property.getValue().toString());
       }
     }
-    json.writeStringField(Constants.AT + Constants.ATOM_ATTR_ID, deletedEntity.getId().toASCIIString());
+    json.writeStringField(Constants.ID,  deletedEntity.getId().toASCIIString());
     json.writeEndObject();
 
   }
