@@ -101,6 +101,8 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Batch info (if to be batched).
    */
   protected ODataBatchController batchInfo = null;
+  
+  private byte[] inputContent = null;
 
   public AbstractODataResponse(
       final ODataClient odataClient, final HttpClient httpclient, final HttpResponse res) {
@@ -149,6 +151,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   public final ODataResponse initFromHttpResponse(final HttpResponse res) {
     try {
       this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
+      this.inputContent = null;
     } catch (final IllegalStateException e) {
       HttpClientUtils.closeQuietly(res);
       LOG.error("Error retrieving payload", e);
@@ -252,6 +255,9 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
   @Override
   public InputStream getRawResponse() {
+
+
+    InputStream inputStream = null;
     if (HttpStatus.SC_NO_CONTENT == getStatusCode()) {
       throw new NoContentException();
     }
@@ -279,8 +285,21 @@ public abstract class AbstractODataResponse implements ODataResponse {
         LOG.error("Error streaming payload response", e);
         throw new IllegalStateException(e);
       }
+    } else if (payload != null) {
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      try {
+        org.apache.commons.io.IOUtils.copy(payload, byteArrayOutputStream);
+       if(inputContent == null){
+         inputContent  = byteArrayOutputStream.toByteArray();
+       }
+        inputStream = new ByteArrayInputStream(inputContent);
+        return inputStream;
+      } catch (IOException e) {
+        HttpClientUtils.closeQuietly(res);
+        LOG.error("Error retrieving payload", e);
+        throw new ODataRuntimeException(e);
+      }
     }
-
     return payload;
   }
 }

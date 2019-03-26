@@ -31,6 +31,7 @@ import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,6 +42,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
@@ -303,8 +305,8 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         getEntitySetRequest(uriBuilder.build());
 
     final ODataRetrieveResponse<ClientEntitySet> res = req.execute();
+    assertNotNull(res.getRawResponse());
     final ClientEntitySet feed = res.getBody();
-
     assertNotNull(feed);
 
     assertEquals(10, feed.getEntities().size());
@@ -364,7 +366,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     assertContentType(response.getContentType());
-
+    assertNotNull(response.getRawResponse());
     final ClientEntity entity = response.getBody();
     assertNotNull(entity);
     final ClientProperty property = entity.getProperty("CollPropertyInt16");
@@ -377,6 +379,30 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertShortOrInt(30112, iterator.next().asPrimitive().toValue());
   }
 
+  @Test
+  public void readEntityProperty() throws Exception {
+    ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
+        .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1)
+            .appendPropertySegment("CollPropertyInt16").build());
+    assertNotNull(request);
+    setCookieHeader(request);
+
+    final ODataRetrieveResponse<ClientProperty> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertContentType(response.getContentType());
+    assertNotNull(response.getRawResponse());
+    final ClientProperty property = response.getBody();
+    assertNotNull(property);
+    assertNotNull(property.getCollectionValue());
+    assertEquals(3, property.getCollectionValue().size());
+    Iterator<ClientValue> iterator = property.getCollectionValue().iterator();
+    assertShortOrInt(1000, iterator.next().asPrimitive().toValue());
+    assertShortOrInt(2000, iterator.next().asPrimitive().toValue());
+    assertShortOrInt(30112, iterator.next().asPrimitive().toValue());
+  }
+  
   @Test
   public void deleteEntity() throws Exception {
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(32767)
@@ -431,6 +457,64 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertEquals(isJson() ? "PT6S" : BigDecimal.valueOf(6), property4.getPrimitiveValue().toValue());
   }
 
+
+  @Test
+  public void readUpdatepdateEntity() throws Exception {
+    
+    EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
+    assertNotNull(request);
+    setCookieHeader(request);    
+    
+    ODataRetrieveResponse<Edm> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+
+    Edm edm = response.getBody();
+    assertNotNull(edm);
+    
+    final EdmEntityContainer container = edm.getEntityContainer(
+        new FullQualifiedName("olingo.odata.test1", "Container"));
+    assertNotNull(container);
+    
+    final EdmEntitySet esAllPrim = container.getEntitySet("ESAllPrim");
+    assertNotNull(esAllPrim);
+    assertEquals("olingo.odata.test1", esAllPrim.getEntityType().getNamespace());
+    
+    assertEquals(2, edm.getSchemas().size());
+    assertEquals(SERVICE_NAMESPACE, edm.getSchema(SERVICE_NAMESPACE).getNamespace());
+    assertEquals("Namespace1_Alias", edm.getSchema(SERVICE_NAMESPACE).getAlias());
+    assertEquals("Org.OData.Core.V1", edm.getSchema("Org.OData.Core.V1").getNamespace());
+    assertEquals("Core", edm.getSchema("Org.OData.Core.V1").getAlias());
+    
+    ClientEntity newEntity = getFactory().newEntity(ET_ALL_PRIM);
+    newEntity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
+        getFactory().newPrimitiveValueBuilder().buildInt64((long) 42)));
+
+    final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(32767)
+        .build();
+    final ODataEntityUpdateRequest<ClientEntity> request2 = getClient().getCUDRequestFactory().getEntityUpdateRequest(
+        uri, UpdateType.REPLACE, newEntity);
+    HttpUriRequest req = request2.getHttpRequest();
+    final ODataEntityUpdateResponse<ClientEntity> response2 = request2.execute();
+    assertNotNull(req);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response2.getStatusCode());
+
+    // Check that the updated properties have changed and that other properties have their default values.
+ 
+    StringWriter writer = new StringWriter();
+    InputStream stream = response2.getRawResponse();
+    IOUtils.copy(stream, writer);
+    assertNotNull(writer.toString());  
+    final ClientEntity entity = response2.getBody();
+    assertNotNull(entity);
+    final ClientProperty property1 = entity.getProperty(PROPERTY_INT64);
+    assertNotNull(property1);
+    assertShortOrInt(42, property1.getPrimitiveValue().toValue());
+    final ClientProperty property2 = entity.getProperty(PROPERTY_DECIMAL);
+    assertNotNull(property2);
+    assertNull(property2.getPrimitiveValue().toValue());
+  }
+  
   @Test
   public void updateEntity() throws Exception {
     ClientEntity newEntity = getFactory().newEntity(ET_ALL_PRIM);
