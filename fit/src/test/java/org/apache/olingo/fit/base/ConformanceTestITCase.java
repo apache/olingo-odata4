@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 
+import org.apache.olingo.client.api.communication.request.AsyncRequestFactory;
 import org.apache.olingo.client.api.communication.request.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataDeltaRequest;
@@ -41,8 +42,8 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.Test;
 
 /**
@@ -163,6 +164,48 @@ public class ConformanceTestITCase extends AbstractTestITCase {
     assertTrue(property.hasComplexValue());
   }
 
+  
+  /**
+   * 10. MAY support deleted entities, link entities, deleted link entities in a delta response for asynch req.
+   */
+  @Test
+  public void itemAsynch10() {
+
+    final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
+        client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
+    req.setPrefer(client.newPreferences().trackChanges());
+ 
+    final ClientEntitySet customers = req.execute().getBody();
+    assertNotNull(customers);
+    assertNotNull(customers.getDeltaLink());
+ 
+    final ODataDeltaRequest deltaReq = client.getRetrieveRequestFactory().getDeltaRequest(customers.getDeltaLink());
+    
+    AsyncRequestFactory asyncRequestFactory = client.getAsyncRequestFactory();
+    AsyncRequestWrapper<ODataRetrieveResponse<ClientDelta>> asyncRequestWrapper =
+            asyncRequestFactory
+                    .<ODataRetrieveResponse<ClientDelta>>getAsyncRequestWrapper(deltaReq);
+    
+    AsyncResponseWrapper<ODataRetrieveResponse<ClientDelta>> responseWrapper =
+            asyncRequestWrapper
+                    .execute();
+    if (responseWrapper.isPreferenceApplied()) {
+        int waitInSec = 5;
+        while (!responseWrapper.isDone()) {
+            try {
+                Thread.sleep(waitInSec);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+    boolean done = responseWrapper.isDone();
+    ODataRetrieveResponse<ClientDelta> res = responseWrapper.getODataResponse();
+    ClientDelta delta = res.getBody(); // NPE !!!
+    assertNotNull(delta);
+  }
+  
   /**
    * 11. MAY support asynchronous responses (section 9.1.3).
    */

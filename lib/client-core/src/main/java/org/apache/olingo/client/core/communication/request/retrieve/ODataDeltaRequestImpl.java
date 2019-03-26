@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 import org.apache.http.HttpResponse;
@@ -27,6 +29,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataDeltaReq
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientDelta;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -63,12 +66,20 @@ public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ClientDe
     public ClientDelta getBody() {
       if (delta == null) {
         try {
+          InputStream content;
+          if(res == null){
+            content = payload;
+          }else{
+            content = res.getEntity().getContent();
+          }
           final ResWrap<Delta> resource = odataClient.getDeserializer(ContentType.parse(getContentType())).
-              toDelta(getRawResponse());
+              toDelta(content);
 
           delta = odataClient.getBinder().getODataDelta(resource);
         } catch (final ODataDeserializerException e) {
           throw new IllegalArgumentException(e);
+        } catch (IOException e) {
+          throw new HttpClientException(e);
         } finally {
           this.close();
         }
