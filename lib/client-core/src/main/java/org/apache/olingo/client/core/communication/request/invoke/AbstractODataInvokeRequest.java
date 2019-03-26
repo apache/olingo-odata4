@@ -112,7 +112,7 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
   protected abstract ContentType getPOSTParameterFormat();
 
   @Override
-  protected InputStream getPayload() {
+  public InputStream getPayload() {
     if (!this.parameters.isEmpty() && this.method == HttpMethod.POST) {
       // Additional, non-binding parameters MUST be sent as JSON
       final ClientEntity tmp = odataClient.getObjectFactory().newEntity(null);

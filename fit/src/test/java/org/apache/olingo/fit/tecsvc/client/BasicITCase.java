@@ -84,6 +84,7 @@ import org.apache.olingo.client.api.uri.FilterFactory;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.client.core.ODataClientFactory;
+import org.apache.olingo.client.core.communication.request.AbstractODataBasicRequest;
 import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
@@ -538,7 +539,8 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         newEntity);
     assertNotNull(createRequest);
     final ODataEntityCreateResponse<ClientEntity> createResponse = createRequest.execute();
-
+    assertNotNull(createRequest.getHttpRequest());
+    assertNotNull(((AbstractODataBasicRequest)createRequest).getPayload());
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), createResponse.getStatusCode());
     assertEquals(SERVICE_URI + ES_ALL_PRIM + "(1)", createResponse.getHeader(HttpHeader.LOCATION).iterator().next());
     final ClientEntity createdEntity = createResponse.getBody();

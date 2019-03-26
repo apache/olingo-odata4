@@ -71,7 +71,7 @@ public class ODataEntityCreateRequestImpl<E extends ClientEntity>
   }
 
   @Override
-  protected InputStream getPayload() {
+  public InputStream getPayload() {
     try {
       return odataClient.getWriter().writeEntity(entity, ContentType.parse(getContentType()));
     } catch (final ODataSerializerException e) {

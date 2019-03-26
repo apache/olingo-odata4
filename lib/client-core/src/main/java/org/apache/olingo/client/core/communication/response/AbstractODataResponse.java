@@ -256,7 +256,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
       throw new NoContentException();
     }
 
-    if (payload == null && batchInfo.isValidBatch()) {
+    if (payload == null && batchInfo != null && batchInfo.isValidBatch()) {
       // get input stream till the end of item
       payload = new PipedInputStream();
 

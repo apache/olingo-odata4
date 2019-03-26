@@ -81,7 +81,7 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
    *
    * @return InputStream for entire payload.
    */
-  protected abstract InputStream getPayload();
+  public abstract InputStream getPayload();
 
   /**
    * Serializes the full request into the given batch request.

@@ -85,7 +85,7 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
    * {@inheritDoc }
    */
   @Override
-  protected InputStream getPayload() {
+  public InputStream getPayload() {
     return IOUtils.toInputStream(value.toString());
   }
 

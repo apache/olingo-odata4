@@ -54,7 +54,7 @@ public abstract class AbstractODataRetrieveRequest<T>
    * This kind of request doesn't have any payload: null will be returned.
    */
   @Override
-  protected InputStream getPayload() {
+  public InputStream getPayload() {
     return null;
   }
 

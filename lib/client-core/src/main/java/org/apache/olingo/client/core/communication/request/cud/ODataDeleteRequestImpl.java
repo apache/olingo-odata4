@@ -50,7 +50,7 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
    * No payload: null will be returned.
    */
   @Override
-  protected InputStream getPayload() {
+  public InputStream getPayload() {
     return null;
   }
 
