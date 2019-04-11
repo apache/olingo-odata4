@@ -34,14 +34,7 @@ import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
-import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
-import org.apache.olingo.server.api.uri.queryoption.expression.Member;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -70,6 +63,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
   private static final String MEMBER_NAME = "member";
   private static final String VALUE_NAME = "value";
   private static final String LITERAL_NAME = "literal";
+  private static final String LITERAL_LIST_NAME = "literals";
   private static final String EXPRESSION_NAME = "expression";
   private static final String LAMBDA_VARIABLE_NAME = "lambdaVariable";
   private static final String LAMBDA_FUNCTION_NAME = "lambdaFunction";
@@ -249,6 +243,14 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
       }
     }
     return result;
+  }
+
+  @Override
+  public JsonNode visitLiteralList(LiteralList literalList) throws ExpressionVisitException, ODataApplicationException {
+    return nodeFactory.objectNode()
+            .put(NODE_TYPE_NAME, LITERAL_LIST_NAME)
+            .put(TYPE_NAME, getTypeString(literalList.getType()))
+            .put(VALUE_NAME, literalList.getText().toString());
   }
 
   private String getType(final UnaryOperatorKind operator) {

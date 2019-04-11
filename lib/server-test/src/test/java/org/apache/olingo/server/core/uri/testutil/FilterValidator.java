@@ -68,6 +68,10 @@ public class FilterValidator implements TestValidator {
   private Expression curExpression;
   private Expression rootExpression;
 
+  public FilterOption getFilter() {
+    return filter;
+  }
+
   // --- Setup ---
   public FilterValidator setValidator(final TestValidator uriValidator) {
     invokedByValidator = uriValidator;

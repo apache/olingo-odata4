@@ -121,6 +121,7 @@ public class UriTokenizer {
     AndOperator,
     EqualsOperator,
     NotEqualsOperator,
+    InOperator,
     GreaterThanOperator,
     GreaterThanOrEqualsOperator,
     LessThanOperator,
@@ -491,6 +492,9 @@ public class UriTokenizer {
       break;
     case NotEqualsOperator:
       found = nextBinaryOperator("ne");
+      break;
+    case InOperator:
+      found = nextBinaryOperator("in");
       break;
     case GreaterThanOperator:
       found = nextBinaryOperator("gt");
@@ -945,7 +949,7 @@ public class UriTokenizer {
 
   /**
    * Moves past a decimal value with a fractional part if found; otherwise leaves the index unchanged.
-   * Whole numbers must be found with {@link #nextIntegerValue()}.
+   * Whole numbers must be found with {@link #nextIntegerValue(boolean signed)}.
    */
   private boolean nextDecimalValue() {
     final int lastGoodIndex = index;
@@ -961,7 +965,7 @@ public class UriTokenizer {
    * Moves past a floating-point-number value with an exponential part
    * or one of the special constants "NaN", "-INF", and "INF"
    * if found; otherwise leaves the index unchanged.
-   * Whole numbers must be found with {@link #nextIntegerValue()}.
+   * Whole numbers must be found with {@link #nextIntegerValue(boolean signed)}.
    * Decimal numbers must be found with {@link #nextDecimalValue()}.
    */
   private boolean nextDoubleValue() {
@@ -1253,7 +1257,7 @@ public class UriTokenizer {
 
   private boolean nextGeoLineString(final boolean isGeography) {
     return nextGeoPrefix(isGeography) && nextCharacter('\'')
-        && nextSrid() && nextCharacter(';') && nextLineString() 
+        && nextSrid() && nextCharacter(';') && nextLineString()
         && nextCharacter('\'');
   }
 
@@ -1288,7 +1292,7 @@ public class UriTokenizer {
 
   private boolean nextGeoPolygon(final boolean isGeography) {
     return nextGeoPrefix(isGeography) && nextCharacter('\'')
-        && nextSrid() && nextCharacter(';') && nextPolygon() 
+        && nextSrid() && nextCharacter(';') && nextPolygon()
         && nextCharacter('\'');
   }
 

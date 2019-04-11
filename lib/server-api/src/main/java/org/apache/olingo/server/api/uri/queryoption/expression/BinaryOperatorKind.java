@@ -92,13 +92,18 @@ public enum BinaryOperatorKind {
   /**
    * Or operator
    */
-  OR("or");
+  OR("or"),
+
+  /**
+   * In operator
+   */
+  IN("in");
 
   private String syntax;
 
   /**
    * Constructor for enumeration value
-   * @param Syntax used in the URI
+   * @param syntax used in the URI
    */
   private BinaryOperatorKind(final String syntax) {
     this.syntax = syntax;

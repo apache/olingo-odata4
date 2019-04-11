@@ -159,6 +159,42 @@ public class LexerTest {
   }
 
   @Test
+  public void testIn() {
+
+    test.run("name in ('Lyndon','Mike')")
+            .has(TokenKind.ODataIdentifier)
+            .isText("name");
+    test.run("name in ('Lyndon','Mike')")
+            .has(TokenKind.ODataIdentifier, TokenKind.InOperator)
+            .isText(" in ");
+
+    test.run("name in ('Lyndon','Mike')")
+            .has(TokenKind.ODataIdentifier, TokenKind.InOperator, TokenKind.OPEN)
+            .isText("(");
+
+    test.run("name in ('Lyndon','Mike')")
+            .has(TokenKind.ODataIdentifier, TokenKind.InOperator, TokenKind.OPEN,
+                    TokenKind.StringValue)
+            .isText("'Lyndon'");
+
+    test.run("name in ('Lyndon','Mike')")
+            .has(TokenKind.ODataIdentifier, TokenKind.InOperator, TokenKind.OPEN,
+                    TokenKind.StringValue, TokenKind.COMMA)
+            .isText(",");
+
+    test.run("name in ('Lyndon','Mike')")
+            .has(TokenKind.ODataIdentifier, TokenKind.InOperator, TokenKind.OPEN,
+                    TokenKind.StringValue, TokenKind.COMMA, TokenKind.StringValue)
+            .isText("'Mike'");
+
+    test.run("name in ('Lyndon','Mike')")
+            .has(TokenKind.ODataIdentifier, TokenKind.InOperator, TokenKind.OPEN,
+                    TokenKind.StringValue, TokenKind.COMMA, TokenKind.StringValue,
+                    TokenKind.CLOSE)
+            .isText(")");
+  }
+
+  @Test
   public void literalDataValues() {
     // null
     test.run("null").has(TokenKind.NULL).isInput();

@@ -28,14 +28,7 @@ import org.apache.olingo.server.api.uri.UriResourceLambdaAll;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
-import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
-import org.apache.olingo.server.api.uri.queryoption.expression.Member;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.*;
 
 public class FilterTreeToText implements ExpressionVisitor<String> {
 
@@ -150,4 +143,28 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
     return "<" + type.getFullQualifiedName().getFullQualifiedNameAsString() + "<" + tmp + ">>";
   }
 
+  @Override
+  public String visitLiteralList(LiteralList literalList) throws ExpressionVisitException, ODataApplicationException {
+    List<String> texts = literalList.getText();
+    if (texts != null) {
+      StringBuffer sb = new StringBuffer();
+
+      int eleNums = texts.size();
+
+      sb.append("<(");
+      for (int i = 0; i < texts.size(); i++) {
+        String comma = ",";
+        if (i == eleNums-1) {
+          comma = "";
+        }
+        sb.append(texts.get(i));
+        sb.append(comma);
+      }
+      sb.append(")>");
+
+      return sb.toString();
+    }
+
+    return null;
+  }
 }

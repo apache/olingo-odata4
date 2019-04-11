@@ -77,7 +77,9 @@ public class UriParserSemanticException extends UriParserException {
     FUNCTION_MUST_USE_COLLECTIONS,
     COLLECTION_NOT_ALLOWED,
     /** parameter: not implemented part for system query option $id */
-    NOT_IMPLEMENTED_SYSTEM_QUERY_OPTION;
+    NOT_IMPLEMENTED_SYSTEM_QUERY_OPTION,
+    /** IN 字句的值类型不匹配 */
+    INCONSISTENT_VALUE_TYPE_AFTER_IN_SENTENCE;
 
     @Override
     public String getKey() {
