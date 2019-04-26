@@ -18,17 +18,19 @@
  */
 package org.apache.olingo.client.core;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.HttpUriRequestFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpUriRequestFactory;
 import org.apache.olingo.commons.api.format.ContentType;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class ConfigurationImpl implements Configuration {
 
@@ -60,7 +62,18 @@ public class ConfigurationImpl implements Configuration {
 
   private final Map<String, Object> CONF = new HashMap<String, Object>();
 
-  private transient ExecutorService executor = Executors.newFixedThreadPool(10);
+  private transient ExecutorService executor = createExecutor(10);
+
+  private ExecutorService createExecutor(final int threads) {
+    final ThreadPoolExecutor tp = new ThreadPoolExecutor(
+        threads,
+        threads,
+        5L,
+        TimeUnit.MILLISECONDS,
+        new LinkedBlockingQueue<Runnable>());
+    tp.allowCoreThreadTimeOut(true);
+    return tp;
+  }
 
   /**
    * Gets given configuration property.
