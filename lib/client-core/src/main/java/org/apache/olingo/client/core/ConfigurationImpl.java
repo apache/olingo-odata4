@@ -60,6 +60,8 @@ public class ConfigurationImpl implements Configuration {
 
   private static final String CONTINUE_ON_ERROR = "continueOnError";
 
+  public static final int DEFAULT_BUFFER_SIZE = 4 * 1024 * 1024;  // 4MB
+
   private final Map<String, Object> CONF = new HashMap<String, Object>();
 
   private transient ExecutorService executor = createExecutor(10);

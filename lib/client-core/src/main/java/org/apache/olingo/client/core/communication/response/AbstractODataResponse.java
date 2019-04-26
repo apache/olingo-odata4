@@ -22,8 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,6 +38,9 @@ import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.NoContentException;
+import org.apache.olingo.client.core.ConfigurationImpl;
+import org.apache.olingo.client.core.communication.util.PipedInputStream;
+import org.apache.olingo.client.core.communication.util.PipedOutputStream;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
@@ -264,10 +265,11 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
     if (payload == null && batchInfo != null && batchInfo.isValidBatch()) {
       // get input stream till the end of item
-      payload = new PipedInputStream();
+      payload = new PipedInputStream(null);
 
       try {
-        final PipedOutputStream os = new PipedOutputStream((PipedInputStream) payload);
+        final PipedOutputStream os = new PipedOutputStream((PipedInputStream) payload,
+                ConfigurationImpl.DEFAULT_BUFFER_SIZE);
 
         new Thread(new Runnable() {
           @Override
@@ -281,7 +283,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
             }
           }
         }).start();
-      } catch (IOException e) {
+      } catch (Exception e) {
         LOG.error("Error streaming payload response", e);
         throw new IllegalStateException(e);
       }

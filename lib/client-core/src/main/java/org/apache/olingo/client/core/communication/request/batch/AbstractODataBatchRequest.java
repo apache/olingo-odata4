@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
-import java.io.PipedOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.core.communication.util.PipedOutputStream;
 import org.apache.olingo.client.core.communication.request.streamed.AbstractODataStreamedRequest;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
@@ -71,7 +71,7 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
   }
 
   public PipedOutputStream getOutputStream() {
-    return getPayloadManager().getBodyStreamWriter();
+    return (PipedOutputStream) getPayloadManager().getBodyStreamWriter();
   }
 
   /**
