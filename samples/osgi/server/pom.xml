@@ -100,6 +100,7 @@ under the License.
             </Export-Package>
             <Import-Package>
               org.apache.olingo.server.api*,
+              org.apache.olingo.netty.server.api*,
               org.apache.catalina;resolution:=optional,
               org.apache.catalina.comet;resolution:=optional,
               org.eclipse.jetty.continuation;resolution:=optional,

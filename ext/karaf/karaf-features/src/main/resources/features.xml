@@ -23,8 +23,15 @@
     <bundle>mvn:commons-codec/commons-codec/${commons.codec.version}</bundle>
     <bundle>mvn:org.apache.commons/commons-lang3/${commons.lang3.version}</bundle>
     <bundle>mvn:org.codehaus.woodstox/stax2-api/${woodstox.stax2-api.version}</bundle>
-    <bundle>mvn:com.fasterxml/aalto-xml/${aalto-xml.version}</bundle>
+    <bundle>mvn:io.netty/netty-common/${netty.version}</bundle>
+    <bundle>mvn:io.netty/netty-buffer/${netty.version}</bundle>
+    <bundle>mvn:io.netty/netty-resolver/${netty.version}</bundle>
+    <bundle>mvn:io.netty/netty-transport/${netty.version}</bundle>
+    <bundle>mvn:io.netty/netty-codec/${netty.version}</bundle>
+    <bundle>mvn:io.netty/netty-handler/${netty.version}</bundle>
+    <bundle>mvn:io.netty/netty-codec-http/${netty.version}</bundle>
 
+    <bundle>mvn:com.fasterxml/aalto-xml/${aalto-xml.version}</bundle>
     <bundle>mvn:com.fasterxml.jackson.core/jackson-core/${jackson.version}</bundle>
     <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson.version}</bundle>
     <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson.version}</bundle>
