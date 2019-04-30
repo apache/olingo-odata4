@@ -118,9 +118,9 @@ public class MetadataDocumentXmlSerializerTest {
     ServiceMetadata metadata = mock(ServiceMetadata.class);
     when(metadata.getEdm()).thenReturn(edm);
 
-    assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"
-        + "<edmx:DataServices/></edmx:Edmx>",
+        + "<edmx:DataServices></edmx:DataServices></edmx:Edmx>",
         IOUtils.toString(serializer.metadataDocument(metadata).getContent()));
   }
 
@@ -136,10 +136,10 @@ public class MetadataDocumentXmlSerializerTest {
 
     InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
     assertNotNull(metadata);
-    assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"
         + "<edmx:DataServices>"
-        + "<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" Namespace=\"MyNamespace\"/>"
+        + "<Schema xmlns=\"http://docs.oasis-open.org/odata/ns/edm\" Namespace=\"MyNamespace\"></Schema>"
         + "</edmx:DataServices>"
         + "</edmx:Edmx>",
         IOUtils.toString(metadata));
@@ -262,41 +262,44 @@ public class MetadataDocumentXmlSerializerTest {
     final String metadataString = IOUtils.toString(metadata);
     // edmx reference
     assertTrue(metadataString.contains(
-        "<edmx:Reference Uri=\"http://example.com\"/>"));
+        "<edmx:Reference Uri=\"http://example.com\"></edmx:Reference>"));
     assertTrue(metadataString.contains(
         "<edmx:Reference " +
             "Uri=\"http://localhost/odata/odata/v4.0/referenceWithInclude\">" +
-            "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" +
+            "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"></edmx:Include>" +
         "</edmx:Reference>"));
     assertTrue(metadataString.contains(
         "<edmx:Reference " +
             "Uri=\"http://localhost/odata/odata/v4.0/referenceWithTwoIncludes\">" +
-            "<edmx:Include Namespace=\"Org.OData.Core.2\" Alias=\"Core2\"/>" +
-            "<edmx:Include Namespace=\"Org.OData.Core.3\" Alias=\"Core3\"/>" +
+            "<edmx:Include Namespace=\"Org.OData.Core.2\" Alias=\"Core2\"></edmx:Include>" +
+            "<edmx:Include Namespace=\"Org.OData.Core.3\" Alias=\"Core3\"></edmx:Include>" +
         "</edmx:Reference>"));
     assertTrue(metadataString.contains(
         "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithIncludeAnnos\">" +
-            "<edmx:IncludeAnnotations TermNamespace=\"TermNs.2\" Qualifier=\"Q.2\" TargetNamespace=\"TargetNS.2\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"TermNs.3\" Qualifier=\"Q.3\" TargetNamespace=\"TargetNS.3\"/>" +
+            "<edmx:IncludeAnnotations TermNamespace=\"TermNs.2\" Qualifier=\"Q.2\" "
+            + "TargetNamespace=\"TargetNS.2\"></edmx:IncludeAnnotations>" +
+            "<edmx:IncludeAnnotations TermNamespace=\"TermNs.3\" Qualifier=\"Q.3\" "
+            + "TargetNamespace=\"TargetNS.3\"></edmx:IncludeAnnotations>" +
         "</edmx:Reference>"));
     assertTrue(metadataString.contains(
-        "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAll\">" +
-            "<edmx:Include Namespace=\"ReferenceWithAll.1\" Alias=\"Core1\"/>" +
-            "<edmx:Include Namespace=\"ReferenceWithAll.2\" Alias=\"Core2\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\" " +
-            "Qualifier=\"Q.4\" TargetNamespace=\"TargetNS.4\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.5\" " +
-            "Qualifier=\"Q.5\" TargetNamespace=\"TargetNS.5\"/>" +
-        "</edmx:Reference>"));
+            "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAll\">" +
+                "<edmx:Include Namespace=\"ReferenceWithAll.1\" Alias=\"Core1\"></edmx:Include>" +
+                "<edmx:Include Namespace=\"ReferenceWithAll.2\" Alias=\"Core2\"></edmx:Include>" +
+                "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\" " +
+                "Qualifier=\"Q.4\" TargetNamespace=\"TargetNS.4\"></edmx:IncludeAnnotations>" +
+                "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.5\" " +
+                "Qualifier=\"Q.5\" TargetNamespace=\"TargetNS.5\"></edmx:IncludeAnnotations>" +
+            "</edmx:Reference>"));
     assertTrue(metadataString.contains(
         "<edmx:Reference Uri=\"http://localhost/odata/odata/v4.0/referenceWithAllAndNull\">" +
-            "<edmx:Include Namespace=\"referenceWithAllAndNull.1\"/>" +
-            "<edmx:Include Namespace=\"referenceWithAllAndNull.2\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.5\" Qualifier=\"Q.5\"/>" +
+            "<edmx:Include Namespace=\"referenceWithAllAndNull.1\"></edmx:Include>" +
+            "<edmx:Include Namespace=\"referenceWithAllAndNull.2\"></edmx:Include>" +
+            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermNs.4\"></edmx:IncludeAnnotations>" +
+            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.5\" " +
+            "Qualifier=\"Q.5\"></edmx:IncludeAnnotations>" +
             "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.6\" " +
-            "TargetNamespace=\"TargetNS\"/>" +
-            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.7\"/>" +
+            "TargetNamespace=\"TargetNS\"></edmx:IncludeAnnotations>" +
+            "<edmx:IncludeAnnotations TermNamespace=\"ReferenceWithAllTermAndNullNs.7\"></edmx:IncludeAnnotations>" +
         "</edmx:Reference>"));
   }
 
@@ -306,24 +309,25 @@ public class MetadataDocumentXmlSerializerTest {
 
     assertTrue(metadata.contains("<EnumType Name=\"ENString\" IsFlags=\"true\" UnderlyingType=\"Edm.Int16\">"));
     assertTrue(metadata.contains("<EntityType Name=\"ETAbstractBase\" BaseType=\"Alias.ETAbstract\">"));
-    assertTrue(metadata.contains("<ComplexType Name=\"CTTwoPrimBase\" BaseType=\"Alias.CTTwoPrim\"/>"));
-    assertTrue(metadata.contains("<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"));
-    assertTrue(metadata.contains("<EntitySet Name=\"ESAllPrim\" EntityType=\"Alias.ETAbstractBase\"/>"));
-    assertTrue(metadata.contains("<Singleton Name=\"SI\" Type=\"Alias.ETAbstractBase\"/>"));
-    assertTrue(metadata.contains("<ActionImport Name=\"AIRTPrimParam\" Action=\"Alias.UARTPrimParam\"/>"));
+    assertTrue(metadata.contains("<ComplexType Name=\"CTTwoPrimBase\" BaseType=\"Alias.CTTwoPrim\"></ComplexType>"));
+    assertTrue(metadata.contains("<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\" Nullable=\"false\"></Property>"));
+    assertTrue(metadata.contains("<EntitySet Name=\"ESAllPrim\" EntityType=\"Alias.ETAbstractBase\"></EntitySet>"));
+    assertTrue(metadata.contains("<Singleton Name=\"SI\" Type=\"Alias.ETAbstractBase\"></Singleton>"));
+    assertTrue(metadata.contains("<ActionImport Name=\"AIRTPrimParam\" Action=\"Alias.UARTPrimParam\"></ActionImport"));
     assertTrue(metadata.contains("<FunctionImport Name=\"FINRTInt16\" " +
-        "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"/>"));
+        "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"></FunctionImport>"));
   }
 
   @Test
   public void terms() throws Exception {
     String metadata = localMetadata();
-    assertTrue(metadata.contains("<Term Name=\"Term1\" Type=\"Edm.String\"/>"));
+    assertTrue(metadata.contains("<Term Name=\"Term1\" Type=\"Edm.String\"></Term>"));
     assertTrue(metadata
         .contains("<Term Name=\"Term2\" Type=\"Edm.String\" Nullable=\"false\" DefaultValue=\"default\" "
-            + "MaxLength=\"1\" Precision=\"2\" Scale=\"3\"/>"));
-    assertTrue(metadata.contains("<Term Name=\"Term3\" Type=\"Edm.String\" AppliesTo=\"Property EntitySet Schema\"/>"));
-    assertTrue(metadata.contains("<Term Name=\"Term4\" Type=\"Edm.String\" BaseTerm=\"Alias.Term1\"/>"));
+            + "MaxLength=\"1\" Precision=\"2\" Scale=\"3\"></Term>"));
+    assertTrue(metadata.contains("<Term Name=\"Term3\" Type=\"Edm.String\" "
+    		+ "AppliesTo=\"Property EntitySet Schema\"></Term>"));
+    assertTrue(metadata.contains("<Term Name=\"Term4\" Type=\"Edm.String\" BaseTerm=\"Alias.Term1\"></Term>"));
   }
 
   @Test
@@ -351,44 +355,55 @@ public class MetadataDocumentXmlSerializerTest {
 
     // All dynamic expressions
     // Logical expressions
-    assertTrue(metadata.contains("<And><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></And>"));
-    assertTrue(metadata.contains("<Or><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Or>"));
-    assertTrue(metadata.contains("<Not><Bool>true</Bool><Annotation Term=\"ns.term\"/></Not>"));
+    assertTrue(metadata.contains("<And><Bool>true</Bool><Bool>false</Bool>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></And>"));
+    assertTrue(metadata.contains("<Or><Bool>true</Bool><Bool>false</Bool>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></Or>"));
+    assertTrue(metadata.contains("<Not><Bool>true</Bool><Annotation Term=\"ns.term\"></Annotation></Not>"));
 
     // Comparison expressions
-    assertTrue(metadata.contains("<Eq><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Eq>"));
-    assertTrue(metadata.contains("<Ne><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Ne>"));
-    assertTrue(metadata.contains("<Gt><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Gt>"));
-    assertTrue(metadata.contains("<Ge><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Ge>"));
-    assertTrue(metadata.contains("<Lt><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Lt>"));
-    assertTrue(metadata.contains("<Le><Bool>true</Bool><Bool>false</Bool><Annotation Term=\"ns.term\"/></Le>"));
+    assertTrue(metadata.contains("<Eq><Bool>true</Bool><Bool>false</Bool>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></Eq>"));
+    assertTrue(metadata.contains("<Ne><Bool>true</Bool><Bool>false</Bool>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></Ne>"));
+    assertTrue(metadata.contains("<Gt><Bool>true</Bool><Bool>false</Bool>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></Gt>"));
+    assertTrue(metadata.contains("<Ge><Bool>true</Bool><Bool>false</Bool>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></Ge>"));
+    assertTrue(metadata.contains("<Lt><Bool>true</Bool><Bool>false</Bool>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></Lt>"));
+    assertTrue(metadata.contains("<Le><Bool>true</Bool><Bool>false</Bool>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></Le>"));
 
     // Other
     assertTrue(metadata.contains("<AnnotationPath>AnnoPathValue</AnnotationPath>"));
     assertTrue(metadata
-        .contains("<Apply Function=\"odata.concat\"><Bool>true</Bool><Annotation Term=\"ns.term\"/></Apply>"));
+        .contains("<Apply Function=\"odata.concat\"><Bool>true</Bool>"
+        		+ "<Annotation Term=\"ns.term\"></Annotation></Apply>"));
     assertTrue(metadata
         .contains("<Cast Type=\"Edm.String\" MaxLength=\"1\" Precision=\"2\" Scale=\"3\">"
-            + "<String>value</String><Annotation Term=\"ns.term\"/></Cast>"));
+            + "<String>value</String><Annotation Term=\"ns.term\"></Annotation></Cast>"));
     assertTrue(metadata.contains("<Collection><Bool>true</Bool>"
         + "<Bool>false</Bool><String>String</String></Collection>"));
     assertTrue(metadata
         .contains("<If><Bool>true</Bool><String>Then</String>"
-            + "<String>Else</String><Annotation Term=\"ns.term\"/></If>"));
+            + "<String>Else</String><Annotation Term=\"ns.term\"></Annotation></If>"));
     assertTrue(metadata
         .contains("<IsOf Type=\"Edm.String\" MaxLength=\"1\" Precision=\"2\" Scale=\"3\">"
-            + "<String>value</String><Annotation Term=\"ns.term\"/></IsOf>"));
+            + "<String>value</String><Annotation Term=\"ns.term\"></Annotation></IsOf>"));
     assertTrue(metadata
         .contains("<LabeledElement Name=\"NameAtt\">"
-            + "<String>value</String><Annotation Term=\"ns.term\"/></LabeledElement>"));
+            + "<String>value</String><Annotation Term=\"ns.term\"></Annotation></LabeledElement>"));
     assertTrue(metadata.contains("<LabeledElementReference>LabeledElementReferenceValue</LabeledElementReference>"));
     assertTrue(metadata.contains("<NavigationPropertyPath>NavigationPropertyPathValue</NavigationPropertyPath>"));
     assertTrue(metadata.contains("<Path>PathValue</Path>"));
     assertTrue(metadata.contains("<PropertyPath>PropertyPathValue</PropertyPath>"));
     assertTrue(metadata
         .contains("<Record Type=\"Alias.ETAbstract\"><PropertyValue Property=\"PropName\"><String>value</String>"
-            + "<Annotation Term=\"ns.term\"/></PropertyValue><Annotation Term=\"ns.term\"/></Record>"));
-    assertTrue(metadata.contains("<UrlRef><String>URLRefValue</String><Annotation Term=\"ns.term\"/></UrlRef>"));
+            + "<Annotation Term=\"ns.term\"></Annotation></PropertyValue>"
+            + "<Annotation Term=\"ns.term\"></Annotation></Record>"));
+    assertTrue(metadata.contains("<UrlRef><String>URLRefValue</String>"
+    		+ "<Annotation Term=\"ns.term\"></Annotation></UrlRef>"));
 
   }
 
@@ -451,8 +466,8 @@ public class MetadataDocumentXmlSerializerTest {
     InputStream metadataStream = serializer.metadataDocument(serviceMetadata).getContent();
     String metadata = IOUtils.toString(metadataStream);
     assertTrue(metadata.contains("<ComplexType Name=\"ComplexType\" Abstract=\"true\" OpenType=\"true\">"
-        + "<Property Name=\"prop1\" Type=\"Edm.String\"/>"
-        + "<Property Name=\"prop2\" Type=\"Edm.String\"/>"
+        + "<Property Name=\"prop1\" Type=\"Edm.String\"></Property>"
+        + "<Property Name=\"prop2\" Type=\"Edm.String\"></Property>"
         + "</ComplexType>"));
   }
 

@@ -125,10 +125,11 @@ public class TripPinServiceTest {
         "<m:properties>"
         +     "<d:AirlineCode>FM</d:AirlineCode>"
         +     "<d:Name>Shanghai xxxAirlinexxx</d:Name>" 
-        +     "<d:Picture m:null=\"true\"/>" 
+        +     "<d:Picture m:null=\"true\"></d:Picture>" 
         +  "</m:properties>"  
         + "</a:content>"  
         +"</a:entry>";
+    System.out.println(actual);
     assertTrue(actual.endsWith(expected));
   }
 
