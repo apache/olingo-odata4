@@ -437,7 +437,7 @@ public class ODataXmlSerializerTest {
             .count(countOption)
             .build()).getContent();
     final String resultString = IOUtils.toString(result);
-    String prefix = "<?xml version='1.0' encoding='UTF-8'?>"
+    String prefix = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<a:feed xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
@@ -445,9 +445,9 @@ public class ODataXmlSerializerTest {
         + "m:metadata-etag=\"metadataETag\">"
         + "<a:id>http://host/svc/ESCompAllPrim</a:id>"
         + "<m:count>4</m:count>"
-        + "<a:link rel=\"next\" href=\"/next\"/>"
+        + "<a:link rel=\"next\" href=\"/next\"></a:link>"
         + "<a:entry m:etag=\"W/&quot;32767&quot;\">"
-        + "<a:id>ESCompAllPrim(32767)</a:id><a:title/><a:summary/>";
+        + "<a:id>ESCompAllPrim(32767)</a:id><a:title></a:title><a:summary></a:summary>";
     Assert.assertTrue(resultString.startsWith(prefix));
   }
 
@@ -2643,7 +2643,7 @@ public class ODataXmlSerializerTest {
                     .build())
                 .build()).getContent());
 
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>"
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "m:context=\"../$metadata#ESAllPrim(32767)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\">"
@@ -2667,7 +2667,7 @@ public class ODataXmlSerializerTest {
                 .unicode(Boolean.TRUE)
                 .build()).getContent());
 
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>"
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "m:context=\"../$metadata#ESAllPrim(32767)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\">"
@@ -2687,11 +2687,11 @@ public class ODataXmlSerializerTest {
                 .entitySet(edmEntitySet).keyPath("4242").navOrPropertyPath(edmProperty.getName())
                 .build())
             .build()).getContent());
-    String expected = "<?xml version='1.0' encoding='UTF-8'?>"
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "m:context=\"../$metadata#ESAllPrim(4242)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\" "
-        + "m:null=\"true\"/>";
+        + "m:null=\"true\"></m:value>";
     Assert.assertEquals(expected, response);
   }
 
@@ -3319,7 +3319,7 @@ public class ODataXmlSerializerTest {
                     .navOrPropertyPath("CollPropertyComp")
                     .build()).select(selectOption)
                 .build()).getContent());
-    final String expectedResult = "<?xml version='1.0' encoding='UTF-8'?>"
+    final String expectedResult = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
         + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" xmlns:a=\"http://www.w3.org/2005/Atom\" "
         + "m:type=\"#Collection(olingo.odata.test1.CTPrimComp)\" "

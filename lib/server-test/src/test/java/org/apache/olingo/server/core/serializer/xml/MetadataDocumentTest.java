@@ -52,7 +52,7 @@ public class MetadataDocumentTest {
         odata.createSerializer(ContentType.APPLICATION_XML).metadataDocument(serviceMetadata).getContent());
     assertNotNull(metadata);
     assertThat(metadata, containsString("<edmx:Reference Uri=\"" + CORE_VOCABULARY + "\">"
-            + "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"/>" + "</edmx:Reference>"));
+            + "<edmx:Include Namespace=\"Org.OData.Core.V1\" Alias=\"Core\"></edmx:Include>" + "</edmx:Reference>"));
 
     assertThat(metadata,
         containsString("<edmx:Edmx Version=\"4.0\" xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\">"));
@@ -64,18 +64,20 @@ public class MetadataDocumentTest {
     assertThat(metadata,
         containsString("<EntityType Name=\"ETTwoPrim\">"
             + "<Key><PropertyRef Name=\"PropertyInt16\"/></Key>"
-            + "<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"
-            + "<Property Name=\"PropertyString\" Type=\"Edm.String\"/>"
-            + "<NavigationProperty Name=\"NavPropertyETAllPrimOne\" Type=\"Namespace1_Alias.ETAllPrim\"/>"
+            + "<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\" Nullable=\"false\"></Property>"
+            + "<Property Name=\"PropertyString\" Type=\"Edm.String\"></Property>"
+            + "<NavigationProperty Name=\"NavPropertyETAllPrimOne\" Type=\"Namespace1_Alias.ETAllPrim\">"
+            + "</NavigationProperty>"
             + "<NavigationProperty Name=\"NavPropertyETAllPrimMany\" "
-            + "Type=\"Collection(Namespace1_Alias.ETAllPrim)\"/>"
+            + "Type=\"Collection(Namespace1_Alias.ETAllPrim)\"></NavigationProperty>"
             + "</EntityType>"));
 
     assertThat(metadata,
         containsString("<EntityType Name=\"ETBase\" BaseType=\"Namespace1_Alias.ETTwoPrim\">"
-            + "<Property Name=\"AdditionalPropertyString_5\" Type=\"Edm.String\"/>"
+            + "<Property Name=\"AdditionalPropertyString_5\" Type=\"Edm.String\"></Property>"
             + "</EntityType>"));
 
+      System.out.println(metadata);
       assertThat(metadata, containsString("<EntitySet Name=\"ESAllPrim\" EntityType=\"Namespace1_Alias.ETAllPrim\">"
         + "<NavigationPropertyBinding Path=\"NavPropertyETTwoPrimOne\" Target=\"ESTwoPrim\"/>"
         + "<NavigationPropertyBinding Path=\"NavPropertyETTwoPrimMany\" Target=\"ESTwoPrim\"/>"
@@ -83,20 +85,20 @@ public class MetadataDocumentTest {
 
     assertThat(metadata,
         containsString("<ComplexType Name=\"CTPrim\">"
-            + "<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\"/></ComplexType>"));
+            + "<Property Name=\"PropertyInt16\" Type=\"Edm.Int16\"></Property></ComplexType>"));
 
     assertThat(metadata,
         containsString("<ComplexType Name=\"CTBase\" BaseType=\"Namespace1_Alias.CTTwoPrim\">"
-            + "<Property Name=\"AdditionalPropString\" Type=\"Edm.String\"/></ComplexType>"));
+            + "<Property Name=\"AdditionalPropString\" Type=\"Edm.String\"></Property></ComplexType>"));
 
     assertThat(metadata, containsString("<Action Name=\"UARTCTTwoPrimParam\" IsBound=\"false\">"
-        + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\" Nullable=\"false\"/>"
+        + "<Parameter Name=\"ParameterInt16\" Type=\"Edm.Int16\" Nullable=\"false\"></Parameter>"
         + "<ReturnType Type=\"Namespace1_Alias.CTTwoPrim\" Nullable=\"false\"/></Action>"));
     
     assertThat(metadata,
         containsString("<Action Name=\"BAESAllPrimRTETAllPrim\" IsBound=\"true\">"
             + "<Parameter Name=\"ParameterESAllPrim\" "
-            + "Type=\"Collection(Namespace1_Alias.ETAllPrim)\" Nullable=\"false\"/>"
+            + "Type=\"Collection(Namespace1_Alias.ETAllPrim)\" Nullable=\"false\"></Parameter>"
             + "<ReturnType Type=\"Namespace1_Alias.ETAllPrim\"/></Action>"));
 
     assertThat(metadata,
@@ -107,8 +109,9 @@ public class MetadataDocumentTest {
         containsString("<Function Name=\"BFC_RTESTwoKeyNav_\" "
             + "EntitySetPath=\"BindingParam/NavPropertyETTwoKeyNavMany\" IsBound=\"true\" IsComposable=\"true\">"
             + "<Parameter Name=\"BindingParam\" Type=\"Collection(Namespace1_Alias.ETTwoKeyNav)\" "
-            + "Nullable=\"false\"/>"
-            + "<ReturnType Type=\"Collection(Namespace1_Alias.ETTwoKeyNav)\" Nullable=\"false\"/></Function>"));
+            + "Nullable=\"false\"></Parameter>"
+            + "<ReturnType Type=\"Collection(Namespace1_Alias.ETTwoKeyNav)\" Nullable=\"false\"/>"
+            + "</Function>"));
 
     assertThat(metadata, containsString("<EntityContainer Name=\"Container\">"));
 
@@ -123,10 +126,12 @@ public class MetadataDocumentTest {
             + "</Singleton>"));
 
     assertThat(metadata,
-        containsString("<ActionImport Name=\"AIRTCTTwoPrimParam\" Action=\"Namespace1_Alias.UARTCTTwoPrimParam\"/>"));
+        containsString("<ActionImport Name=\"AIRTCTTwoPrimParam\" Action=\"Namespace1_Alias.UARTCTTwoPrimParam\">"
+        		+ "</ActionImport>"));
 
     assertThat(metadata,
-        containsString("<FunctionImport Name=\"FINInvisible2RTInt16\" Function=\"Namespace1_Alias.UFNRTInt16\"/>"));
+        containsString("<FunctionImport Name=\"FINInvisible2RTInt16\" Function=\"Namespace1_Alias.UFNRTInt16\">"
+        		+ "</FunctionImport"));
 
     assertThat(
         metadata,
@@ -140,8 +145,9 @@ public class MetadataDocumentTest {
 
     // TypeDefCheck
     assertThat(metadata,
-        containsString("<Property Name=\"PropertyDefString\" Type=\"Namespace1_Alias.TDString\"/>"));
+        containsString("<Property Name=\"PropertyDefString\" Type=\"Namespace1_Alias.TDString\"></Property>"));
     assertThat(metadata,
-        containsString("<Property Name=\"CollPropertyDefString\" Type=\"Collection(Namespace1_Alias.TDString)\"/>"));
+        containsString("<Property Name=\"CollPropertyDefString\" Type=\"Collection(Namespace1_Alias.TDString)\">"
+        		+ "</Property>"));
   }
 }

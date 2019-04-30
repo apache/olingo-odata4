@@ -63,7 +63,7 @@ public class ServiceDocumentXmlSerializerTest {
     ServiceMetadata metadata = mock(ServiceMetadata.class);
     when(metadata.getEdm()).thenReturn(edm);
 
-    assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<app:service xmlns:atom=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:app=\"http://www.w3.org/2007/app\" "
         + "xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\" "
@@ -80,7 +80,7 @@ public class ServiceDocumentXmlSerializerTest {
         Collections.<EdmxReference> emptyList(), null);
     InputStream metadataStream = serializer.serviceDocument(serviceMetadata, "http://host/svc").getContent();
     String metadata = IOUtils.toString(metadataStream);
-    assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<app:service xmlns:atom=\"http://www.w3.org/2005/Atom\" "
         + "xmlns:app=\"http://www.w3.org/2007/app\" "
         + "xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\" "
