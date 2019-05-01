@@ -36,6 +36,7 @@ public abstract class AbstractODataStreamer implements ODataStreamer {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractODataStreamer.class);
+  private static final byte[] CRLF = {13, 10};
 
   /**
    * OutputStream to be used to write objects to the stream.

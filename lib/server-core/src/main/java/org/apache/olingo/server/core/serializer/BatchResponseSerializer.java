@@ -198,7 +198,7 @@ public class BatchResponseSerializer {
 
     private void put(final byte[] b) {
       if (isClosed) {
-        throw new RuntimeException("BodyBuilder is closed.");
+        throw new ODataRuntimeException("BodyBuilder is closed.");
       }
       if (buffer.remaining() < b.length) {
         buffer.flip();

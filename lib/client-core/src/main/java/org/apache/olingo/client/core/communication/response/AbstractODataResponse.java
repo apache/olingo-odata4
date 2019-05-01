@@ -34,7 +34,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.NoContentException;
@@ -61,6 +60,8 @@ public abstract class AbstractODataResponse implements ODataResponse {
   protected static final Logger LOG = LoggerFactory.getLogger(ODataResponse.class);
 
   protected final ODataClient odataClient;
+
+  private static final byte[] CRLF = {13, 10};
 
   /**
    * HTTP client.
@@ -227,7 +228,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
       while (batchLineIterator.hasNext()) {
         bos.write(batchLineIterator.nextLine().getBytes(Constants.UTF8));
-        bos.write(ODataStreamer.CRLF);
+        bos.write(CRLF);
       }
 
       try {

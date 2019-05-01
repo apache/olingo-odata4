@@ -34,7 +34,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -47,6 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ODataBatchUtilities {
 
+  private static final byte[] CRLF = {13, 10};
   public static enum BatchItemType {
     NONE,
     CHANGESET,
@@ -139,7 +139,7 @@ public class ODataBatchUtilities {
 
             if (notEndLine && os != null && currentLine!=null) {
               os.write(currentLine.getBytes(Constants.UTF8));
-              os.write(ODataStreamer.CRLF);
+              os.write(CRLF);
             }
           }
 

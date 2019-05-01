@@ -56,6 +56,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    */
   protected ODataPayloadManager<V> payloadManager;
   private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  private static final byte[] CRLF = {13, 10};
 
   /**
    * Wrapper for actual streamed request's future. This holds information about the HTTP request / response currently
@@ -153,9 +154,9 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
       req.rawAppend(toByteArray());
       if (StringUtils.isNotBlank(contentId)) {
         req.rawAppend((ODataBatchConstants.CHANGESET_CONTENT_ID_NAME + ": " + contentId).getBytes(DEFAULT_CHARSET));
-        req.rawAppend(ODataStreamer.CRLF);
+        req.rawAppend(CRLF);
       }
-      req.rawAppend(ODataStreamer.CRLF);
+      req.rawAppend(CRLF);
 
       try {
         req.rawAppend(IOUtils.toByteArray(input));
