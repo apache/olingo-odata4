@@ -30,7 +30,7 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-ext</artifactId>
-    <version>4.6.0-RC01</version>
+    <version>4.6.0</version>
     <relativePath>..</relativePath>
   </parent>
 
