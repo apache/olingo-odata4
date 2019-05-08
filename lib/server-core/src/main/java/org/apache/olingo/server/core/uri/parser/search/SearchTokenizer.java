@@ -53,6 +53,9 @@ public class SearchTokenizer {
     protected static final char CHAR_R = 'R';
     protected static final char CHAR_CLOSE = ')';
     protected static final char CHAR_OPEN = '(';
+    protected static final char CHAR_COMMA = ',';
+    protected static final char CHAR_DOT = '.';
+    protected static final char CHAR_HYPEN = '-';
 
     public State() {}
 
@@ -120,7 +123,7 @@ public class SearchTokenizer {
     static boolean isAllowedWord(final char character) {
       return Character.isUnicodeIdentifierStart(character);
     }
-
+    
     /**
      * <code>
      * <b>searchPhrase</b> = quotation-mark 1*qchar-no-AMP-DQUOTE quotation-mark
@@ -317,6 +320,14 @@ public class SearchTokenizer {
     }
   }
 
+  /**
+   * 
+   * As per the updated abnf 
+   * https://github.com/oasis-tcs/odata-abnf/blob/master/abnf/odata-abnf-construction-rules.txt#L332-L356.
+   * searchWord   = 1*( ALPHA / DIGIT / COMMA / "." / "-" / pct-encoded )
+   * This includes Unicode characters of categories 
+   * L or N using UTF-8 and percent-encoding.
+   */
   private class SearchWordState extends LiteralState {
     public SearchWordState(final char c) throws SearchTokenizerException {
       super(Token.WORD, c);
@@ -336,7 +347,11 @@ public class SearchTokenizer {
 
     @Override
     public State nextChar(final char c) throws SearchTokenizerException {
-      if (isAllowedWord(c)) {
+      if (isAllowedWord(c) ||
+          ('0' <= c && c <= '9') ||
+          (c == CHAR_COMMA) ||
+          (c == CHAR_DOT) ||
+          (c == CHAR_HYPEN)) {
         return allowed(c);
       } else if (c == CHAR_CLOSE) {
         finish();
