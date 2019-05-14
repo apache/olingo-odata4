@@ -37,7 +37,7 @@ public class ClientEntitySetIteratorTest {
   
     @Test
     public void testGetEntitySetIterator1() throws IOException, URISyntaxException {
-        String str = "{ \"@odata.context\": \"http://bdh-df5.wdf.sap.corp:8080/CloudDataIntegration/providers"
+        String str = "{ \"@odata.context\": \"http://providers"
             + "/CLOUD_DATA_INTEGRATION_TEST%3ABUG_CURLY_BRACKETS/$metadata#BUG_CURLY_BRACKETSResult/$delta\", "
             + "\"value\": [ "
             + "{ \"@odata.id\": \"BUG_CURLY_BRACKETSResult(1)\", \"ID\": 1, \"TEXT\": \"ABC\", \"TEXT2\": \"DEF\" }, "
