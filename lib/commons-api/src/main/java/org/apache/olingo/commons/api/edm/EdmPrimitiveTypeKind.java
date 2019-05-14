@@ -18,6 +18,10 @@
  */
 package org.apache.olingo.commons.api.edm;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Enumeration of all primitive type kinds.
  */
@@ -56,6 +60,26 @@ public enum EdmPrimitiveTypeKind {
   GeometryMultiLineString,
   GeometryMultiPolygon,
   GeometryCollection;
+
+  private static Map<String, EdmPrimitiveTypeKind> VALUES_BY_NAME;
+
+  static {
+    Map<String, EdmPrimitiveTypeKind> valuesByName = new HashMap<java.lang.String, EdmPrimitiveTypeKind>();
+    for (EdmPrimitiveTypeKind value : values()) {
+      valuesByName.put(value.name(), value);
+    }
+    VALUES_BY_NAME = Collections.unmodifiableMap(valuesByName);
+  }
+
+  /**
+   * Get a type kind by name.
+   *
+   * @param name The name.
+   * @return The type kind or <tt>null</tt> if it does not exist.
+   */
+  public static EdmPrimitiveTypeKind getByName(String name) {
+    return VALUES_BY_NAME.get(name);
+  }
 
   /**
    * Checks if is a geospatial type.
