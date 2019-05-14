@@ -182,6 +182,8 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
       return methodCallOperation.floor();
     case CEILING:
       return methodCallOperation.ceiling();
+    case SUBSTRINGOF:
+      return methodCallOperation.substringof();
 
     default:
       return throwNotImplemented();

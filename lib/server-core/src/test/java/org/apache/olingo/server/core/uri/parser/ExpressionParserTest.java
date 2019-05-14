@@ -25,14 +25,30 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntityContainer;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
+import org.apache.olingo.commons.api.edm.EdmEntityType;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
+import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class ExpressionParserTest {
 
@@ -51,8 +67,27 @@ public class ExpressionParserTest {
     assertEquals("{null EQ null}", parseExpression("null eq null").toString());
 
     wrongExpression("5 eq '5'");
+    
   }
 
+  @Test
+  public void testIntegerTypes() throws Exception {
+    Expression expression = parseExpression("5 ne 545678979");
+    assertEquals("{5 NE 545678979}", expression.toString());
+    
+    expression = parseExpression("5456 eq 5456");
+    assertEquals("{5456 EQ 5456}", expression.toString());
+    
+    expression = parseExpression("null ne 54561234567");
+    assertEquals("{null NE 54561234567}", expression.toString());
+    
+    expression = parseExpression("null ne 255");
+    assertEquals("{null NE 255}", expression.toString());
+    
+    expression = parseExpression("123 le 2551234567890000999999");
+    assertEquals("{123 LE 2551234567890000999999}", expression.toString());
+  }
+  
   @Test
   public void relational() throws Exception {
     Expression expression = parseExpression("5 gt 5");
@@ -217,6 +252,12 @@ public class ExpressionParserTest {
     wrongExpression("endswith('a',1)");
     
     assertEquals("{concat ['a', 'b']}", parseExpression("concat( 'a' ,\t'b' )").toString());
+    
+    parseMethod(TokenKind.SubstringofMethod, "'a'", "'b'");
+    parseMethod(TokenKind.SubstringofMethod, "' '", "'b'");
+    parseMethod(TokenKind.SubstringofMethod, "' '", "' '");
+    parseMethod(TokenKind.SubstringofMethod, null, "'a'");
+    wrongExpression("substringof('a',1)");
 }
 
   @Test
@@ -237,6 +278,62 @@ public class ExpressionParserTest {
     wrongExpression("isof(Edm.Int16,2)");
     
     assertEquals("{cast [42, Edm.SByte]}", parseExpression("cast( 42\t, Edm.SByte        )").toString());
+  }
+
+  @Test
+  public void twoParameterAliasMethods() throws Exception {
+    parseMethodWithParametersWithAlias(TokenKind.SubstringofMethod, "'a'", "'b'");
+    parseMethodWithParametersWithoutAlias(TokenKind.SubstringofMethod, "'a'", "'b'");
+  }
+  
+  private void parseMethodWithParametersWithoutAlias(TokenKind kind, String... parameters) 
+      throws UriParserException, UriValidationException {
+    final String methodName = kind.name().substring(0, kind.name().indexOf("Method")).toLowerCase(Locale.ROOT)
+        .replace("geo", "geo.");
+    String expressionString = methodName + '(';
+    expressionString += "@word1";
+    expressionString += ',';
+    expressionString += parameters[1];
+    expressionString += ')';
+    expressionString += "&@word1=" + parameters[0];
+
+    Map<String, AliasQueryOption> alias = new HashMap<String, AliasQueryOption>();
+    AliasQueryOptionImpl aliasQueryOption = new AliasQueryOptionImpl();
+    aliasQueryOption.setName("@word");
+    aliasQueryOption.setText("\'a\'");
+    alias.put("@word", aliasQueryOption);
+    UriTokenizer tokenizer = new UriTokenizer(expressionString);
+    final Expression expression = new ExpressionParser(mock(Edm.class), odata).parse(tokenizer, null, null, alias);
+    assertNotNull(expression);
+    
+    assertEquals('{' + methodName + ' ' + "[@word1, " + parameters[1] + ']' + '}',
+        expression.toString());
+    
+  }
+
+  private void parseMethodWithParametersWithAlias(TokenKind kind, 
+      String... parameters) throws UriParserException, UriValidationException {
+    final String methodName = kind.name().substring(0, kind.name().indexOf("Method")).toLowerCase(Locale.ROOT)
+        .replace("geo", "geo.");
+    String expressionString = methodName + '(';
+    expressionString += "@word";
+    expressionString += ',';
+    expressionString += parameters[1];
+    expressionString += ')';
+    expressionString += "&@word=" + parameters[0];
+
+    Map<String, AliasQueryOption> alias = new HashMap<String, AliasQueryOption>();
+    AliasQueryOptionImpl aliasQueryOption = new AliasQueryOptionImpl();
+    aliasQueryOption.setName("@word");
+    aliasQueryOption.setText("\'a\'");
+    alias.put("@word", aliasQueryOption);
+    UriTokenizer tokenizer = new UriTokenizer(expressionString);
+    final Expression expression = new ExpressionParser(mock(Edm.class), odata).parse(tokenizer, null, null, alias);
+    assertNotNull(expression);
+    
+    assertEquals('{' + methodName + ' ' + "[@word, " + parameters[1] + ']' + '}',
+        expression.toString());
+    
   }
 
   private void parseMethod(TokenKind kind, String... parameters) throws UriParserException, UriValidationException {
@@ -277,5 +374,310 @@ public class ExpressionParserTest {
     } catch (final UriValidationException e) {
       assertNotNull(e);
     }
+  }
+  
+  @Test
+  public void testPropertyPathExp() throws Exception {
+    final String entitySetName = "ESName";
+    final String keyPropertyName = "a";
+    EdmProperty keyProperty = mockProperty(keyPropertyName,
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    EdmKeyPropertyRef keyPropertyRef = mockKeyPropertyRef(keyPropertyName, keyProperty);
+    EdmEntityType entityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(entityType.getPropertyNames()).thenReturn(Collections.singletonList(keyPropertyName));
+    Mockito.when(entityType.getProperty(keyPropertyName)).thenReturn(keyProperty);
+    EdmEntitySet entitySet = mockEntitySet(entitySetName, entityType);
+    EdmEntityContainer container = mockContainer(entitySetName, entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    
+    UriTokenizer tokenizer = new UriTokenizer("a eq \'abc\'");
+    final Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+        entityType, null, null);
+    assertNotNull(expression);
+    assertEquals("{[a] EQ \'abc\'}", expression.toString());
+  }
+
+  /**
+   * @param keyPropertyName
+   * @param keyPropertyRef
+   * @return
+   */
+  private EdmEntityType mockEntityType(final String keyPropertyName, EdmKeyPropertyRef keyPropertyRef) {
+    EdmEntityType entityType = Mockito.mock(EdmEntityType.class);
+    Mockito.when(entityType.getKeyPredicateNames()).thenReturn(Collections.singletonList(keyPropertyName));
+    Mockito.when(entityType.getKeyPropertyRefs()).thenReturn(Collections.singletonList(keyPropertyRef));
+    return entityType;
+  }
+
+  /**
+   * @param keyPropertyName
+   * @param keyProperty
+   * @return
+   */
+  private EdmKeyPropertyRef mockKeyPropertyRef(final String keyPropertyName, EdmProperty keyProperty) {
+    EdmKeyPropertyRef keyPropertyRef = Mockito.mock(EdmKeyPropertyRef.class);
+    Mockito.when(keyPropertyRef.getName()).thenReturn(keyPropertyName);
+    Mockito.when(keyPropertyRef.getProperty()).thenReturn(keyProperty);
+    return keyPropertyRef;
+  }
+
+  /**
+   * @param propertyName
+   * @return
+   */
+  private EdmProperty mockProperty(final String propertyName, final EdmType type) {
+    EdmProperty keyProperty = Mockito.mock(EdmProperty.class);
+    Mockito.when(keyProperty.getType()).thenReturn(type);
+    Mockito.when(keyProperty.getDefaultValue()).thenReturn("");
+    Mockito.when(keyProperty.getName()).thenReturn(propertyName);
+    return keyProperty;
+  }
+  
+  @Test(expected = UriParserSemanticException.class)
+  public void testPropertyPathExpWithoutType() throws Exception {
+    final String entitySetName = "ESName";
+    final String keyPropertyName = "a";
+    EdmProperty keyProperty = mockProperty(keyPropertyName,
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    EdmKeyPropertyRef keyPropertyRef = mockKeyPropertyRef(keyPropertyName, keyProperty);
+    EdmEntityType entityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(entityType.getPropertyNames()).thenReturn(Collections.singletonList(keyPropertyName));
+    Mockito.when(entityType.getProperty(keyPropertyName)).thenReturn(keyProperty);
+    EdmEntitySet entitySet = mockEntitySet(entitySetName, entityType);
+    EdmEntityContainer container = mockContainer(entitySetName, entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    
+    UriTokenizer tokenizer = new UriTokenizer("a eq \'abc\'");
+    new ExpressionParser(mockedEdm, odata).parse(tokenizer, null, null, null);
+  }
+  
+  @Test(expected = UriParserSemanticException.class)
+  public void testPropertyPathExpWithoutProperty() throws Exception {
+    final String entitySetName = "ESName";
+    final String keyPropertyName = "a";
+    EdmProperty keyProperty = mockProperty(keyPropertyName, 
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    EdmKeyPropertyRef keyPropertyRef = mockKeyPropertyRef(keyPropertyName, keyProperty);
+    EdmEntityType entityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("test.ETName"));
+    EdmEntitySet entitySet = mockEntitySet(entitySetName, entityType);
+    EdmEntityContainer container = mockContainer(entitySetName, entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    
+    UriTokenizer tokenizer = new UriTokenizer("a eq \'abc\'");
+    new ExpressionParser(mockedEdm, odata).parse(tokenizer, entityType, null, null);
+  }
+
+  /**
+   * @param entitySetName
+   * @param entitySet
+   * @return
+   */
+  private EdmEntityContainer mockContainer(final String entitySetName, EdmEntitySet entitySet) {
+    EdmEntityContainer container = Mockito.mock(EdmEntityContainer.class);
+    Mockito.when(container.getEntitySet(entitySetName)).thenReturn(entitySet);
+    return container;
+  }
+
+  /**
+   * @param entitySetName
+   * @param entityType
+   * @return
+   */
+  private EdmEntitySet mockEntitySet(final String entitySetName, EdmEntityType entityType) {
+    EdmEntitySet entitySet = Mockito.mock(EdmEntitySet.class);
+    Mockito.when(entitySet.getName()).thenReturn(entitySetName);
+    Mockito.when(entitySet.getEntityType()).thenReturn(entityType);
+    return entitySet;
+  }
+  
+  @Test
+  public void testComplexPropertyPathExp() throws Exception {
+    final String entitySetName = "ESName";
+    final String keyPropertyName = "a";
+    final String complexPropertyName = "comp";
+    final String propertyName = "prop";
+    EdmProperty keyProperty = mockProperty(keyPropertyName, 
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    EdmKeyPropertyRef keyPropertyRef = mockKeyPropertyRef(keyPropertyName, keyProperty);
+    EdmProperty property = mockProperty(propertyName, 
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    
+    EdmComplexType complexType = mockComplexType(propertyName, property);
+    EdmProperty complexProperty = mockProperty(complexPropertyName, complexType);
+    
+    EdmEntityType entityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(entityType.getPropertyNames()).thenReturn(Arrays.asList(keyPropertyName, complexPropertyName));
+    Mockito.when(entityType.getProperty(keyPropertyName)).thenReturn(keyProperty);
+    Mockito.when(entityType.getProperty(complexPropertyName)).thenReturn(complexProperty);
+    EdmEntitySet entitySet = mockEntitySet(entitySetName, entityType);
+    EdmEntityContainer container = mockContainer(entitySetName, entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    
+    UriTokenizer tokenizer = new UriTokenizer("comp/prop eq \'abc\'");
+    final Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+        entityType, null, null);
+    assertNotNull(expression);
+    assertEquals("{[comp, prop] EQ \'abc\'}", expression.toString());
+  }
+
+  /**
+   * @param propertyName
+   * @param property
+   * @return
+   */
+  private EdmComplexType mockComplexType(final String propertyName, EdmProperty property) {
+    EdmComplexType complexType = Mockito.mock(EdmComplexType.class);
+    Mockito.when(complexType.getPropertyNames()).thenReturn(Collections.singletonList(propertyName));
+    Mockito.when(complexType.getProperty(propertyName)).thenReturn(property);
+    return complexType;
+  }
+  
+  /**
+   * @param propertyName
+   * @param property
+   * @return
+   */
+  private EdmComplexType mockComplexType(final String propertyName, EdmNavigationProperty property) {
+    EdmComplexType complexType = Mockito.mock(EdmComplexType.class);
+    Mockito.when(complexType.getPropertyNames()).thenReturn(Collections.singletonList(propertyName));
+    Mockito.when(complexType.getProperty(propertyName)).thenReturn(property);
+    return complexType;
+  }
+  
+  @Test
+  public void testLambdaPropertyPathExp() throws Exception {
+    final String entitySetName = "ESName";
+    final String keyPropertyName = "a";
+    final String complexPropertyName = "comp";
+    final String propertyName = "prop";
+    EdmProperty keyProperty = mockProperty(keyPropertyName, 
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    EdmKeyPropertyRef keyPropertyRef = mockKeyPropertyRef(keyPropertyName, keyProperty);
+    EdmProperty property = mockProperty(propertyName, 
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    
+    EdmComplexType complexType = mockComplexType(propertyName, property);
+    EdmProperty complexProperty = mockProperty(complexPropertyName, complexType);
+    Mockito.when(complexProperty.isCollection()).thenReturn(true);
+    
+    EdmEntityType entityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(entityType.getPropertyNames()).thenReturn(Arrays.asList(keyPropertyName, complexPropertyName));
+    Mockito.when(entityType.getProperty(keyPropertyName)).thenReturn(keyProperty);
+    Mockito.when(entityType.getProperty(complexPropertyName)).thenReturn(complexProperty);
+    Mockito.when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("test.ET"));
+    EdmEntitySet entitySet = mockEntitySet(entitySetName, entityType);
+    EdmEntityContainer container = mockContainer(entitySetName, entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    
+    UriTokenizer tokenizer = new UriTokenizer("comp/any(d:d/prop eq \'abc\')");
+    Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+        entityType, null, null);
+    assertNotNull(expression);
+    assertEquals("[comp, any]", expression.toString());
+    
+    tokenizer = new UriTokenizer("comp/all(d:d/prop eq \'abc\')");
+    expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+        entityType, null, null);
+    assertNotNull(expression);
+    assertEquals("[comp, all]", expression.toString());
+  }
+  
+  @Test
+  public void testNavigationPropertyPathExp() throws Exception {
+    final String entitySetName = "ESName";
+    final String keyPropertyName = "a";
+    final String complexPropertyName = "comp";
+    final String propertyName = "navProp";
+    EdmProperty keyProperty = mockProperty(keyPropertyName, 
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    EdmKeyPropertyRef keyPropertyRef = mockKeyPropertyRef(keyPropertyName, keyProperty);
+    
+    EdmEntityType targetEntityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(targetEntityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("test.TargetET"));
+    EdmNavigationProperty navProperty = mockNavigationProperty(propertyName, targetEntityType);
+    
+    EdmComplexType complexType = mockComplexType(propertyName, navProperty);
+    EdmProperty complexProperty = mockProperty(complexPropertyName, complexType);
+    
+    EdmEntityType startEntityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(startEntityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("test.StartET"));
+    Mockito.when(startEntityType.getPropertyNames()).thenReturn(
+        Arrays.asList(keyPropertyName, complexPropertyName));
+    Mockito.when(startEntityType.getProperty(keyPropertyName)).thenReturn(keyProperty);
+    Mockito.when(startEntityType.getProperty(complexPropertyName)).thenReturn(complexProperty);
+    EdmEntitySet entitySet = mockEntitySet(entitySetName, startEntityType);
+    EdmEntityContainer container = mockContainer(entitySetName, entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    
+    UriTokenizer tokenizer = new UriTokenizer("comp/navProp");
+    final Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+        startEntityType, null, null);
+    assertNotNull(expression);
+    assertEquals("[comp, navProp]", expression.toString());
+  }
+
+  /**
+   * @param propertyName
+   * @param entityType
+   * @return
+   */
+  private EdmNavigationProperty mockNavigationProperty(final String propertyName, EdmEntityType entityType) {
+    EdmNavigationProperty navProperty = Mockito.mock(EdmNavigationProperty.class);
+    Mockito.when(navProperty.getName()).thenReturn(propertyName);
+    Mockito.when(navProperty.getType()).thenReturn(entityType);
+    return navProperty;
+  }
+  
+  @Test
+  public void testDerivedPathExp() throws Exception {
+    final String derivedEntitySetName = "ESName";
+    final String keyPropertyName = "a";
+    final String propertyName = "navProp";
+    EdmProperty keyProperty = mockProperty(keyPropertyName, 
+        OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.String));
+    EdmKeyPropertyRef keyPropertyRef = mockKeyPropertyRef(keyPropertyName, keyProperty);
+    
+    EdmEntityType navEntityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(navEntityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("test.navET"));
+    Mockito.when(navEntityType.getNamespace()).thenReturn("test");
+    Mockito.when(navEntityType.getPropertyNames()).thenReturn(
+        Arrays.asList(keyPropertyName));
+    Mockito.when(navEntityType.getProperty(keyPropertyName)).thenReturn(keyProperty);
+    
+    EdmEntityType baseEntityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(baseEntityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("test.baseET"));
+    Mockito.when(baseEntityType.getNamespace()).thenReturn("test");
+    Mockito.when(baseEntityType.getPropertyNames()).thenReturn(
+        Arrays.asList(keyPropertyName));
+    Mockito.when(baseEntityType.getProperty(keyPropertyName)).thenReturn(keyProperty);
+    
+    Mockito.when(navEntityType.getBaseType()).thenReturn(baseEntityType);
+    Mockito.when(baseEntityType.compatibleTo(navEntityType)).thenReturn(true);
+    
+    EdmEntityType entityType = mockEntityType(keyPropertyName, keyPropertyRef);
+    Mockito.when(entityType.getFullQualifiedName()).thenReturn(new FullQualifiedName("test.derivedET"));
+    Mockito.when(entityType.getNamespace()).thenReturn("test");
+    Mockito.when(entityType.getPropertyNames()).thenReturn(Arrays.asList(keyPropertyName, propertyName));
+    EdmNavigationProperty navProperty = mockNavigationProperty(propertyName, navEntityType);
+    Mockito.when(entityType.getProperty(propertyName)).thenReturn(navProperty);
+    
+    EdmEntitySet entitySet = mockEntitySet(derivedEntitySetName, entityType);
+    EdmEntityContainer container = mockContainer(derivedEntitySetName, entitySet);
+    Edm mockedEdm = Mockito.mock(Edm.class);
+    Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
+    Mockito.when(mockedEdm.getEntityType(new FullQualifiedName("test.baseET"))).thenReturn(baseEntityType);
+    
+    UriTokenizer tokenizer = new UriTokenizer("navProp/test.baseET");
+    Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+        entityType, null, null);
+    assertNotNull(expression);
+    assertEquals("[navProp]", expression.toString());
   }
 }

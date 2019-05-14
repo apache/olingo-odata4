@@ -153,6 +153,7 @@ public class ExpressionParser {
     temp.put(TokenKind.ToupperMethod, MethodKind.TOUPPER);
     temp.put(TokenKind.TrimMethod, MethodKind.TRIM);
     temp.put(TokenKind.YearMethod, MethodKind.YEAR);
+    temp.put(TokenKind.SubstringofMethod, MethodKind.SUBSTRINGOF);
 
     tokenToMethod = Collections.unmodifiableMap(temp);
   }
@@ -386,7 +387,7 @@ public class ExpressionParser {
     if (tokenizer.next(TokenKind.ODataIdentifier)) {
       return parseFirstMemberExpr(TokenKind.ODataIdentifier);
     }
-
+    
     throw new UriParserSyntaxException("Unexpected token.", UriParserSyntaxException.MessageKeys.SYNTAX);
   }
 
@@ -527,6 +528,7 @@ public class ExpressionParser {
     case STARTSWITH:
     case INDEXOF:
     case CONCAT:
+    case SUBSTRINGOF:
       ParserHelper.bws(tokenizer);
       final Expression stringParameter1 = parseExpression();
       checkType(stringParameter1, EdmPrimitiveTypeKind.String);

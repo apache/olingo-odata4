@@ -405,4 +405,26 @@ public class BasicHttpITCase extends AbstractBaseTestITCase {
     assertEquals("3", IOUtils.toString(connection.getInputStream()));
     connection.disconnect();
   }
+  
+  @Test
+  public void testSubstringOfWithParameterAlias() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESAllPrim?$filter=substringof(@word,PropertyString)&@word='Second'");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty(HttpHeader.ACCEPT, "application/json");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    String content = IOUtils.toString(connection.getInputStream());
+    assertNotNull(content);
+    assertTrue(content.contains("\"value\":[{\"PropertyInt16\":-32768,"
+        + "\"PropertyString\":\"Second Resource - negative values\","
+        + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":-128,\"PropertyInt32\":-2147483648,"
+        + "\"PropertyInt64\":-9223372036854775808,\"PropertySingle\":-1.79E8,\"PropertyDouble\":-179000.0,"
+        + "\"PropertyDecimal\":-34,\"PropertyBinary\":\"ASNFZ4mrze8=\",\"PropertyDate\":\"2015-11-05\","
+        + "\"PropertyDateTimeOffset\":\"2005-12-03T07:17:08Z\",\"PropertyDuration\":\"PT9S\","
+        + "\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789dddfff\",\"PropertyTimeOfDay\":\"23:49:14\"}]}"));
+    connection.disconnect();
+  }
 }

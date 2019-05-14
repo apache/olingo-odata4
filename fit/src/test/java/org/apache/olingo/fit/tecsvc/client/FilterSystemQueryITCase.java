@@ -1071,7 +1071,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     }
     return response;
   }
-
+  
   private void fail(final String entitySet, final String filterString, final HttpStatusCode errorCode) {
     try {
       sendRequest(entitySet, filterString);
@@ -1079,5 +1079,22 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     } catch (ODataClientErrorException e) {
       assertEquals(errorCode.getStatusCode(), e.getStatusLine().getStatusCode());
     }
+  }
+  
+  @Test
+  public void substringOf() {
+    ODataRetrieveResponse<ClientEntitySet> response =
+        sendRequest(ES_ALL_PRIM, "substringof('Second',PropertyString)");
+    assertEquals(1, response.getBody().getEntities().size());
+    assertEquals("Second Resource - negative values", 
+        response.getBody().getEntities().get(0).getProperty("PropertyString")
+          .getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void substringOfWithNegativeValues() {
+    fail(ES_ALL_PRIM, "substringof(123,PropertyString)", HttpStatusCode.BAD_REQUEST);
+    fail(ES_ALL_PRIM, "substringof(PropertyString,123)", HttpStatusCode.BAD_REQUEST);
+    fail(ES_ALL_PRIM, "substringof(123,123)", HttpStatusCode.BAD_REQUEST);
   }
 }

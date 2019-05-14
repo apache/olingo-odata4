@@ -54,6 +54,7 @@ public class MethodImpl implements Method {
     case CONTAINS:
     case STARTSWITH:
     case ENDSWITH:
+    case SUBSTRINGOF:
       kind = EdmPrimitiveTypeKind.Boolean;
       break;
     case LENGTH:

@@ -170,6 +170,7 @@ public class UriTokenizer {
     ToupperMethod,
     TrimMethod,
     YearMethod,
+    SubstringofMethod,
 
     IsDefinedMethod, // for the aggregation extension
 
@@ -637,6 +638,9 @@ public class UriTokenizer {
       break;
     case YearMethod:
       found = nextMethod("year");
+      break;
+    case SubstringofMethod:
+      found = nextMethod("substringof");
       break;
 
     // Method for the aggregation extension

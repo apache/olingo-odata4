@@ -51,6 +51,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Unary;
 import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
 import org.apache.olingo.server.core.uri.parser.Parser;
 import org.apache.olingo.server.core.uri.parser.UriParserException;
+import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.queryoption.expression.BinaryImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
@@ -102,6 +103,16 @@ public class FilterValidator implements TestValidator {
       throws UriParserException, UriValidationException {
     return runUriOrderBy("ESTwoKeyNav", "$orderby=" + orderBy);
   }
+  
+  public FilterValidator runOrderByOnETTwoKeyNavNeg(final String orderBy) 
+      throws UriParserException, UriValidationException {
+    try {
+      runUriOrderBy("ESTwoKeyNav", "$orderby=" + orderBy);
+    } catch (UriParserSemanticException e) {
+      assertEquals("EntitySet or singleton expected.", e.getMessage());
+    }
+    return this;
+  }
 
   public FilterValidator runOrderByOnETMixEnumDefCollComp(final String orderBy)
       throws UriParserException, UriValidationException {
@@ -132,6 +143,20 @@ public class FilterValidator implements TestValidator {
 
   public FilterValidator runOnETAllPrim(final String filter) throws UriParserException, UriValidationException {
     return runUri("ESAllPrim(1)", "$filter=" + filter);
+  }
+  
+  public FilterValidator runOnESCompCollComp(final String filter) throws UriParserException, UriValidationException {
+    return runUri("ESCompCollComp", "$filter=" + filter);
+  }
+  
+  public FilterValidator runOnESCompCollCompNeg(final String filter) 
+      throws UriParserException, UriValidationException {
+    try {
+      runUri("ESCompCollComp", "$filter=" + filter);
+    } catch (UriParserSemanticException e) {
+      assertEquals("Bound function 'olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNav' not found.", e.getMessage());
+    }
+    return this;
   }
 
   public FilterValidator runOnETKeyNav(final String filter) throws UriParserException, UriValidationException {

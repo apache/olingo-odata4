@@ -50,6 +50,29 @@ public class ExpressionParserTest {
 
   @Test
   public void filter() throws Exception {
+    testFilter.runOnESCompCollComp("PropertyComp/CollPropertyComp/any"
+        + "(f:f/olingo.odata.test1.CTBase/AdditionalPropString eq 'ADD TEST')")
+    .is("<PropertyComp/CollPropertyComp/<ANY;<<f/olingo.odata.test1.CTBase/AdditionalPropString> eq <'ADD TEST'>>>>")
+    .isMember().goPath()
+    .first()
+    .isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTCompCollComp, false)
+    .n()
+    .isComplexProperty("CollPropertyComp", ComplexTypeProvider.nameCTTwoPrim, true)
+    .n()
+    .isUriPathInfoKind(UriResourceKind.lambdaAny)
+    .goLambdaExpression()
+    .isBinary(BinaryOperatorKind.EQ)
+    .left().goPath()
+    .first().isUriPathInfoKind(UriResourceKind.lambdaVariable)
+    .isType(ComplexTypeProvider.nameCTTwoPrim, false)
+    .n()
+    .isPrimitiveProperty("AdditionalPropString", PropertyProvider.nameString, false)
+    .goUpFilterValidator()
+    .root().right()
+    .isLiteral("'ADD TEST'");
+    
+    testFilter.runOnESCompCollCompNeg("PropertyComp/CollPropertyComp/olingo.odata.test1.BFCCTPrimCompRTESTwoKeyNav()");
+    
     testFilter.runOnETAllPrim("PropertyBoolean")
         .is("<PropertyBoolean>")
         .isType(PropertyProvider.nameBoolean);
@@ -1928,6 +1951,24 @@ public class ExpressionParserTest {
         .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
         .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
         .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
+    
+    testFilter.runOrderByOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyDate eq "
+        + "$root/SINav/PropertyComp/PropertyComp/PropertyDate")
+        .isSortOrder(0, false)
+        .goOrder(0).isBinary(BinaryOperatorKind.EQ).left().goPath()
+        .first().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false)
+        .goUpFilterValidator()
+        .goOrder(0).right().goPath()
+        .first().isUriPathInfoKind(UriResourceKind.root)
+        .n().isSingleton("SINav")
+        .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTPrimComp, false)
+        .n().isComplexProperty("PropertyComp", ComplexTypeProvider.nameCTAllPrim, false)
+        .n().isPrimitiveProperty("PropertyDate", PropertyProvider.nameDate, false);
+    
+    testFilter.runOrderByOnETTwoKeyNavNeg("PropertyComp/PropertyComp/PropertyDate eq "
+        + "$root/SIType/PropertyComp/PropertyComp/PropertyDate");
 
     testFilter.runOrderByOnETTwoKeyNav("PropertyComp/PropertyComp/PropertyDate eq 2013-11-12 desc,"
         + "PropertyString eq 'SomeString' desc")
