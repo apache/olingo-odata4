@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmActionImport;
 import org.apache.olingo.commons.api.edm.EdmEntityContainer;
@@ -34,8 +33,8 @@ import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlActionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlAliasInfo;
 import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
-import org.apache.olingo.commons.api.edm.provider.CsdlAnnotations;
 import org.apache.olingo.commons.api.edm.provider.CsdlComplexType;
 import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityContainer;
@@ -44,8 +43,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEntitySet;
 import org.apache.olingo.commons.api.edm.provider.CsdlEntityType;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlOperationImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
-import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.api.ex.ODataException;
 
@@ -75,6 +74,8 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
   private final Map<String, EdmSingleton> singletonWithAnnotationsCache = Collections.synchronizedMap(
       new LinkedHashMap<String, EdmSingleton>());
   private boolean isSingletonAnnotationsIncluded = false;
+  private final String SLASH = "/";
+  private final String DOT = ".";
 
   public EdmEntityContainerImpl(final Edm edm, final CsdlEdmProvider provider,
       final CsdlEntityContainerInfo entityContainerInfo) {
@@ -216,7 +217,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     try {
       final CsdlSingleton providerSingleton = provider.getSingleton(entityContainerName, singletonName);
       if (providerSingleton != null) {
-		addAnnotations(providerSingleton, entityContainerName);
+        addSingletonAnnotations(providerSingleton, entityContainerName);
         singleton = new EdmSingletonImpl(edm, this, providerSingleton);
       }
     } catch (ODataException e) {
@@ -226,61 +227,130 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     return singleton;
   }
 
-  private void addAnnotations(CsdlSingleton singleton, FullQualifiedName entityContainerName) {
-    boolean isPropAnnotationsCleared = false;
-    boolean isNavPropAnnotationsCleared = false;
+  private void addSingletonAnnotations(CsdlSingleton singleton, FullQualifiedName entityContainerName) {
     CsdlEntityType entityType = fetchEntityTypeFromSingleton(singleton);
     if (entityType == null) {
       return;
     }
-    
-    List<CsdlSchema> termSchemaDefinition = ((EdmProviderImpl)edm).getTermSchemaDefinitions();
-    for (CsdlSchema schema : termSchemaDefinition) {
-      List<CsdlAnnotations> annotationGrps = schema.getAnnotationGroups();
-      for (CsdlAnnotations annotationGrp : annotationGrps) {
-        if (annotationGrp.getTarget().
-            equalsIgnoreCase(entityContainerName + "/" + singleton.getName())) {
-          isSingletonAnnotationsIncluded = true;
-          addAnnotationsToSingleton(singleton, annotationGrp);
-        } else {
-          addAnnotationsToPropertiesDerivedFromSingleton(singleton, isPropAnnotationsCleared,
-              isNavPropAnnotationsCleared, entityType, annotationGrp);
-          isPropAnnotationsCleared = true;
-          isNavPropAnnotationsCleared = true;
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(entityContainerName + SLASH + singleton.getName());
+    addAnnotationsOnSingleton(singleton, annotations);
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(aliasName + DOT + entityContainerName.getName() + SLASH + singleton.getName());
+    addAnnotationsOnSingleton(singleton, annotationsOnAlias);
+    addAnnotationsToPropertiesDerivedFromSingleton(singleton, entityType, entityContainerName);
+   }
+
+  /**
+   * Adds annotations on singleton
+   * @param singleton
+   * @param annotations
+   */
+  private void addAnnotationsOnSingleton(CsdlSingleton singleton, List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+      isSingletonAnnotationsIncluded = true;
+      for (CsdlAnnotation annotation : annotations) {
+        if (!compareAnnotations(singleton.getAnnotations(), annotation)) {
+          singleton.getAnnotations().add(annotation);
         }
       }
     }
-   }
-
+  }
+  
+  /**
+   * Get alias name given the namespace from the alias info 
+   * @param namespace
+   * @return
+   */
+  private String getAliasInfo(String namespace) {
+    try {
+      if (null != provider.getAliasInfos()) {
+        for (CsdlAliasInfo aliasInfo : provider.getAliasInfos()) {
+          if (aliasInfo.getNamespace().equalsIgnoreCase(namespace)) {
+            return aliasInfo.getAlias();
+          }
+        }
+      }
+    } catch (ODataException e) {
+      throw new EdmException(e);
+    }
+    return null;
+  }
+  
   /** adds annotations to entity type properties derived from singleton
+   * E.g of target paths
+   * MySchema.MyEntityContainer/MySingleton/MyComplexProperty/MyNavigationProperty
    * @param singleton
    * @param isPropAnnotationsCleared
    * @param isNavPropAnnotationsCleared
    * @param entityType
+   * @param entityContainerName
    * @param annotationGrp
    */
-  private void addAnnotationsToPropertiesDerivedFromSingleton(CsdlSingleton singleton, boolean isPropAnnotationsCleared,
-      boolean isNavPropAnnotationsCleared, CsdlEntityType entityType, CsdlAnnotations annotationGrp) {
-    for (CsdlProperty propertyName : entityType.getProperties()) {
-      if (!isPropAnnotationsCleared) {
-        entityType.getProperty(propertyName.getName()).getAnnotations().clear();
+  private void addAnnotationsToPropertiesDerivedFromSingleton(CsdlSingleton singleton, 
+      CsdlEntityType entityType, FullQualifiedName entityContainerName) {
+    String entitySetName = null;
+    String schemaName = null;
+    String containerName = null;
+    try {
+      List<CsdlEntitySet> entitySets = this.provider.getEntityContainer() != null ? 
+          this.provider.getEntityContainer().getEntitySets() : new ArrayList<CsdlEntitySet>();
+      for (CsdlEntitySet entitySet : entitySets) {
+        entitySetName = entitySet.getName();
+        String entityTypeName = entitySet.getTypeFQN().getFullQualifiedNameAsString();
+        if ((null != entityTypeName && entityTypeName.equalsIgnoreCase(
+            entitySet.getTypeFQN().getNamespace() + DOT + entityType.getName()))) {
+          containerName = this.provider.getEntityContainer().getName();
+          schemaName = entitySet.getTypeFQN().getNamespace();
+          for (CsdlProperty property : entityType.getProperties()) {
+            if (isPropertyComplex(property)) {
+              CsdlComplexType complexType = getComplexTypeFromProperty(property);
+              addAnnotationsToComplexTypeIncludedFromSingleton(singleton, property, complexType);
+            }
+            removeAnnotationsAddedToPropertiesOfEntityType(entityType, property, entityContainerName);
+            removeAnnotationsAddedToPropertiesViaEntitySet(entityType, property, 
+                schemaName, containerName, entitySetName);
+          }
+        }
       }
-      if (isPropertyComplex(propertyName)) {
-        CsdlComplexType complexType = getComplexTypeFromProperty(propertyName);
-        addAnnotationsToComplexTypeIncludedFromSingleton(singleton, 
-           annotationGrp, propertyName, isNavPropAnnotationsCleared, complexType);
-      }
+    } catch (ODataException e) {
+      throw new EdmException(e);
     }
   }
-
-  /** Adds annotation to singleton
-   * @param singleton
-   * @param annotationGrp
+  
+  /**
+   * If annotations are added to properties via Entity set then remove them
+   * @param entityType
+   * @param property
+   * @param schemaName
+   * @param containerName
+   * @param entitySetName
    */
-  private void addAnnotationsToSingleton(CsdlSingleton singleton, CsdlAnnotations annotationGrp) {
-    for (CsdlAnnotation annotation : annotationGrp.getAnnotations()) {
-      if (!compareAnnotations(singleton.getAnnotations(), annotation)) {
-        singleton.getAnnotations().add(annotation);
+  private void removeAnnotationsAddedToPropertiesViaEntitySet(CsdlEntityType entityType, CsdlProperty property,
+      String schemaName, String containerName, String entitySetName) {
+    List<CsdlAnnotation> annotPropDerivedFromES = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+        schemaName + DOT + 
+        containerName + SLASH +  entitySetName + SLASH + property.getName());
+    removeAnnotationsOnPropertiesDerivedFromES(entityType, property, annotPropDerivedFromES);
+    String aliasName = getAliasInfo(schemaName);
+    List<CsdlAnnotation> annotPropDerivedFromESOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+        aliasName + DOT + 
+        containerName + SLASH +  entitySetName + SLASH + property.getName());
+    removeAnnotationsOnPropertiesDerivedFromES(entityType, property, annotPropDerivedFromESOnAlias);
+  }
+
+  /**
+   * Removes the annotations added on properties via Entity Set in case of singleton flow
+   * @param entityType
+   * @param property
+   * @param annotPropDerivedFromES
+   */
+  private void removeAnnotationsOnPropertiesDerivedFromES(CsdlEntityType entityType, CsdlProperty property,
+      List<CsdlAnnotation> annotPropDerivedFromES) {
+    if (null != annotPropDerivedFromES && !annotPropDerivedFromES.isEmpty()) {
+      for (CsdlAnnotation annotation : annotPropDerivedFromES) {
+        entityType.getProperty(property.getName()).getAnnotations().remove(annotation);
       }
     }
   }
@@ -310,19 +380,73 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
    * @param complexType
    */
   private void addAnnotationsToComplexTypeIncludedFromSingleton(CsdlSingleton singleton,
-      CsdlAnnotations annotationGrp, CsdlProperty propertyName,
-      boolean isComplexNavPropAnnotationsCleared, CsdlComplexType complexType) {
+      CsdlProperty propertyName, CsdlComplexType complexType) {
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    for (CsdlProperty complexPropertyName : complexType.getProperties()) {
+      removeAnnotationAddedToPropertiesOfComplexType(complexType, complexPropertyName, entityContainerName);
+      
+      List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+          entityContainerName + SLASH + 
+              singleton.getName() + SLASH + 
+              propertyName.getName() + SLASH + complexPropertyName.getName());
+      addAnnotationsOnComplexTypeProperties(complexType, complexPropertyName, annotations);
+      List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+          aliasName + DOT + entityContainerName.getName() + SLASH + 
+              singleton.getName() + SLASH + 
+              propertyName.getName() + SLASH + complexPropertyName.getName());
+      addAnnotationsOnComplexTypeProperties(complexType, complexPropertyName, annotationsOnAlias);
+    }
     for (CsdlNavigationProperty complexNavPropertyName : complexType.getNavigationProperties()) {
-      if (!isComplexNavPropAnnotationsCleared) {
-        complexType.getNavigationProperty(complexNavPropertyName.getName()).getAnnotations().clear();
-      }
-      if (annotationGrp.getTarget().
-          equalsIgnoreCase(entityContainerName + "/" + singleton.getName() + "/" + 
-      propertyName.getName() + "/" + complexNavPropertyName.getName())) {
-        isSingletonAnnotationsIncluded = true;
-        addAnnotationsToComplexTypeNavProperties(annotationGrp, complexType, complexNavPropertyName);
-      }
+      checkAnnotationAddedToNavPropertiesOfComplexType(complexType, complexNavPropertyName, entityContainerName);
+      
+      List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().get(entityContainerName +
+          SLASH + singleton.getName() + SLASH + 
+          propertyName.getName() + SLASH + complexNavPropertyName.getName());
+      addAnnotationsOnComplexTypeNavProperties(complexType, complexNavPropertyName, annotations);
+      List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+          aliasName + DOT + entityContainerName.getName() +
+          SLASH + singleton.getName() + SLASH + 
+          propertyName.getName() + SLASH + complexNavPropertyName.getName());
+      addAnnotationsOnComplexTypeNavProperties(complexType, complexNavPropertyName, annotationsOnAlias);
     }    
+  }
+  
+  /**
+   * Adds annotations on complex type navigation properties
+   * @param complexType
+   * @param complexNavProperty
+   * @param annotations
+   */
+  private void addAnnotationsOnComplexTypeNavProperties(CsdlComplexType complexType,
+      CsdlNavigationProperty complexNavProperty, List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+      isAnnotationsIncluded = true;
+      for (CsdlAnnotation annotation : annotations) {
+        if (!compareAnnotations(complexType.getNavigationProperty(
+            complexNavProperty.getName()).getAnnotations(), annotation)) {
+          complexType.getNavigationProperty(complexNavProperty.getName()).getAnnotations().add(annotation); 
+        }
+      }
+    }
+  }
+
+  /**
+   * Adds annotations on complex type properties
+   * @param complexType
+   * @param complexProperty
+   * @param annotations
+   */
+  private void addAnnotationsOnComplexTypeProperties(CsdlComplexType complexType, CsdlProperty complexProperty,
+      List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+      isAnnotationsIncluded = true;
+      for (CsdlAnnotation annotation : annotations) {
+        if (!compareAnnotations(complexType.getProperty(
+            complexProperty.getName()).getAnnotations(), annotation)) {
+          complexType.getProperty(complexProperty.getName()).getAnnotations().add(annotation); 
+        }
+      }
+    }
   }
   
   protected EdmEntitySet createEntitySet(final String entitySetName) {
@@ -331,7 +455,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     try {
       final CsdlEntitySet providerEntitySet = provider.getEntitySet(entityContainerName, entitySetName);
       if (providerEntitySet != null) {
-		addAnnotations(providerEntitySet, entityContainerName);
+		addEntitySetAnnotations(providerEntitySet, entityContainerName);
         entitySet = new EdmEntitySetImpl(edm, this, providerEntitySet);
       }
     } catch (ODataException e) {
@@ -341,42 +465,36 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     return entitySet;
   }
 
-  private void addAnnotations(CsdlEntitySet entitySet, FullQualifiedName entityContainerName) {
-    boolean isPropAnnotationsCleared = false;
-    boolean isNavPropAnnotationsCleared = false;
+  private void addEntitySetAnnotations(CsdlEntitySet entitySet, FullQualifiedName entityContainerName) {
     CsdlEntityType entityType = getCsdlEntityTypeFromEntitySet(entitySet);
     if (entityType == null) {
       return;
     }
     
-   List<CsdlSchema> termSchemaDefinition = ((EdmProviderImpl)edm).getTermSchemaDefinitions();
-   for (CsdlSchema schema : termSchemaDefinition) {
-     List<CsdlAnnotations> annotationGrps = schema.getAnnotationGroups();
-     for (CsdlAnnotations annotationGrp : annotationGrps) {
-       if (annotationGrp.getTarget().
-           equalsIgnoreCase(entityContainerName + "/" + entitySet.getName())) {
-         isAnnotationsIncluded = true;
-         addAnnotationsToEntitySet(entitySet, annotationGrp);
-       } else {
-         addAnnotationsToEntityTypeIncludedFromES(entitySet, entityContainerName,
-             annotationGrp, isPropAnnotationsCleared, isNavPropAnnotationsCleared, entityType);
-         isPropAnnotationsCleared = true;
-         isNavPropAnnotationsCleared = true;
-       }
-     }
-   }
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(entityContainerName + SLASH + entitySet.getName());
+    addAnnotationsOnEntitySet(entitySet, annotations);
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(aliasName + DOT + entityContainerName.getName() + SLASH + entitySet.getName());
+    addAnnotationsOnEntitySet(entitySet, annotationsOnAlias);
+    addAnnotationsToPropertiesIncludedFromES(entitySet, entityContainerName, entityType);
   }
 
   /**
+   * Adds annotations on entity sets
    * @param entitySet
-   * @param annotationGrp
+   * @param annotations
    */
-  private void addAnnotationsToEntitySet(CsdlEntitySet entitySet, CsdlAnnotations annotationGrp) {
-    for (CsdlAnnotation annotation : annotationGrp.getAnnotations()) {
-       if (!compareAnnotations(entitySet.getAnnotations(), annotation)) {
-         entitySet.getAnnotations().add(annotation);
-       }
-     }
+  private void addAnnotationsOnEntitySet(CsdlEntitySet entitySet, List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+      isAnnotationsIncluded = true;
+      for (CsdlAnnotation annotation : annotations) {
+        if (!compareAnnotations(entitySet.getAnnotations(), annotation)) {
+          entitySet.getAnnotations().add(annotation);
+        }
+      }
+    }
   }
 
   /**
@@ -395,75 +513,172 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
   }
 
   /** Adds annotations to Entity type Properties derived from entity set
+   * E.g of target paths 
+   * MySchema.MyEntityContainer/MyEntitySet/MyProperty
+   * MySchema.MyEntityContainer/MyEntitySet/MyNavigationProperty
+   * MySchema.MyEntityContainer/MyEntitySet/MyComplexProperty/MyProperty
+   * MySchema.MyEntityContainer/MyEntitySet/MyComplexProperty/MyNavigationProperty
    * @param entitySet
    * @param entityContainerName
-   * @param annotationGrp
    * @param entityType 
-   * @param isNavPropAnnotationsCleared 
-   * @param isPropAnnotationsCleared
    * @return
    */
-  private void addAnnotationsToEntityTypeIncludedFromES(CsdlEntitySet entitySet,
-      FullQualifiedName entityContainerName, CsdlAnnotations annotationGrp, 
-      boolean isPropAnnotationsCleared, boolean isNavPropAnnotationsCleared, CsdlEntityType entityType) {
-     for (CsdlProperty propertyName : entityType.getProperties()) {
-       if (!isPropAnnotationsCleared) {
-         entityType.getProperty(propertyName.getName()).getAnnotations().clear();
-       }
-       if (isPropertyComplex(propertyName)) {
-         CsdlComplexType complexType = getComplexTypeFromProperty(propertyName);
-         addAnnotationsToComplexTypeIncludedFromES(entitySet, entityContainerName,
-            annotationGrp, propertyName, isPropAnnotationsCleared, isNavPropAnnotationsCleared, complexType);
-       } else {
-         if (annotationGrp.getTarget().
-             equalsIgnoreCase(entityContainerName + "/" + entitySet.getName() + "/" + 
-         propertyName.getName())) {
-           isAnnotationsIncluded = true;
-           addAnnotationsToEntityTypeProperties(annotationGrp, entityType, propertyName);
+  private void addAnnotationsToPropertiesIncludedFromES(CsdlEntitySet entitySet,
+      FullQualifiedName entityContainerName, CsdlEntityType entityType) {
+    for (CsdlProperty property : entityType.getProperties()) {
+      removeAnnotationsAddedToPropertiesOfEntityType(entityType, property, entityContainerName);
+        if (isPropertyComplex(property)) {
+          CsdlComplexType complexType = getComplexTypeFromProperty(property);
+          addAnnotationsToComplexTypeIncludedFromES(entitySet, entityContainerName,
+             property, complexType);
+        } else {
+          addAnnotationsToETProperties(entitySet, entityContainerName, entityType, property);
+        }
+      }
+     for (CsdlNavigationProperty navProperty : entityType.getNavigationProperties()) {
+       removeAnnotationAddedToNavProperties(entityType, navProperty, entityContainerName);
+       addAnnotationsToETNavProperties(entitySet, entityContainerName, entityType, navProperty);
+     }
+  }
+
+  /**
+   * @param entitySet
+   * @param entityContainerName
+   * @param entityType
+   * @param property
+   */
+  private void addAnnotationsToETProperties(CsdlEntitySet entitySet, FullQualifiedName entityContainerName,
+      CsdlEntityType entityType, CsdlProperty property) {
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+        entityContainerName + SLASH + entitySet.getName() + SLASH + 
+        property.getName());
+    addAnnotationsOnETProperties(entityType, property, annotations);
+    
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+        aliasName + DOT + entityContainerName.getName() + SLASH + entitySet.getName() + SLASH + 
+        property.getName());
+    addAnnotationsOnETProperties(entityType, property, annotationsOnAlias);
+  }
+
+  /**
+   * Adds annotations to Entity type Properties derived from entity set
+   * @param entityType
+   * @param property
+   * @param annotations
+   */
+  private void addAnnotationsOnETProperties(CsdlEntityType entityType, CsdlProperty property,
+      List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+      isAnnotationsIncluded = true;
+      for (CsdlAnnotation annotation : annotations) {
+        if (!compareAnnotations(entityType.getProperty(
+            property.getName()).getAnnotations(), annotation)) {
+          entityType.getProperty(property.getName()).getAnnotations().add(annotation); 
+        }
+      }
+    }
+  }
+
+  /**
+   * Adds annotations to Entity type Navigation Properties derived from entity set
+   * @param entitySet
+   * @param entityContainerName
+   * @param entityType
+   * @param navProperty
+   */
+  private void addAnnotationsToETNavProperties(CsdlEntitySet entitySet, FullQualifiedName entityContainerName,
+      CsdlEntityType entityType, CsdlNavigationProperty navProperty) {
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+         entityContainerName + SLASH + entitySet.getName() + SLASH + 
+             navProperty.getName());
+     addAnnotationsOnETNavProperties(entityType, navProperty, annotations);
+     
+     String aliasName = getAliasInfo(entityContainerName.getNamespace());
+     List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+         aliasName + DOT + entityContainerName.getName() + SLASH + entitySet.getName() + SLASH + 
+             navProperty.getName());
+     addAnnotationsOnETNavProperties(entityType, navProperty, annotationsOnAlias);
+  }
+
+  /**
+   * @param entityType
+   * @param navProperty
+   * @param annotations
+   */
+  private void addAnnotationsOnETNavProperties(CsdlEntityType entityType, CsdlNavigationProperty navProperty,
+      List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+       isAnnotationsIncluded = true;
+       for (CsdlAnnotation annotation : annotations) {
+         if (!compareAnnotations(entityType.getNavigationProperty(
+             navProperty.getName()).getAnnotations(), annotation)) {
+           entityType.getNavigationProperty(navProperty.getName()).getAnnotations().add(annotation); 
          }
        }
      }
-     for (CsdlNavigationProperty navPropertyName : entityType.getNavigationProperties()) {
-       if (!isNavPropAnnotationsCleared) {
-         entityType.getNavigationProperty(navPropertyName.getName()).getAnnotations().clear();
-       }
-       if (annotationGrp.getTarget().
-           equalsIgnoreCase(entityContainerName + "/" + entitySet.getName() + "/" + 
-       navPropertyName.getName())) {
-         isAnnotationsIncluded = true;
-         addAnnotationsToEntityTypeNavProperties(annotationGrp, entityType, navPropertyName);
-       }
-     }
   }
 
-  /** Adds annotations to Entity type Navigation Properties derived from entity set
-   * @param annotationGrp
-   * @param entityType
-   * @param navPropertyName
+  /**
+   * If annotations are added to properties via entity type path, then remove it
+   * @param type
+   * @param property
+   * @param entityContainerName
    */
-  private void addAnnotationsToEntityTypeNavProperties(CsdlAnnotations annotationGrp, CsdlEntityType entityType,
-      CsdlNavigationProperty navPropertyName) {
-    for (CsdlAnnotation annotation : annotationGrp.getAnnotations()) {
-       if (!compareAnnotations(entityType.getNavigationProperty(
-           navPropertyName.getName()).getAnnotations(), annotation)) {
-         entityType.getNavigationProperty(navPropertyName.getName()).getAnnotations().add(annotation); 
-       }
-     }
+  private void removeAnnotationsAddedToPropertiesOfEntityType(CsdlEntityType type, CsdlProperty property, 
+      FullQualifiedName entityContainerName) {
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(entityContainerName.getNamespace() + 
+        DOT + type.getName() + SLASH + property.getName());
+    removeAnnotationsOnETProperties(property, annotations);
+    
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(aliasName + DOT + entityContainerName.getName() + 
+        DOT + type.getName() + SLASH + property.getName());
+    removeAnnotationsOnETProperties(property, annotationsOnAlias);
   }
 
-  /** Adds annotations to Entity type Properties derived from entity set
-   * @param annotationGrp
-   * @param entityType
-   * @param propertyName
+  /**
+   * Removes the annotations added on Entity type
+   * properties when there is a target path on entity type
+   * @param property
+   * @param annotations
    */
-  private void addAnnotationsToEntityTypeProperties(CsdlAnnotations annotationGrp, CsdlEntityType entityType,
-      CsdlProperty propertyName) {
-    for (CsdlAnnotation annotation : annotationGrp.getAnnotations()) {
-       if (!compareAnnotations(entityType.getProperty(
-           propertyName.getName()).getAnnotations(), annotation)) {
-         entityType.getProperty(propertyName.getName()).getAnnotations().add(annotation); 
-       }
-     }
+  private void removeAnnotationsOnETProperties(CsdlProperty property, List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+      for (CsdlAnnotation annotation : annotations) {
+        property.getAnnotations().remove(annotation); 
+      }
+    }
+  }
+  
+  private void removeAnnotationAddedToNavProperties(CsdlEntityType entityType, 
+      CsdlNavigationProperty navProperty, FullQualifiedName entityContainerName) {
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+        entityContainerName.getNamespace() + 
+        DOT + entityType.getName() + SLASH + navProperty.getName());
+    removeAnnotationsOnNavProperties(navProperty, annotations);
+    
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+        aliasName + DOT + entityContainerName.getName() + 
+        DOT + entityType.getName() + SLASH + navProperty.getName());
+    removeAnnotationsOnNavProperties(navProperty, annotationsOnAlias);
+  }
+
+  /**
+   * Removes the annotations added on Entity type
+   * navigation properties when there is a target path on entity type
+   * @param property
+   * @param annotations
+   */
+  private void removeAnnotationsOnNavProperties(CsdlNavigationProperty property, List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+      for (CsdlAnnotation annotation : annotations) {
+        property.getAnnotations().remove(annotation); 
+      }
+    }
   }
 
   /**
@@ -483,69 +698,69 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
   /**
    * @param entitySet
    * @param entityContainerName
-   * @param annotationGrp
-   * @param propertyName
+   * @param complexProperty
    * @param complexType 
-   * @param isComplexNavPropAnnotationsCleared2 
-   * @param isComplexPropAnnotationsCleared2 
    * @return
    */
   private void addAnnotationsToComplexTypeIncludedFromES(CsdlEntitySet entitySet,
-      FullQualifiedName entityContainerName, CsdlAnnotations annotationGrp, 
-      CsdlProperty propertyName, boolean isComplexPropAnnotationsCleared, 
-      boolean isComplexNavPropAnnotationsCleared, CsdlComplexType complexType) {
-     for (CsdlProperty complexPropertyName : complexType.getProperties()) {
-       if (!isComplexPropAnnotationsCleared) {
-         complexType.getProperty(complexPropertyName.getName()).getAnnotations().clear();
-       }
-       if (annotationGrp.getTarget().
-           equalsIgnoreCase(entityContainerName + "/" + entitySet.getName() + "/" + 
-       propertyName.getName() + "/" + complexPropertyName.getName())) {
-         isAnnotationsIncluded = true;
-         addAnnotationsToComplexTypeProperties(annotationGrp, complexType, complexPropertyName);
-       }
-     }
-     for (CsdlNavigationProperty complexNavPropertyName : complexType.getNavigationProperties()) {
-       if (!isComplexNavPropAnnotationsCleared) {
-         complexType.getNavigationProperty(complexNavPropertyName.getName()).getAnnotations().clear();
-       }
-       if (annotationGrp.getTarget().
-           equalsIgnoreCase(entityContainerName + "/" + entitySet.getName() + "/" + 
-       propertyName.getName() + "/" + complexNavPropertyName.getName())) {
-         isAnnotationsIncluded = true;
-         addAnnotationsToComplexTypeNavProperties(annotationGrp, complexType, complexNavPropertyName);
-       }
-     }
+      FullQualifiedName entityContainerName, CsdlProperty complexProperty, 
+      CsdlComplexType complexType) {
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    for (CsdlProperty complexPropertyName : complexType.getProperties()) {
+      removeAnnotationAddedToPropertiesOfComplexType(complexType, complexPropertyName, entityContainerName);
+      
+      List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().get(entityContainerName + SLASH + 
+      entitySet.getName() + SLASH + 
+      complexProperty.getName() + SLASH + complexPropertyName.getName());
+      addAnnotationsOnComplexTypeProperties(complexType, complexPropertyName, annotations);
+      
+      List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+          aliasName + DOT + entityContainerName.getName() + SLASH + 
+          entitySet.getName() + SLASH + 
+          complexProperty.getName() + SLASH + complexPropertyName.getName());
+      addAnnotationsOnComplexTypeProperties(complexType, complexPropertyName, annotationsOnAlias);
+    }
+    for (CsdlNavigationProperty complexNavProperty : complexType.getNavigationProperties()) {
+      checkAnnotationAddedToNavPropertiesOfComplexType(complexType, complexNavProperty, entityContainerName);
+      
+      List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+          entityContainerName + SLASH + entitySet.getName() + SLASH + 
+          complexProperty.getName() + SLASH + complexNavProperty.getName());
+      addAnnotationsOnComplexTypeNavProperties(complexType, complexNavProperty, annotations);
+      
+      List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().get(
+          aliasName + DOT + entityContainerName.getName() + SLASH + entitySet.getName() + SLASH + 
+          complexProperty.getName() + SLASH + complexNavProperty.getName());
+      addAnnotationsOnComplexTypeNavProperties(complexType, complexNavProperty, annotationsOnAlias);
+    }
   }
 
-  /**
-   * @param annotationGrp
-   * @param complexType
-   * @param complexNavPropertyName
-   */
-  private void addAnnotationsToComplexTypeNavProperties(CsdlAnnotations annotationGrp, CsdlComplexType complexType,
-      CsdlNavigationProperty complexNavPropertyName) {
-    for (CsdlAnnotation annotation : annotationGrp.getAnnotations()) {
-       if (!compareAnnotations(complexType.getNavigationProperty(
-           complexNavPropertyName.getName()).getAnnotations(), annotation)) {
-         complexType.getNavigationProperty(complexNavPropertyName.getName()).getAnnotations().add(annotation); 
-       }
-     }
+  private void checkAnnotationAddedToNavPropertiesOfComplexType(CsdlComplexType complexType,
+      CsdlNavigationProperty complexNavProperty, FullQualifiedName entityContainerName) {
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(entityContainerName.getNamespace() + 
+        DOT + complexType.getName() + SLASH + complexNavProperty.getName());
+    removeAnnotationsOnNavProperties(complexNavProperty, annotations);
+    
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(aliasName + 
+        DOT + complexType.getName() + SLASH + complexNavProperty.getName());
+    removeAnnotationsOnNavProperties(complexNavProperty, annotationsOnAlias);
   }
 
-  /**
-   * @param annotationGrp
-   * @param complexType
-   * @param complexPropertyName
-   */
-  private void addAnnotationsToComplexTypeProperties(CsdlAnnotations annotationGrp, CsdlComplexType complexType,
-      CsdlProperty complexPropertyName) {
-    for (CsdlAnnotation annotation : annotationGrp.getAnnotations()) {
-       if (!compareAnnotations(complexType.getProperty(
-           complexPropertyName.getName()).getAnnotations(), annotation)) {
-         complexType.getProperty(complexPropertyName.getName()).getAnnotations().add(annotation); 
-       }
-     }
+  private void removeAnnotationAddedToPropertiesOfComplexType(CsdlComplexType complexType,
+      CsdlProperty complexPropertyName, FullQualifiedName entityContainerName) {
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(entityContainerName.getNamespace() + 
+        DOT + complexType.getName() + SLASH + complexPropertyName.getName());
+    removeAnnotationsOnETProperties(complexPropertyName, annotations);
+    
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(aliasName + DOT + entityContainerName.getName() + 
+        DOT + complexType.getName() + SLASH + complexPropertyName.getName());
+    removeAnnotationsOnETProperties(complexPropertyName, annotationsOnAlias);
   }
 
   private boolean isPropertyComplex(CsdlProperty propertyName) {
@@ -562,7 +777,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     try {
       final CsdlActionImport providerImport = provider.getActionImport(entityContainerName, actionImportName);
       if (providerImport != null) {
-		addAnnotations(providerImport, entityContainerName);
+        addOperationImportAnnotations(providerImport, entityContainerName);
         actionImport = new EdmActionImportImpl(edm, this, providerImport);
       }
     } catch (ODataException e) {
@@ -572,31 +787,40 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
     return actionImport;
   }
 
-  private void addAnnotations(CsdlActionImport actionImport, FullQualifiedName entityContainerName) {
-    List<CsdlSchema> termSchemaDefinition = ((EdmProviderImpl)edm).getTermSchemaDefinitions();
-    for (CsdlSchema schema : termSchemaDefinition) {
-      List<CsdlAnnotations> annotationGrps = schema.getAnnotationGroups();
-      for (CsdlAnnotations annotationGrp : annotationGrps) {
-        if (annotationGrp.getTarget().
-            equalsIgnoreCase(entityContainerName + "/" + actionImport.getName())) {
-          for (CsdlAnnotation annotation : annotationGrp.getAnnotations()) {
-            if (!compareAnnotations(actionImport.getAnnotations(), annotation)) {
-              actionImport.getAnnotations().add(annotation);
-            }
-          }
-          break;
+  private void addOperationImportAnnotations(CsdlOperationImport operationImport, 
+      FullQualifiedName entityContainerName) {
+    List<CsdlAnnotation> annotations = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(entityContainerName + SLASH + operationImport.getName());
+    addAnnotationsOnOperationImport(operationImport, annotations);
+    
+    String aliasName = getAliasInfo(entityContainerName.getNamespace());
+    List<CsdlAnnotation> annotationsOnAlias = ((EdmProviderImpl)edm).getAnnotationsMap().
+        get(aliasName + DOT + entityContainerName.getName() + SLASH + operationImport.getName());
+    addAnnotationsOnOperationImport(operationImport, annotationsOnAlias);
+   }
+   
+  /**
+   * Adds annotations on action import
+   * @param operationImport
+   * @param annotations
+   */
+  private void addAnnotationsOnOperationImport(CsdlOperationImport operationImport, List<CsdlAnnotation> annotations) {
+    if (null != annotations && !annotations.isEmpty()) {
+      for (CsdlAnnotation annotation : annotations) {
+        if (!compareAnnotations(operationImport.getAnnotations(), annotation)) {
+          operationImport.getAnnotations().add(annotation);
         }
       }
     }
-   }
-   
+  }
+  
   protected EdmFunctionImport createFunctionImport(final String functionImportName) {
     EdmFunctionImport functionImport = null;
 
     try {
       final CsdlFunctionImport providerImport = provider.getFunctionImport(entityContainerName, functionImportName);
       if (providerImport != null) {
-		addAnnotations(providerImport, entityContainerName);
+        addOperationImportAnnotations(providerImport, entityContainerName);
         functionImport = new EdmFunctionImportImpl(edm, this, providerImport);
       }
     } catch (ODataException e) {
@@ -605,25 +829,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
     return functionImport;
   }
-
-  private void addAnnotations(CsdlFunctionImport functionImport, FullQualifiedName entityContainerName) {
-    List<CsdlSchema> termSchemaDefinition = ((EdmProviderImpl)edm).getTermSchemaDefinitions();
-    for (CsdlSchema schema : termSchemaDefinition) {
-      List<CsdlAnnotations> annotationGrps = schema.getAnnotationGroups();
-      for (CsdlAnnotations annotationGrp : annotationGrps) {
-        if (annotationGrp.getTarget().
-            equalsIgnoreCase(entityContainerName + "/" + functionImport.getName())) {
-          for (CsdlAnnotation annotation : annotationGrp.getAnnotations()) {
-            if (!compareAnnotations(functionImport.getAnnotations(), annotation)) {
-              functionImport.getAnnotations().add(annotation);
-            }
-          }
-          break;
-        }
-      }
-    }
-   }
-   
+  
   protected void loadAllEntitySets() {
     loadContainer();
     final List<CsdlEntitySet> providerEntitySets = container.getEntitySets();
@@ -631,7 +837,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
     if (providerEntitySets != null) {
       for (CsdlEntitySet entitySet : providerEntitySets) {
-		addAnnotations(entitySet, entityContainerName);
+		addEntitySetAnnotations(entitySet, entityContainerName);
         final EdmEntitySetImpl impl = new EdmEntitySetImpl(edm, this, entitySet);
         if (isAnnotationsIncluded) {
           entitySetWithAnnotationsCache.put(impl.getName(), impl);
@@ -652,7 +858,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
     if (providerFunctionImports != null) {
       for (CsdlFunctionImport functionImport : providerFunctionImports) {
-		addAnnotations(functionImport, entityContainerName);
+        addOperationImportAnnotations(functionImport, entityContainerName);
         EdmFunctionImportImpl impl = new EdmFunctionImportImpl(edm, this, functionImport);
         functionImportCache.put(impl.getName(), impl);
         functionImportsLocal.add(impl);
@@ -668,7 +874,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
     if (providerSingletons != null) {
       for (CsdlSingleton singleton : providerSingletons) {
-		addAnnotations(singleton, entityContainerName);
+        addSingletonAnnotations(singleton, entityContainerName);
         final EdmSingletonImpl impl = new EdmSingletonImpl(edm, this, singleton);
         singletonCache.put(singleton.getName(), impl);
         singletonsLocal.add(impl);
@@ -684,7 +890,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
 
     if (providerActionImports != null) {
       for (CsdlActionImport actionImport : providerActionImports) {
-        addAnnotations(actionImport, entityContainerName);
+        addOperationImportAnnotations(actionImport, entityContainerName);
 		final EdmActionImportImpl impl = new EdmActionImportImpl(edm, this, actionImport);
         actionImportCache.put(actionImport.getName(), impl);
         actionImportsLocal.add(impl);
@@ -701,7 +907,7 @@ public class EdmEntityContainerImpl extends AbstractEdmNamed implements EdmEntit
         if (containerLocal == null) {
           containerLocal = new CsdlEntityContainer().setName(getName());
         }
-		((EdmProviderImpl)edm).addAnnotations(containerLocal, entityContainerName);
+		((EdmProviderImpl)edm).addEntityContainerAnnotations(containerLocal, entityContainerName);
         container = containerLocal;
       } catch (ODataException e) {
         throw new EdmException(e);

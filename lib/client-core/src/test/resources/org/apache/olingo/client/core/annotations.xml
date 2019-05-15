@@ -34,11 +34,17 @@
     <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/ComplexProperty/PropertyInt16">
         <Annotation Term="UI.AdditionalInfo"/>
     </Annotations>
+    <Annotations Target="Test.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/ComplexProperty/PropertyInt16">
+        <Annotation Term="UI.HeaderInfo"/>
+    </Annotations>
     <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/ComplexProperty/NavPropertyDraftAdministrativeDataType">
         <Annotation Term="UI.AdditionalInfo"/>
     </Annotations>
-    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SINav/ComplexProperty/NavPropertyDraftAdministrativeDataType">
+    <Annotations Target="Test.SEPMRA_SO_MAN2_Entities/SINav/ComplexProperty/NavPropertyDraftAdministrativeDataType">
         <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SINav/ComplexProperty/NavPropertyDraftAdministrativeDataType">
+        <Annotation Term="UI.HeaderInfo"/>
     </Annotations>
     <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderCustCntctVH/to_Customer">
         <Annotation Term="UI.AdditionalInfo"/>
@@ -48,8 +54,6 @@
     </Annotations>
     <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/DraftUUID">
         <Annotation Term="UI.AdditionalInfo"/>
-    </Annotations>
-    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/DraftUUID">
         <Annotation Term="UI.HeaderInfo"/>
     </Annotations>
     <Annotations Target="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType/DraftUUID">
@@ -70,7 +74,7 @@
     <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/AIRTString">
         <Annotation Term="UI.HeaderInfo"/>
       </Annotations>
-    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SINav">
+    <Annotations Target="Test.SEPMRA_SO_MAN2_Entities/SINav">
       <Annotation Term="UI.HeaderInfo"/>
     </Annotations>
     <Annotations Target="SEPMRA_SO_MAN2.TDString">
@@ -87,7 +91,7 @@
       </Annotations>
       <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData">
         <Annotation Term="UI.HeaderInfo"/>
-      </Annotations>
+      </Annotations> 
       <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities">
         <Annotation Term="UI.HeaderInfo"/>
       </Annotations>
@@ -146,6 +150,9 @@
       </Annotations>
       <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType/to_Customer">
         <Annotation Term="UI.ThingPerspective"/>
+      </Annotations>
+      <Annotations Target="Test.SEPMRA_C_SalesOrderCustCntctVHType/to_Customer">
+        <Annotation Term="UI.HeaderInfo"/>
       </Annotations>
       <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType">
         <Annotation Term="UI.FieldGroup" Qualifier="ContactPerson">
@@ -1271,6 +1278,29 @@
         <Annotation Term="UI.HiddenFilter"/>
         <Annotation Term="Common.SemanticObject" String="EPMSalesOrder"/>
       </Annotations>
+     <Annotations Target="Test.SEPMRA_SO_MAN2_Entities/CDI_CDC_SOURCEResult">
+		<Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="UnitOfMeasure"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+	</Annotations>
+	<Annotations Target="Test.CDI_CDC_SOURCEResult">
+		<Annotation Term="UI.HeaderInfo"/>
+	</Annotations>
+	<Annotations Target="Test.SEPMRA_SO_MAN2_Entities/FIC_RTTimeOfDay_">
+		<Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="UnitOfMeasure"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+	</Annotations>
     </Schema>
   </edmx:DataServices>
 </edmx:Edmx>

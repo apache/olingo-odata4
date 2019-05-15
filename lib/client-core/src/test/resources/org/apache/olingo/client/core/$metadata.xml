@@ -26,14 +26,28 @@
   <edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Uri="../v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
     <edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
   </edmx:Reference>
+  <edmx:Reference Uri="http://server/TEST/odata/DataIntegration.xml">
+	<edmx:Include Namespace="com.test.vocabularies.DataIntegration.v1" Alias="Integration"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://server/TEST/odata/Org.OData.Capabilities.V1.xml">
+	<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+  </edmx:Reference>
   <edmx:DataServices m:DataServiceVersion="2.0">
-    <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="SEPMRA_SO_MAN2" xml:lang="en">
+    <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="SEPMRA_SO_MAN2" Alias="Test" xml:lang="en">
     <EnumType Name="ENString" IsFlags="true" UnderlyingType="Edm.Int16">
-		<Member Name="String1" Value="1"/>
+		<Member Name="String1" Value="1">
+			<Annotation Term="Integration.OriginalDataType">
+				<String>TIMESTAMP</String>
+			</Annotation>
+		</Member>
 		<Member Name="String2" Value="2"/>
 		<Member Name="String3" Value="4"/>
 		</EnumType>
-	<TypeDefinition Name="TDString" UnderlyingType="Edm.String" MaxLength="15"/>
+	<TypeDefinition Name="TDString" UnderlyingType="Edm.String" MaxLength="15">
+		<Annotation Term="Integration.OriginalDataType">
+			<String>TIMESTAMP</String>
+		</Annotation>
+	</TypeDefinition>
 	  <ComplexType Name="CTPrim">
 		<Property Name="PropertyInt16" Type="Edm.Int16"/>
 		<NavigationProperty Name="NavPropertyDraftAdministrativeDataType" Type="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType"/>
@@ -79,6 +93,36 @@
         <Property Name="Country" Type="Edm.String" Nullable="false" MaxLength="3"/>
         <Property Name="CountryT" Type="Edm.String" MaxLength="50"/>
       </EntityType>
+      <EntityType Name="CDI_CDC_SOURCEResult">
+		<Key>
+			<PropertyRef Name="ID"/>
+		</Key>
+		<Property Name="CHANGED" Type="Edm.DateTimeOffset" MaxLength="27" Precision="6" Scale="7">
+			<Annotation Term="Integration.OriginalDataType">
+				<String>TIMESTAMP</String>
+			</Annotation>
+		</Property>
+		<Property Name="CREATED" Type="Edm.DateTimeOffset" MaxLength="27" Precision="6" Scale="7">
+			<Annotation Term="Integration.OriginalDataType">
+				<String>TIMESTAMP</String>
+			</Annotation>
+		</Property>
+		<Property Name="ID" Type="Edm.Int64" MaxLength="10" Scale="0">
+			<Annotation Term="Integration.OriginalDataType">
+				<String>INTEGER</String>
+			</Annotation>
+		</Property>
+		<Property Name="NAME" Type="Edm.String" MaxLength="20">
+			<Annotation Term="Integration.OriginalDataType">
+				<String>VARCHAR</String>
+			</Annotation>
+		</Property>
+		<Property Name="STATUS" Type="Edm.Int64" MaxLength="10" Scale="0">
+			<Annotation Term="Integration.OriginalDataType">
+				<String>INTEGER</String>
+			</Annotation>
+		</Property>
+	</EntityType>
       <Action Name="BA_RTCountryVHType" IsBound="true">
 		<Parameter Name="ParameterCountryType" Type="SEPMRA_SO_MAN2.SEPMRA_C_CountryVHType" Nullable="false"/>
 		<ReturnType Type="SEPMRA_SO_MAN2.SEPMRA_C_CountryVHType"/>
@@ -93,6 +137,9 @@
 		<Parameter Name="ParameterCTPrim" Type="SEPMRA_SO_MAN2.CTPrim" Nullable="false"/>
 		<ReturnType Type="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType"/>
 	  </Action>
+	  <Action Name="UARTString" IsBound="false">
+		<ReturnType Type="Edm.String"/>
+	</Action>
 	  <Function Name="_FC_RTTimeOfDay_" IsBound="true" IsComposable="true">
 		<Parameter Name="ParameterTimeOfDay" Type="Edm.TimeOfDay" Nullable="false"/>
 		<ReturnType Type="Edm.TimeOfDay"/>
@@ -102,13 +149,21 @@
 		<Parameter Name="ParameterAny" Type="Edm.String" Nullable="false"/>
 		<ReturnType Type="Edm.TimeOfDay"/>
 	  </Function>
+	  <Function Name="UFCRTCollString" IsBound="false">
+		<ReturnType Type="Collection(Edm.String)" Nullable="false"/>
+	</Function>
+	<Function Name="UFCRTStringTwoParam" IsBound="false">
+		<Parameter Name="ParameterString" Type="Edm.String" Nullable="false"/>
+		<Parameter Name="ParameterInt16" Type="Edm.Int16" Nullable="false"/>
+		<ReturnType Type="Edm.String"/>
+	</Function>
       <EntityContainer Name="SEPMRA_SO_MAN2_Entities" m:IsDefaultEntityContainer="true">
         <EntitySet Name="I_DraftAdministrativeData" EntityType="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType"/>
         <EntitySet Name="SEPMRA_C_SalesOrderCustCntctVH" EntityType="SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType">
         <NavigationPropertyBinding Path="Customer" Target="SEPMRA_C_CountryVH" />
         </EntitySet>
         <EntitySet Name="SEPMRA_C_CountryVH" EntityType="SEPMRA_SO_MAN2.SEPMRA_C_CountryVHType"/>
-        <ActionImport Name="AIRTString" Action="Namespace1_Alias.UARTString">
+        <ActionImport Name="AIRTString" Action="SEPMRA_SO_MAN2.UARTString">
 			<Annotation Term="Core.Description">
 				<String>Action Import returns a simple String</String>
 			</Annotation>
@@ -116,11 +171,29 @@
 				<Bool>true</Bool>
 			</Annotation>
 		</ActionImport>
+		<FunctionImport Name="FIC_RTTimeOfDay_" Function="SEPMRA_SO_MAN2._FC_RTTimeOfDay_" IncludeInServiceDocument="true">
+			<Annotation Term="Core.Description">
+				<String>
+				Overload with same unbound parameter name and different type Composable Importing:Edm.TimeOfDay (Edm.TimeOfDay) Returning:Edm.TimeOfDay
+				</String>
+			</Annotation>
+			<Annotation Term="Integration.Extractable">
+				<Bool>false</Bool>
+			</Annotation>
+		</FunctionImport>
 		<Singleton Name="SINav" Type="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType">
 			<NavigationPropertyBinding Path="NavPropertyDraftAdministrativeDataType" Target="I_DraftAdministrativeData"/>
 		</Singleton>
+		<EntitySet Name="CDI_CDC_SOURCEResult" EntityType="SEPMRA_SO_MAN2.CDI_CDC_SOURCEResult">
+		<Annotation Term="Integration.SourceSystem">
+			<String>DB</String>
+		</Annotation>
+		</EntitySet>
+		<Annotation Term="Integration.SourceSystem">
+			<String>DB</String>
+		</Annotation>
       </EntityContainer>
-      <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderTP">
+     <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderTP">
         <Annotation Term="Common.DraftRoot">
           <Record>
             <PropertyValue Property="ActivationAction" String="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderTPActivation"/>
@@ -773,6 +846,132 @@
             <PropertyValue Property="EffectTypes" EnumMember="Common.EffectType/ValueChange"/>
           </Record>
         </Annotation>
+      </Annotations> 
+      <Annotations Target="SEPMRA_SO_MAN2.CDI_CDC_SOURCEResult">
+		<Annotation Term="Capabilities.ChangeTracking">
+			<Record>
+				<PropertyValue Property="Supported">
+					<Bool>true</Bool>
+				</PropertyValue>
+			</Record>
+		</Annotation>
+		<Annotation Term="Integration.Extractable">
+			<Bool>true</Bool>
+		</Annotation>
+	</Annotations>
+	<Annotations Target="SEPMRA_SO_MAN2.CDI_CDC_SOURCEResult/CHANGED">
+	<Annotation Term="Integration.SourceSystem">
+		<String>DB</String>
+	</Annotation>
+	</Annotations>
+	<Annotations Target="Test.CDI_CDC_SOURCEResult/CHANGED">
+	<Annotation Term="Integration.Extractable">
+		<Bool>true</Bool>
+	</Annotation>
+	</Annotations>
+	<Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/CDI_CDC_SOURCEResult/CHANGED">
+	<Annotation Term="Integration.Extractable">
+		<Bool>true</Bool>
+	</Annotation>
+	</Annotations>
+	<Annotations Target="SEPMRA_SO_MAN2.TDString">
+	<Annotation Term="Integration.Extractable">
+		<Bool>true</Bool>
+	</Annotation>
+	</Annotations>
+	<Annotations Target="SEPMRA_SO_MAN2.ENString/String1">
+	<Annotation Term="Integration.Extractable">
+		<Bool>true</Bool>
+	</Annotation>
+	</Annotations>
+	<Annotations Target="SEPMRA_SO_MAN2.ENString">
+		<Annotation Term="Integration.Extractable">
+			<Bool>true</Bool>
+		</Annotation>
+	</Annotations>
+	<Annotations Target="Test.ENString">
+		<Annotation Term="UI.HeaderInfo"/>
+	</Annotations>
+	<Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities">
+	<Annotation Term="Integration.Extractable">
+		<Bool>true</Bool>
+	</Annotation>
+	</Annotations>
+	<Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/CDI_CDC_SOURCEResult">
+	<Annotation Term="Integration.Extractable">
+		<Bool>true</Bool>
+	</Annotation>
+	</Annotations> 
+	<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="Test.SEPMRA_SO_MAN2_Entities">
+       <Annotation Term="Common.DraftNode">
+         <Record>
+           <PropertyValue Property="PreparationAction" String="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_ScheduleLineTPPreparation"/>
+           <PropertyValue Property="ValidationFunction" String="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_ScheduleLineTPValidation"/>
+         </Record>
+       </Annotation>
+       <Annotation Term="Common.DraftActivationVia">
+         <Collection>
+           <String>SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SEPMRA_C_SalesOrderTP</String>
+         </Collection>
+       </Annotation>
+     </Annotations>
+     <Annotations Target="Test.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/DraftUUID">
+        <Annotation Term="Integration.Extractable">
+			<Bool>true</Bool>
+		</Annotation>
+    </Annotations>
+    <Annotations Target="Test.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/ComplexProperty/NavPropertyDraftAdministrativeDataType">
+        <Annotation Term="Integration.Extractable">
+			<Bool>true</Bool>
+		</Annotation>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/SINav">
+      <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="Test._FC_RTTimeOfDay_">
+        <Annotation Term="Integration.Extractable">
+			<Bool>true</Bool>
+		</Annotation>
+    </Annotations>
+    <Annotations Target="Test._FC_RTTimeOfDay_/ParameterTimeOfDay">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="Test.SEPMRA_SO_MAN2_Entities/AIRTString">
+       <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="Test.BA_RTCountryVHType/ParameterCTPrim">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="Test.UFCRTCollString">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.UFCRTCollString">
+        <Annotation Term="Integration.Extractable">
+			<Bool>true</Bool>
+		</Annotation>
+    </Annotations>
+    <Annotations Target="Test.UARTString">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.UARTString">
+        <Annotation Term="Integration.Extractable">
+			<Bool>true</Bool>
+		</Annotation>
+    </Annotations>
+    <Annotations Target="Test.UFCRTStringTwoParam">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.UFCRTStringTwoParam">
+        <Annotation Term="Integration.Extractable"/>
+    </Annotations>
+    <Annotations Target="Test.UFCRTStringTwoParam/ParameterString">
+        <Annotation Term="UI.AdditionalInfo"/>
+    </Annotations>
+    <Annotations Target="SEPMRA_SO_MAN2.UFCRTStringTwoParam/ParameterInt16">
+        <Annotation Term="Integration.Extractable"/>
+    </Annotations>
+    <Annotations Target="Test.CTPrim">
+        <Annotation Term="Integration.Extractable"/>
       </Annotations>
     </Schema>
   </edmx:DataServices>

@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 
 public abstract class AbstractEdm implements Edm {
 
@@ -96,6 +97,9 @@ public abstract class AbstractEdm implements Edm {
   private final Map<FullQualifiedName, EdmComplexType> complexTypesDerivedFromES =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmComplexType>());
 
+  private Map<String, List<CsdlAnnotation>> annotationMap = 
+      new HashMap<String, List<CsdlAnnotation>>();
+  
   @Override
   public List<EdmSchema> getSchemas() {
     if (schemaList == null) {
@@ -546,5 +550,9 @@ public abstract class AbstractEdm implements Edm {
   
   protected boolean isPreviousES() {
     return isPreviousES;
+  }
+  
+  protected Map<String, List<CsdlAnnotation>> getAnnotationsMap() {
+    return annotationMap;
   }
 }

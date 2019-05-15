@@ -42,6 +42,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
+import org.apache.olingo.commons.api.edm.EdmMember;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -50,6 +51,9 @@ import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.annotation.EdmCollection;
+import org.apache.olingo.commons.api.edm.annotation.EdmConstantExpression;
+import org.apache.olingo.commons.api.edm.annotation.EdmDynamicExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
@@ -546,7 +550,7 @@ public class MetadataTest extends AbstractTest {
        new FullQualifiedName("SEPMRA_SO_MAN2", "SEPMRA_C_SalesOrderCustCntctVHType"));
    EdmAnnotation annotation = entity1.getAnnotations().get(0);
    assertNotNull(annotation);
-   assertEquals(5, entity1.getAnnotations().size());
+   assertEquals(6, entity1.getAnnotations().size());
    assertEquals("FieldGroup", annotation.getTerm().getName());
    assertEquals("ContactPerson", annotation.getQualifier());
    EdmExpression expression = annotation.getExpression();
@@ -563,7 +567,7 @@ public class MetadataTest extends AbstractTest {
    assertEquals("Label", propertyValues.get(1).getProperty());
    assertEquals("Contact Person", propertyValues.get(1).getValue().asConstant().asPrimitive());
    
-   assertEquals(1, entity1.getNavigationProperty("to_Customer").getAnnotations().size());
+   assertEquals(2, entity1.getNavigationProperty("to_Customer").getAnnotations().size());
    EdmNavigationProperty navProperty = entity1.getNavigationProperty("to_Customer");
    assertEquals("ThingPerspective", navProperty.
        getAnnotations().get(0).getTerm().getName());
@@ -588,7 +592,7 @@ public class MetadataTest extends AbstractTest {
    assertNotNull(edm);
    EdmEntityContainer container = edm.getEntityContainer();
    EdmActionImport actionImport = container.getActionImport("AIRTString");
-   assertEquals(3, actionImport.getAnnotations().size());
+   assertEquals(4, actionImport.getAnnotations().size());
    assertEquals("Description", actionImport.getAnnotations().get(0).getTerm().getName());
    assertEquals("HeaderInfo", actionImport.getAnnotations().get(2).getTerm().getName());
  }
@@ -599,15 +603,18 @@ public class MetadataTest extends AbstractTest {
    assertNotNull(edm);
    EdmEntityContainer container = edm.getEntityContainer();
    EdmSingleton singleton = container.getSingleton("SINav");
-   assertEquals(1, singleton.getAnnotations().size());
-   assertEquals("HeaderInfo", singleton.getAnnotations().get(0).getTerm().getName());
-   
+   assertEquals(2, singleton.getAnnotations().size());
+   FullQualifiedName termName = new FullQualifiedName("UI", "HeaderInfo");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = singleton.getAnnotation(term, null);
+   assertNotNull(annotation);
+
    EdmEntityType singletonET = singleton.getEntityType();
-   EdmProperty singlComplexProp = (EdmProperty)singletonET.getProperty("ComplexProperty");
+   EdmProperty singlComplexProp = (EdmProperty) singletonET.getProperty("ComplexProperty");
    EdmComplexType singlCompType = (EdmComplexType) singlComplexProp.getTypeWithAnnotations();
-   EdmNavigationProperty singlNavProp = (EdmNavigationProperty) singlCompType.
-       getNavigationProperty("NavPropertyDraftAdministrativeDataType");
-   assertEquals(1, singlNavProp.getAnnotations().size());
+   EdmNavigationProperty singlNavProp = (EdmNavigationProperty) singlCompType.getNavigationProperty(
+       "NavPropertyDraftAdministrativeDataType");
+   assertEquals(2, singlNavProp.getAnnotations().size());
    assertEquals("AdditionalInfo", singlNavProp.getAnnotations().get(0).getTerm().getName());
  }
  
@@ -616,15 +623,26 @@ public class MetadataTest extends AbstractTest {
    final Edm edm = fetchEdm();
    assertNotNull(edm);
    List<String> parameterNames = new ArrayList<String>();
-   EdmFunction function = edm.getBoundFunction(new FullQualifiedName("SEPMRA_SO_MAN2", "_FC_RTTimeOfDay_"), 
-       new FullQualifiedName("Edm","TimeOfDay"), false, parameterNames);
-   assertEquals(1, function.getAnnotations().size());
+   EdmFunction function = edm.getBoundFunction(new FullQualifiedName("SEPMRA_SO_MAN2", "_FC_RTTimeOfDay_"),
+       new FullQualifiedName("Edm", "TimeOfDay"), false, parameterNames);
+   assertEquals(2, function.getAnnotations().size());
    assertEquals("HeaderInfo", function.getAnnotations().get(0).getTerm().getName());
+
+   FullQualifiedName termName =
+       new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = function.getAnnotation(term, null);
+   assertNotNull(annotation);
    
    // Annotations on Bound Function parameter
-   assertEquals(1, function.getParameter("ParameterTimeOfDay").getAnnotations().size());
+   assertEquals(2, function.getParameter("ParameterTimeOfDay").getAnnotations().size());
    assertEquals("HeaderInfo", function.getParameter("ParameterTimeOfDay")
        .getAnnotations().get(0).getTerm().getName());
+   termName =
+       new FullQualifiedName("UI", "AdditionalInfo");
+   term = edm.getTerm(termName);
+   annotation = function.getParameter("ParameterTimeOfDay").getAnnotation(term, null);
+   assertNotNull(annotation);
  }
  
  @Test
@@ -633,8 +651,8 @@ public class MetadataTest extends AbstractTest {
    assertNotNull(edm);
    EdmSchema schema = edm.getSchema("sepmra_so_man2_anno_mdl.v1");
    assertNotNull(schema);
-   assertEquals(112, schema.getAnnotationGroups().size());
-   
+   assertEquals(117, schema.getAnnotationGroups().size());
+
    EdmAnnotations annotations = edm.getSchema("SEPMRA_SO_MAN2").getAnnotationGroups().get(22);
    assertEquals("SEPMRA_SO_MAN2.SEPMRA_C_SalesOrderCustCntctVHType", annotations.getTargetPath());
    assertEquals(1, annotations.getAnnotations().size());
@@ -648,8 +666,8 @@ public class MetadataTest extends AbstractTest {
    final Edm edm = fetchEdm();
    assertNotNull(edm);
    EdmEntityContainer container = edm.getEntityContainer();
-   assertEquals(1, container.getAnnotations().size());
-   assertEquals("HeaderInfo", container.getAnnotations().get(0).getTerm().getName());
+   assertEquals(5, container.getAnnotations().size());
+   assertEquals("HeaderInfo", container.getAnnotations().get(1).getTerm().getName());
  }
  
  @Test
@@ -658,17 +676,22 @@ public class MetadataTest extends AbstractTest {
    assertNotNull(edm);
    EdmComplexType complexType = edm.getComplexTypeWithAnnotations(
        new FullQualifiedName("SEPMRA_SO_MAN2", "CTPrim"));
-   assertEquals(1, complexType.getAnnotations().size());
+   assertEquals(2, complexType.getAnnotations().size());
    assertEquals("HeaderInfo", complexType.getAnnotations().get(0).getTerm().getName());
    // Annotations on complex type property
    EdmProperty complexTypeProp = (EdmProperty) complexType.getProperty("PropertyInt16");
    assertEquals(1, complexTypeProp.getAnnotations().size());
    assertEquals("HeaderInfo", complexTypeProp.getAnnotations().get(0).getTerm().getName());
    // Annotations on complex type navigation property
-   EdmNavigationProperty complexTypeNavProp = complexType.
-       getNavigationProperty("NavPropertyDraftAdministrativeDataType");
+   EdmNavigationProperty complexTypeNavProp = complexType.getNavigationProperty(
+       "NavPropertyDraftAdministrativeDataType");
    assertEquals(1, complexTypeNavProp.getAnnotations().size());
    assertEquals("HeaderInfo", complexTypeNavProp.getAnnotations().get(0).getTerm().getName());
+   
+   FullQualifiedName termName = new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = complexType.getAnnotation(term, null);
+   assertNotNull(annotation);
  }
  
  @Test
@@ -676,23 +699,28 @@ public class MetadataTest extends AbstractTest {
    final Edm edm = fetchEdm();
    assertNotNull(edm);
    EdmTypeDefinition typeDefn = edm.getTypeDefinition(new FullQualifiedName("SEPMRA_SO_MAN2", "TDString"));
-   assertEquals(1, typeDefn.getAnnotations().size());
-   assertEquals("HeaderInfo", typeDefn.getAnnotations().get(0).getTerm().getName());
+   assertEquals(3, typeDefn.getAnnotations().size());
+   assertEquals("OriginalDataType", typeDefn.getAnnotations().get(0).getTerm().getName());
  }
  
  @Test
  public void readAnnotationOnBoundActions() {
    final Edm edm = fetchEdm();
    assertNotNull(edm);
-   EdmAction action = edm.getBoundAction(new FullQualifiedName("SEPMRA_SO_MAN2", "BA_RTCountryVHType"), 
-       new FullQualifiedName("SEPMRA_SO_MAN2","I_DraftAdministrativeDataType"), false);
+   EdmAction action = edm.getBoundAction(new FullQualifiedName("SEPMRA_SO_MAN2", "BA_RTCountryVHType"),
+       new FullQualifiedName("SEPMRA_SO_MAN2", "I_DraftAdministrativeDataType"), false);
    assertEquals(1, action.getAnnotations().size());
    assertEquals("HeaderInfo", action.getAnnotations().get(0).getTerm().getName());
-   
-   //Annotations on Bound Action parameter
-   assertEquals(1, action.getParameter("ParameterCTPrim").getAnnotations().size());
+
+   // Annotations on Bound Action parameter
+   assertEquals(2, action.getParameter("ParameterCTPrim").getAnnotations().size());
    assertEquals("HeaderInfo", action.getParameter("ParameterCTPrim")
        .getAnnotations().get(0).getTerm().getName());
+   
+   FullQualifiedName termName = new FullQualifiedName("UI", "AdditionalInfo");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = action.getParameter("ParameterCTPrim").getAnnotation(term, null);
+   assertNotNull(annotation);
  }
  
  @Test
@@ -703,58 +731,50 @@ public class MetadataTest extends AbstractTest {
    EdmEntitySet entitySet = container.getEntitySet("I_DraftAdministrativeData");
    assertEquals(1, entitySet.getAnnotations().size());
    assertEquals("HeaderInfo", entitySet.getAnnotations().get(0).getTerm().getName());
-   
-   
-   
+
    EdmEntityType entityType50 = edm.getEntityTypeWithAnnotations(
        new FullQualifiedName("SEPMRA_SO_MAN2", "I_DraftAdministrativeDataType"));
-   assertEquals(1, ((EdmProperty)entityType50.getProperty("DraftUUID")).getAnnotations().size());
-   assertEquals("UI.HeaderInfo", ((EdmProperty)entityType50.getProperty("DraftUUID")).
-       getAnnotations().get(0).getTerm().getFullQualifiedName().getFullQualifiedNameAsString());
-   
-   
-   
+   assertEquals(1, ((EdmProperty) entityType50.getProperty("DraftUUID")).getAnnotations().size());
+   assertEquals("UI.HeaderInfo", ((EdmProperty) entityType50.getProperty("DraftUUID")).getAnnotations().get(0)
+       .getTerm().getFullQualifiedName().getFullQualifiedNameAsString());
+
    // Annotations on properties of entity type included in EntitySet
    EdmEntityType entityType3 = entitySet.getEntityTypeWithAnnotations();
-   assertEquals(2, ((EdmProperty)entityType3.getProperty("DraftUUID")).getAnnotations().size());
-   assertEquals("AdditionalInfo", ((EdmProperty)entityType3.getProperty("DraftUUID"))
+   assertEquals(3, ((EdmProperty) entityType3.getProperty("DraftUUID")).getAnnotations().size());
+   assertEquals("AdditionalInfo", ((EdmProperty) entityType3.getProperty("DraftUUID"))
        .getAnnotations().get(0).getTerm().getName());
-   assertEquals("HeaderInfo", ((EdmProperty)entityType3.getProperty("DraftUUID"))
+   assertEquals("HeaderInfo", ((EdmProperty) entityType3.getProperty("DraftUUID"))
        .getAnnotations().get(1).getTerm().getName());
-   
+
    // Annotations on navigation properties of entity type included in EntitySet
    EdmEntitySet entitySet1 = container.getEntitySet("SEPMRA_C_SalesOrderCustCntctVH");
    EdmEntityType entityType5 = entitySet1.getEntityTypeWithAnnotations();
-   assertEquals(2, ((EdmNavigationProperty)entityType5.getNavigationProperty("to_Customer"))
+   assertEquals(2, ((EdmNavigationProperty) entityType5.getNavigationProperty("to_Customer"))
        .getAnnotations().size());
-   assertEquals("AdditionalInfo", ((EdmNavigationProperty)entityType5
+   assertEquals("AdditionalInfo", ((EdmNavigationProperty) entityType5
        .getNavigationProperty("to_Customer"))
-       .getAnnotations().get(0).getTerm().getName());
-   assertEquals("HeaderInfo", ((EdmNavigationProperty)entityType5
+           .getAnnotations().get(0).getTerm().getName());
+   assertEquals("HeaderInfo", ((EdmNavigationProperty) entityType5
        .getNavigationProperty("to_Customer"))
-       .getAnnotations().get(1).getTerm().getName());
-   
-   
-   
-   EdmComplexType complexType = edm.getComplexTypeWithAnnotations(
+           .getAnnotations().get(1).getTerm().getName());
+
+  EdmComplexType complexType = edm.getComplexTypeWithAnnotations(
        new FullQualifiedName("SEPMRA_SO_MAN2", "CTPrim"));
    EdmProperty complexTypeProp = (EdmProperty) complexType.getProperty("PropertyInt16");
    assertEquals(1, complexTypeProp.getAnnotations().size());
    assertEquals("HeaderInfo", complexTypeProp.getAnnotations().get(0).getTerm().getName());
-   
-   
-   
+
    // Annotations on properties of complex properties of entity type included in EntitySet
    EdmProperty complexProp = (EdmProperty) entityType3.getProperty("ComplexProperty");
    EdmComplexType compType = (EdmComplexType) complexProp.getTypeWithAnnotations();
    EdmProperty prop = (EdmProperty) compType.getProperty("PropertyInt16");
-   assertEquals(1, prop.getAnnotations().size());
+   assertEquals(2, prop.getAnnotations().size());
    assertEquals("AdditionalInfo", prop.getAnnotations().get(0).getTerm().getName());
-   
+
    // Annotations on navigation properties of complex properties of entity type included in EntitySet
    EdmNavigationProperty navProp = (EdmNavigationProperty) compType
        .getProperty("NavPropertyDraftAdministrativeDataType");
-   assertEquals(1, navProp.getAnnotations().size());
+   assertEquals(2, navProp.getAnnotations().size());
    assertEquals("AdditionalInfo", navProp.getAnnotations().get(0).getTerm().getName());
  }
  
@@ -763,8 +783,417 @@ public class MetadataTest extends AbstractTest {
    streams.add(getClass().getResourceAsStream("annotations.xml"));
    streams.add(getClass().getResourceAsStream("VOC_Core.xml"));
    streams.add(getClass().getResourceAsStream("UI.xml"));
+   streams.add(getClass().getResourceAsStream("Capabilities.xml"));
+   streams.add(getClass().getResourceAsStream("Integration.xml"));
    final Edm edm = client.getReader().readMetadata(getClass().getResourceAsStream("$metadata.xml"),
        streams);
-  return edm;
+   return edm;
+ }
+ 
+ @Test
+ public void readAnnotationOnFunctionImport() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEntityContainer container = edm.getEntityContainer();
+   EdmFunctionImport functionImport = container.getFunctionImport("FIC_RTTimeOfDay_");
+   assertEquals(3, functionImport.getAnnotations().size());
+   
+   FullQualifiedName termName = new FullQualifiedName("UI", "Identification");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = functionImport.getAnnotation(term, null);
+   assertNotNull(annotation);
+   
+ }
+ 
+ @Test
+ public void readAnnotationWithinMetadataFile() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+
+   //Get Annotations on entity types derived from edm 
+   EdmEntityType entityType = edm.getEntityTypeWithAnnotations(
+       new FullQualifiedName("SEPMRA_SO_MAN2", "CDI_CDC_SOURCEResult"));
+   FullQualifiedName termName;
+   EdmTerm term;
+   EdmAnnotation annotation;
+   String valueAsString;
+   checkAnnotationsOnEntityType(edm, entityType);
+   
+   assertEquals(3, ((EdmProperty) entityType.getProperty("CHANGED")).getAnnotations().size());
+   // Get the term defined on the entity property
+   termName =
+       new FullQualifiedName("Integration", "OriginalDataType");
+   term = edm.getTerm(termName);
+   annotation = ((EdmProperty) entityType.getProperty("CHANGED")).getAnnotation(term, null);
+   assertNotNull(annotation);
+   valueAsString = annotation.getExpression().asConstant().getValueAsString();
+   assertEquals("TIMESTAMP" , valueAsString);
+   
+   termName =
+       new FullQualifiedName("Integration", "SourceSystem");
+   term = edm.getTerm(termName);
+   annotation = ((EdmProperty) entityType.getProperty("CHANGED")).getAnnotation(term, null);
+   assertNotNull(annotation);
+   valueAsString = annotation.getExpression().asConstant().getValueAsString();
+   assertEquals("DB" , valueAsString);
+   
+   // Get annotations added on container
+   EdmEntityContainer container = edm.getEntityContainer();
+   assertEquals(5, container.getAnnotations().size());
+   // Get the term defined on the entity container
+   termName =
+       new FullQualifiedName("Integration", "SourceSystem");
+   term = edm.getTerm(termName);
+   annotation = container.getAnnotation(term, null);
+   assertNotNull(annotation);
+   valueAsString = annotation.getExpression().asConstant().getValueAsString();
+   assertEquals("DB", valueAsString);
+   
+   termName =
+       new FullQualifiedName("Integration", "Extractable");
+   term = edm.getTerm(termName);
+   annotation = container.getAnnotation(term, null);
+   assertNotNull(annotation);
+   valueAsString = annotation.getExpression().asConstant().getValueAsString();
+   assertTrue(Boolean.valueOf(valueAsString));
+   
+   //Get the annotations defined on type definitions
+   final EdmTypeDefinition defn = edm.getTypeDefinition(new FullQualifiedName("SEPMRA_SO_MAN2", "TDString"));
+   assertNotNull(defn);
+   assertEquals(3, defn.getAnnotations().size());
+   termName =
+       new FullQualifiedName("Integration", "Extractable");
+   term = edm.getTerm(termName);
+   annotation = defn.getAnnotation(term, null);
+   assertNotNull(annotation);
+   valueAsString = annotation.getExpression().asConstant().getValueAsString();
+   assertTrue(Boolean.valueOf(valueAsString));
+   
+   termName =
+       new FullQualifiedName("UI", "HeaderInfo");
+   term = edm.getTerm(termName);
+   annotation = defn.getAnnotation(term, null);
+   assertNotNull(annotation);
+   assertEquals("HeaderInfo", annotation.getTerm().getName());
+   
+   // Get the annotations defined on entity set
+    container = edm.getEntityContainer();
+    EdmEntitySet entitySet = container.getEntitySet("CDI_CDC_SOURCEResult");
+    assertEquals(3, entitySet.getAnnotations().size());
+    assertEquals("SourceSystem", entitySet.getAnnotations().get(0).getTerm().getName());
+    assertEquals("Extractable", entitySet.getAnnotations().get(1).getTerm().getName());
+    
+    termName =
+        new FullQualifiedName("UI", "Identification");
+    term = edm.getTerm(termName);
+    annotation = entitySet.getAnnotation(term, null);
+    assertNotNull(annotation);
+    
+    EdmExpression expression = annotation.getExpression();
+    EdmDynamicExpression asDynamic = expression.asDynamic();
+    if ((asDynamic != null) && (asDynamic.isCollection())) {
+      EdmCollection collection = asDynamic.asCollection();
+      EdmExpression exp = collection.getItems().get(0);
+      EdmRecord asRecord = exp.asDynamic().asRecord();
+      if (asRecord != null) {
+        List<EdmPropertyValue> propertyValues = asRecord.getPropertyValues();
+        if (propertyValues != null) {
+          for (int i = 0; i < propertyValues.size(); i++) {
+            EdmPropertyValue edmPropertyValue = propertyValues.get(i);
+            String property = edmPropertyValue.getProperty();
+            if (property.equals("Value")) {
+              EdmExpression value = edmPropertyValue.getValue();
+              assertNotNull(value);
+              assertEquals("Path", value.getExpressionName());
+            }
+          }
+        }
+      }
+    }
+    
+    // Get the annotations defined on entity type derived from entity set
+    entityType = entitySet.getEntityTypeWithAnnotations();
+    checkAnnotationsOnEntityType(edm, entityType);
+    assertEquals(2, ((EdmProperty) entityType.getProperty("CHANGED")).getAnnotations().size());
+    
+    termName =
+        new FullQualifiedName("Integration", "OriginalDataType");
+    term = edm.getTerm(termName);
+    annotation = ((EdmProperty) entityType.getProperty("CHANGED")).getAnnotation(term, null);
+    assertNotNull(annotation);
+    valueAsString = annotation.getExpression().asConstant().getValueAsString();
+    assertEquals("TIMESTAMP" , valueAsString);
+    
+    termName =
+        new FullQualifiedName("Integration", "Extractable");
+    term = edm.getTerm(termName);
+    annotation = ((EdmProperty) entityType.getProperty("CHANGED")).getAnnotation(term, null);
+    assertNotNull(annotation);
+    valueAsString = annotation.getExpression().asConstant().getValueAsString();
+    assertTrue(Boolean.valueOf(valueAsString));
+    
+    assertEquals(3, entityType.getAnnotations().size());
+    termName =
+        new FullQualifiedName("Capabilities", "ChangeTracking");
+    term = edm.getTerm(termName);
+    annotation = entityType.getAnnotation(term, null);
+    assertNotNull(annotation);
+    
+    expression = annotation.getExpression();
+    asDynamic = expression.asDynamic();
+    if ((asDynamic != null) && (asDynamic.isRecord())) {
+      EdmRecord asRecord = asDynamic.asRecord();
+      if (asRecord != null) {
+        List<EdmPropertyValue> propertyValues = asRecord.getPropertyValues();
+        if (propertyValues != null) {
+          for (int i = 0; i < propertyValues.size(); i++) {
+            EdmPropertyValue edmPropertyValue = propertyValues.get(i);
+            String property = edmPropertyValue.getProperty();
+            if (property.equals("Supported")) {
+              EdmExpression value = edmPropertyValue.getValue();
+              EdmConstantExpression asConstant2 = value.asConstant();
+              String valueAsString1 = asConstant2.getValueAsString();
+              assertTrue(Boolean.valueOf(valueAsString1));
+            }
+          }
+        }
+      }
+    }
+ }
+
+ /**
+  * @param edm
+  * @param entityType
+  */
+ private void checkAnnotationsOnEntityType(final Edm edm, EdmEntityType entityType) {
+   FullQualifiedName termName =
+       new FullQualifiedName("Capabilities", "ChangeTracking");
+   // Get the term defined on the entity type
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotationChangeTracking = entityType.getAnnotation(term, null);
+   assertNotNull(annotationChangeTracking);
+   if (annotationChangeTracking != null) {
+     EdmExpression expression = annotationChangeTracking.getExpression();
+     EdmDynamicExpression asDynamic = expression.asDynamic();
+     if ((asDynamic != null) && (asDynamic.isRecord())) {
+       EdmRecord asRecord = asDynamic.asRecord();
+       if (asRecord != null) {
+         List<EdmPropertyValue> propertyValues = asRecord.getPropertyValues();
+         if (propertyValues != null) {
+           for (int i = 0; i < propertyValues.size(); i++) {
+             EdmPropertyValue edmPropertyValue = propertyValues.get(i);
+             String property = edmPropertyValue.getProperty();
+             if (property.equals("Supported")) {
+               EdmExpression value = edmPropertyValue.getValue();
+               EdmConstantExpression asConstant2 = value.asConstant();
+               String valueAsString = asConstant2.getValueAsString();
+               assertTrue(Boolean.valueOf(valueAsString));
+             }
+           }
+         }
+       }
+     }
+   }
+   termName =
+       new FullQualifiedName("Integration", "Extractable");
+   term = edm.getTerm(termName);
+   EdmAnnotation annotation = entityType.getAnnotation(term, null);
+   assertNotNull(annotation);
+   String valueAsString = annotation.getExpression().asConstant().getValueAsString();
+   assertTrue(Boolean.valueOf(valueAsString));
+ }
+ 
+ @Test
+ public void readAnnotationWithAliasOnEntityTypesProperties() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEntityType entityType = edm.getEntityTypeWithAnnotations(new FullQualifiedName("Test.CDI_CDC_SOURCEResult"));
+   List<EdmAnnotation> annotations = ((EdmProperty)entityType.getProperty("CHANGED")).getAnnotations();
+   assertEquals(3, annotations.size());
+   
+   FullQualifiedName termName =
+       new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = ((EdmProperty)entityType.getProperty("CHANGED")).getAnnotation(term, null);
+   assertNotNull(annotation);
+   
+   entityType = edm.getEntityTypeWithAnnotations(
+       new FullQualifiedName("Test.SEPMRA_C_SalesOrderCustCntctVHType"));
+   List<EdmAnnotation> annotationsOnNavProp = ((EdmNavigationProperty)entityType.
+       getNavigationProperty("to_Customer")).getAnnotations();
+   assertEquals(2, annotationsOnNavProp.size());
+   
+   termName =
+       new FullQualifiedName("UI", "HeaderInfo");
+   term = edm.getTerm(termName);
+   annotation = ((EdmNavigationProperty)entityType.getNavigationProperty("to_Customer")).
+       getAnnotation(term, null);
+   assertNotNull(annotation);
+ }
+ 
+ @Test
+ public void readAnnotationWithAliasOnEntitySetProperties() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEntityContainer container = edm.getEntityContainer();
+   EdmEntitySet entitySet = container.getEntitySet("I_DraftAdministrativeData");
+   EdmEntityType entityType = entitySet.getEntityTypeWithAnnotations();
+   List<EdmAnnotation> annotations = ((EdmProperty)entityType.getProperty("DraftUUID")).getAnnotations();
+   assertEquals(3, annotations.size());
+   
+   FullQualifiedName termName =
+       new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = ((EdmProperty)entityType.getProperty("DraftUUID")).getAnnotation(term, null);
+   assertNotNull(annotation);
+   
+ }
+ 
+ @Test
+ public void readAnnotationFetchingAllSingletons() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEntityContainer container = edm.getEntityContainer();
+   List<EdmSingleton> singletons = container.getSingletons();
+   assertEquals(1, singletons.size());
+   
+   FullQualifiedName termName = new FullQualifiedName("UI", "HeaderInfo");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = singletons.get(0).getAnnotation(term, null);
+   assertNotNull(annotation);
+ }
+ 
+ @Test
+ public void readAnnotationFetchingAllActionImports() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEntityContainer container = edm.getEntityContainer();
+   List<EdmActionImport> actionImports = container.getActionImports();
+   assertEquals(1, actionImports.size());
+ }
+ 
+ @Test
+ public void readAnnotationFetchingAllFunctionImports() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEntityContainer container = edm.getEntityContainer();
+   List<EdmFunctionImport> functionImports = container.getFunctionImports();
+   assertEquals(1, functionImports.size());
+   
+   FullQualifiedName termName = new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = functionImports.get(0).getAnnotation(term, null);
+   assertNotNull(annotation);
+ }
+ 
+ @Test
+ public void readAnnotationFetchingAllEntitySets() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEntityContainer container = edm.getEntityContainer();
+   List<EdmEntitySet> entitySets = container.getEntitySets();
+   assertEquals(4, entitySets.size());
+   
+   FullQualifiedName termName = new FullQualifiedName("UI", "HeaderInfo");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = entitySets.get(0).getAnnotation(term, null);
+   assertNotNull(annotation);
+ }
+ 
+ @Test
+ public void readAnnotationOnEnumTypes() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEnumType enumType = edm.getEnumType(new FullQualifiedName("SEPMRA_SO_MAN2.ENString"));
+   EdmMember member = enumType.getMember("String1");
+   assertEquals(1, member.getAnnotations().size());
+   FullQualifiedName termName = new FullQualifiedName("Integration", "OriginalDataType");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = member.getAnnotation(term, null);
+   assertNotNull(annotation);
+ }
+ 
+ @Test
+ public void readAnnotationOnFunction() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   List<EdmFunction> function = edm.getUnboundFunctions(new FullQualifiedName("SEPMRA_SO_MAN2", "UFCRTCollString"));
+   assertEquals(1, function.size());
+   List<EdmAnnotation> annotations = function.get(0).getAnnotations();
+   assertEquals(2, annotations.size());
+
+   FullQualifiedName termName =
+       new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = function.get(0).getAnnotation(term, null);
+   assertNotNull(annotation);
+   
+ }
+ 
+ @Test
+ public void readAnnotationOnFunctionWithParameters() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   List<String> paramNames = new ArrayList<String>();
+   paramNames.add("ParameterString");
+   paramNames.add("ParameterInt16");
+   EdmFunction function = edm.getUnboundFunction(
+       new FullQualifiedName("SEPMRA_SO_MAN2", "UFCRTStringTwoParam"), paramNames);
+   assertNotNull(function);
+   List<EdmAnnotation> annotations = function.getAnnotations();
+   assertEquals(2, annotations.size());
+
+   FullQualifiedName termName =
+       new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = function.getAnnotation(term, null);
+   assertNotNull(annotation);
+   
+   termName =
+       new FullQualifiedName("UI", "AdditionalInfo");
+   term = edm.getTerm(termName);
+   annotation = function.getParameter("ParameterString").getAnnotation(term, null);
+   assertNotNull(annotation);
+   
+ }
+ 
+ @Test
+ public void readAnnotationOnAction() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmAction action = edm.getUnboundAction(new FullQualifiedName("SEPMRA_SO_MAN2", "UARTString"));
+   List<EdmAnnotation> annotations = action.getAnnotations();
+   assertEquals(2, annotations.size());
+
+   FullQualifiedName termName =
+       new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = action.getAnnotation(term, null);
+   assertNotNull(annotation);
+   
+ }
+ 
+ @Test
+ public void readAnnotationGroup() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   // Read annotations on annotation group within metadata file
+   EdmAnnotations annotations = edm.getAnnotationGroup(
+       new FullQualifiedName("SEPMRA_SO_MAN2", "CDI_CDC_SOURCEResult"), null);
+   assertNotNull(annotations);
+   FullQualifiedName termName = new FullQualifiedName("Integration", "Extractable");
+   EdmTerm term = edm.getTerm(termName);
+   EdmAnnotation annotation = annotations.getAnnotation(term, null);
+   assertNotNull(annotation);
+   
+   //Read annotations on annotation group from external file
+   annotations = edm.getAnnotationGroup(
+       new FullQualifiedName(
+           "SEPMRA_SO_MAN2.SEPMRA_SO_MAN2_Entities/I_DraftAdministrativeData/ComplexProperty/PropertyInt16"), null);
+   assertNotNull(annotations);
+   termName = new FullQualifiedName("UI", "AdditionalInfo");
+   term = edm.getTerm(termName);
+   annotation = annotations.getAnnotation(term, null);
+   assertNotNull(annotation);
  }
 }
