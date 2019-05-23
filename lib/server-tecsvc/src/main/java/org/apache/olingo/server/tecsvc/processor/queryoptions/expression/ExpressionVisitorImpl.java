@@ -44,15 +44,7 @@ import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.server.api.uri.UriResourceLambdaVariable;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
-import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
-import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
-import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
-import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
-import org.apache.olingo.server.api.uri.queryoption.expression.Member;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
+import org.apache.olingo.server.api.uri.queryoption.expression.*;
 import org.apache.olingo.server.core.uri.UriResourceLambdaVarImpl;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
@@ -318,6 +310,12 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT, e);
     }
     return new TypedOperand(result, type);
+  }
+
+  @Override
+  public VisitorOperand visitLiteralList(LiteralList literalList)
+          throws ExpressionVisitException, ODataApplicationException {
+    return null;
   }
 
   private VisitorOperand throwNotImplemented() throws ODataApplicationException {

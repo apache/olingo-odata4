@@ -133,4 +133,13 @@ public interface ExpressionVisitor<T> {
    */
   T visitEnum(EdmEnumType type, List<String> enumValues) throws ExpressionVisitException, ODataApplicationException;
 
+  /**
+   * Called for each traversed {@link Literal} expression  被每个遍历的字面量集合调用
+   * @param literalList literalList
+   * @return Application return value of type T
+   * @throws ExpressionVisitException Thrown if an exception while traversing occured
+   * @throws ODataApplicationException Thrown by the application
+   */
+  T visitLiteralList(LiteralList literalList) throws ExpressionVisitException, ODataApplicationException;
+
 }

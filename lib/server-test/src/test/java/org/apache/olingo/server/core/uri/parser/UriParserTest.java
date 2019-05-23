@@ -20,14 +20,20 @@ package org.apache.olingo.server.core.uri.parser;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
+import org.apache.olingo.commons.api.edm.EdmType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.core.edm.primitivetype.*;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriInfoKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException.MessageKeys;
+import org.apache.olingo.server.core.uri.testutil.FilterTreeToText;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
@@ -908,6 +914,77 @@ public class UriParserTest {
     
     testUri.run("ESAllPrim", "%20$filter%20=%20PropertyInt16%20%20eq%2012%20")
       .isKind(UriInfoKind.resource).goFilter().isBinary(BinaryOperatorKind.EQ).is("<<PropertyInt16> eq <12>>");    
+  }
+
+  @Test
+  public void customInOptionNumber() throws Exception {
+    FilterValidator esAllPrim = testUri.run("ESAllPrim", "$filter= PropertyInt16 in (12,10) ")
+            .isKind(UriInfoKind.resource).goFilter().isBinary(BinaryOperatorKind.IN);
+    String expression = FilterTreeToText.Serialize(esAllPrim.getFilter());
+    System.out.println(expression);
+  }
+
+  @Test
+  public void customInOptionHybridNumber() throws Exception {
+    FilterValidator esAllPrim = testUri.run("ESAllPrim", "$filter=PropertyInt16 in (2, 10.5) ")
+            .isKind(UriInfoKind.resource).goFilter().isBinary(BinaryOperatorKind.IN);
+    String expression = FilterTreeToText.Serialize(esAllPrim.getFilter());
+    System.out.println(expression);
+  }
+
+  @Test
+  public void customInOptionString() throws Exception {
+    FilterValidator esAllPrim = testUri.run("ESAllPrim", "$filter=PropertyString in ('A', 'B') ")
+            .isKind(UriInfoKind.resource).goFilter().isBinary(BinaryOperatorKind.IN);
+    String expression = FilterTreeToText.Serialize(esAllPrim.getFilter());
+    System.out.println(expression);
+  }
+
+  @Test
+  public void autoFloatHybirdNumber() {
+    EdmType edmType = null;
+    try {
+      edmType = compatibleEdmTypeForNumbers(new EdmString(), new EdmDouble(),
+              new EdmInt16(), new EdmDecimal(), new EdmSingle());
+    } catch (UriParserSemanticException e) {
+      e.printStackTrace();
+    }
+    System.out.println(edmType);
+  }
+
+
+  private EdmType compatibleEdmTypeForNumbers(EdmType... edmTypes) throws UriParserSemanticException {
+    final List<FullQualifiedName> numbersEdmTypesQFN =
+            Arrays.asList(EdmPrimitiveTypeKind.SByte.getFullQualifiedName(),
+                    EdmPrimitiveTypeKind.Int16.getFullQualifiedName(),
+                    EdmPrimitiveTypeKind.Int32.getFullQualifiedName(),
+                    EdmPrimitiveTypeKind.Int64.getFullQualifiedName(),
+                    EdmPrimitiveTypeKind.Decimal.getFullQualifiedName(),
+                    EdmPrimitiveTypeKind.Single.getFullQualifiedName(),
+                    EdmPrimitiveTypeKind.Double.getFullQualifiedName()
+            );
+
+    int max = -1;
+    EdmType retEdmType = null;
+    for (EdmType edmType : edmTypes) {
+      int of = numbersEdmTypesQFN.indexOf(edmType.getFullQualifiedName());
+      if (of > max) {
+        max = of;
+        retEdmType = edmType;
+      }
+      if (retEdmType == null) {
+        throw new UriParserSemanticException("incompatible type filter", MessageKeys.INCOMPATIBLE_TYPE_FILTER);
+      }
+    }
+
+    FullQualifiedName fullQualifiedName = numbersEdmTypesQFN.get(max);
+    System.out.println(fullQualifiedName);
+
+    EdmPrimitiveTypeKind edmPrimitiveTypeKind = EdmPrimitiveTypeKind.valueOfFQN(fullQualifiedName);
+    System.out.println(edmPrimitiveTypeKind);
+
+    System.out.println(retEdmType.getFullQualifiedName());
+    return retEdmType;
   }
 
   @Test

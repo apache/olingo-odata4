@@ -18,83 +18,32 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.olingo.commons.api.edm.Edm;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmElement;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmEnumType;
-import org.apache.olingo.commons.api.edm.EdmFunction;
-import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmReturnType;
-import org.apache.olingo.commons.api.edm.EdmSingleton;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
-import org.apache.olingo.commons.api.edm.EdmType;
-import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
 import org.apache.olingo.server.api.OData;
-import org.apache.olingo.server.api.uri.UriParameter;
-import org.apache.olingo.server.api.uri.UriResourceFunction;
-import org.apache.olingo.server.api.uri.UriResourceLambdaVariable;
-import org.apache.olingo.server.api.uri.UriResourceNavigation;
-import org.apache.olingo.server.api.uri.UriResourcePartTyped;
+import org.apache.olingo.server.api.uri.*;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
-import org.apache.olingo.server.api.uri.queryoption.expression.Alias;
-import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
-import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Enumeration;
-import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
-import org.apache.olingo.server.api.uri.queryoption.expression.LambdaRef;
-import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
-import org.apache.olingo.server.api.uri.queryoption.expression.Member;
-import org.apache.olingo.server.api.uri.queryoption.expression.Method;
-import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
-import org.apache.olingo.server.api.uri.queryoption.expression.TypeLiteral;
-import org.apache.olingo.server.api.uri.queryoption.expression.Unary;
-import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
-import org.apache.olingo.server.core.uri.UriInfoImpl;
-import org.apache.olingo.server.core.uri.UriResourceComplexPropertyImpl;
-import org.apache.olingo.server.core.uri.UriResourceCountImpl;
-import org.apache.olingo.server.core.uri.UriResourceEntitySetImpl;
-import org.apache.olingo.server.core.uri.UriResourceFunctionImpl;
-import org.apache.olingo.server.core.uri.UriResourceItImpl;
-import org.apache.olingo.server.core.uri.UriResourceLambdaAllImpl;
-import org.apache.olingo.server.core.uri.UriResourceLambdaAnyImpl;
-import org.apache.olingo.server.core.uri.UriResourceLambdaVarImpl;
-import org.apache.olingo.server.core.uri.UriResourceNavigationPropertyImpl;
-import org.apache.olingo.server.core.uri.UriResourcePrimitivePropertyImpl;
-import org.apache.olingo.server.core.uri.UriResourceRootImpl;
-import org.apache.olingo.server.core.uri.UriResourceSingletonImpl;
-import org.apache.olingo.server.core.uri.UriResourceStartingTypeFilterImpl;
-import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
-import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
+import org.apache.olingo.server.api.uri.queryoption.expression.*;
+import org.apache.olingo.server.core.uri.*;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
-import org.apache.olingo.server.core.uri.queryoption.expression.AliasImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.BinaryImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.EnumerationImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.LiteralImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.MethodImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.TypeLiteralImpl;
-import org.apache.olingo.server.core.uri.queryoption.expression.UnaryImpl;
+import org.apache.olingo.server.core.uri.queryoption.expression.*;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
+import java.util.*;
+
 public class ExpressionParser {
+
+  public static final List<FullQualifiedName> NUMBERSEDMTYPESQFN =
+          Arrays.asList(EdmPrimitiveTypeKind.SByte.getFullQualifiedName(),
+                  EdmPrimitiveTypeKind.Int16.getFullQualifiedName(),
+                  EdmPrimitiveTypeKind.Int32.getFullQualifiedName(),
+                  EdmPrimitiveTypeKind.Int64.getFullQualifiedName(),
+                  EdmPrimitiveTypeKind.Decimal.getFullQualifiedName(),
+                  EdmPrimitiveTypeKind.Single.getFullQualifiedName(),
+                  EdmPrimitiveTypeKind.Double.getFullQualifiedName()
+          );
+
   private static final Map<TokenKind, BinaryOperatorKind> tokenToBinaryOperator;
   static {
     Map<TokenKind, BinaryOperatorKind> temp = new EnumMap<TokenKind, BinaryOperatorKind>(TokenKind.class);
@@ -115,6 +64,7 @@ public class ExpressionParser {
     temp.put(TokenKind.MulOperator, BinaryOperatorKind.MUL);
     temp.put(TokenKind.DivOperator, BinaryOperatorKind.DIV);
     temp.put(TokenKind.ModOperator, BinaryOperatorKind.MOD);
+    temp.put(TokenKind.InOperator, BinaryOperatorKind.IN);
 
     tokenToBinaryOperator = Collections.unmodifiableMap(temp);
   }
@@ -225,6 +175,16 @@ public class ExpressionParser {
           odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
       operatorTokenKind = ParserHelper.next(tokenizer, TokenKind.EqualsOperator, TokenKind.NotEqualsOperator);
     }
+
+    TokenKind operatorTokenKindIn = ParserHelper.next(tokenizer, TokenKind.InOperator);
+    // Null for everything other than EQ or NE
+    while (operatorTokenKindIn != null) {
+      final Expression right = parseExprMultiValues();
+      //checkInTypes(left, right);
+      left = new BinaryImpl(left, tokenToBinaryOperator.get(operatorTokenKindIn), right,
+              odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
+      operatorTokenKindIn = ParserHelper.next(tokenizer, TokenKind.InOperator);
+    }
     return left;
   }
 
@@ -314,7 +274,7 @@ public class ExpressionParser {
       }
       return new UnaryImpl(UnaryOperatorKind.MINUS, expression, getType(expression));
     } else if (tokenizer.next(TokenKind.NotOperator)) {
-      final Expression expression = parseExprValue();
+      final Expression expression = parseExprPrimary();
       checkType(expression, EdmPrimitiveTypeKind.Boolean);
       checkNoCollection(expression);
       return new UnaryImpl(UnaryOperatorKind.NOT, expression, getType(expression));
@@ -389,6 +349,63 @@ public class ExpressionParser {
     }
     
     throw new UriParserSyntaxException("Unexpected token.", UriParserSyntaxException.MessageKeys.SYNTAX);
+  }
+
+  private Expression parseExprMultiValues() throws UriParserException, UriValidationException {
+    final LiteralListImpl literalList = new LiteralListImpl();
+    if (tokenizer.next(TokenKind.OPEN)) {
+      while (!tokenizer.next(TokenKind.CLOSE)) {
+        ParserHelper.bws(tokenizer);
+        if (tokenizer.next(TokenKind.COMMA)) {
+          ParserHelper.bws(tokenizer);
+        }
+        final Literal literal = (Literal) parseExprValue();
+        if (literalList.getType() == null) {
+          literalList.setType(literal.getType());
+        }
+
+        EdmType compatibleNumberEdmType = null;
+
+        if (literal.getType() == null || literalList.getType() == null) {
+          throw new UriParserSemanticException("incompatible type filter",
+                  UriParserSemanticException.MessageKeys.INCOMPATIBLE_TYPE_FILTER);
+        } else if (NUMBERSEDMTYPESQFN.contains(literalList.getType().getFullQualifiedName())
+        || NUMBERSEDMTYPESQFN.contains(literal.getType().getFullQualifiedName())) {
+          compatibleNumberEdmType = compatibleEdmTypeForNumbers(literal.getType(), literalList.getType());
+        }
+
+        if (literal.getType().equals(literalList.getType())) {
+          literalList.getText().add(literal.getText());
+        } else if (compatibleNumberEdmType != null) {
+          literalList.getText().add(literal.getText());
+          literalList.setType(compatibleNumberEdmType);
+        } else {
+          literal.getType().getFullQualifiedName();
+          throw new UriParserSemanticException("Inconsistent Type -> " + literal.getType().toString() + " != "
+                  + literalList.getType().toString(),
+                  UriParserSemanticException.MessageKeys.INCONSISTENT_VALUE_TYPE_AFTER_IN_SENTENCE,
+                  literal.getType().toString(), literalList.getType().toString());
+        }
+        //ParserHelper.bws(tokenizer);
+      }
+      //ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
+      return literalList;
+    }
+
+    throw new UriParserSyntaxException("Unexpected token.", UriParserSyntaxException.MessageKeys.SYNTAX);
+  }
+
+  private EdmType compatibleEdmTypeForNumbers(EdmType... edmTypes) {
+    int max = -1;
+    EdmType retEdmType = null;
+    for (EdmType edmType : edmTypes) {
+      int of = NUMBERSEDMTYPESQFN.indexOf(edmType.getFullQualifiedName());
+      if (of > max) {
+        max = of;
+        retEdmType = edmType;
+      }
+    }
+    return retEdmType;
   }
 
   private Expression parseMethod(final TokenKind nextMethod) throws UriParserException, UriValidationException {
@@ -1106,6 +1123,8 @@ public class ExpressionParser {
       type = ((Literal) expression).getType();
     } else if (expression instanceof TypeLiteral) {
       type = ((TypeLiteral) expression).getType();
+    } else if (expression instanceof LiteralList) {
+      type = ((LiteralList) expression).getType();
     } else if (expression instanceof Enumeration) {
       type = ((Enumeration) expression).getType();
     } else if (expression instanceof Member) {
@@ -1200,6 +1219,15 @@ public class ExpressionParser {
           UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
           leftType.getFullQualifiedName().getFullQualifiedNameAsString(),
           rightType.getFullQualifiedName().getFullQualifiedNameAsString());
+    }
+  }
+
+  private void checkInTypes(final Expression left, final Expression right) throws UriParserException {
+
+    final EdmType leftType = getType(left);
+    final EdmType rightType = getType(right);
+    if (leftType == null || rightType == null || leftType.equals(rightType)) {
+      return;
     }
   }
 

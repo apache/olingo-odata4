@@ -717,6 +717,13 @@ public class UriTokenizerTest {
     assertTrue(new UriTokenizer("isdefined(x)").next(TokenKind.IsDefinedMethod));
   }
 
+  @Test
+  public void hasIn() {
+    final UriTokenizer tokenizer = new UriTokenizer(" in ");
+    boolean hasIn = tokenizer.next(TokenKind.InOperator);
+    System.out.println(hasIn);
+  }
+
   private void wrongToken(final TokenKind kind, final String value, final char disturbCharacter) {
     assertFalse(new UriTokenizer(disturbCharacter + value).next(kind));
 
