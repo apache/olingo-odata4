@@ -50,8 +50,8 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
     ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);
 
-    assertEquals(Integer.valueOf(3), response.getBody().getCount());
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(Integer.valueOf(4), response.getBody().getCount());
+    assertEquals(4, response.getBody().getEntities().size());
   }
 
   @Test

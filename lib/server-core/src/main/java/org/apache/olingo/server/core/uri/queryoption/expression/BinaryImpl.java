@@ -18,6 +18,9 @@
  */
 package org.apache.olingo.server.core.uri.queryoption.expression;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
@@ -32,6 +35,7 @@ public class BinaryImpl implements Binary {
   private final BinaryOperatorKind operator;
   private final Expression right;
   private final EdmType type;
+  private final List<Expression> expressions;
 
   public BinaryImpl(final Expression left, final BinaryOperatorKind operator, final Expression right,
       final EdmType type) {
@@ -39,6 +43,16 @@ public class BinaryImpl implements Binary {
     this.operator = operator;
     this.right = right;
     this.type = type;
+    this.expressions = null;
+  }
+  
+  public BinaryImpl(final Expression left, final BinaryOperatorKind operator, final List<Expression> right,
+      final EdmType type) {
+    this.left = left;
+    this.operator = operator;
+    this.right = null;
+    this.type = type;
+    this.expressions = right;
   }
 
   @Override
@@ -63,12 +77,26 @@ public class BinaryImpl implements Binary {
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     T localLeft = this.left.accept(visitor);
-    T localRight = this.right.accept(visitor);
-    return visitor.visitBinaryOperator(operator, localLeft, localRight);
+    if (this.right != null) {
+      T localRight = this.right.accept(visitor);
+      return visitor.visitBinaryOperator(operator, localLeft, localRight);
+    } else if (this.expressions != null) {
+      List<T> expressions = new ArrayList<T>();
+      for (final Expression expression : this.expressions) {
+        expressions.add(expression.accept(visitor));
+      }
+      return visitor.visitBinaryOperator(operator, localLeft, expressions);
+    }
+    return null;
   }
 
   @Override
   public String toString() {
-    return "{" + left + " " + operator.name() + " " + right + '}';
+    return "{" + left + " " + operator.name() + " " + (null != right ? right : expressions) + '}';
+  }
+
+  @Override
+  public List<Expression> getExpressions() {
+    return expressions;
   }
 }

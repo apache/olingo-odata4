@@ -28,6 +28,11 @@ public enum BinaryOperatorKind {
    * OData has operator used for OData enumerations
    */
   HAS("has"),
+  
+  /**
+   * In operator
+   */
+  IN("in"),
 
   /**
    * Multiplication operator

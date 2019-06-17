@@ -294,7 +294,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertNotNull(res);
 
     final ResWrap<ClientEntitySet> entitySet = res.getBodyAs(ClientEntitySet.class);
-    assertEquals(3, entitySet.getPayload().getEntities().size());
+    assertEquals(4, entitySet.getPayload().getEntities().size());
   }
   
   @Test
@@ -1303,7 +1303,6 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
         getFactory().newPrimitiveValueBuilder().buildInt64(null)));
     entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
         getFactory().newPrimitiveValueBuilder().buildDecimal(null)));
-
     final ODataEntityUpdateRequest<ClientEntity> requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityUpdateRequest(uri, UpdateType.PATCH, entity);
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1456,7 +1455,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
 
     final List<ClientEntity> entities = response.getBody().getEntities();
-    assertEquals(3, entities.size());
+    assertEquals(4, entities.size());
 
     ClientEntity entity = entities.get(0);
     assertEquals(-32768, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
@@ -1469,6 +1468,11 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     assertEquals(BigDecimal.valueOf(0), entity.getProperty(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
 
     entity = entities.get(2);
+    assertEquals(10, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
+    assertEquals(0L, entity.getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(0), entity.getProperty(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
+    
+    entity = entities.get(3);
     assertEquals(32767, entity.getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
     assertEquals(Long.MAX_VALUE, entity.getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
     assertEquals(BigDecimal.valueOf(34), entity.getProperty(PROPERTY_DECIMAL).getPrimitiveValue().toValue());

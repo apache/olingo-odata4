@@ -322,6 +322,49 @@ public class ODataXmlSerializerTest {
         + "title=\"olingo.odata.test1.BAETAllPrimRT\" "
         + "target=\"ESAllPrim(0)/olingo.odata.test1.BAETAllPrimRT\" />\n" + 
         "   </a:entry>\n" + 
+        "<a:entry>\n" +
+        "<a:id>ESAllPrim(10)</a:id>\n" +
+        "<a:title/>\n" +
+        "<a:summary/>\n" +
+        "<a:updated>"+ UPDATED_FORMAT.format(new Date(currentTimeMillis)) +"</a:updated>\n" +
+        "<a:author>\n" +
+        "<a:name/>\n" +
+      "</a:author>\n" +
+      "<a:link rel=\"edit\" href=\"ESAllPrim(10)\"/>\n" +
+      "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\" "
+      + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimOne\" "
+      + "href=\"ESAllPrim(10)/NavPropertyETTwoPrimOne\"/>\n" +
+      "<a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\" "
+      + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\" "
+      + "href=\"ESAllPrim(10)/NavPropertyETTwoPrimMany\"/>\n" +
+      "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+      + "term=\"#olingo.odata.test1.ETAllPrim\"/>\n" +
+      "<a:content type=\"application/xml\">\n" +
+        "<m:properties>\n" +
+          "<d:PropertyInt16 m:type=\"Int16\">10</d:PropertyInt16>\n" +
+          "<d:PropertyString>Employee1@company.example</d:PropertyString>\n" +
+          "<d:PropertyBoolean m:type=\"Boolean\">false</d:PropertyBoolean>\n" +
+          "<d:PropertyByte m:type=\"Byte\">0</d:PropertyByte>\n" +
+          "<d:PropertySByte m:type=\"SByte\">0</d:PropertySByte>\n" +
+          "<d:PropertyInt32 m:type=\"Int32\">0</d:PropertyInt32>\n" +
+          "<d:PropertyInt64 m:type=\"Int64\">0</d:PropertyInt64>\n" +
+          "<d:PropertySingle m:type=\"Single\">0.0</d:PropertySingle>\n" +
+          "<d:PropertyDouble m:type=\"Double\">0.0</d:PropertyDouble>\n" +
+          "<d:PropertyDecimal m:type=\"Decimal\">0</d:PropertyDecimal>\n" +
+          "<d:PropertyBinary m:type=\"Binary\"/>\n" +
+          "<d:PropertyDate m:type=\"Date\">1970-01-01</d:PropertyDate>\n" +
+          "<d:PropertyDateTimeOffset m:type=\"DateTimeOffset\">"
+          + "2005-12-03T00:00:00Z</d:PropertyDateTimeOffset>\n" +
+          "<d:PropertyDuration m:type=\"Duration\">PT0S</d:PropertyDuration>\n"+
+          "<d:PropertyGuid m:type=\"Guid\">"
+          + "76543201-23ab-cdef-0123-456789cccddd</d:PropertyGuid>\n" +
+          "<d:PropertyTimeOfDay m:type=\"TimeOfDay\">00:01:01</d:PropertyTimeOfDay>\n" +
+        "</m:properties>\n" +
+      "</a:content>\n" +
+      "<m:action metadata=\"#olingo.odata.test1.BAETAllPrimRT\" "
+      + "title=\"olingo.odata.test1.BAETAllPrimRT\" "
+      + "target=\"ESAllPrim(10)/olingo.odata.test1.BAETAllPrimRT\"/>\n" +
+      "</a:entry>\n" +
         "</a:feed>";
     checkXMLEqual(expected, resultString);
   }  
@@ -2834,6 +2877,7 @@ public class ODataXmlSerializerTest {
         "  <m:ref id=\"ESAllPrim(32767)\" />\n" +
         "  <m:ref id=\"ESAllPrim(-32768)\" />\n" +
         "  <m:ref id=\"ESAllPrim(0)\" />\n" +
+        "  <m:ref id=\"ESAllPrim(10)\" />\n" +
         "</a:feed>";
     checkXMLEqual(expected, resultString);
   }

@@ -126,6 +126,7 @@ public class UriTokenizer {
     LessThanOperator,
     LessThanOrEqualsOperator,
     HasOperator,
+    InOperator,
     AddOperator,
     SubOperator,
     MulOperator,
@@ -507,6 +508,9 @@ public class UriTokenizer {
       break;
     case HasOperator:
       found = nextBinaryOperator("has");
+      break;
+    case InOperator:
+      found = nextBinaryOperator("in");
       break;
     case AddOperator:
       found = nextBinaryOperator("add");

@@ -142,7 +142,7 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
         .getEntitySetRequest(uri).execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientEntitySet responseBody = response.getBody();
-    assertEquals(3, responseBody.getEntities().size());
+    assertEquals(4, responseBody.getEntities().size());
     checkEntityAvailableWith(responseBody, "PropertyInt16", 32767);
 
     // first async request
@@ -174,7 +174,7 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
     ResWrap<EntityCollection> firWrap = client.getDeserializer(getContentType())
         .toEntitySet(firstResponse.getRawResponse());
     EntityCollection firstResponseEntitySet = firWrap.getPayload();
-    assertEquals(3, firstResponseEntitySet.getEntities().size());
+    assertEquals(4, firstResponseEntitySet.getEntities().size());
     Entity firstResponseEntity = firstResponseEntitySet.getEntities().get(0);
     assertShortOrInt(32767, firstResponseEntity.getProperty("PropertyInt16").asPrimitive());
     assertEquals("First Resource - positive values", firstResponseEntity.getProperty("PropertyString").asPrimitive());

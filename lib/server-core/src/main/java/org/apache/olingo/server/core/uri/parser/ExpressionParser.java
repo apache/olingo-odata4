@@ -332,9 +332,64 @@ public class ExpressionParser {
       final Expression right = createEnumExpression(tokenizer.getText());
       return new BinaryImpl(left, BinaryOperatorKind.HAS, right,
           odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
-    } else {
-      return left;
+    } else if (tokenizer.next(TokenKind.InOperator)) {
+      EdmType leftExprType = getType(left);
+      EdmPrimitiveTypeKind kinds = EdmPrimitiveTypeKind.valueOfFQN(leftExprType.getFullQualifiedName());
+      if (tokenizer.next(TokenKind.OPEN)) {
+        ParserHelper.bws(tokenizer);
+        List<Expression> expressionList = parseInExpr();
+        checkInExpressionTypes(expressionList, kinds);
+        return new BinaryImpl(left, BinaryOperatorKind.IN, expressionList,
+            odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
+      } else {
+        ParserHelper.bws(tokenizer);
+        final Expression right = parseExpression();
+        checkType(right, kinds);
+        return new BinaryImpl(left, BinaryOperatorKind.IN, right,
+            odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
+      }
     }
+    return left;
+  }
+
+  /**
+   * @param expressionList
+   * @param kinds
+   * @throws UriParserException
+   * @throws UriParserSemanticException
+   */
+  private void checkInExpressionTypes(List<Expression> expressionList, EdmPrimitiveTypeKind kinds)
+      throws UriParserException, UriParserSemanticException {
+    for (Expression expr : expressionList) {
+      EdmType inExprType = getType(expr);
+      if (!isType(inExprType, kinds)) {
+        throw new UriParserSemanticException("Incompatible types.",
+            UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
+            inExprType == null ? "" : inExprType.getFullQualifiedName().getFullQualifiedNameAsString(),
+            kinds.getFullQualifiedName().getFullQualifiedNameAsString());
+      }
+    }
+  }
+
+  /**
+   * @param expressionList
+   * @throws UriParserException
+   * @throws UriValidationException
+   */
+  private List<Expression> parseInExpr() throws UriParserException, UriValidationException {
+    List<Expression> expressionList = new ArrayList<Expression>();
+    while(!tokenizer.next(TokenKind.CLOSE)) {
+      Expression expression = parseExpression();
+      expressionList.add(expression);
+      ParserHelper.bws(tokenizer);
+      if (tokenizer.next(TokenKind.COMMA)) {
+        ParserHelper.bws(tokenizer);
+        expression = parseExpression();
+        expressionList.add(expression);
+        ParserHelper.bws(tokenizer);
+      }
+    }
+    return expressionList;
   }
 
   private Expression parseExprValue() throws UriParserException, UriValidationException {

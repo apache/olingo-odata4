@@ -90,7 +90,7 @@ public class DataProviderTest {
     final DataProvider data = new DataProvider(oData, edm);
     EntityCollection outSet = data.readAll(esAllPrim);
 
-    Assert.assertEquals(3, outSet.getEntities().size());
+    Assert.assertEquals(4, outSet.getEntities().size());
 
     Entity first = outSet.getEntities().get(0);
     Assert.assertEquals(16, first.getProperties().size());

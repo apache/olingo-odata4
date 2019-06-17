@@ -41,7 +41,7 @@ public class MetadataTestITCase extends AbstractTestITCase {
     final Edm edm = client.getRetrieveRequestFactory().
         getMetadataRequest(testVocabulariesServiceRootURL).execute().getBody();
     assertNotNull(edm);
-
+    
     final EdmTerm isLanguageDependent = edm.getTerm(new FullQualifiedName("Core", "IsLanguageDependent"));
     assertNotNull(isLanguageDependent);
     assertTrue(isLanguageDependent.getAppliesTo().contains(TargetType.Property));

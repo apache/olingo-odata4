@@ -392,10 +392,23 @@ public class ExpressionParserTest {
     Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
     
     UriTokenizer tokenizer = new UriTokenizer("a eq \'abc\'");
-    final Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+    Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
         entityType, null, null);
     assertNotNull(expression);
     assertEquals("{[a] EQ \'abc\'}", expression.toString());
+    
+    tokenizer = new UriTokenizer("a in (\'abc\', \'xyz\')");
+    expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+        entityType, null, null);
+    assertNotNull(expression);
+    assertEquals("{[a] IN [\'abc\', \'xyz\']}", expression.toString());
+    try {
+      tokenizer = new UriTokenizer("a in (\'abc\', 10)");
+      expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+          entityType, null, null);
+    } catch (UriParserSemanticException e) {
+      assertEquals("Incompatible types.", e.getMessage());
+    }
   }
 
   /**
@@ -519,10 +532,16 @@ public class ExpressionParserTest {
     Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
     
     UriTokenizer tokenizer = new UriTokenizer("comp/prop eq \'abc\'");
-    final Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+    Expression expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
         entityType, null, null);
     assertNotNull(expression);
     assertEquals("{[comp, prop] EQ \'abc\'}", expression.toString());
+    
+    tokenizer = new UriTokenizer("comp/prop in (\'abc\','xyz')");
+    expression = new ExpressionParser(mockedEdm, odata).parse(tokenizer, 
+        entityType, null, null);
+    assertNotNull(expression);
+    assertEquals("{[comp, prop] IN [\'abc\', \'xyz\']}", expression.toString());
   }
 
   /**

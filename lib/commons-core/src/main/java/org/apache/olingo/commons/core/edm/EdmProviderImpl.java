@@ -293,7 +293,8 @@ public class EdmProviderImpl extends AbstractEdm {
     try {
       if (null != provider.getAliasInfos()) {
         for (CsdlAliasInfo aliasInfo : provider.getAliasInfos()) {
-          if (aliasInfo.getNamespace().equalsIgnoreCase(namespace)) {
+          if (null != aliasInfo.getNamespace() && 
+              aliasInfo.getNamespace().equalsIgnoreCase(namespace)) {
             return aliasInfo.getAlias();
           }
         }

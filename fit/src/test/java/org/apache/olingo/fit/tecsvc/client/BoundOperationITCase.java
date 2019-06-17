@@ -96,7 +96,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
         
     final List<ClientEntity> entities = entitySet.getEntities();
     assertNotNull(entities);
-    assertEquals(3, entities.size());
+    assertEquals(4, entities.size());
     
     ClientEntity entity = entities.get(0);
     assertNotNull(entity);

@@ -1149,6 +1149,25 @@ public class DataCreator {
         .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(0)))
         .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
         .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
+    
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(createPrimitive("PropertyInt16", (short) 10))
+        .addProperty(createPrimitive("PropertyString", "Employee1@company.example"))
+        .addProperty(createPrimitive("PropertyBoolean", false))
+        .addProperty(createPrimitive("PropertyByte", (short) 0))
+        .addProperty(createPrimitive("PropertySByte", 0))
+        .addProperty(createPrimitive("PropertyInt32", 0))
+        .addProperty(createPrimitive("PropertyInt64", 0L))
+        .addProperty(createPrimitive("PropertySingle", (float) 0))
+        .addProperty(createPrimitive("PropertyDouble", 0D))
+        .addProperty(createPrimitive("PropertyDecimal", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyBinary", new byte[] {}))
+        .addProperty(createPrimitive("PropertyDate", getDate(1970, 1, 1)))
+        .addProperty(createPrimitive("PropertyDateTimeOffset", getDateTime(2005, 12, 3, 0, 0, 0)))
+        .addProperty(createPrimitive("PropertyDuration", BigDecimal.valueOf(0)))
+        .addProperty(createPrimitive("PropertyGuid", UUID.fromString("76543201-23ab-cdef-0123-456789cccddd")))
+        .addProperty(createPrimitive("PropertyTimeOfDay", getTime(0, 1, 1))));
+    
 
     setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETAllPrim));
     createEntityId(edm, odata, "ESAllPrim", entityCollection);

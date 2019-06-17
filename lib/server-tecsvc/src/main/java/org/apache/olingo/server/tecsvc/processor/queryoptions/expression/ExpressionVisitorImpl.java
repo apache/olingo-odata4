@@ -24,11 +24,13 @@ import java.util.Locale;
 
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
@@ -43,6 +45,7 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
 import org.apache.olingo.server.api.uri.UriResourceLambdaVariable;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -112,6 +115,8 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
       return binaryOperator.arithmeticOperator(operator);
     case HAS:
       return binaryOperator.hasOperator();
+    case IN:
+      return binaryOperator.inOperator();
 
     default:
       return throwNotImplemented();
@@ -278,6 +283,25 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
       }
       return new TypedOperand(currentProperty == null ? null : currentProperty.getValue(), 
           currentEdmProperty.getType(), currentEdmProperty);
+    } else if (initialPart instanceof UriResourceNavigation) {
+      EdmNavigationProperty currentEdmNavProperty = ((UriResourceNavigation) initialPart).getProperty();
+      EdmProperty currentEdmProperty = null;
+      Link link = entity.getNavigationLink(currentEdmNavProperty.getName());
+      Entity inlineEntity = link != null ? link.getInlineEntity() : null;
+      Property currentProperty = null;
+      for (int i = 1; i < uriResourceParts.size(); i++) {
+        currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(i)).getProperty();
+        if (null != inlineEntity) {
+          for (Property property : inlineEntity.getProperties()) {
+            if (property.getName().equalsIgnoreCase(currentEdmProperty.getName())) {
+              currentProperty = property;
+              break;
+            } 
+          }
+        }
+      }
+      return new TypedOperand(currentProperty != null ? currentProperty.getValue() : null, 
+          currentEdmProperty.getType(), currentEdmProperty);
     } else {
       return throwNotImplemented();
     }
@@ -323,5 +347,16 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
   private VisitorOperand throwNotImplemented() throws ODataApplicationException {
     throw new ODataApplicationException("Not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(),
         Locale.ROOT);
+  }
+
+  @Override
+  public VisitorOperand visitBinaryOperator(BinaryOperatorKind operator, VisitorOperand left,
+      List<VisitorOperand> right) throws ExpressionVisitException, ODataApplicationException {
+    BinaryOperator binaryOperator = new BinaryOperator(left, right);
+    switch (operator) {
+    case IN : return binaryOperator.inOperator();
+    default:
+      return throwNotImplemented();
+    }
   }
 }

@@ -20,7 +20,9 @@ package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operan
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -55,10 +57,61 @@ public class TypedOperand extends VisitorOperand {
       return value.getClass() == getDefaultType((EdmPrimitiveType) type) ?
           this :
           asTypedOperand((EdmPrimitiveType) type);
+    } else if (type instanceof EdmPrimitiveType && value instanceof Collection) {
+      return value.getClass() == getDefaultType((EdmPrimitiveType) type) ?
+          this :
+          asTypedOperandForCollection((EdmPrimitiveType) type);
     } else {
       throw new ODataApplicationException("A single primitive-type instance is expected.",
           HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
     }
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public TypedOperand asTypedOperandForCollection(final EdmPrimitiveType asType) throws ODataApplicationException {
+    if (is(primNull)) {
+      return this;
+    } else if (isNull()) {
+      return new TypedOperand(null, asType);
+    } 
+    List<Object> newValue = new ArrayList<Object>();
+    List<Object> list = (List<Object>) value;
+    for (Object val : list) {
+   // Use BigInteger for arbitrarily large whole numbers.
+      if (asType.equals(primSByte) || asType.equals(primByte)
+          || asType.equals(primInt16) || asType.equals(primInt32) || asType.equals(primInt64)) {
+        if (val instanceof BigInteger) {
+          newValue.add(val);
+        } else if (val instanceof Byte || val instanceof Short
+            || val instanceof Integer || val instanceof Long) {
+          newValue.add(BigInteger.valueOf(((Number) val).longValue()));
+        }
+      // Use BigDecimal for unlimited precision.
+      } else if (asType.equals(primDouble) || asType.equals(primSingle) || asType.equals(primDecimal)) {
+        try {
+          newValue.add(new BigDecimal(val.toString()));
+        } catch (NumberFormatException e) {
+          throw new ODataApplicationException("Format exception", 
+              HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT, e.getCause());
+        }
+      } else {
+        // Use type conversion of EdmPrimitive types
+        try {
+          final String literal = getLiteral(val);
+          newValue.add(tryCast(literal, asType));
+        } catch (EdmPrimitiveTypeException e) {
+          throw new ODataApplicationException("Cast Failed", 
+              HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT, e.getCause());
+        }
+      }
+    }
+    if (!newValue.isEmpty()) {
+      return new TypedOperand(newValue, asType);
+    }
+
+    throw new ODataApplicationException("Cast failed", HttpStatusCode.BAD_REQUEST.getStatusCode(), Locale.ROOT);
+    
   }
 
   @Override
@@ -67,7 +120,7 @@ public class TypedOperand extends VisitorOperand {
       return this;
     } else if (isNull()) {
       return new TypedOperand(null, asType);
-    }
+    } 
 
     Object newValue = null;
     // Use BigInteger for arbitrarily large whole numbers.
@@ -119,19 +172,20 @@ public class TypedOperand extends VisitorOperand {
     }
 
     if (type.equals(primDouble) || oType.equals(primDouble)) {
-      return asTypedOperand(primDouble);
+      return (value instanceof ArrayList) ? asTypedOperandForCollection(primDouble) : asTypedOperand(primDouble);
     } else if (type.equals(primSingle) || oType.equals(primSingle)) {
-      return asTypedOperand(primSingle);
+      return (value instanceof ArrayList) ? asTypedOperandForCollection(primSingle) : asTypedOperand(primSingle);
     } else if (type.equals(primDecimal) || oType.equals(primDecimal)) {
-      return asTypedOperand(primDecimal);
+      return (value instanceof ArrayList) ? asTypedOperandForCollection(primDecimal) : asTypedOperand(primDecimal);
     } else if (type.equals(primInt64) || oType.equals(primInt64)) {
-      return asTypedOperand(primInt64);
+      return (value instanceof ArrayList) ? asTypedOperandForCollection(primInt64) : asTypedOperand(primInt64);
     } else if (type.equals(primInt32) || oType.equals(primInt32)) {
-      return asTypedOperand(primInt32);
+      return (value instanceof ArrayList) ? asTypedOperandForCollection(primInt32) : asTypedOperand(primInt32);
     } else if (type.equals(primInt16) || oType.equals(primInt16)) {
-      return asTypedOperand(primInt16);
+      return (value instanceof ArrayList) ? asTypedOperandForCollection(primInt16) : asTypedOperand(primInt16);
     } else {
-      return asTypedOperand((EdmPrimitiveType) type);
+      return (value instanceof ArrayList) ? asTypedOperandForCollection((EdmPrimitiveType) type) : 
+        asTypedOperand((EdmPrimitiveType) type);
     }
   }
 
@@ -142,6 +196,16 @@ public class TypedOperand extends VisitorOperand {
   public <T> T getTypedValue(final Class<T> clazz) {
     return clazz.cast(value);
   }
+  
+  public <T> List<T> getTypedValueList(final Class<T> clazz) {
+    List<Object> list = (List<Object>) value;
+    List<Object> newList = new ArrayList<Object>();
+    for (Object obj : list) {
+      newList.add(clazz.cast(obj));
+    }
+    return (List<T>) newList;
+  }
+  
 
   public boolean isNull() {
     return is(primNull) || value == null;

@@ -150,4 +150,10 @@ public class FilterTreeToText implements ExpressionVisitor<String> {
     return "<" + type.getFullQualifiedName().getFullQualifiedNameAsString() + "<" + tmp + ">>";
   }
 
+  @Override
+  public String visitBinaryOperator(BinaryOperatorKind operator, String left, List<String> right)
+      throws ExpressionVisitException, ODataApplicationException {
+    return "<" + left + " " + operator.toString() + " " + right.toString() + ">";
+  }
+
 }

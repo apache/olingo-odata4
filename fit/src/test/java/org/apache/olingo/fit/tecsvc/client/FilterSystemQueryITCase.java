@@ -88,7 +88,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void booleanLiteral() {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq false");
-    assertEquals(2, response.getBody().getEntities().size());
+    assertEquals(3, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
     assertShortOrInt(-32768, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
@@ -256,18 +256,18 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     // One representative of "stringFuntion" "residue class"
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "endswith(PropertyString,null) eq null"); // null eq null => true
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
 
     // One representative of "stringifiedValueFunction" "residue class"
     result = sendRequest(ES_ALL_PRIM, "substring(PropertyString,null) eq null"); // null eq null => true
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
 
     // Substring
     result = sendRequest(ES_ALL_PRIM, "hour(null) eq null"); // null eq null => true
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
 
     result = sendRequest(ES_ALL_PRIM, "substring(PropertyString,0,null) eq null"); // null eq null => true
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
   }
 
   @Test
@@ -283,7 +283,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
 
     // -1 should be treated as 0, Same values substring(PropertyString, 0, 0) returns the empty String
     response = sendRequest(ES_ALL_PRIM, "substring(PropertyString,0,-1) eq ''");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
   }
 
   @Test
@@ -340,10 +340,10 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     assertEquals(3, result.getBody().getEntities().size());
 
     result = sendRequest(ES_ALL_PRIM, "PropertyDouble ge -179000");
-    assertEquals(2, result.getBody().getEntities().size());
+    assertEquals(3, result.getBody().getEntities().size());
 
     result = sendRequest(ES_ALL_PRIM, "PropertyDouble gt -179000");
-    assertEquals(1, result.getBody().getEntities().size());
+    assertEquals(2, result.getBody().getEntities().size());
 
     result = sendRequest(ES_ALL_PRIM, "PropertyDouble lt -179000");
     assertEquals(1, result.getBody().getEntities().size());
@@ -507,7 +507,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void monthFunctionDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDateTimeOffset) eq 12");
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
     assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
@@ -531,7 +531,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void dayFunctionDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDateTimeOffset) eq 3");
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
     assertShortOrInt(32767, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
@@ -628,7 +628,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   public void fractionalsecondsDateOfTime() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "fractionalseconds(PropertyTimeOfDay) eq 0");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
   }
 
   @Test
@@ -636,22 +636,22 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     ODataRetrieveResponse<ClientEntitySet> response;
 
     response = sendRequest(ES_ALL_PRIM, "year(null) eq null");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     response = sendRequest(ES_ALL_PRIM, "month(null) eq null");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     response = sendRequest(ES_ALL_PRIM, "day(null) eq null");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     response = sendRequest(ES_ALL_PRIM, "hour(null) eq null");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     response = sendRequest(ES_ALL_PRIM, "minute(null) eq null");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     response = sendRequest(ES_ALL_PRIM, "second(null) eq null");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
   }
 
   @Test
@@ -794,7 +794,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   public void numericPromotionToInt64() {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 eq 0");
-    assertEquals(1, result.getBody().getEntities().size());
+    assertEquals(2, result.getBody().getEntities().size());
 
     ClientEntity clientEntity = result.getBody().getEntities().get(0);
     assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
@@ -805,7 +805,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     double value = Float.MAX_VALUE + 1;
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 lt " + value);
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
   }
 
   @Test
@@ -879,7 +879,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   public void dateSubDate() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq 2012-12-04 sub 2012-12-04");
-    assertEquals(1, response.getBody().getEntities().size());
+    assertEquals(2, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
     assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
@@ -889,7 +889,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   public void dateTimeOffsetSubDateTimeOffset() {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq 2005-12-03T00:00:00Z sub 2005-12-03T00:00:00Z");
-    assertEquals(1, response.getBody().getEntities().size());
+    assertEquals(2, response.getBody().getEntities().size());
 
     final ClientEntity clientEntity = response.getBody().getEntities().get(0);
     assertShortOrInt(0, clientEntity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
@@ -1008,28 +1008,28 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   public void comparisonOnStringOperands() {
     // If check if the expression is true => All entry are returned
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "'Tes' lt 'Test'");
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
     
     result = sendRequest(ES_ALL_PRIM, "'Test' le 'Test'");
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
     
     result = sendRequest(ES_ALL_PRIM, "'Test1' le 'Test'");
     assertEquals(0, result.getBody().getEntities().size());
     
     result = sendRequest(ES_ALL_PRIM, "'Test1' gt 'Test'");
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
     
     result = sendRequest(ES_ALL_PRIM, "'Tes' gt 'Test'");
     assertEquals(0, result.getBody().getEntities().size());
     
     result = sendRequest(ES_ALL_PRIM, "'Test' ge 'Test'");
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
     
     result = sendRequest(ES_ALL_PRIM, "'Test' eq 'Test'");
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
     
     result = sendRequest(ES_ALL_PRIM, "'Test1' ne 'Test'");
-    assertEquals(3, result.getBody().getEntities().size());
+    assertEquals(4, result.getBody().getEntities().size());
   }
 
   @Test
