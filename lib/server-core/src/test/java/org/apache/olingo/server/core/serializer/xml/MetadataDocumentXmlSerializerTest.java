@@ -316,6 +316,8 @@ public class MetadataDocumentXmlSerializerTest {
     assertTrue(metadata.contains("<ActionImport Name=\"AIRTPrimParam\" Action=\"Alias.UARTPrimParam\"></ActionImport"));
     assertTrue(metadata.contains("<FunctionImport Name=\"FINRTInt16\" " +
         "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"></FunctionImport>"));
+    assertTrue(metadata.contains("<FunctionImport Name=\"FINRTET\" Function=\"Alias.UFNRTETAllPrim\" "
+        + "EntitySet=\"ESAllPrim\" IncludeInServiceDocument=\"true\"></FunctionImport>"));
   }
 
   @Test
@@ -356,30 +358,30 @@ public class MetadataDocumentXmlSerializerTest {
     // All dynamic expressions
     // Logical expressions
     assertTrue(metadata.contains("<And><Bool>true</Bool><Bool>false</Bool>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></And>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></And>"));
     assertTrue(metadata.contains("<Or><Bool>true</Bool><Bool>false</Bool>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></Or>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></Or>"));
     assertTrue(metadata.contains("<Not><Bool>true</Bool><Annotation Term=\"ns.term\"></Annotation></Not>"));
 
     // Comparison expressions
     assertTrue(metadata.contains("<Eq><Bool>true</Bool><Bool>false</Bool>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></Eq>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></Eq>"));
     assertTrue(metadata.contains("<Ne><Bool>true</Bool><Bool>false</Bool>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></Ne>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></Ne>"));
     assertTrue(metadata.contains("<Gt><Bool>true</Bool><Bool>false</Bool>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></Gt>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></Gt>"));
     assertTrue(metadata.contains("<Ge><Bool>true</Bool><Bool>false</Bool>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></Ge>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></Ge>"));
     assertTrue(metadata.contains("<Lt><Bool>true</Bool><Bool>false</Bool>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></Lt>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></Lt>"));
     assertTrue(metadata.contains("<Le><Bool>true</Bool><Bool>false</Bool>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></Le>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></Le>"));
 
     // Other
     assertTrue(metadata.contains("<AnnotationPath>AnnoPathValue</AnnotationPath>"));
     assertTrue(metadata
         .contains("<Apply Function=\"odata.concat\"><Bool>true</Bool>"
-        		+ "<Annotation Term=\"ns.term\"></Annotation></Apply>"));
+            + "<Annotation Term=\"ns.term\"></Annotation></Apply>"));
     assertTrue(metadata
         .contains("<Cast Type=\"Edm.String\" MaxLength=\"1\" Precision=\"2\" Scale=\"3\">"
             + "<String>value</String><Annotation Term=\"ns.term\"></Annotation></Cast>"));
@@ -403,7 +405,7 @@ public class MetadataDocumentXmlSerializerTest {
             + "<Annotation Term=\"ns.term\"></Annotation></PropertyValue>"
             + "<Annotation Term=\"ns.term\"></Annotation></Record>"));
     assertTrue(metadata.contains("<UrlRef><String>URLRefValue</String>"
-    		+ "<Annotation Term=\"ns.term\"></Annotation></UrlRef>"));
+        + "<Annotation Term=\"ns.term\"></Annotation></UrlRef>"));
 
   }
 
@@ -491,6 +493,7 @@ public class MetadataDocumentXmlSerializerTest {
     private final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(nameSpace, "CTTwoPrim");
     private final FullQualifiedName nameCTTwoPrimBase = new FullQualifiedName(nameSpace, "CTTwoPrimBase");
     private final FullQualifiedName nameUFNRTInt16 = new FullQualifiedName(nameSpace, "UFNRTInt16");
+    private final FullQualifiedName nameUFNRTETAllPrim = new FullQualifiedName(nameSpace, "UFNRTETAllPrim");
     private final FullQualifiedName nameContainer = new FullQualifiedName(nameSpace, "container");
     private final FullQualifiedName nameENString = new FullQualifiedName(nameSpace, "ENString");
 
@@ -567,6 +570,12 @@ public class MetadataDocumentXmlSerializerTest {
             .setName("UFNRTInt16")
             .setParameters(Collections.<CsdlParameter> emptyList())
             .setReturnType(new CsdlReturnType().setType(nameInt16)));
+      } else if (functionName.equals(nameUFNRTETAllPrim)) {
+        return Collections.singletonList(
+            new CsdlFunction()
+            .setName("UFNRTETAllPrim")
+            .setParameters(Collections.<CsdlParameter> emptyList())
+            .setReturnType(new CsdlReturnType().setType(nameETAbstractBase)));
       }
       return null;
     }
@@ -616,6 +625,12 @@ public class MetadataDocumentXmlSerializerTest {
           .setName("FINRTInt16")
           .setFunction(nameUFNRTInt16)
           .setIncludeInServiceDocument(true);
+        } else if (functionImportName.equals("FINRTET")) {
+          return new CsdlFunctionImport()
+          .setName("FINRTET")
+          .setFunction(nameUFNRTETAllPrim)
+          .setEntitySet("ESAllPrim")
+          .setIncludeInServiceDocument(true);
         }
       }
       return null;
@@ -649,6 +664,8 @@ public class MetadataDocumentXmlSerializerTest {
 
       // Functions
       schema.setFunctions(getFunctions(nameUFNRTInt16));
+      
+      schema.setFunctions(getFunctions(nameUFNRTETAllPrim));
 
       // EntityContainer
       schema.setEntityContainer(getEntityContainer());
@@ -692,7 +709,8 @@ public class MetadataDocumentXmlSerializerTest {
       container.setActionImports(Collections.singletonList(getActionImport(nameContainer, "AIRTPrimParam")));
 
       // FunctionImports
-      container.setFunctionImports(Collections.singletonList(getFunctionImport(nameContainer, "FINRTInt16")));
+      container.setFunctionImports(Arrays.asList(getFunctionImport(nameContainer, "FINRTInt16"),
+          getFunctionImport(nameContainer, "FINRTET")));
 
       return container;
     }

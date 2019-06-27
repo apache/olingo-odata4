@@ -583,7 +583,14 @@ public class MetadataDocumentXmlSerializer {
 
       EdmEntitySet returnedEntitySet = functionImport.getReturnedEntitySet();
       if (returnedEntitySet != null) {
-        writer.writeAttribute(XML_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
+        String returnedEntitySetNamespace = returnedEntitySet.getEntityContainer().getNamespace();
+        if ((null != returnedEntitySetNamespace && returnedEntitySetNamespace.equals(containerNamespace)) || (
+            namespaceToAlias.get(returnedEntitySetNamespace) != null && 
+            namespaceToAlias.get(returnedEntitySetNamespace).equals(containerNamespace))) {
+          writer.writeAttribute(XML_ENTITY_SET, returnedEntitySet.getName());
+        } else {
+          writer.writeAttribute(XML_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
+        }
       }
       // Default is false and we do not write the default
       if (functionImport.isIncludeInServiceDocument()) {
