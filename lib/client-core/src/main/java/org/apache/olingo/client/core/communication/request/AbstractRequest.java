@@ -17,10 +17,12 @@ package org.apache.olingo.client.core.communication.request;
 
 import java.io.IOException;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ public abstract class AbstractRequest {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractRequest.class);
+  private static final String TEXT_CONTENT_TYPE = "text/plain";
 
   protected void checkRequest(final ODataClient odataClient, final HttpUriRequest request) {
     // If using and Edm enabled client, checks that the cached service root matches the request URI
@@ -50,13 +53,18 @@ public abstract class AbstractRequest {
           final ODataClient odataClient, final HttpResponse response, final String accept) {
 
     if (response.getStatusLine().getStatusCode() >= 400) {
+      Header contentTypeHeader = response.getEntity() != null ? response.getEntity().getContentType() : null;
       try {
         final ODataRuntimeException exception = ODataErrorResponseChecker.checkResponse(
                 odataClient,
                 response.getStatusLine(),
                 response.getEntity() == null ? null : response.getEntity().getContent(),
-                accept);
+                    (contentTypeHeader != null && 
+                    contentTypeHeader.getValue().contains(TEXT_CONTENT_TYPE)) ? TEXT_CONTENT_TYPE : accept);
         if (exception != null) {
+          if (exception instanceof ODataClientErrorException) {
+            ((ODataClientErrorException)exception).setHeaderInfo(response.getAllHeaders());
+          }
           throw exception;
         }
       } catch (IOException e) {

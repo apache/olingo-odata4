@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -125,5 +126,24 @@ public class ErrorTest extends AbstractTest {
     ODataRuntimeException exp = ODataErrorResponseChecker.
         checkResponse(odataClient, statusLine, null, "Json");
     assertTrue(exp.getMessage().startsWith("Internal Server Error"));
+  }
+  
+  @Test
+  public void testExpTextMsg403() throws Exception {
+    ODataClient odataClient = ODataClientFactory.getClient();
+    InputStream entity = new ByteArrayInputStream("CSRF Validation Exception".getBytes()); 
+    StatusLine statusLine = mock(StatusLine.class);
+    when(statusLine.getStatusCode()).thenReturn(403);
+    when(statusLine.toString()).thenReturn("Validation Exception");
+    when(statusLine.getReasonPhrase()).thenReturn("Forbidden");
+    
+    ODataClientErrorException exp = (ODataClientErrorException) ODataErrorResponseChecker.
+        checkResponse(odataClient, statusLine, entity, "text/plain");
+    assertEquals(exp.getStatusLine().getStatusCode(), 403);
+    ODataError error = exp.getODataError();
+    assertTrue(error.getMessage().equals("CSRF Validation Exception"));
+    assertEquals(error.getCode(), "403");
+    assertEquals(error.getTarget(), "Forbidden");
+    assertNull(exp.getHeaderInfo());
   }
 }

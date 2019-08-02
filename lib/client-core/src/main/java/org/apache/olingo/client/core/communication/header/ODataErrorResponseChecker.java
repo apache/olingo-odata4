@@ -18,13 +18,16 @@
  */
 package org.apache.olingo.client.core.communication.header;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.StatusLine;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
+import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -55,29 +58,42 @@ public final class ODataErrorResponseChecker {
     } else {
       final ContentType contentType = accept.contains("xml") ? ContentType.APPLICATION_ATOM_XML : ContentType.JSON;
 
-      ODataError error;
-      try {
-        error = odataClient.getReader().readError(entity, contentType);
-        if (error != null) {
-          Map<String, String> innerError = error.getInnerError();
-          if (innerError != null) {
-            if (innerError.get("internalexception") != null) {
-              error.setMessage(error.getMessage() + innerError.get("internalexception"));
-            } else {
-              error.setMessage(error.getMessage() + innerError.get("message"));
+      ODataError error = new ODataError();
+      if (!accept.contains("text/plain")) {
+        try {
+          error = odataClient.getReader().readError(entity, contentType);
+          if (error != null) {
+            Map<String, String> innerError = error.getInnerError();
+            if (innerError != null) {
+              if (innerError.get("internalexception") != null) {
+                error.setMessage(error.getMessage() + innerError.get("internalexception"));
+              } else {
+                error.setMessage(error.getMessage() + innerError.get("message"));
+              }
             }
           }
+        } catch (final RuntimeException e) {
+          LOG.warn("Error deserializing error response", e);
+          error = getGenericError(
+              statusLine.getStatusCode(),
+              statusLine.getReasonPhrase());
+        } catch (final ODataDeserializerException e) {
+          LOG.warn("Error deserializing error response", e);
+          error = getGenericError(
+              statusLine.getStatusCode(),
+              statusLine.getReasonPhrase());
         }
-      } catch (final RuntimeException e) {
-        LOG.warn("Error deserializing error response", e);
-        error = getGenericError(
-            statusLine.getStatusCode(),
-            statusLine.getReasonPhrase());
-      } catch (final ODataDeserializerException e) {
-        LOG.warn("Error deserializing error response", e);
-        error = getGenericError(
-            statusLine.getStatusCode(),
-            statusLine.getReasonPhrase());
+      } else {
+        error.setCode(String.valueOf(statusLine.getStatusCode()));
+        error.setTarget(statusLine.getReasonPhrase());
+        try {
+          error.setMessage(IOUtils.toString(entity));
+        } catch (IOException e) {
+          LOG.warn("Error deserializing error response", e);
+          error = getGenericError(
+              statusLine.getStatusCode(),
+              statusLine.getReasonPhrase());
+        }
       }
 
       if (statusLine.getStatusCode() >= 500 && error!= null && 

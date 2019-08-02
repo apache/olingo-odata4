@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
@@ -351,6 +352,11 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
       final ODataError error = e.getODataError();
       assertThat(error.getMessage(), containsString("key"));
+      for (Header header : e.getHeaderInfo()) {
+        if(header.getName().equals("Version")) {
+          assertEquals(header.getValue(), "4.0");
+        }
+      }
     }    
   }
  
@@ -1797,5 +1803,42 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     final ClientProperty property = entity.getProperty("CollPropertyComp");
     assertNotNull(property);
     assertEquals(3, property.getCollectionValue().size());
+  }
+  
+  @Test
+  public void readHeaderInfoFromClientException1() throws Exception {
+    ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_MIX_PRIM_COLL_COMP).appendKeySegment("42").build());
+    assertNotNull(request);
+    setCookieHeader(request);
+    request.setAccept("text/plain");
+    try {
+      request.execute();
+      fail("Expected Exception not thrown!");
+    } catch (final ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+      final ODataError error = e.getODataError();
+      assertThat(error.getMessage(), containsString("key"));
+    }    
+  }
+  
+  @Test
+  public void readHeaderInfoFromClientException2() throws Exception {
+    ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(SERVICE_URI)
+            .appendEntitySetSegment(ES_MIX_PRIM_COLL_COMP).appendKeySegment("42").build());
+    assertNotNull(request);
+    setCookieHeader(request);
+    request.setAccept("text/plain");
+    request.setContentType("application/json");
+    try {
+      request.execute();
+      fail("Expected Exception not thrown!");
+    } catch (final ODataClientErrorException e) {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+      final ODataError error = e.getODataError();
+      assertThat(error.getMessage(), containsString("key"));
+    }    
   }
 }
