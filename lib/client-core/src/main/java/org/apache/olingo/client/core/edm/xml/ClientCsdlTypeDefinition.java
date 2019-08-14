@@ -57,7 +57,8 @@ class ClientCsdlTypeDefinition extends CsdlTypeDefinition implements Serializabl
             typeDefinition.setPrecision(jp.nextIntValue(0));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            typeDefinition.setScale("variable".equalsIgnoreCase(scale) ? 0 : Integer.valueOf(scale));
+            typeDefinition.setScale("variable".equalsIgnoreCase(scale) || "floating".equalsIgnoreCase(scale) ?
+                0 : Integer.valueOf(scale));
           } else if ("SRID".equals(jp.getCurrentName())) {
             final String srid = jp.nextTextValue();
             if (srid != null) {
