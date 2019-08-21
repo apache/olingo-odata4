@@ -67,7 +67,8 @@ class ClientCsdlParameter extends CsdlParameter implements Serializable {
             parameter.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            parameter.setScale("variable".equalsIgnoreCase(scale) ? 0 : Integer.valueOf(scale));
+            parameter.setScale("variable".equalsIgnoreCase(scale) || "floating".equalsIgnoreCase(scale) ?
+                0 : Integer.valueOf(scale));
           } else if ("SRID".equals(jp.getCurrentName())) {
             final String srid = jp.nextTextValue();
             if (srid != null) {

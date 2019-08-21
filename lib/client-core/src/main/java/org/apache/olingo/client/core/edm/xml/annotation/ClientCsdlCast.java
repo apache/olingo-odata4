@@ -56,7 +56,8 @@ class ClientCsdlCast extends CsdlCast implements Serializable {
             cast.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            cast.setScale("variable".equalsIgnoreCase(scale) ? 0 : Integer.valueOf(scale));
+            cast.setScale("variable".equalsIgnoreCase(scale) || "floating".equalsIgnoreCase(scale) ?
+                0 : Integer.valueOf(scale));
           } else if ("SRID".equals(jp.getCurrentName())) {
             final String srid = jp.nextTextValue();
             if (srid != null) {

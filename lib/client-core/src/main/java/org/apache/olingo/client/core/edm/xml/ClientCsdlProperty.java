@@ -69,7 +69,8 @@ class ClientCsdlProperty extends CsdlProperty implements Serializable {
             property.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            property.setScale("variable".equalsIgnoreCase(scale) ? 0 : Integer.valueOf(scale));
+            property.setScale("variable".equalsIgnoreCase(scale) || "floating".equalsIgnoreCase(scale) ?
+                0 : Integer.valueOf(scale));
           } else if ("Unicode".equals(jp.getCurrentName())) {
             property.setUnicode(BooleanUtils.toBoolean(jp.nextTextValue()));
           } else if ("SRID".equals(jp.getCurrentName())) {
