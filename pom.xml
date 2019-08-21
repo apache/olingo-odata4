@@ -76,7 +76,7 @@
     <servlet.version>3.1.0</servlet.version>
     <cxf.version>3.0.0</cxf.version>
     <spring.version>4.0.6.RELEASE</spring.version>
-    <netty.version>4.1.35.Final</netty.version>
+    <netty.version>4.1.39.Final</netty.version>
 
     <velocity.version>1.7</velocity.version>
     <maven.plugin.api.version>3.2.2</maven.plugin.api.version>
@@ -85,6 +85,7 @@
     <hc.client.version>4.5.8</hc.client.version>
     <hc.core.version>4.4.11</hc.core.version>
     <jackson.version>2.9.8</jackson.version>
+    <jackson-databind.version>2.9.9.3</jackson-databind.version>
     <aalto-xml.version>0.9.10</aalto-xml.version>
 
     <android.platform.version>4.1.1.4</android.platform.version>
@@ -158,7 +159,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
+        <version>${jackson-databind.version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
