@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.ex.ODataNotSupportedException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.server.api.OData;
@@ -539,7 +540,13 @@ public class TripPinHandler implements ServiceHandler {
 
   @Override
   public void crossJoin(DataRequest dataRequest, List<String> entitySetNames, ODataResponse response) {
-    response.setStatusCode(200);
+    response.setStatusCode(501);
+  }
+  
+  @Override
+  public void apply(DataRequest dataRequest, ODataResponse response)
+      throws ODataLibraryException, ODataApplicationException {
+    response.setStatusCode(501);
   }
 
   @Override

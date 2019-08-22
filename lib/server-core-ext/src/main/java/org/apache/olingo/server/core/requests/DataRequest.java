@@ -71,6 +71,7 @@ import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.core.ContentNegotiator;
 import org.apache.olingo.server.core.ContentNegotiatorException;
 import org.apache.olingo.server.core.ODataHandlerException;
@@ -763,7 +764,39 @@ public class DataRequest extends ServiceRequest {
       return builder.build();
     }
   }
+  
+  class ApplyRequest implements RequestType {
 
+    @Override
+    public boolean assertHttpMethod(ODataResponse response)
+        throws ODataHandlerException {
+      return ServiceRequest.assertHttpMethod(httpMethod(), allowedMethods(), response);
+    }
+    
+    @Override
+    public HttpMethod[] allowedMethods() {
+      return new HttpMethod[] {HttpMethod.GET};
+    }
+
+    @Override
+    public ContentType getResponseContentType() throws ContentNegotiatorException {
+      return ContentNegotiator.doContentNegotiation(getUriInfo().getFormatOption(),
+          getODataRequest(), getCustomContentTypeSupport(), RepresentationType.COLLECTION_COMPLEX);
+    }
+
+    @Override
+    public void execute(ServiceHandler handler, ODataResponse response)
+        throws ODataLibraryException, ODataApplicationException {
+      handler.apply(DataRequest.this, response);
+    }
+
+    @Override
+    public ContextURL getContextURL(OData odata) throws SerializerException {
+      ContextURL.Builder builder = ContextURL.with().asCollection();
+      return builder.build();
+    }
+  }
+  
   private org.apache.olingo.commons.api.data.Property getPropertyValueFromClient(
       EdmProperty edmProperty) throws DeserializerException {
     ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType(), getServiceMetaData());
@@ -929,5 +962,9 @@ public class DataRequest extends ServiceRequest {
       }
     }
     return sb.toString();
+  }
+
+  public void setApply(ApplyOption apply) {
+    this.type = new ApplyRequest();
   }
 }

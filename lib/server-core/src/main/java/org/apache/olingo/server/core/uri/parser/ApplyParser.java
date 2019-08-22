@@ -135,6 +135,7 @@ public class ApplyParser {
   private ApplyOption parseApply(EdmStructuredType referencedType)
       throws UriParserException, UriValidationException {
     ApplyOptionImpl option = new ApplyOptionImpl();
+    option.setEdmStructuredType(referencedType);
     do {
       option.add(parseTrafo(referencedType));
     } while (tokenizer.next(TokenKind.SLASH));
@@ -253,11 +254,18 @@ public class ApplyParser {
       }
       final String alias = parseAsAlias(referencedType, true);
       aggregateExpression.setAlias(alias);
+      DynamicProperty dynamicProperty = createDynamicProperty(alias,
+          // Determine the type for standard methods; there is no way to do this for custom methods.
+          getTypeForAggregateMethod(aggregateExpression.getStandardMethod(),
+              ExpressionParser.getType(expression)));
+      if (aggregateExpression.getStandardMethod() == StandardMethod.SUM
+          || aggregateExpression.getStandardMethod() == StandardMethod.AVERAGE) {
+        //by default a property with no precision/scale defaults to a 0 scale
+        //this does not work for sum/average in general
+        dynamicProperty.setScale(Integer.MAX_VALUE);
+      }
       ((DynamicStructuredType) referencedType).addProperty(
-          createDynamicProperty(alias,
-              // Determine the type for standard methods; there is no way to do this for custom methods.
-              getTypeForAggregateMethod(aggregateExpression.getStandardMethod(),
-                  ExpressionParser.getType(expression))));
+          dynamicProperty);
       parseAggregateFrom(aggregateExpression, referencedType);
     }
 
@@ -319,7 +327,7 @@ public class ApplyParser {
     }
   }
 
-  private EdmProperty createDynamicProperty(final String name, final EdmType type) {
+  private DynamicProperty createDynamicProperty(final String name, final EdmType type) {
     return name == null ? null : new DynamicProperty(name, type);
   }
 

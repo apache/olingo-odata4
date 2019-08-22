@@ -34,6 +34,8 @@ public class DynamicProperty implements EdmProperty {
 
   private final String name;
   private final EdmType propertyType;
+  private Integer precision;
+  private Integer scale;
 
   /** Creates a dynamic property with a mandatory name and an optional type. */
   public DynamicProperty(final String name, final EdmType type) {
@@ -78,12 +80,12 @@ public class DynamicProperty implements EdmProperty {
 
   @Override
   public Integer getPrecision() {
-    return null;
+    return precision;
   }
 
   @Override
   public Integer getScale() {
-    return null;
+    return scale;
   }
 
   @Override
@@ -119,5 +121,15 @@ public class DynamicProperty implements EdmProperty {
   @Override
   public EdmType getTypeWithAnnotations() {
     return propertyType;
+  }
+  
+  public DynamicProperty setPrecision(Integer precision) {
+    this.precision = precision;
+    return this;
+  }
+  
+  public DynamicProperty setScale(Integer scale) {
+    this.scale = scale;
+    return this;
   }
 }
