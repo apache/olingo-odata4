@@ -493,7 +493,7 @@ public class TripPinDataModel {
         map = new HashMap<String, Object>();
         this.peopleLinks.put((String) parentEntity.getProperty(key).getValue(), map);
       }
-      map.put("Photo", childEntity.getProperty(key).getValue());
+      map.put("Photo", ((Long)childEntity.getProperty("Id").getValue()).intValue());
       setLink(parentEntity, navigation, childEntity);
     } else if (type.getName().equals("Trip") && navigation.equals("PlanItems")) {
       Map<String, Object> map = this.tripLinks.get(parentEntity.getProperty(key).getValue());

@@ -552,6 +552,46 @@ public class TripPinServiceTest {
     assertTrue(node.get("value").isArray());
     assertEquals("scottketchum", ((ArrayNode)node.get("value")).get(1).get("UserName").asText());
   }
+  
+  @Ignore("4.01 style binding not supported")
+  @Test
+  public void testCreateEntityWithLinkToRelatedEntitiesIds() throws Exception {
+    String payload = "{\n" +
+        "         \"UserName\":\"olingo\",\n" +
+        "         \"FirstName\":\"Olingo\",\n" +
+        "         \"LastName\":\"Apache\",\n" +
+        "         \"Emails\":[\n" +
+        "            \"olingo@apache.org\"\n" +
+        "         ],\n" +
+        "         \"AddressInfo\":[\n" +
+        "            {\n" +
+        "               \"Address\":\"100 apache Ln.\",\n" +
+        "               \"City\":{\n" +
+        "                  \"CountryRegion\":\"United States\",\n" +
+        "                  \"Name\":\"Boise\",\n" +
+        "                  \"Region\":\"ID\"\n" +
+        "               }\n" +
+        "            }\n" +
+        "         ],\n" +
+        "         \"Gender\":\"0\",\n" +
+        "         \"Concurrency\":635585295719432047,\n" +
+        "\"Friends\":[" +
+        "{\"@id\": \"People('russellwhyte')\"},\n" + 
+        "{\"@id\": \"People('scottketchum')\"}\n" +
+        "]"+
+        "}";
+    HttpPost postRequest = new HttpPost(baseURL + "/People");
+    postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
+    postRequest.setHeader("Prefer", "return=minimal");
+    HttpResponse response = httpSend(postRequest, 204);
+    EntityUtils.consumeQuietly(response.getEntity());
+    
+    response = httpGET(baseURL+"/People('olingo')/Friends", 200);
+    JsonNode node = getJSONNode(response);
+    assertEquals(baseURL+"/$metadata#People", node.get("@odata.context").asText());
+    assertTrue(node.get("value").isArray());
+    assertEquals("scottketchum", ((ArrayNode)node.get("value")).get(1).get("UserName").asText());
+  }
 
   @Test
   public void testUpdatePrimitiveProperty() throws Exception {
@@ -778,6 +818,80 @@ public class TripPinServiceTest {
     response = httpGET(editUrl, 200);
     node = getJSONNode(response);
     assertNull("/People('russellwhyte')", ((ArrayNode) node.get("value")).get(2));
+  }
+  
+  @Test
+  public void testAddEntityToNavigationFailsNotEntitySet() throws Exception {
+    // adding to an entity that is not part of an entity set
+    // goes against a few assumptions in downstream code, so 
+    // not handling for now
+    String msg = "{\n" +
+        "\"TripId\": 1010,\n" +
+        "\"Description\": \"The trip of a lifetime.\",\n" +
+        "\"Name\": \"Grand Prize\",\n" +
+        "\"Budget\": 100000\n" +
+        "}";
+    String editUrl = baseURL + "/People('vincentcalabrese')/Trips";
+    HttpPost postRequest = new HttpPost(editUrl);
+    postRequest.setEntity(new StringEntity(msg, ContentType.APPLICATION_JSON));
+    postRequest.addHeader("Content-Type", "application/json;odata.metadata=minimal");
+    HttpResponse response = httpSend(postRequest, 405);
+    EntityUtils.consumeQuietly(response.getEntity());
+  }
+  
+  @Test
+  public void testAddEntityToNavigation() throws Exception {
+    String msg = "{\n" +
+        "\"Id\": 1010,\n" +
+        "\"Name\": \"Grand Prize\"\n" +
+        "}";
+    String editUrl = baseURL + "/People('vincentcalabrese')/Photo";
+    HttpPost postRequest = new HttpPost(editUrl);
+    postRequest.setEntity(new StringEntity(msg, ContentType.APPLICATION_JSON));
+    postRequest.addHeader("Content-Type", "application/json;odata.metadata=minimal");
+    HttpResponse response = httpSend(postRequest, 201);
+    EntityUtils.consumeQuietly(response.getEntity());
+    
+    response = httpGET(baseURL+"/People('vincentcalabrese')/Photo", 200);
+    JsonNode node = getJSONNode(response);
+    assertEquals(baseURL+"/$metadata#Photos/$entity", node.get("@odata.context").asText());
+    assertEquals("Grand Prize", node.get("Name").asText());
+  }
+  
+  @Test
+  public void testAddEntityToNavigationSelf() throws Exception {
+    String payload = "{\n" +
+        "         \"UserName\":\"olingo\",\n" +
+        "         \"FirstName\":\"Olingo\",\n" +
+        "         \"LastName\":\"Apache\",\n" +
+        "         \"Emails\":[\n" +
+        "            \"olingo@apache.org\"\n" +
+        "         ],\n" +
+        "         \"AddressInfo\":[\n" +
+        "            {\n" +
+        "               \"Address\":\"100 apache Ln.\",\n" +
+        "               \"City\":{\n" +
+        "                  \"CountryRegion\":\"United States\",\n" +
+        "                  \"Name\":\"Boise\",\n" +
+        "                  \"Region\":\"ID\"\n" +
+        "               }\n" +
+        "            }\n" +
+        "         ],\n" +
+        "         \"Gender\":\"0\",\n" +
+        "         \"Concurrency\":635585295719432047\n" +
+        "}";
+    String editUrl = baseURL + "/People('vincentcalabrese')/Friends";
+    HttpPost postRequest = new HttpPost(editUrl);
+    postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
+    postRequest.addHeader("Content-Type", "application/json;odata.metadata=minimal");
+    HttpResponse response = httpSend(postRequest, 201);
+    EntityUtils.consumeQuietly(response.getEntity());
+    
+    response = httpGET(baseURL+"/People('vincentcalabrese')/Friends", 200);
+    JsonNode node = getJSONNode(response);
+    assertEquals(baseURL+"/$metadata#People", node.get("@odata.context").asText());
+    assertTrue(node.get("value").isArray());
+    assertEquals("olingo", ((ArrayNode)node.get("value")).get(2).get("UserName").asText());
   }
 
   @Test

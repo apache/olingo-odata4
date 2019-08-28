@@ -277,10 +277,20 @@ public class DataRequest extends ServiceRequest {
     public boolean assertHttpMethod(ODataResponse response) throws ODataHandlerException {
       // the create/update/delete to navigation property is done through references
       // see # 11.4.6
-      if (!getNavigations().isEmpty() && !isGET()) {
-        return methodNotAllowed(response, httpMethod(), 
-            "create/update/delete to navigation property is done through references", 
-            allowedMethods());
+      if (!getNavigations().isEmpty()) {
+        if (isPOST()) {
+          UriResourceNavigation last = getNavigations().getLast();
+          if (!(getEntitySet().getRelatedBindingTarget(last.getProperty().getName()) 
+              instanceof EdmEntitySet)) {
+            return methodNotAllowed(response, httpMethod(), 
+                "navigation updates must be to an entity contained in an entity set", 
+                allowedMethods());
+          }
+        } else if (!isGET()) {
+          return methodNotAllowed(response, httpMethod(), 
+              "update/delete to navigation property is done through references", 
+              allowedMethods());
+        }
       }
       
       if ((isGET() || isDELETE()) && getReturnRepresentation() != ReturnRepresentation.NONE) {
@@ -315,13 +325,14 @@ public class DataRequest extends ServiceRequest {
     public void execute(ServiceHandler handler, ODataResponse response)
         throws ODataLibraryException, ODataApplicationException {
 
+      ContextURL contextURL = getContextURL(odata);
       EntityResponse entityResponse = EntityResponse.getInstance(DataRequest.this,
-          getContextURL(odata), false, response);
+          contextURL, false, response);
 
       if (isGET()) {
         if (isCollection()) {
           handler.read(DataRequest.this,
-              EntitySetResponse.getInstance(DataRequest.this, getContextURL(odata), false, response));
+              EntitySetResponse.getInstance(DataRequest.this, contextURL, false, response));
         } else {
           handler.read(DataRequest.this,entityResponse);
         }
@@ -338,24 +349,37 @@ public class DataRequest extends ServiceRequest {
         } else if (ifNoneMatch) {
           // 11.4.4
           entityResponse = EntityResponse.getInstance(DataRequest.this,
-              getContextURL(odata), false, response, getReturnRepresentation());
+              contextURL, false, response, getReturnRepresentation());
           handler.createEntity(DataRequest.this, getEntityFromClient(), entityResponse);
         } else {
           handler.upsertEntity(DataRequest.this, getEntityFromClient(), isPATCH(), getETag(),
               entityResponse);
         }
       } else if (isPOST()) {
-        entityResponse = EntityResponse.getInstance(DataRequest.this,
-            getContextURL(odata), false, response, getReturnRepresentation());
-        handler.createEntity(DataRequest.this, getEntityFromClient(),entityResponse);
+        if (!getNavigations().isEmpty()) {
+          entityResponse = EntityResponse.getInstance(DataRequest.this,
+              contextURL, false, response, getReturnRepresentation());
+          UriResourceNavigation last = getNavigations().getLast();
+          EdmEntityType navigationType = last.getProperty().getType();
+          Entity entity = getEntityFromClient(navigationType);
+          handler.createEntity(DataRequest.this, entity,entityResponse);
+        } else {
+          entityResponse = EntityResponse.getInstance(DataRequest.this,
+              contextURL, false, response, getReturnRepresentation());
+          handler.createEntity(DataRequest.this, getEntityFromClient(),entityResponse);
+        }
       } else if (isDELETE()) {
         handler.deleteEntity(DataRequest.this, getETag(), entityResponse);
       }
     }
 
     private Entity getEntityFromClient() throws DeserializerException {
+      return getEntityFromClient(getEntitySet().getEntityType());
+    }
+    
+    private Entity getEntityFromClient(EdmEntityType entityType) throws DeserializerException {
       ODataDeserializer deserializer = odata.createDeserializer(getRequestContentType(), getServiceMetaData());
-      return deserializer.entity(getODataRequest().getBody(), getEntitySet().getEntityType()).getEntity();
+      return deserializer.entity(getODataRequest().getBody(), entityType).getEntity();
     }
 
     @Override
