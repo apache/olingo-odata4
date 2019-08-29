@@ -142,7 +142,8 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
     json.writeStartArray();
     for (final Entity entity : entitySet.getEntities()) {
       writeAddedUpdatedEntity(metadata, entityType, entity, options.getExpand(), options.getSelect(),
-          options.getContextURL(), false, options.getContextURL().getEntitySetOrSingletonOrType(), json);
+          options.getContextURL(), false, options.getContextURL().getEntitySetOrSingletonOrType(), json,
+          options.isFullRepresentation());
     }
     for (final DeletedEntity deletedEntity : entitySet.getDeletedEntities()) {
       writeDeletedEntity(deletedEntity, json);
@@ -232,7 +233,7 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
 
   public void writeAddedUpdatedEntity(final ServiceMetadata metadata, final EdmEntityType entityType,
       final Entity entity, final ExpandOption expand, final SelectOption select, final ContextURL url,
-      final boolean onlyReference, String name, final JsonGenerator json)
+      final boolean onlyReference, String name, final JsonGenerator json, boolean isFullRepresentation)
       throws IOException, SerializerException {
     json.writeStartObject();
     if (entity.getId() != null && url != null) {
@@ -248,7 +249,7 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
     }
     json.writeStringField(Constants.AT + Constants.ATOM_ATTR_ID, getEntityId(entity, entityType, name));
     writeProperties(metadata, entityType, entity.getProperties(), select, json);
-    writeNavigationProperties(metadata, entityType, entity, expand, name, json);
+    writeNavigationProperties(metadata, entityType, entity, expand, name, json, isFullRepresentation);
     json.writeEndObject();
 
   }
@@ -503,7 +504,8 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
 
   protected void writeNavigationProperties(final ServiceMetadata metadata,
       final EdmStructuredType type, final Linked linked, final ExpandOption expand,
-      final String name, final JsonGenerator json) throws SerializerException, IOException {
+      final String name, final JsonGenerator json, boolean isFullRepresentation) 
+          throws SerializerException, IOException {
     if (ExpandSelectHelper.hasExpand(expand)) {
       final boolean expandAll = ExpandSelectHelper.getExpandAll(expand) != null;
       final Set<String> expanded = expandAll ? new HashSet<String>() : ExpandSelectHelper.getExpandedPropertyNames(
@@ -525,7 +527,15 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
                 innerOptions == null ? null : innerOptions.getCountOption(),
                 innerOptions == null ? false : innerOptions.hasCountPath(),
                 innerOptions == null ? false : innerOptions.isRef(),
-                name, json);
+                name, json, isFullRepresentation);
+          } else {
+            json.writeFieldName(property.getName());
+            if (property.isCollection()) {
+              json.writeStartArray();
+              json.writeEndArray();
+            } else {
+              json.writeNull();
+            }
           }
         }
       }
@@ -534,24 +544,28 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,
       final AbstractEntityCollection entitySet, final ExpandOption expand, final SelectOption select,
-      final boolean onlyReference, String name, final JsonGenerator json) throws IOException,
-      SerializerException {
-    json.writeStartArray();
-    for (final Entity entity : entitySet) {
-      if (onlyReference) {
-        json.writeStartObject();
-        json.writeStringField(Constants.JSON_ID, getEntityId(entity, entityType, null));
-        json.writeEndObject();
-      } else {
-        if (entity instanceof DeletedEntity) {
-          writeDeletedEntity(entity, json);
+      final boolean onlyReference, String name, final JsonGenerator json, 
+      boolean isFullRepresentation) throws IOException, SerializerException {
+    if (entitySet instanceof AbstractEntityCollection) {
+      AbstractEntityCollection entities = (AbstractEntityCollection)entitySet;
+      json.writeStartArray();
+      for (final Entity entity : entities) {
+        if (onlyReference) {
+          json.writeStartObject();
+          json.writeStringField(Constants.JSON_ID, getEntityId(entity, entityType, null));
+          json.writeEndObject();
         } else {
-          writeAddedUpdatedEntity(metadata, entityType, entity, expand, select, null, false, name, json);
+          if (entity instanceof DeletedEntity) {
+            writeDeletedEntity(entity, json);
+          } else {
+            writeAddedUpdatedEntity(metadata, entityType, entity, expand, select, null, false, 
+                name, json, isFullRepresentation);
+          }
+  
         }
-
       }
+      json.writeEndArray();
     }
-    json.writeEndArray();
   }
 
   protected void writeExpandedNavigationProperty(
@@ -559,23 +573,37 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
       final Link navigationLink, final ExpandOption innerExpand,
       final SelectOption innerSelect, final CountOption innerCount,
       final boolean writeOnlyCount, final boolean writeOnlyRef, final String name,
-      final JsonGenerator json) throws IOException, SerializerException {
+      final JsonGenerator json, boolean isFullRepresentation) throws IOException, SerializerException {
 
     if (property.isCollection()) {
-      if (navigationLink != null && navigationLink.getInlineEntitySet() != null) {
-        json.writeFieldName(property.getName() + Constants.AT + Constants.DELTAVALUE);
+      if (navigationLink == null || navigationLink.getInlineEntitySet() == null) {
+        json.writeFieldName(property.getName());
+        json.writeStartArray();
+        json.writeEndArray();
+      } else if (navigationLink != null && navigationLink.getInlineEntitySet() != null) {
+        if (isFullRepresentation) {
+          json.writeFieldName(property.getName());
+        } else {
+          json.writeFieldName(property.getName() + Constants.AT + Constants.DELTAVALUE);
+        }
         writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand,
-            innerSelect, writeOnlyRef, name, json);
+            innerSelect, writeOnlyRef, name, json, isFullRepresentation);
       }
 
     } else {
-      json.writeFieldName(property.getName()+ Constants.AT + Constants.DELTAVALUE);
-      if (navigationLink != null && navigationLink.getInlineEntity() != null) {
+      if (isFullRepresentation) {
+        json.writeFieldName(property.getName());
+      } else {
+        json.writeFieldName(property.getName()+ Constants.AT + Constants.DELTAVALUE);
+      }
+      if (navigationLink == null || navigationLink.getInlineEntity() == null) {
+        json.writeNull();
+      } else if (navigationLink != null && navigationLink.getInlineEntity() != null) {
         if (navigationLink.getInlineEntity() instanceof DeletedEntity) {
           writeDeletedEntity(navigationLink.getInlineEntity(), json);
         } else {
           writeAddedUpdatedEntity(metadata, property.getType(), navigationLink.getInlineEntity(),
-              innerExpand, innerSelect, null, writeOnlyRef, name, json);
+              innerExpand, innerSelect, null, writeOnlyRef, name, json, isFullRepresentation);
         }
       }
     }

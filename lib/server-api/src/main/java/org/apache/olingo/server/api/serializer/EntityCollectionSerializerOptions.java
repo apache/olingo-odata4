@@ -35,6 +35,7 @@ public class EntityCollectionSerializerOptions {
   private String id;
   private ODataContentWriteErrorCallback odataContentWriteErrorCallback;
   private String xml10InvalidCharReplacement;
+  private boolean isFullRepresentation = false;
 
   /** Gets the {@link ContextURL}. */
   public ContextURL getContextURL() {
@@ -81,6 +82,11 @@ public class EntityCollectionSerializerOptions {
   public String xml10InvalidCharReplacement() {
     return xml10InvalidCharReplacement;
   }  
+  
+  /** Inline entries will not have @delta if representation is full **/ 
+  public boolean isFullRepresentation() {
+    return isFullRepresentation;
+  }
 
   /** Initializes the options builder. */
   public static Builder with() {
@@ -149,6 +155,12 @@ public class EntityCollectionSerializerOptions {
       options.xml10InvalidCharReplacement = replacement;
       return this;
     } 
+    
+    /** sets isFullRepresentation to represent inline entries**/
+    public Builder isFullRepresentation(boolean isFullRepresentation) {
+      options.isFullRepresentation = isFullRepresentation;
+      return this;
+    }
     
     /** Builds the OData serializer options. */
     public EntityCollectionSerializerOptions build() {

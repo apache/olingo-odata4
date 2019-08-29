@@ -60,6 +60,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+@SuppressWarnings("deprecation")
 public class JsonDeltaSerializerWithNavigationsTest {
 
   EdmDeltaSerializer ser;
@@ -541,8 +542,53 @@ public class JsonDeltaSerializerWithNavigationsTest {
          + "\"PropertyDuration\":\"PT0S\",\"PropertyGuid\":"
          + "\"76543201-23ab-cdef-0123-456789cccddd\","
          + "\"PropertyTimeOfDay\":\"00:01:01\"}]},{\"@id\":\"ESDelta(-32768)\","
-         + "\"PropertyString\":\"Number:-32768\"}]"
+         + "\"PropertyString\":\"Number:-32768\",\"NavPropertyETAllPrimMany\":[]}]"
            + "}";
+       Assert.assertNotNull(jsonString);
+       Assert.assertEquals(expectedResult, jsonString);
+     } 
+  
+  @Test
+  public void navigationInDeltaEntityInFullRepresentation() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESDelta");
+    Delta delta = new Delta();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final Entity entity2 = data.readAll(edmEntitySet).getEntities().get(1);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimMany")));
+    List<Entity> addedEntity = new ArrayList<Entity>();
+    Entity changedEntity = new Entity();
+    changedEntity.setId(entity2.getId());
+    changedEntity.addProperty(entity2.getProperty("PropertyString"));
+    addedEntity.add(entity);
+    addedEntity.add(changedEntity);
+    delta.getEntities().addAll(addedEntity);
+     InputStream stream = ser.entityCollection(metadata, edmEntitySet.getEntityType(), delta ,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).expand(expand)
+        .isFullRepresentation(true).build()).getContent();
+       String jsonString = IOUtils.toString(stream);
+       final String expectedResult = "{"
+         + "\"@context\":\"$metadata#ESDelta/$delta\",\"value\":"
+         + "[{\"@id\":\"ESDelta(32767)\",\"PropertyInt16\":32767,\"PropertyString\":\"Number:32767\","
+         + "\"NavPropertyETAllPrimMany\":["
+         + "{\"@id\":\"ESAllPrim(-32768)\",\"PropertyInt16\":-32768,"
+         + "\"PropertyString\":\"Second Resource - negative values\","
+         + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":-128,\"PropertyInt32\":-2147483648,"
+         + "\"PropertyInt64\":-9223372036854775808,\"PropertySingle\":-1.79E8,\"PropertyDouble\":-179000.0,"
+         + "\"PropertyDecimal\":-34,\"PropertyBinary\":\"ASNFZ4mrze8=\",\"PropertyDate\":\"2015-11-05\","
+         + "\"PropertyDateTimeOffset\":\"2005-12-03T07:17:08Z\",\"PropertyDuration\":\"PT9S\","
+         + "\"PropertyGuid\":\"76543201-23ab-cdef-0123-456789dddfff\",\"PropertyTimeOfDay\":\"23:49:14\"},"
+         + "{\"@id\":\"ESAllPrim(0)\",\"PropertyInt16\":0,\"PropertyString\":\"\","
+         + "\"PropertyBoolean\":false,\"PropertyByte\":0,\"PropertySByte\":0,\"PropertyInt32\":0,"
+         + "\"PropertyInt64\":0,\"PropertySingle\":0.0,\"PropertyDouble\":0.0,"
+         + "\"PropertyDecimal\":0,"
+         + "\"PropertyBinary\":\"\",\"PropertyDate\":\"1970-01-01\","
+         + "\"PropertyDateTimeOffset\":\"2005-12-03T00:00:00Z\","
+         + "\"PropertyDuration\":\"PT0S\",\"PropertyGuid\":"
+         + "\"76543201-23ab-cdef-0123-456789cccddd\","
+         + "\"PropertyTimeOfDay\":\"00:01:01\"}]},{\"@id\":\"ESDelta(-32768)\","
+         + "\"PropertyString\":\"Number:-32768\",\"NavPropertyETAllPrimMany\":[]}]}";
        Assert.assertNotNull(jsonString);
        Assert.assertEquals(expectedResult, jsonString);
      } 
@@ -839,9 +885,49 @@ public class JsonDeltaSerializerWithNavigationsTest {
        String jsonString = IOUtils.toString(stream);
        final String expectedResult = "{"
            + "\"@context\":\"$metadata#ESDelta/$delta\",\"value\":[{\"@id\":\"ESDelta(32767)\","
-           + "\"PropertyInt16\":32767,\"PropertyString\":\"Number:32767\"},{\"@id\":\"ESDelta(100)\","
+           + "\"PropertyInt16\":32767,\"PropertyString\":\"Number:32767\",\"NavPropertyETAllPrimOne\":null},"
+           + "{\"@id\":\"ESDelta(100)\","
            + "\"PropertyInt16\":100,\"PropertyString\":\"Number:100\","
            + "\"NavPropertyETAllPrimOne@delta\":"
+           + "{\"@id\":\"ESAllPrim(32767)\",\"PropertyInt16\":32767,\"PropertyString\":"
+           + "\"First Resource - positive values\","
+           + "\"PropertyBoolean\":true,\"PropertyByte\":255,\"PropertySByte\":127,\"PropertyInt32\":2147483647,"
+           + "\"PropertyInt64\":9223372036854775807,\"PropertySingle\":1.79E20,\"PropertyDouble\":-1.79E19,"
+           + "\"PropertyDecimal\":34,\"PropertyBinary\":\"ASNFZ4mrze8=\",\"PropertyDate\":\"2012-12-03\","
+           + "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\",\"PropertyDuration\":\"PT6S\",\"PropertyGuid\":"
+           + "\"01234567-89ab-cdef-0123-456789abcdef\",\"PropertyTimeOfDay\":\"03:26:05\"}}]"
+           + "}";
+       Assert.assertNotNull(jsonString);
+       Assert.assertEquals(expectedResult, jsonString);
+     } 
+  
+  @Test
+  public void navigationEntityInDeltaEntityWithFullRepresentation() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESDelta");
+    Delta delta = new Delta();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final Entity entity2 = data.readAll(edmEntitySet).getEntities().get(3);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne")));
+    List<Entity> addedEntity = new ArrayList<Entity>();
+    Entity changedEntity = new Entity();
+    changedEntity.setId(entity.getId());
+    changedEntity.addProperty(entity.getProperty("PropertyString"));
+    addedEntity.add(entity);
+    addedEntity.add(entity2);
+    delta.getEntities().addAll(addedEntity);
+     InputStream stream = ser.entityCollection(metadata, edmEntitySet.getEntityType(), delta ,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).expand(expand)
+        .isFullRepresentation(true)
+        .build()).getContent();
+       String jsonString = IOUtils.toString(stream);
+       final String expectedResult = "{"
+           + "\"@context\":\"$metadata#ESDelta/$delta\",\"value\":[{\"@id\":\"ESDelta(32767)\","
+           + "\"PropertyInt16\":32767,\"PropertyString\":\"Number:32767\",\"NavPropertyETAllPrimOne\":null},"
+           + "{\"@id\":\"ESDelta(100)\","
+           + "\"PropertyInt16\":100,\"PropertyString\":\"Number:100\","
+           + "\"NavPropertyETAllPrimOne\":"
            + "{\"@id\":\"ESAllPrim(32767)\",\"PropertyInt16\":32767,\"PropertyString\":"
            + "\"First Resource - positive values\","
            + "\"PropertyBoolean\":true,\"PropertyByte\":255,\"PropertySByte\":127,\"PropertyInt32\":2147483647,"
@@ -1010,4 +1096,91 @@ public class JsonDeltaSerializerWithNavigationsTest {
        Assert.assertEquals(expectedResult, jsonString);
      } 
   
+  @Test
+  public void emptynavigationToManyInDeltaEntityInFullRepresentation() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESDelta");
+    Delta delta = new Delta();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(2);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimMany")));
+    List<Entity> addedEntity = new ArrayList<Entity>();
+    addedEntity.add(entity);
+    delta.getEntities().addAll(addedEntity);
+     InputStream stream = ser.entityCollection(metadata, edmEntitySet.getEntityType(), delta ,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).expand(expand)
+        .isFullRepresentation(true).build()).getContent();
+       String jsonString = IOUtils.toString(stream);
+       final String expectedResult = "{\"@context\":\"$metadata#ESDelta/$delta\","
+           + "\"value\":[{\"@id\":\"ESDelta(0)\",\"PropertyInt16\":0,"
+           + "\"PropertyString\":\"Number:0\",\"NavPropertyETAllPrimMany\":[]}]}";
+       Assert.assertNotNull(jsonString);
+       Assert.assertEquals(expectedResult, jsonString);
+     }
+  
+  @Test
+  public void emptynavigationToOneInDeltaEntityInFullRepresentation() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESDelta");
+    Delta delta = new Delta();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne")));
+    List<Entity> addedEntity = new ArrayList<Entity>();
+    addedEntity.add(entity);
+    delta.getEntities().addAll(addedEntity);
+     InputStream stream = ser.entityCollection(metadata, edmEntitySet.getEntityType(), delta ,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).expand(expand)
+        .isFullRepresentation(true).build()).getContent();
+       String jsonString = IOUtils.toString(stream);
+       final String expectedResult = "{\"@context\":\"$metadata#ESDelta/$delta\","
+           + "\"value\":[{\"@id\":\"ESDelta(-32768)\",\"PropertyInt16\":-32768,"
+           + "\"PropertyString\":\"Number:-32768\",\"NavPropertyETAllPrimOne\":null}]}";
+       Assert.assertNotNull(jsonString);
+       Assert.assertEquals(expectedResult, jsonString);
+     }
+  
+  @Test
+  public void nullnavigationToOneInDeltaEntityInFullRepresentation() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESDelta");
+    Delta delta = new Delta();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(4);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimOne")));
+    List<Entity> addedEntity = new ArrayList<Entity>();
+    addedEntity.add(entity);
+    delta.getEntities().addAll(addedEntity);
+     InputStream stream = ser.entityCollection(metadata, edmEntitySet.getEntityType(), delta ,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).expand(expand)
+        .isFullRepresentation(true).build()).getContent();
+       String jsonString = IOUtils.toString(stream);
+       final String expectedResult = "{\"@context\":\"$metadata#ESDelta/$delta\","
+           + "\"value\":[{\"@id\":\"ESDelta(-1)\",\"PropertyInt16\":-1,"
+           + "\"PropertyString\":\"Number:-1\",\"NavPropertyETAllPrimOne\":null}]}";
+       Assert.assertNotNull(jsonString);
+       Assert.assertEquals(expectedResult, jsonString);
+     }
+  
+  @Test
+  public void nullnavigationToManyInDeltaEntityInFullRepresentation() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESDelta");
+    Delta delta = new Delta();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(4);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimMany")));
+    List<Entity> addedEntity = new ArrayList<Entity>();
+    addedEntity.add(entity);
+    delta.getEntities().addAll(addedEntity);
+     InputStream stream = ser.entityCollection(metadata, edmEntitySet.getEntityType(), delta ,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).expand(expand)
+        .isFullRepresentation(true).build()).getContent();
+       String jsonString = IOUtils.toString(stream);
+       final String expectedResult = "{\"@context\":\"$metadata#ESDelta/$delta\","
+           + "\"value\":[{\"@id\":\"ESDelta(-1)\",\"PropertyInt16\":-1,"
+           + "\"PropertyString\":\"Number:-1\",\"NavPropertyETAllPrimMany\":[]}]}";
+       Assert.assertNotNull(jsonString);
+       Assert.assertEquals(expectedResult, jsonString);
+     }
 }
