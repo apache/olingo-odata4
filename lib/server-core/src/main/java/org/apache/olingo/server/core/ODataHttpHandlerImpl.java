@@ -267,11 +267,13 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   static void fillUriInformation(final ODataRequest odRequest, 
 		  final HttpServletRequest httpRequest, final int split) {
     String rawRequestUri = httpRequest.getRequestURL().toString();
-
+    
+    String rawServiceResolutionUri = null;
     String rawODataPath;
     //Application need to set the request mapping attribute if the request is coming from a spring based application
     if(httpRequest.getAttribute(REQUESTMAPPING)!=null){
       String requestMapping = httpRequest.getAttribute(REQUESTMAPPING).toString();
+      rawServiceResolutionUri = requestMapping;
       int beginIndex = rawRequestUri.indexOf(requestMapping) + requestMapping.length();
       rawODataPath = rawRequestUri.substring(beginIndex);
     }else if(!"".equals(httpRequest.getServletPath())) {
@@ -286,7 +288,6 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
       rawODataPath = httpRequest.getRequestURI();
     }
 
-    String rawServiceResolutionUri = null;
     if (split > 0) {
       rawServiceResolutionUri = rawODataPath;
       for (int i = 0; i < split; i++) {
