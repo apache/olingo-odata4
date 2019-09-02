@@ -481,6 +481,7 @@ public class Parser {
       for (final ApplyItem item : option.getApplyItems()) {
         ((ApplyOptionImpl) applyOption).add(item);
       }
+      ((ApplyOptionImpl) applyOption).setEdmStructuredType(option.getEdmStructuredType());
     }
   }
 

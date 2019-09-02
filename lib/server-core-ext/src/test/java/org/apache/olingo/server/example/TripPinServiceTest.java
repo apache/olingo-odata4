@@ -912,7 +912,7 @@ public class TripPinServiceTest {
   public void crossJoin() throws Exception {
     String editUrl = baseURL + "/$crossjoin(People,Airlines)?$filter="
         + "People/UserName%20eq%20Airlines/AirlineCode";
-    HttpResponse response = httpGET(editUrl, 200);
+    HttpResponse response = httpGET(editUrl, 501);
     EntityUtils.consumeQuietly(response.getEntity());
   }
   

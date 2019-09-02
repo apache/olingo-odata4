@@ -51,6 +51,7 @@ import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.UriResourceValue;
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.core.requests.ActionRequest;
 import org.apache.olingo.server.core.requests.BatchRequest;
@@ -270,6 +271,11 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
     DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
     dataRequest.setCrossJoin(info);
     this.request = dataRequest;
+  }
+  
+  @Override
+  public void visit(ApplyOption option) {
+    ((DataRequest)this.request).setApply(option);
   }
   
   private void executeIdOption(String query, ODataRequest odRequest,
