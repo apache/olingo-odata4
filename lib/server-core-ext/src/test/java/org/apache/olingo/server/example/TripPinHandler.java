@@ -238,7 +238,12 @@ public class TripPinHandler implements ServiceHandler {
   public void createEntity(DataRequest request, Entity entity, EntityResponse response)
       throws ODataLibraryException, ODataApplicationException {
     EdmEntitySet edmEntitySet = request.getEntitySet();
-
+    
+    if (!request.getNavigations().isEmpty()) {
+      UriResourceNavigation lastNavigation = request.getNavigations().getLast();
+      edmEntitySet = (EdmEntitySet)edmEntitySet.getRelatedBindingTarget(lastNavigation.getProperty().getName());
+    }
+    
     Entity created = this.dataModel.createEntity(edmEntitySet, entity, request.getODataRequest().getRawBaseUri());
 
     try {
@@ -270,6 +275,25 @@ public class TripPinHandler implements ServiceHandler {
       }
     } catch (URISyntaxException e) {
       throw new ODataApplicationException(e.getMessage(), 500, Locale.getDefault());
+    }
+    
+    if (!request.getNavigations().isEmpty()) {
+      UriResourceNavigation lastNavigation = request.getNavigations().getLast();
+      
+      String parentRequest = request.getODataRequest().getRawRequestUri();
+      parentRequest = parentRequest.substring(0, parentRequest.lastIndexOf('/'));
+      
+      DataRequest bindingRequest;
+      try {
+        bindingRequest = request.parseLink(new URI(parentRequest));
+      } catch (URISyntaxException e) {
+        throw new ODataApplicationException(e.getMessage(), 500, Locale.getDefault());
+      }
+
+      Entity reference = this.dataModel.getEntity(bindingRequest.getEntitySet().getName(),
+          bindingRequest.getKeyPredicates());
+
+      this.dataModel.addNavigationLink(lastNavigation.getProperty().getName(), reference, created);
     }
 
     response.writeCreatedEntity(edmEntitySet, created);
