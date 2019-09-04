@@ -601,8 +601,13 @@ public class ODataDispatcher {
         validateIsSingleton(method);
         validatePreconditions(request, false);
         validatePreferHeader(request);
-        handler.selectProcessor(isMedia ? MediaEntityProcessor.class : EntityProcessor.class)
-            .deleteEntity(request, response, uriInfo);
+        if (isMedia) {
+          ((MediaEntityProcessor) handler.selectProcessor(MediaEntityProcessor.class))
+          .deleteEntity(request, response, uriInfo);
+          } else {
+          ((EntityProcessor) handler.selectProcessor(EntityProcessor.class))
+          .deleteEntity(request, response, uriInfo);
+        }
       } else {
         throwMethodNotAllowed(method);
       }

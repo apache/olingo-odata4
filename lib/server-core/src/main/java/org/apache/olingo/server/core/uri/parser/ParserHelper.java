@@ -619,12 +619,15 @@ public class ParserHelper {
                     parseAliasValue(parameter.getAlias(),
                         edmParameter.getType(), edmParameter.isNullable(), edmParameter.isCollection(),
                         edm, type, aliases).getText() : null;
-          primitiveType.valueOfString(primitiveType.fromUriLiteral(text),
-              edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), 
-              edmParameter.getScale(), true,
-              edmParameter.getMapping() == null ?
-                  primitiveType.getDefaultType() :
-                    edmParameter.getMapping().getMappedJavaClass());
+                        if (edmParameter.getMapping() == null) {
+                          primitiveType.valueOfString(primitiveType.fromUriLiteral(text),
+                              edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), 
+                              edmParameter.getScale(), true, primitiveType.getDefaultType());
+                        } else {
+                          primitiveType.valueOfString(primitiveType.fromUriLiteral(text),
+                              edmParameter.isNullable(), edmParameter.getMaxLength(), edmParameter.getPrecision(), 
+                              edmParameter.getScale(), true, edmParameter.getMapping().getMappedJavaClass());
+                        }
         } catch (final EdmPrimitiveTypeException e) {
           throw new UriValidationException(
               "Invalid value '" + text + "' for parameter " + parameter.getName(), e,

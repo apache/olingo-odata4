@@ -143,11 +143,17 @@ public class DataProvider {
             throw new DataProviderException("Expression in key value is not supported yet!",
                 HttpStatusCode.NOT_IMPLEMENTED);
           }
+          Object keyValue = null;
           final String text = key.getAlias() == null ? key.getText() : ((Literal) key.getExpression()).getText();
-          final Object keyValue = type.valueOfString(type.fromUriLiteral(text),
-              property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
-              property.isUnicode(),
-              Calendar.class.isAssignableFrom(value.getClass()) ? Calendar.class : value.getClass());
+          if (Calendar.class.isAssignableFrom(value.getClass())) {
+            keyValue = type.valueOfString(type.fromUriLiteral(text),
+                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+                property.isUnicode(), Calendar.class);
+          } else {
+            keyValue = type.valueOfString(type.fromUriLiteral(text),
+                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+                property.isUnicode(), value.getClass());
+          }
           if (!value.equals(keyValue)) {
             found = false;
             break;
@@ -958,10 +964,16 @@ public class DataProvider {
                 HttpStatusCode.NOT_IMPLEMENTED);
           }
           final String text = key.getAlias() == null ? key.getText() : ((Literal) key.getExpression()).getText();
-          final Object keyValue = type.valueOfString(type.fromUriLiteral(text),
-              property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
-              property.isUnicode(),
-              Calendar.class.isAssignableFrom(value.getClass()) ? Calendar.class : value.getClass());
+          Object keyValue = null;
+          if (Calendar.class.isAssignableFrom(value.getClass())) {
+            keyValue = type.valueOfString(type.fromUriLiteral(text),
+                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+                property.isUnicode(), Calendar.class);
+          } else {
+            keyValue = type.valueOfString(type.fromUriLiteral(text),
+                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+                property.isUnicode(), value.getClass());
+          }
           if (!value.equals(keyValue)) {
             found = false;
             break;
