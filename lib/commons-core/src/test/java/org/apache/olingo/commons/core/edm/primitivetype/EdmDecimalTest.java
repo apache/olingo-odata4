@@ -19,6 +19,7 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -97,11 +98,10 @@ public class EdmDecimalTest extends PrimitiveTypeBaseTest {
     assertEquals(Double.valueOf(0.5), instance.valueOfString("0.5", null, null, 1, 1, null, Double.class));
     assertEquals(Float.valueOf(0.5F), instance.valueOfString("0.5", null, null, null, 1, null, Float.class));
     assertEquals(new BigDecimal("12.3"), instance.valueOfString("12.3", null, null, 3, 1, null, BigDecimal.class));
-    assertEquals(new BigDecimal("31991163"), instance.valueOfString("3.1991163E7", null, null, 8, 7, 
-        null, BigDecimal.class));
     assertEquals(new BigDecimal("31991163.34"),
         instance.valueOfString("3.199116334E7", null, null, 10, 2, null, BigDecimal.class));
     
+    expectFacetsErrorInValueOfString(instance, "3.1991163E7", null, 8, 7, null, null);
     expectFacetsErrorInValueOfString(instance, "0.5", null, null, null, null, null);
     expectFacetsErrorInValueOfString(instance, "-1234", null, null, 2, null, null);
     expectFacetsErrorInValueOfString(instance, "1234", null, null, 3, null, null);
@@ -110,6 +110,9 @@ public class EdmDecimalTest extends PrimitiveTypeBaseTest {
     expectFacetsErrorInValueOfString(instance, "12.34", null, null, 4, 1, null);
     expectFacetsErrorInValueOfString(instance, "0.00390625", null, null, 5, null, null);
     expectFacetsErrorInValueOfString(instance, "0.00390625", null, null, null, 7, null);
+    expectFacetsErrorInValueOfString(instance, "-129", null, null, Integer.MAX_VALUE, Integer.MAX_VALUE, null);
+    expectFacetsErrorInValueOfString(instance, "-32769", null, null, Integer.MAX_VALUE, Integer.MAX_VALUE, null);
+    expectFacetsErrorInValueOfString(instance, "32768", null, null, Integer.MAX_VALUE, Integer.MAX_VALUE, null);
 
     expectContentErrorInValueOfString(instance, "1.");
     expectContentErrorInValueOfString(instance, ".1");
@@ -117,10 +120,6 @@ public class EdmDecimalTest extends PrimitiveTypeBaseTest {
     expectContentErrorInValueOfString(instance, "1M");
     expectContentErrorInValueOfString(instance, "0x42");
 
-    expectUnconvertibleErrorInValueOfString(instance, "-129", Byte.class);
-    expectUnconvertibleErrorInValueOfString(instance, "128", Byte.class);
-    expectUnconvertibleErrorInValueOfString(instance, "-32769", Short.class);
-    expectUnconvertibleErrorInValueOfString(instance, "32768", Short.class);
     expectUnconvertibleErrorInValueOfString(instance, "-2147483649", Integer.class);
     expectUnconvertibleErrorInValueOfString(instance, "2147483648", Integer.class);
     expectUnconvertibleErrorInValueOfString(instance, "-9223372036854775809", Long.class);
@@ -129,5 +128,85 @@ public class EdmDecimalTest extends PrimitiveTypeBaseTest {
     expectUnconvertibleErrorInValueOfString(instance, "1234567890", Float.class);
 
     expectTypeErrorInValueOfString(instance, "1");
+  }
+  
+  @Test
+  public void validateDecimal() throws Exception {
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("3.1991163E7", null, null, 8, 7, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("1", null, null, null, null, null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("1.2", null, null, null, 0, null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+    validate("10.2", false, null, 3, 2, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("1.2", false, null, 3, 2, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("0.12", false, null, 3, 2, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("1.23", false, null, 3, 2, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("1.03", false, null, 3, 2, null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("1.03", false, null, 3, null, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("12", false, null, 3, null, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("12", false, null, null, 2, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("0.12", false, null, null, 2, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("12", false, null, null, null, null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("0.12", false, null, null, null, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("0.23", false, null, 2, 2, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("0.7", false, null, 2, 2, null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("12e-101", false, null, 2, 2, null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("12e101", false, null, 2, 2, null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("-1.234567e3", false, null, 7, 3, null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validate("0.7", false, null, 2, 3, null));
+  }
+  
+  @Test
+  public void validateDecimalInV401() throws Exception {
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("0.123", null, null, 3, "variable", null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("1.23", null, null, 3, "variable", null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("0.23", null, null, 3, "variable", null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("0.7", null, null, 3, "variable", null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("123", null, null, 3, "variable", null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("12.3", null, null, 3, "variable", null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("12.34", null, null, 3, "variable", null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("1234", null, null, 3, "variable", null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("123.4", null, null, 3, "variable", null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("123.4", null, null, null, "variable", null));
+    
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("-1.234567e3", null, null, 7, "floating", null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("1e-101", null, null, 7, "floating", null));
+    assertTrue(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("9.999999e96", null, null, 7, "floating", null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("1e-102", null, null, 7, "floating", null));
+    assertFalse(EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Decimal).
+        validateDecimals("1e97", null, null, 7, "floating", null));
+    
   }
 }

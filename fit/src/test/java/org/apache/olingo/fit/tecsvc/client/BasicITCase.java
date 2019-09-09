@@ -1275,7 +1275,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
         getFactory().newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
     entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
-        getFactory().newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(Long.MAX_VALUE))));
+        getFactory().newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(922337203685477L))));
 
     final ODataEntityUpdateRequest<ClientEntity> requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getEntityUpdateRequest(uri, UpdateType.PATCH, entity);
@@ -1292,7 +1292,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     final ODataRetrieveResponse<ClientEntity> responseGet = requestGet.execute();
 
     assertEquals(Long.MAX_VALUE, responseGet.getBody().getProperty(PROPERTY_INT64).getPrimitiveValue().toValue());
-    assertEquals(BigDecimal.valueOf(Long.MAX_VALUE), responseGet.getBody().getProperty(PROPERTY_DECIMAL)
+    assertEquals(BigDecimal.valueOf(922337203685477L), responseGet.getBody().getProperty(PROPERTY_DECIMAL)
         .getPrimitiveValue()
         .toValue());
   }
@@ -1395,7 +1395,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
                     .add(getFactory().newPrimitiveProperty(PROPERTY_INT64,
                         getFactory().newPrimitiveValueBuilder().buildInt64(Long.MIN_VALUE)))
                     .add(getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
-                        getFactory().newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(12345678912L))))
+                        getFactory().newPrimitiveValueBuilder().buildDecimal(BigDecimal.valueOf(123456.78912))))
                     .add(getFactory().newPrimitiveProperty(PROPERTY_INT16,
                         getFactory().newPrimitiveValueBuilder().buildInt16((short) 2)))));
 
@@ -1413,7 +1413,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     final ClientComplexValue complexValue = responseGet.getBody().getComplexValue();
 
     assertEquals(Long.MIN_VALUE, complexValue.get(PROPERTY_INT64).getPrimitiveValue().toValue());
-    assertEquals(BigDecimal.valueOf(12345678912L), complexValue.get(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(123456.78912), complexValue.get(PROPERTY_DECIMAL).getPrimitiveValue().toValue());
     assertEquals(2, complexValue.get(PROPERTY_INT16).getPrimitiveValue().toValue());
   }
 
@@ -1428,7 +1428,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     final ODataPropertyUpdateRequest requestUpdate = getEdmEnabledClient().getCUDRequestFactory()
         .getPropertyPrimitiveValueUpdateRequest(uri,
             getFactory().newPrimitiveProperty(PROPERTY_DECIMAL,
-                getFactory().newPrimitiveValueBuilder().buildInt64(Long.MAX_VALUE)));
+                getFactory().newPrimitiveValueBuilder().buildInt64(922337203685477L)));
 
     requestUpdate.setContentType(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     requestUpdate.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
@@ -1441,7 +1441,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
     requestGet.setAccept(CONTENT_TYPE_JSON_IEEE754_COMPATIBLE);
     final ODataRetrieveResponse<ClientProperty> responseGet = requestGet.execute();
 
-    assertEquals(BigDecimal.valueOf(Long.MAX_VALUE), responseGet.getBody().getPrimitiveValue().toValue());
+    assertEquals(BigDecimal.valueOf(922337203685477L), responseGet.getBody().getPrimitiveValue().toValue());
   }
 
   @Test

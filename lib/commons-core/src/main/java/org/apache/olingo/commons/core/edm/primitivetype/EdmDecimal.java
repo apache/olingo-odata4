@@ -83,8 +83,65 @@ public final class EdmDecimal extends SingletonPrimitiveType {
 	}
     final int significantIntegerDigits = "0".equals(matcher.group(1)) ? 0 : matcher.group(1).length();
     final int decimals = matcher.group(2) == null ? 0 : matcher.group(2).length();
-    return (precision == null || precision >= significantIntegerDigits + decimals)
-        && (decimals <= (scale == null ? 0 : scale));
+    return (precision == null || (significantIntegerDigits >= 0 && 
+        significantIntegerDigits <= precision - ((scale == null) ? 0 : scale))) &&
+        (decimals >= 0 && decimals <= ((scale == null) ? 0 : scale));
+  }
+  
+  @Override
+  public boolean validateDecimals(final String value,
+      final Boolean isNullable, final Integer maxLength, final Integer precision,
+      final String scale, final Boolean isUnicode) {
+
+    return value == null
+        ? isNullable == null || isNullable
+        : validateLiteral(value) && validatePrecisionAndScale(value, precision, scale);
+  }
+
+  private boolean validatePrecisionAndScale(String value, Integer precision, String scale) {
+    Matcher matcher = PATTERN.matcher(value);
+    matcher.matches();
+    if (matcher.group(3) != null) {
+      String plainValue = new BigDecimal(value).toPlainString();
+      matcher = PATTERN.matcher(plainValue);
+      matcher.matches();
+    }
+    int significantIntegerDigits = "0".equals(matcher.group(1)) ? 0 : matcher.group(1).length();
+    int decimals = matcher.group(2) == null ? 0 : matcher.group(2).length();
+    
+    try {
+      int scaleValue = (scale == null) ? 0 : Integer.parseInt(scale);
+      return (precision == null || (significantIntegerDigits >= 0 && 
+          significantIntegerDigits <= precision - scaleValue)) &&
+          (decimals >= 0 && decimals <= scaleValue);
+    } catch(NumberFormatException e) {
+      String scaleValue = (scale == null) ? String.valueOf(0) : scale;
+      if (scaleValue.equals("variable")) {
+        return (precision == null || 
+            (significantIntegerDigits >= 0 && 
+            (significantIntegerDigits <= precision - decimals))) && 
+            (decimals >= 0 && decimals <= ((precision == null) ? 0 : precision));
+      } else if (scaleValue.equals("floating")) {
+        Matcher matcher1 = PATTERN.matcher(value);
+        matcher1.matches();
+        significantIntegerDigits = "0".equals(matcher1.group(1)) ? 0 : matcher1.group(1).length();
+        decimals = matcher1.group(2) == null ? 0 : matcher1.group(2).length();
+        int exponents = 0;
+        if (matcher1.group(3) != null) {
+          exponents = Integer.parseInt(matcher1.group(3).substring(1));
+          if (exponents < -95 || exponents > 96) {
+            if (String.valueOf(exponents).startsWith("-")) {
+              significantIntegerDigits += Integer.parseInt(String.valueOf(exponents + 95).substring(1));
+              exponents = -95;
+            }
+          }
+           return (significantIntegerDigits + decimals) <= 7 && (exponents >= -95 && exponents <= 96);
+        }
+      } else {
+        return false;
+      }
+    }
+    return false;
   }
 
   @Override

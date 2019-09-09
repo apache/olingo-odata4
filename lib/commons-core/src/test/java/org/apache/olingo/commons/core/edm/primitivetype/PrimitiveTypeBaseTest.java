@@ -85,7 +85,7 @@ public abstract class PrimitiveTypeBaseTest {
 
   protected void expectUnconvertibleErrorInValueOfString(final EdmPrimitiveType instance, final String value,
       final Class<?> type) {
-    expectErrorInValueOfString(instance, value, true, Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE, true,
+    expectErrorInValueOfString(instance, value, true, Integer.MAX_VALUE, Integer.MAX_VALUE, null, true,
         type, "cannot be converted to");
   }
 
