@@ -696,14 +696,20 @@ public class ContainerProvider {
     } else if (name.equals("ESDelta")) {
       return new CsdlEntitySet()
           .setName("ESDelta")
-          .setType(EntityTypeProvider.nameETTwoPrim)
+          .setType(EntityTypeProvider.nameETDelta)
           .setNavigationPropertyBindings(Arrays.asList(
               new CsdlNavigationPropertyBinding()
                   .setPath("NavPropertyETAllPrimOne")
                   .setTarget("ESAllPrim"),
               new CsdlNavigationPropertyBinding()
                   .setPath("NavPropertyETAllPrimMany")
-                  .setTarget("ESAllPrim")));
+                  .setTarget("ESAllPrim"),
+              new CsdlNavigationPropertyBinding()
+              .setPath("NavPropertyETBaseContOne")
+              .setTarget("ESTwoBase"),
+              new CsdlNavigationPropertyBinding()
+              .setPath("NavPropertyETBaseContMany")
+              .setTarget("ESTwoBase")));
 
     } else if (name.equals("ESStreamOnComplexProp")) {
       return new CsdlEntitySet()

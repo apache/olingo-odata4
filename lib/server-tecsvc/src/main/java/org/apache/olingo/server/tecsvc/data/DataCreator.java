@@ -1798,6 +1798,45 @@ public class DataCreator {
     setLink(entityCollection.getEntities().get(3), "NavPropertyETAllPrimOne", targetEntities.get(0));
     setLinkForDelta(entityCollection.getEntities().get(1), "NavPropertyETAllPrimOne");
     setLinksForDelta(entityCollection.getEntities().get(2), "NavPropertyETAllPrimMany");
+    final List<Entity> targetEntities1 = data.get("ESTwoBase").getEntities();
+    setLinkWithoutEntityID(entityCollection.getEntities().get(0), 
+        "NavPropertyETBaseContTwoContOne", targetEntities1.get(0));
+    setLinksWithoutEntityID(entityCollection.getEntities().get(1), "NavPropertyETBaseContTwoContMany", 
+        targetEntities1.get(1), targetEntities1.get(2));
+  }
+
+  private void setLinksWithoutEntityID(Entity entity, String navigationPropertyName, final Entity... targets) {
+    Link link = entity.getNavigationLink(navigationPropertyName);
+    for (Entity target : targets) {
+      target.setId(null);
+    }
+    if (link == null) {
+      link = new Link();
+      link.setRel(Constants.NS_NAVIGATION_LINK_REL + navigationPropertyName);
+      link.setType(Constants.ENTITY_SET_NAVIGATION_LINK_TYPE);
+      link.setTitle(navigationPropertyName);
+      EntityCollection target = new EntityCollection();
+      target.getEntities().addAll(Arrays.asList(targets));
+      link.setInlineEntitySet(target);
+      link.setHref(entity.getId().toASCIIString() + "/" + navigationPropertyName);
+      entity.getNavigationLinks().add(link);
+    } else {
+      link.getInlineEntitySet().getEntities().addAll(Arrays.asList(targets));
+    }
+  }
+
+  private void setLinkWithoutEntityID(Entity entity, String navigationPropertyName, Entity target) {
+    Link link = entity.getNavigationLink(navigationPropertyName);
+    target.setId(null);
+    if (link == null) {
+      link = new Link();
+      link.setRel(Constants.NS_NAVIGATION_LINK_REL + navigationPropertyName);
+      link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+      link.setTitle(navigationPropertyName);
+      link.setHref(target.getId() != null ? target.getId().toASCIIString() : null);
+      entity.getNavigationLinks().add(link);
+    }
+    link.setInlineEntity(target);
   }
 
   protected static void setLinkForDelta(final Entity entity, final String navigationPropertyName) {

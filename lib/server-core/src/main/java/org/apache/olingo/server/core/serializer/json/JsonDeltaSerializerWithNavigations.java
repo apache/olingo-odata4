@@ -38,6 +38,7 @@ import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
+import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -247,9 +248,10 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
         }
       }
     }
-    json.writeStringField(Constants.AT + Constants.ATOM_ATTR_ID, getEntityId(entity, entityType, name));
+    String id = getEntityId(entity, entityType, name);
+    json.writeStringField(Constants.AT + Constants.ATOM_ATTR_ID, id);
     writeProperties(metadata, entityType, entity.getProperties(), select, json);
-    writeNavigationProperties(metadata, entityType, entity, expand, name, json, isFullRepresentation);
+    writeNavigationProperties(metadata, entityType, entity, expand, id, json, isFullRepresentation);
     json.writeEndObject();
 
   }
@@ -521,13 +523,17 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
                 SerializerException.MessageKeys.NOT_IMPLEMENTED);
           }
           if (navigationLink != null) {
+            EdmNavigationProperty navProperty = type.getNavigationProperty(propertyName);
+            String navEntitySetName = getNavigatedEntitySetName(metadata, navProperty.getType()
+                .getFullQualifiedName().getFullQualifiedNameAsString());
             writeExpandedNavigationProperty(metadata, property, navigationLink,
                 innerOptions == null ? null : innerOptions.getExpandOption(),
                 innerOptions == null ? null : innerOptions.getSelectOption(),
                 innerOptions == null ? null : innerOptions.getCountOption(),
                 innerOptions == null ? false : innerOptions.hasCountPath(),
                 innerOptions == null ? false : innerOptions.isRef(),
-                name, json, isFullRepresentation);
+                    navEntitySetName != null ? navEntitySetName : name + "/" + property.getName(), 
+                        json, isFullRepresentation);
           } else {
             json.writeFieldName(property.getName());
             if (property.isCollection()) {
@@ -540,6 +546,23 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
         }
       }
     }
+  }
+
+  /**
+   * Fetch the entity set name which has to be shown in @Id annotation
+   * @param metadata
+   * @param fullQualifiedName
+   * @return
+   */
+  private String getNavigatedEntitySetName(ServiceMetadata metadata, String fullQualifiedName) {
+    List<EdmEntitySet> entitySets = metadata.getEdm().getEntityContainer().getEntitySets();
+    for (EdmEntitySet entitySet : entitySets) {
+      if (entitySet.getEntityType().getFullQualifiedName()
+          .getFullQualifiedNameAsString().equals(fullQualifiedName)) {
+        return entitySet.getName();
+      }
+    }
+    return null;
   }
 
   protected void writeEntitySet(final ServiceMetadata metadata, final EdmEntityType entityType,

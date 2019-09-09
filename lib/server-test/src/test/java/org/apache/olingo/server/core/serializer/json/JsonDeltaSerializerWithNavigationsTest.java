@@ -1183,4 +1183,71 @@ public class JsonDeltaSerializerWithNavigationsTest {
        Assert.assertNotNull(jsonString);
        Assert.assertEquals(expectedResult, jsonString);
      }
+  
+  @Test
+  public void testIdAnnotationWithNavigationOneInDelta() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESDelta");
+    Delta delta = new Delta();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final Entity entity2 = data.readAll(edmEntitySet).getEntities().get(1);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETBaseContTwoContOne")));
+    List<Entity> addedEntity = new ArrayList<Entity>();
+    Entity changedEntity = new Entity();
+    changedEntity.setId(entity2.getId());
+    changedEntity.addProperty(entity2.getProperty("PropertyString"));
+    addedEntity.add(entity);
+    addedEntity.add(changedEntity);
+    delta.getEntities().addAll(addedEntity);
+     InputStream stream = ser.entityCollection(metadata, edmEntitySet.getEntityType(), delta ,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).expand(expand)
+        .build()).getContent();
+       String jsonString = IOUtils.toString(stream);
+       final String expectedResult = "{\"@context\":\"$metadata#ESDelta/$delta\","
+           + "\"value\":[{\"@id\":\"ESDelta(32767)\",\"PropertyInt16\":32767,"
+           + "\"PropertyString\":\"Number:32767\","
+           + "\"NavPropertyETBaseContTwoContOne@delta\":"
+           + "{\"@id\":\"ESDelta(32767)/NavPropertyETBaseContTwoContOne"
+           + "(PropertyInt16=111,PropertyString='TEST%20A')\",\"PropertyInt16\":111,"
+           + "\"PropertyString\":\"TEST A\"}},{\"@id\":\"ESDelta(-32768)\","
+           + "\"PropertyString\":\"Number:-32768\",\"NavPropertyETBaseContTwoContOne\":null}]}";
+       Assert.assertNotNull(jsonString);
+       Assert.assertEquals(expectedResult, jsonString);
+     }
+  
+  @Test
+  public void testIdAnnotationWithNavigationManyInDelta() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESDelta");
+    Delta delta = new Delta();
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    final Entity entity2 = data.readAll(edmEntitySet).getEntities().get(2);
+    final ExpandOption expand = ExpandSelectMock.mockExpandOption(Collections.singletonList(
+        ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETBaseContTwoContMany")));
+    List<Entity> addedEntity = new ArrayList<Entity>();
+    Entity changedEntity = new Entity();
+    changedEntity.setId(entity2.getId());
+    changedEntity.addProperty(entity2.getProperty("PropertyString"));
+    addedEntity.add(entity);
+    addedEntity.add(changedEntity);
+    delta.getEntities().addAll(addedEntity);
+     InputStream stream = ser.entityCollection(metadata, edmEntitySet.getEntityType(), delta ,
+        EntityCollectionSerializerOptions.with()
+        .contextURL(ContextURL.with().entitySet(edmEntitySet).build()).expand(expand)
+        .build()).getContent();
+       String jsonString = IOUtils.toString(stream);
+       final String expectedResult = "{\"@context\":\"$metadata#ESDelta/$delta\","
+           + "\"value\":[{\"@id\":\"ESDelta(-32768)\",\"PropertyInt16\":-32768,"
+           + "\"PropertyString\":\"Number:-32768\","
+           + "\"NavPropertyETBaseContTwoContMany@delta\":"
+           + "[{\"@id\":\"ESDelta(-32768)/NavPropertyETBaseContTwoContMany"
+           + "(PropertyInt16=222,PropertyString='TEST%20B')\","
+           + "\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"},"
+           + "{\"@id\":\"ESDelta(-32768)/NavPropertyETBaseContTwoContMany"
+           + "(PropertyInt16=333,PropertyString='TEST%20C')\",\"PropertyInt16\":333,"
+           + "\"PropertyString\":\"TEST C\"}]},{\"@id\":\"ESDelta(0)\","
+           + "\"PropertyString\":\"Number:0\",\"NavPropertyETBaseContTwoContMany\":[]}]}";
+       Assert.assertNotNull(jsonString);
+       Assert.assertEquals(expectedResult, jsonString);
+     }
 }
