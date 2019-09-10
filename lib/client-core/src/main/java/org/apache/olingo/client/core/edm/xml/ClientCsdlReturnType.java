@@ -71,6 +71,9 @@ class ClientCsdlReturnType extends CsdlReturnType implements Serializable {
             if (srid != null) {
               returnType.setSrid(SRID.valueOf(srid));
             }
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            returnType.getAnnotations().add(jp.readValueAs(ClientCsdlAnnotation.class));
           }
         }
       }
