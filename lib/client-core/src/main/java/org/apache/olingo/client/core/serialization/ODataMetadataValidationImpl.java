@@ -44,11 +44,11 @@ public class ODataMetadataValidationImpl implements ODataMetadataValidation {
 
   @Override
   public void validateMetadata(Edm edm) {
-    Map<FullQualifiedName, EdmEntityType> edmEntityTypesMap = new HashMap<FullQualifiedName, EdmEntityType>();
-    Map<FullQualifiedName, EdmComplexType> edmComplexTypesMap = new HashMap<FullQualifiedName, EdmComplexType>();
-    Map<FullQualifiedName, EdmFunction> edmFunctionsMap = new HashMap<FullQualifiedName, EdmFunction>();
-    Map<FullQualifiedName, EdmEntityContainer> edmContainersMap = new HashMap<FullQualifiedName, EdmEntityContainer>();
-    Map<String, String> aliasNamespaceMap = new HashMap<String, String>();
+    Map<FullQualifiedName, EdmEntityType> edmEntityTypesMap = new HashMap<>();
+    Map<FullQualifiedName, EdmComplexType> edmComplexTypesMap = new HashMap<>();
+    Map<FullQualifiedName, EdmFunction> edmFunctionsMap = new HashMap<>();
+    Map<FullQualifiedName, EdmEntityContainer> edmContainersMap = new HashMap<>();
+    Map<String, String> aliasNamespaceMap = new HashMap<>();
     List<EdmSchema> edmSchemas = edm.getSchemas();
     for (EdmSchema edmSchema : edmSchemas) {
       List<EdmEntityType> edmEntityTypes = edmSchema.getEntityTypes();
@@ -75,13 +75,13 @@ public class ODataMetadataValidationImpl implements ODataMetadataValidation {
 
   @Override
   public void validateMetadata(XMLMetadata xmlMetadata) {
-    Map<FullQualifiedName, CsdlEntityType> csdlEntityTypesMap = new HashMap<FullQualifiedName, CsdlEntityType>();
-    Map<FullQualifiedName, CsdlComplexType> csdlComplexTypesMap = new HashMap<FullQualifiedName, CsdlComplexType>();
-    Map<FullQualifiedName, CsdlAction> csdlActionsMap = new HashMap<FullQualifiedName, CsdlAction>();
-    Map<FullQualifiedName, CsdlFunction> csdlFunctionsMap = new HashMap<FullQualifiedName, CsdlFunction>();
+    Map<FullQualifiedName, CsdlEntityType> csdlEntityTypesMap = new HashMap<>();
+    Map<FullQualifiedName, CsdlComplexType> csdlComplexTypesMap = new HashMap<>();
+    Map<FullQualifiedName, CsdlAction> csdlActionsMap = new HashMap<>();
+    Map<FullQualifiedName, CsdlFunction> csdlFunctionsMap = new HashMap<>();
     Map<FullQualifiedName, CsdlEntityContainer> csdlContainersMap = 
-        new HashMap<FullQualifiedName, CsdlEntityContainer>();
-    Map<String, String> aliasNamespaceMap = new HashMap<String, String>();
+        new HashMap<>();
+    Map<String, String> aliasNamespaceMap = new HashMap<>();
     List<CsdlSchema> csdlSchemas = xmlMetadata.getSchemas();
     for (CsdlSchema csdlSchema : csdlSchemas) {
       List<CsdlEntityType> csdlEntityTypes = csdlSchema.getEntityTypes();

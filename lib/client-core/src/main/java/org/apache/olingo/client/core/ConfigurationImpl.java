@@ -62,7 +62,7 @@ public class ConfigurationImpl implements Configuration {
 
   public static final int DEFAULT_BUFFER_SIZE = 4 * 1024 * 1024;  // 4MB
 
-  private final Map<String, Object> CONF = new HashMap<String, Object>();
+  private final Map<String, Object> CONF = new HashMap<>();
 
   private transient ExecutorService executor = createExecutor(10);
 

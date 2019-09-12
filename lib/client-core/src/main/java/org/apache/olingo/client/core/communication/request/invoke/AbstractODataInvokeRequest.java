@@ -79,7 +79,7 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
     super(odataClient, method, uri);
 
     this.reference = reference;
-    this.parameters = new LinkedHashMap<String, ClientValue>();
+    this.parameters = new LinkedHashMap<>();
   }
 
   @Override

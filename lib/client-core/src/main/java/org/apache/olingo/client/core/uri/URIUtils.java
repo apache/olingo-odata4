@@ -257,9 +257,7 @@ public final class URIUtils {
                                                                 ? quoteString((String) obj, singleQuoteEscape)
                                                                 : obj.toString();
       }
-    } catch (final EdmPrimitiveTypeException e) {
-      value = obj.toString();
-    } catch (final UnsupportedEncodingException e) {
+    } catch (final EdmPrimitiveTypeException | UnsupportedEncodingException e) {
       value = obj.toString();
     }
 

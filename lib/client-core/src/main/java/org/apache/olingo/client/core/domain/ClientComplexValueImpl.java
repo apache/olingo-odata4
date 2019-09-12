@@ -36,19 +36,19 @@ public class ClientComplexValueImpl extends AbstractClientValue implements Clien
   /**
    * Navigation links (might contain in-line entities or entity sets).
    */
-  private final List<ClientLink> navigationLinks = new ArrayList<ClientLink>();
+  private final List<ClientLink> navigationLinks = new ArrayList<>();
 
   /**
    * Association links.
    */
-  private final List<ClientLink> associationLinks = new ArrayList<ClientLink>();
+  private final List<ClientLink> associationLinks = new ArrayList<>();
 
-  private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
+  private final List<ClientAnnotation> annotations = new ArrayList<>();
 
   /**
    * Complex type fields.
    */
-  private final Map<String, ClientProperty> fields = new LinkedHashMap<String, ClientProperty>();
+  private final Map<String, ClientProperty> fields = new LinkedHashMap<>();
 
   /**
    * Constructor.
@@ -137,7 +137,7 @@ public class ClientComplexValueImpl extends AbstractClientValue implements Clien
 
   @Override
   public Map<String, Object> asJavaMap() {
-    final Map<String, Object> result = new LinkedHashMap<String, Object>();
+    final Map<String, Object> result = new LinkedHashMap<>();
     for (Map.Entry<String, ClientProperty> entry : fields.entrySet()) {
       Object value = null;
       if (entry.getValue().hasPrimitiveValue()) {

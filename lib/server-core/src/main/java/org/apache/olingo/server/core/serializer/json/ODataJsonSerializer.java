@@ -136,19 +136,17 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
 
-    try {
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       new ServiceDocumentJsonSerializer(metadata, serviceRoot, isODataMetadataNone).writeServiceDocument(json);
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
-      cachedException =
-          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
-      throw cachedException;
+    cachedException =
+        new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
+    throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
     }
@@ -159,14 +157,12 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
 
-    try {
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       new MetadataDocumentJsonSerializer(serviceMetadata).writeMetadataDocument(json);
-
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
       cachedException =
@@ -181,14 +177,13 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   public SerializerResult error(final ODataServerError error) throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
-    try {
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       new ODataErrorSerializer().writeErrorDocument(json, error);
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
       cachedException =
@@ -206,10 +201,10 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
     boolean pagination = false;
-    try {
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       json.writeStartObject();
 
       final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
@@ -233,13 +228,8 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writeDeltaLink(entitySet, json, pagination);
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
-    } catch (final IOException e) {
-      cachedException =
-          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
-      throw cachedException;
-    } catch (DecoderException e) {
+    } catch (final IOException | DecoderException e) {
       cachedException =
           new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
@@ -286,11 +276,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writeNextLink(entitySet, json, pagination);
 
       json.close();
-    } catch (final IOException e) {
-      cachedException =
-          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
-      throw cachedException;
-    } catch (DecoderException e) {
+    } catch (final IOException | DecoderException e) {
       cachedException =
           new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
@@ -302,11 +288,11 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final Entity entity, final EntitySerializerOptions options) throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
-    try {
-      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       String name =  contextURL == null ? null:contextURL.getEntitySetOrSingletonOrType();
       writeEntity(metadata, entityType, entity, contextURL,
           options == null ? null : options.getExpand(),
@@ -317,15 +303,10 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           json);
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
-    } catch (final IOException e) {
+    } catch (final IOException | DecoderException e) {
       cachedException =
           new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
-      throw cachedException;
-    } catch (DecoderException e) { 
-      cachedException =
-        new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;
     } finally {
       closeCircleStreamBufferOutput(outputStream, cachedException);
@@ -1122,11 +1103,11 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final Property property, final PrimitiveSerializerOptions options) throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
-    try {
-      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       json.writeStartObject();
       writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
@@ -1145,7 +1126,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       json.writeEndObject();
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
       cachedException =
@@ -1227,11 +1207,11 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final Property property, final PrimitiveSerializerOptions options) throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
-    try {
-      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       json.writeStartObject();
       writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
@@ -1249,7 +1229,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       json.writeEndObject();
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
       cachedException =
@@ -1265,11 +1244,11 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final Property property, final ComplexSerializerOptions options) throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
-    try {
-      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       json.writeStartObject();
       writeContextURL(contextURL, json);
       writeMetadataETag(metadata, json);
@@ -1294,7 +1273,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       json.writeEndObject();
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
       cachedException =
@@ -1311,12 +1289,12 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
 
-    try {
-      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      final UriHelper uriHelper = new UriHelperImpl();
-      outputStream = buffer.getOutputStream();
-      final JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    final UriHelper uriHelper = new UriHelperImpl();
+    outputStream = buffer.getOutputStream();
+    try (final JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
 
       json.writeStartObject();
       writeContextURL(contextURL, json);
@@ -1324,7 +1302,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       json.writeEndObject();
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
       cachedException =
@@ -1343,12 +1320,11 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     SerializerException cachedException = null;
     boolean pagination = false ;
 
-    try {
-      final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      final UriHelper uriHelper = new UriHelperImpl();
-      outputStream = buffer.getOutputStream();
-      final JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    final ContextURL contextURL = checkContextURL(options == null ? null : options.getContextURL());
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    final UriHelper uriHelper = new UriHelperImpl();
+    outputStream = buffer.getOutputStream();
+    try (final JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       json.writeStartObject();
 
       writeContextURL(contextURL, json);
@@ -1369,7 +1345,6 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       json.writeEndObject();
 
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
       cachedException =

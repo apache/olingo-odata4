@@ -28,11 +28,11 @@ import org.apache.olingo.client.api.domain.ClientDeltaLink;
 
 public class ClientDeltaImpl extends ClientEntitySetImpl implements ClientDelta {
 
-  private final List<ClientDeletedEntity> deletedEntities = new ArrayList<ClientDeletedEntity>();
+  private final List<ClientDeletedEntity> deletedEntities = new ArrayList<>();
 
-  private final List<ClientDeltaLink> addedLinks = new ArrayList<ClientDeltaLink>();
+  private final List<ClientDeltaLink> addedLinks = new ArrayList<>();
 
-  private final List<ClientDeltaLink> deletedLinks = new ArrayList<ClientDeltaLink>();
+  private final List<ClientDeltaLink> deletedLinks = new ArrayList<>();
 
   public ClientDeltaImpl() {
     super();

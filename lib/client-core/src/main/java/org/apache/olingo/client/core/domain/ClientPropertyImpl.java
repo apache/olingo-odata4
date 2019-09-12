@@ -28,9 +28,9 @@ import org.apache.olingo.client.api.domain.ClientValue;
 
 public final class ClientPropertyImpl extends ClientValuableImpl implements ClientProperty {
 
-  private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
+  private final List<ClientAnnotation> annotations = new ArrayList<>();
   private final String name;
-  private final List<ClientOperation> operations = new ArrayList<ClientOperation>();
+  private final List<ClientOperation> operations = new ArrayList<>();
   
   public ClientPropertyImpl(final String name, final ClientValue value) {
     super(value);

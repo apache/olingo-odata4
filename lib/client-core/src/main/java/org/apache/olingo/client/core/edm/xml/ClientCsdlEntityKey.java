@@ -37,7 +37,7 @@ class ClientCsdlEntityKey extends CsdlAbstractEdmItem implements Serializable {
 
   private static final long serialVersionUID = 520227585458843347L;
 
-  private final List<CsdlPropertyRef> propertyRefs = new ArrayList<CsdlPropertyRef>();
+  private final List<CsdlPropertyRef> propertyRefs = new ArrayList<>();
 
   public List<CsdlPropertyRef> getPropertyRefs() {
     return propertyRefs;

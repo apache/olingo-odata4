@@ -48,7 +48,7 @@ public abstract class AbstractODataBatchRequest<V extends ODataResponse, T exten
   /**
    * Expected batch response items.
    */
-  protected final List<ODataBatchResponseItem> expectedResItems = new ArrayList<ODataBatchResponseItem>();
+  protected final List<ODataBatchResponseItem> expectedResItems = new ArrayList<>();
 
   /**
    * Constructor.

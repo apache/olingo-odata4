@@ -129,21 +129,19 @@ public class ODataNettyHandlerImpl implements ODataNettyHandler {
    * @param response
    */
   static void copyContent(final ReadableByteChannel input, final HttpResponse response) {
-    WritableByteChannel output = null;
-    try {
-      ByteBuffer inBuffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
-      output = Channels.newChannel(new ByteBufOutputStream(((HttpContent)response).content()));
-      while (input.read(inBuffer) > 0) {
-        inBuffer.flip();
-        output.write(inBuffer);
-        inBuffer.clear();
+    try (WritableByteChannel output = Channels.newChannel(new ByteBufOutputStream(((HttpContent)response).content()))){
+        ByteBuffer inBuffer = ByteBuffer.allocate(COPY_BUFFER_SIZE);
+        while (input.read(inBuffer) > 0) {
+          inBuffer.flip();
+          output.write(inBuffer);
+          inBuffer.clear();
+        }
+        closeStream(output);
+      } catch (IOException e) {
+        throw new ODataRuntimeException("Error on reading request content", e);
+      } finally {
+        closeStream(input);
       }
-    } catch (IOException e) {
-      throw new ODataRuntimeException("Error on reading request content", e);
-    } finally {
-      closeStream(input);
-      closeStream(output);
-    }
   }
 
   private static void closeStream(final Channel closeable) {

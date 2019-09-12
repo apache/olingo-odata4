@@ -40,17 +40,17 @@ import org.apache.olingo.commons.api.edm.provider.CsdlStructuralType;
 
 public class CsdlTypeValidator {
 
-  private Map<String, String> aliasNamespaceMap = new HashMap<String, String>();
+  private Map<String, String> aliasNamespaceMap = new HashMap<>();
   private Map<FullQualifiedName, CsdlEntityContainer> csdlContainersMap = 
-      new HashMap<FullQualifiedName, CsdlEntityContainer>();
+      new HashMap<>();
   private Map<FullQualifiedName, CsdlEntityType> csdlEntityTypesMap = 
-      new HashMap<FullQualifiedName, CsdlEntityType>();
+      new HashMap<>();
   private Map<FullQualifiedName, CsdlComplexType> csdlComplexTypesMap = 
-      new HashMap<FullQualifiedName, CsdlComplexType>();
+      new HashMap<>();
   private Map<FullQualifiedName, CsdlAction> csdlActionsMap = 
-      new HashMap<FullQualifiedName, CsdlAction>();
+      new HashMap<>();
   private Map<FullQualifiedName, CsdlFunction> csdlFunctionsMap = 
-      new HashMap<FullQualifiedName, CsdlFunction>();
+      new HashMap<>();
   private static final String V4_SCHEMA_XMLNS = 
 		  "http://docs.oasis-open.org/odata/ns/edm";
   

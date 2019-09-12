@@ -30,10 +30,10 @@ public final class ServiceDocumentImpl implements ServiceDocument {
 
   private String title;
 
-  private final List<ServiceDocumentItem> entitySets = new ArrayList<ServiceDocumentItem>();
-  private final List<ServiceDocumentItem> functionImports = new ArrayList<ServiceDocumentItem>();
-  private final List<ServiceDocumentItem> singletons = new ArrayList<ServiceDocumentItem>();
-  private final List<ServiceDocumentItem> relatedServiceDocuments = new ArrayList<ServiceDocumentItem>();
+  private final List<ServiceDocumentItem> entitySets = new ArrayList<>();
+  private final List<ServiceDocumentItem> functionImports = new ArrayList<>();
+  private final List<ServiceDocumentItem> singletons = new ArrayList<>();
+  private final List<ServiceDocumentItem> relatedServiceDocuments = new ArrayList<>();
 
   private String metadata;
 

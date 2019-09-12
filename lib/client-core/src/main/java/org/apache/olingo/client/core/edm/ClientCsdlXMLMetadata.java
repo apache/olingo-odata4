@@ -73,7 +73,7 @@ public class ClientCsdlXMLMetadata extends CsdlAbstractEdmItem implements Serial
 
   @Override
   public Map<String, CsdlSchema> getSchemaByNsOrAlias() {
-    final Map<String, CsdlSchema> schemaByNsOrAlias = new HashMap<String, CsdlSchema>();
+    final Map<String, CsdlSchema> schemaByNsOrAlias = new HashMap<>();
     for (CsdlSchema schema : getSchemas()) {
       schemaByNsOrAlias.put(schema.getNamespace(), schema);
       if (StringUtils.isNotBlank(schema.getAlias())) {

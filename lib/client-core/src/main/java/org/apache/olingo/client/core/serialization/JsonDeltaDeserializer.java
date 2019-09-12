@@ -86,7 +86,7 @@ public class JsonDeltaDeserializer extends JsonDeserializer {
       }
     }
 
-    return new ResWrap<Delta>(contextURL, null, delta);
+    return new ResWrap<>(contextURL, null, delta);
   }
 
   public ResWrap<Delta> toDelta(final InputStream input) throws ODataDeserializerException {

@@ -166,7 +166,7 @@ public class ODataBatchUtilities {
    */
   public static Map<String, Collection<String>> readHeaders(final ODataBatchLineIterator iterator) {
     final Map<String, Collection<String>> target =
-            new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
+            new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     readHeaders(iterator, target);
     return target;
@@ -214,7 +214,7 @@ public class ODataBatchUtilities {
       if (targetMap.containsKey(key)) {
         value = targetMap.get(key);
       } else {
-        value = new HashSet<String>();
+        value = new HashSet<>();
         targetMap.put(key, value);
       }
       value.add(headerLine.substring(sep + 1, headerLine.length()).trim());
@@ -262,7 +262,7 @@ public class ODataBatchUtilities {
       final Matcher matcher = RESPONSE_PATTERN.matcher(line.trim());
 
       if (matcher.matches()) {
-        return new AbstractMap.SimpleEntry<Integer, String>(Integer.valueOf(matcher.group(1)), matcher.group(2));
+        return new AbstractMap.SimpleEntry<>(Integer.valueOf(matcher.group(1)), matcher.group(2));
       }
     }
 
@@ -280,7 +280,7 @@ public class ODataBatchUtilities {
           final ODataBatchLineIterator iterator, final String boundary) {
 
     final Map<String, Collection<String>> headers =
-            new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
+            new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     final String line = ODataBatchUtilities.readBatchPart(new ODataBatchController(iterator, boundary), true);
 

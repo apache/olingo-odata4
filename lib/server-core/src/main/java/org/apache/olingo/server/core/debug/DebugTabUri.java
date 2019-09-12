@@ -499,15 +499,14 @@ public class DebugTabUri implements DebugTab {
   public void appendHtml(final Writer writer) throws IOException {
     // factory for JSON generators (the object mapper is necessary to write expression trees)
     final JsonFactory jsonFactory = new ObjectMapper().getFactory();
-    JsonGenerator json;
-
     if (uriInfo.getKind() == UriInfoKind.resource) {
       writer.append("<h2>Resource Path</h2>\n")
           .append("<ul>\n<li class=\"json\">");
-      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
-      appendURIResourceParts(json, uriInfo.getUriResourceParts());
-      json.close();
-      writer.append("\n</li>\n</ul>\n");
+      try (JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter()) {
+        appendURIResourceParts(json, uriInfo.getUriResourceParts());
+        json.close();
+        writer.append("\n</li>\n</ul>\n");
+      }
     } else if (uriInfo.getKind() == UriInfoKind.crossjoin) {
       writer.append("<h2>Crossjoin EntitySet Names</h2>\n")
           .append("<ul>\n");
@@ -528,37 +527,41 @@ public class DebugTabUri implements DebugTab {
     if (uriInfo.getSearchOption() != null) {
       writer.append("<h2>Search Option</h2>\n")
           .append("<ul>\n<li class=\"json\">");
-      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
-      appendSearchJson(json, uriInfo.getSearchOption().getSearchExpression());
-      json.close();
-      writer.append("\n</li>\n</ul>\n");
+      try (JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter()) {
+        appendSearchJson(json, uriInfo.getSearchOption().getSearchExpression());
+        json.close();
+        writer.append("\n</li>\n</ul>\n");
+      }
     }
 
     if (uriInfo.getFilterOption() != null) {
       writer.append("<h2>Filter Option</h2>\n")
           .append("<ul>\n<li class=\"json\">");
-      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
-      appendExpressionJson(json, uriInfo.getFilterOption().getExpression());
-      json.close();
-      writer.append("\n</li>\n</ul>\n");
+      try (JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter()) {
+        appendExpressionJson(json, uriInfo.getFilterOption().getExpression());
+        json.close();
+        writer.append("\n</li>\n</ul>\n");
+      }
     }
 
     if (uriInfo.getOrderByOption() != null) {
       writer.append("<h2>OrderBy Option</h2>\n")
           .append("<ul>\n<li class=\"json\">");
-      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
-      appendOrderByItemsJson(json, uriInfo.getOrderByOption().getOrders());
-      json.close();
-      writer.append("\n</li>\n</ul>\n");
+      try (JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter()) {
+        appendOrderByItemsJson(json, uriInfo.getOrderByOption().getOrders());
+        json.close();
+        writer.append("\n</li>\n</ul>\n");
+      }
     }
 
     if (uriInfo.getExpandOption() != null) {
       writer.append("<h2>Expand Option</h2>\n")
           .append("<ul>\n<li class=\"json\">");
-      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
-      appendExpandedPropertiesJson(json, uriInfo.getExpandOption().getExpandItems());
-      json.close();
-      writer.append("\n</li>\n</ul>\n");
+      try (JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter()) {
+        appendExpandedPropertiesJson(json, uriInfo.getExpandOption().getExpandItems());
+        json.close();
+        writer.append("\n</li>\n</ul>\n");
+      }
     }
 
     if (uriInfo.getSelectOption() != null) {
@@ -573,10 +576,11 @@ public class DebugTabUri implements DebugTab {
     if (uriInfo.getApplyOption() != null) {
       writer.append("<h2>Apply Option</h2>\n")
           .append("<ul>\n<li class=\"json\">");
-      json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter();
-      appendApplyItemsJson(json, uriInfo.getApplyOption().getApplyItems());
-      json.close();
-      writer.append("\n</li>\n</ul>\n");
+      try (JsonGenerator json = jsonFactory.createGenerator(writer).useDefaultPrettyPrinter()) {
+        appendApplyItemsJson(json, uriInfo.getApplyOption().getApplyItems());
+        json.close();
+        writer.append("\n</li>\n</ul>\n");
+      }
     }
 
     if (uriInfo.getCountOption() != null

@@ -149,7 +149,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
 	private List<List<String>> getAllSchemaNameSpace(InputStream inputStream)
 			throws ParserConfigurationException, SAXException, IOException{
-		List<List<String>> schemaNameSpaces = new ArrayList <List<String>>();
+		List<List<String>> schemaNameSpaces = new ArrayList <>();
 		
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		dbFactory.setFeature(
@@ -180,7 +180,7 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 		
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
-			List<String> nameSpaces = new ArrayList <String>();
+			List<String> nameSpaces = new ArrayList <>();
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) nNode;
 				NamedNodeMap attributes = eElement.getAttributes();
@@ -212,16 +212,14 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
           || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML) ?
           new AtomDeserializer().delta(input) :
           new JsonDeltaDeserializer(false).toDelta(input);
-    } catch (final XMLStreamException e) {
-      throw new ODataDeserializerException(e);
-    } catch (final EdmPrimitiveTypeException e) {
+    } catch (final XMLStreamException | EdmPrimitiveTypeException e) {
       throw new ODataDeserializerException(e);
     }
   }
 
   @Override
   public List<CsdlSchema> fetchTermDefinitionSchema(List<InputStream> input) {
-    List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
+    List<CsdlSchema> schemas = new ArrayList<>();
     try {
       for (InputStream stream : input) {
         ClientCsdlEdmx edmx = getXmlMapper().readValue(stream, ClientCsdlEdmx.class);

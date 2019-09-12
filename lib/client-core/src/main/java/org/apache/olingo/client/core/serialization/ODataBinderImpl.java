@@ -343,7 +343,7 @@ public class ODataBinderImpl implements ODataBinder {
     } else if (value.isPrimitive()) {
       valueResource = value.asPrimitive().toValue();
     } else if (value.isComplex()) {
-      List<Property> complexProperties = new ArrayList<Property>();
+      List<Property> complexProperties = new ArrayList<>();
       for (final ClientProperty propertyValue : value.asComplex()) {
         complexProperties.add(getProperty(propertyValue));
       }
@@ -356,7 +356,7 @@ public class ODataBinderImpl implements ODataBinder {
 
     } else if (value.isCollection()) {
       final ClientCollectionValue<? extends ClientValue> _value = value.asCollection();
-      ArrayList<Object> lcValueResource = new ArrayList<Object>();
+      ArrayList<Object> lcValueResource = new ArrayList<>();
 
       for (final ClientValue collectionValue : _value) {
         lcValueResource.add(getValue(collectionValue));
@@ -703,7 +703,7 @@ public class ODataBinderImpl implements ODataBinder {
       entity.setMediaETag(resource.getPayload().getMediaETag());
     }
 
-    Map<String, Integer> countMap = new HashMap<String, Integer>();
+    Map<String, Integer> countMap = new HashMap<>();
     for (final Property property : resource.getPayload().getProperties()) {
       EdmType propertyType = null;
       if (edmType instanceof EdmEntityType) {

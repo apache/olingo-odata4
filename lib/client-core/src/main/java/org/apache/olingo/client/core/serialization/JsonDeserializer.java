@@ -222,7 +222,7 @@ public class JsonDeserializer implements ODataDeserializer {
 
     final EdmTypeInfo typeInfo = typeExpression == null ? null :
       new EdmTypeInfo.Builder().setTypeExpression(typeExpression).build();
-    return new SimpleEntry<PropertyType, EdmTypeInfo>(type, typeInfo);
+    return new SimpleEntry<>(type, typeInfo);
   }
 
   private EdmPrimitiveTypeKind guessPrimitiveTypeKind(final JsonNode node) {
@@ -299,7 +299,7 @@ public class JsonDeserializer implements ODataDeserializer {
       throws IOException, EdmPrimitiveTypeException {
 
     final ComplexValue complexValue = new ComplexValue();
-    final Set<String> toRemove = new HashSet<String>();
+    final Set<String> toRemove = new HashSet<>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = node.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
 
@@ -314,7 +314,7 @@ public class JsonDeserializer implements ODataDeserializer {
   private void fromCollection(final Valuable valuable, final Iterator<JsonNode> nodeItor, final EdmTypeInfo typeInfo,
       final ObjectCodec codec) throws IOException, EdmPrimitiveTypeException {
 
-    final List<Object> values = new ArrayList<Object>();
+    final List<Object> values = new ArrayList<>();
     ValueType valueType = ValueType.COLLECTION_PRIMITIVE;
 
     final EdmTypeInfo type = typeInfo == null ? null

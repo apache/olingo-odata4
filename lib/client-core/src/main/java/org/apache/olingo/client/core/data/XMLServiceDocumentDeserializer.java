@@ -120,7 +120,7 @@ public class XMLServiceDocumentDeserializer extends JsonDeserializer {
         ? URIUtils.getURI(base, "$metadata")
         : URIUtils.getURI(base, contextURL.toASCIIString())).toASCIIString());
 
-    return new ResWrap<ServiceDocument>(
+    return new ResWrap<>(
         contextURL == null ? null : URIUtils.getURI(sdoc.getBaseURI(), contextURL),
         metadataETag, sdoc);
   }

@@ -95,10 +95,10 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
         contextURL).toASCIIString();
     OutputStream outputStream = null;
     SerializerException cachedException = null;
-    try {
-      CircleStreamBuffer buffer = new CircleStreamBuffer();
-      outputStream = buffer.getOutputStream();
-      JsonGenerator json = new JsonFactory().createGenerator(outputStream);
+    
+    CircleStreamBuffer buffer = new CircleStreamBuffer();
+    outputStream = buffer.getOutputStream();
+    try (JsonGenerator json = new JsonFactory().createGenerator(outputStream)) {
       if (obj instanceof AbstractEntityCollection) {
         doSerialize(entityType, (AbstractEntityCollection) obj, contextURLString, metadataETag, json);
       } else if (obj instanceof Entity) {
@@ -108,7 +108,6 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
       }
       json.flush();
       json.close();
-      outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
     } catch (final IOException e) {
       cachedException = new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);

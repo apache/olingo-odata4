@@ -101,7 +101,7 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
       }
       tree.remove(Constants.VALUE);
     }
-    final Set<String> toRemove = new HashSet<String>();
+    final Set<String> toRemove = new HashSet<>();
     // any remaining entry is supposed to be an annotation or is ignored
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
@@ -127,6 +127,6 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
       }
     }
     tree.remove(toRemove);
-    return new ResWrap<EntityCollection>(contextURL, metadataETag, entitySet);
+    return new ResWrap<>(contextURL, metadataETag, entitySet);
   }
 }

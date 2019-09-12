@@ -63,27 +63,27 @@ public class ClientEntityImpl extends AbstractClientPayload implements ClientEnt
    */
   private URI editLink;
 
-  private final List<ClientProperty> properties = new ArrayList<ClientProperty>();
+  private final List<ClientProperty> properties = new ArrayList<>();
 
-  private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
+  private final List<ClientAnnotation> annotations = new ArrayList<>();
 
   private final FullQualifiedName typeName;
   /**
    * Navigation links (might contain in-line entities or entity sets).
    */
-  private final List<ClientLink> navigationLinks = new ArrayList<ClientLink>();
+  private final List<ClientLink> navigationLinks = new ArrayList<>();
   /**
    * Association links.
    */
-  private final List<ClientLink> associationLinks = new ArrayList<ClientLink>();
+  private final List<ClientLink> associationLinks = new ArrayList<>();
   /**
    * Media edit links.
    */
-  private final List<ClientLink> mediaEditLinks = new ArrayList<ClientLink>();
+  private final List<ClientLink> mediaEditLinks = new ArrayList<>();
   /**
    * Operations (legacy, functions, actions).
    */
-  private final List<ClientOperation> operations = new ArrayList<ClientOperation>();
+  private final List<ClientOperation> operations = new ArrayList<>();
 
   public ClientEntityImpl(final FullQualifiedName typeName) {
     super(typeName == null ? null : typeName.toString());

@@ -41,7 +41,7 @@ public abstract class AbstractODataBatchResponseItem implements ODataBatchRespon
   /**
    * Expected OData responses for the current batch response item.
    */
-  protected final Map<String, ODataResponse> responses = new HashMap<String, ODataResponse>();
+  protected final Map<String, ODataResponse> responses = new HashMap<>();
 
   /**
    * Expected OData responses iterator.

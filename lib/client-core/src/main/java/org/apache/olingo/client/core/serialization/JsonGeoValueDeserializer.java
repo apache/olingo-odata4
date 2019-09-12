@@ -65,7 +65,7 @@ class JsonGeoValueDeserializer {
     final MultiPoint multiPoint;
 
     if (itor.hasNext()) {
-      final List<Point> points = new ArrayList<Point>();
+      final List<Point> points = new ArrayList<>();
       while (itor.hasNext()) {
         final Iterator<JsonNode> mpItor = itor.next().elements();
         points.add(point(mpItor, type, srid));
@@ -82,7 +82,7 @@ class JsonGeoValueDeserializer {
     final LineString lineString;
 
     if (itor.hasNext()) {
-      final List<Point> points = new ArrayList<Point>();
+      final List<Point> points = new ArrayList<>();
       while (itor.hasNext()) {
         final Iterator<JsonNode> mpItor = itor.next().elements();
         points.add(point(mpItor, type, srid));
@@ -101,7 +101,7 @@ class JsonGeoValueDeserializer {
     final MultiLineString multiLineString;
 
     if (itor.hasNext()) {
-      final List<LineString> lineStrings = new ArrayList<LineString>();
+      final List<LineString> lineStrings = new ArrayList<>();
       while (itor.hasNext()) {
         final Iterator<JsonNode> mlsItor = itor.next().elements();
         lineStrings.add(lineString(mlsItor, type, srid));
@@ -119,7 +119,7 @@ class JsonGeoValueDeserializer {
     if (itor.hasNext()) {
       final Iterator<JsonNode> extItor = itor.next().elements();
       if (extItor.hasNext()) {
-        extPoints = new ArrayList<Point>();
+        extPoints = new ArrayList<>();
         while (extItor.hasNext()) {
           final Iterator<JsonNode> mpItor = extItor.next().elements();
           extPoints.add(point(mpItor, type, srid));
@@ -131,7 +131,7 @@ class JsonGeoValueDeserializer {
     while (itor.hasNext()) {
       final Iterator<JsonNode> intItor = itor.next().elements();
       if (intItor.hasNext()) {
-        List<Point> intPoints = new ArrayList<Point>();
+        List<Point> intPoints = new ArrayList<>();
         while (intItor.hasNext()) {
           final Iterator<JsonNode> mpItor = intItor.next().elements();
           intPoints.add(point(mpItor, type, srid));
@@ -148,7 +148,7 @@ class JsonGeoValueDeserializer {
     final MultiPolygon multiPolygon;
 
     if (itor.hasNext()) {
-      final List<Polygon> polygons = new ArrayList<Polygon>();
+      final List<Polygon> polygons = new ArrayList<>();
       while (itor.hasNext()) {
         final Iterator<JsonNode> mpItor = itor.next().elements();
         polygons.add(polygon(mpItor, type, srid));
@@ -167,7 +167,7 @@ class JsonGeoValueDeserializer {
     final GeospatialCollection collection;
 
     if (itor.hasNext()) {
-      final List<Geospatial> geospatials = new ArrayList<Geospatial>();
+      final List<Geospatial> geospatials = new ArrayList<>();
 
       while (itor.hasNext()) {
         final JsonNode geo = itor.next();

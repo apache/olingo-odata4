@@ -39,7 +39,7 @@ public class ClientCsdlEdmx extends CsdlAbstractEdmItem implements Serializable,
 
   private static final long serialVersionUID = -6293476719276092572L;
 
-  private final List<Reference> references = new ArrayList<Reference>();
+  private final List<Reference> references = new ArrayList<>();
 
   private String version;
 

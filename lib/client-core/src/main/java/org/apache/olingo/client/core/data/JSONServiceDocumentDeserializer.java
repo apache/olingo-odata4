@@ -92,7 +92,7 @@ public class JSONServiceDocumentDeserializer extends JsonDeserializer {
       }
     }
 
-    return new ResWrap<ServiceDocument>(contextURL, metadataETag, serviceDocument);
+    return new ResWrap<>(contextURL, metadataETag, serviceDocument);
   }
 
   public ResWrap<ServiceDocument> toServiceDocument(final InputStream input) throws ODataDeserializerException {

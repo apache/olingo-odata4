@@ -41,7 +41,7 @@ public class EdmEnabledInvokeRequestFactoryImpl extends AbstractEdmEnabledInvoke
           final HttpMethod method, final URI uri, final Class<RES> resultRef,
           final Map<String, ClientValue> parameters) {
 
-    final ODataInvokeRequest<RES> request = new ODataInvokeRequestImpl<RES>(edmClient, resultRef, method, uri);
+    final ODataInvokeRequest<RES> request = new ODataInvokeRequestImpl<>(edmClient, resultRef, method, uri);
     if (parameters != null) {
       request.setParameters(parameters);
     }

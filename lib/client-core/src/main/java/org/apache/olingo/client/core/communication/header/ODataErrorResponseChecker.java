@@ -72,12 +72,7 @@ public final class ODataErrorResponseChecker {
               }
             }
           }
-        } catch (final RuntimeException e) {
-          LOG.warn("Error deserializing error response", e);
-          error = getGenericError(
-              statusLine.getStatusCode(),
-              statusLine.getReasonPhrase());
-        } catch (final ODataDeserializerException e) {
+        } catch (final RuntimeException | ODataDeserializerException e) {
           LOG.warn("Error deserializing error response", e);
           error = getGenericError(
               statusLine.getStatusCode(),

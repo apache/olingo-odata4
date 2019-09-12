@@ -132,13 +132,10 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
   private InputStream wrapInJson(final List<DebugTab> parts) throws IOException {
     OutputStream outputStream = null;
-
-    try {
-      CircleStreamBuffer csb = new CircleStreamBuffer();
-      outputStream = csb.getOutputStream();
-      // Create JSON generator (the object mapper is necessary to write expression trees).
-      JsonGenerator gen = new ObjectMapper().getFactory().createGenerator(outputStream);
-
+    CircleStreamBuffer csb = new CircleStreamBuffer();
+    outputStream = csb.getOutputStream();
+    // Create JSON generator (the object mapper is necessary to write expression trees).
+    try (JsonGenerator gen = new ObjectMapper().getFactory().createGenerator(outputStream)) {
       gen.writeStartObject();
       DebugTab requestInfo = parts.get(0);
       gen.writeFieldName(requestInfo.getName().toLowerCase(Locale.ROOT));
@@ -159,8 +156,6 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
 
       gen.writeEndObject();
       gen.close();
-      outputStream.close();
-
       return csb.getInputStream();
     } finally {
       if (outputStream != null) {

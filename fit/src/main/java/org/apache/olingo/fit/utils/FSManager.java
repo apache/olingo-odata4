@@ -122,8 +122,7 @@ public class FSManager {
     content.reset();
 
     new JsonSerializer(true, ContentType.JSON_FULL_METADATA).write(writer, container);
-    writer.flush();
-
+    
     putInMemory(new ByteArrayInputStream(content.toByteArray()), getAbsolutePath(relativePath, Accept.JSON_FULLMETA));
   }
 

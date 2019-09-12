@@ -107,7 +107,7 @@ public class ClientLink extends ClientItem implements ClientAnnotatable {
    */
   private String mediaETag;
 
-  private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
+  private final List<ClientAnnotation> annotations = new ArrayList<>();
 
   /**
    * Constructor.

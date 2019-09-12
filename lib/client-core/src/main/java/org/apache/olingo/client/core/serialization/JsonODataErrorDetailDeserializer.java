@@ -53,6 +53,6 @@ public class JsonODataErrorDetailDeserializer extends JsonDeserializer {
       error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
     }
 
-    return new ResWrap<ODataErrorDetail>((URI) null, null, error);
+    return new ResWrap<>((URI) null, null, error);
   }
 }

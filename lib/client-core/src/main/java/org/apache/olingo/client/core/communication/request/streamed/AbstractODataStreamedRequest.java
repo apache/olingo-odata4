@@ -62,7 +62,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * Wrapper for actual streamed request's future. This holds information about the HTTP request / response currently
    * open.
    */
-  protected final Wrapper<Future<HttpResponse>> futureWrapper = new Wrapper<Future<HttpResponse>>();
+  protected final Wrapper<Future<HttpResponse>> futureWrapper = new Wrapper<>();
 
   /**
    * Constructor.

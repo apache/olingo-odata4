@@ -26,7 +26,7 @@ import java.util.List;
  */
 public abstract class Annotatable {
 
-  private final List<Annotation> annotations = new ArrayList<Annotation>();
+  private final List<Annotation> annotations = new ArrayList<>();
 
   /**
    * Get Annotations.

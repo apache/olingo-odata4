@@ -77,8 +77,7 @@ public class JsonSerializer implements ODataSerializer {
 
   @Override
   public <T> void write(final Writer writer, final T obj) throws ODataSerializerException {
-    try {
-      final JsonGenerator json = new JsonFactory().createGenerator(writer);
+    try (final JsonGenerator json = new JsonFactory().createGenerator(writer)) {
       if (obj instanceof EntityCollection) {
         new JsonEntitySetSerializer(serverMode, contentType).doSerialize((EntityCollection) obj, json);
       } else if (obj instanceof Entity) {
@@ -89,9 +88,7 @@ public class JsonSerializer implements ODataSerializer {
         link((Link) obj, json);
       }
       json.flush();
-    } catch (final IOException e) {
-      throw new ODataSerializerException(e);
-    } catch (final EdmPrimitiveTypeException e) {
+    } catch (final IOException | EdmPrimitiveTypeException e) {
       throw new ODataSerializerException(e);
     }
   }
@@ -111,8 +108,7 @@ public class JsonSerializer implements ODataSerializer {
   @Override
   public <T> void write(final Writer writer, final ResWrap<T> container) throws ODataSerializerException {
     final T obj = container == null ? null : container.getPayload();
-    try {
-      final JsonGenerator json = new JsonFactory().createGenerator(writer);
+    try (final JsonGenerator json = new JsonFactory().createGenerator(writer)) {
       if (obj instanceof EntityCollection) {
         new JsonEntitySetSerializer(serverMode, contentType).doContainerSerialize(
             (ResWrap<EntityCollection>) container, json);
@@ -126,9 +122,7 @@ public class JsonSerializer implements ODataSerializer {
         reference((ResWrap<URI>) container, json);
       }
       json.flush();
-    } catch (final IOException e) {
-      throw new ODataSerializerException(e);
-    } catch (final EdmPrimitiveTypeException e) {
+    } catch (final IOException | EdmPrimitiveTypeException e) {
       throw new ODataSerializerException(e);
     }
   }
@@ -152,7 +146,7 @@ public class JsonSerializer implements ODataSerializer {
   protected void clientLinks(final Linked linked, final JsonGenerator jgen)
       throws IOException, EdmPrimitiveTypeException {
 
-    final Map<String, List<String>> entitySetLinks = new HashMap<String, List<String>>();
+    final Map<String, List<String>> entitySetLinks = new HashMap<>();
     for (Link link : linked.getNavigationLinks()) {
       for (Annotation annotation : link.getAnnotations()) {
         valuable(jgen, annotation, link.getTitle() + "@" + annotation.getTerm());
@@ -163,7 +157,7 @@ public class JsonSerializer implements ODataSerializer {
         if (entitySetLinks.containsKey(link.getTitle())) {
           uris = entitySetLinks.get(link.getTitle());
         } else {
-          uris = new ArrayList<String>();
+          uris = new ArrayList<>();
           entitySetLinks.put(link.getTitle(), uris);
         }
         if (link.getHref() != null && !link.getHref().isEmpty()) {

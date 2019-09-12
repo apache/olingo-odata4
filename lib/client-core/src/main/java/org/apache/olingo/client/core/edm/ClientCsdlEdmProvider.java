@@ -174,7 +174,7 @@ public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
 
   @Override
   public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
-    ArrayList<CsdlAliasInfo> aliasInfo = new ArrayList<CsdlAliasInfo>();
+    ArrayList<CsdlAliasInfo> aliasInfo = new ArrayList<>();
     for (CsdlSchema schema : xmlSchemas.values()) {
       if (schema.getAlias() != null) {
         aliasInfo.add(new CsdlAliasInfo().setNamespace(schema.getNamespace()).setAlias(schema.getAlias()));
@@ -185,7 +185,7 @@ public class ClientCsdlEdmProvider extends CsdlAbstractEdmProvider {
 
   @Override
   public List<CsdlSchema> getSchemas() throws ODataException {
-    return new ArrayList<CsdlSchema>(xmlSchemas.values());
+    return new ArrayList<>(xmlSchemas.values());
   }
 
   @Override

@@ -25,13 +25,13 @@ import java.util.Map;
 
 public class ClientServiceDocument {
 
-  private final Map<String, URI> entitySets = new HashMap<String, URI>();
+  private final Map<String, URI> entitySets = new HashMap<>();
 
-  private final Map<String, URI> functionImports = new HashMap<String, URI>();
+  private final Map<String, URI> functionImports = new HashMap<>();
 
-  private final Map<String, URI> singletons = new HashMap<String, URI>();
+  private final Map<String, URI> singletons = new HashMap<>();
 
-  private final Map<String, URI> relatedServiceDocuments = new HashMap<String, URI>();
+  private final Map<String, URI> relatedServiceDocuments = new HashMap<>();
 
   public Map<String, URI> getEntitySets() {
     return entitySets;

@@ -40,7 +40,7 @@ public class InvokeRequestFactoryImpl extends AbstractInvokeRequestFactory {
           final HttpMethod method, final URI uri, final Class<RES> resultRef,
           final Map<String, ClientValue> parameters) {
 
-    final ODataInvokeRequest<RES> request = new ODataInvokeRequestImpl<RES>(client, resultRef, method, uri);
+    final ODataInvokeRequest<RES> request = new ODataInvokeRequestImpl<>(client, resultRef, method, uri);
     if (parameters != null) {
       request.setParameters(parameters);
     }

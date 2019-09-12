@@ -37,15 +37,15 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 public class EdmTypeValidator {
   
-  private Map<String, String> aliasNamespaceMap = new HashMap<String, String>();
+  private Map<String, String> aliasNamespaceMap = new HashMap<>();
   private Map<FullQualifiedName, EdmEntityContainer> edmContainersMap = 
-      new HashMap<FullQualifiedName, EdmEntityContainer>();
+      new HashMap<>();
   private Map<FullQualifiedName, EdmEntityType> edmEntityTypesMap = 
-      new HashMap<FullQualifiedName, EdmEntityType>();
+      new HashMap<>();
   private Map<FullQualifiedName, EdmComplexType> edmComplexTypesMap = 
-      new HashMap<FullQualifiedName, EdmComplexType>();
+      new HashMap<>();
   private Map<FullQualifiedName, EdmFunction> edmFunctionsMap = 
-      new HashMap<FullQualifiedName, EdmFunction>();
+      new HashMap<>();
 
   /**
    * 

@@ -77,7 +77,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Response headers.
    */
   protected final Map<String, Collection<String>> headers =
-      new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
+      new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
   /**
    * Response code.
@@ -154,11 +154,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
     try {
       this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
       this.inputContent = null;
-    } catch (final IllegalStateException e) {
-      HttpClientUtils.closeQuietly(res);
-      LOG.error("Error retrieving payload", e);
-      throw new ODataRuntimeException(e);
-    } catch (final IOException e) {
+    } catch (final IllegalStateException | IOException e) {
       HttpClientUtils.closeQuietly(res);
       LOG.error("Error retrieving payload", e);
       throw new ODataRuntimeException(e);
@@ -168,7 +164,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
       if (headers.containsKey(header.getName())) {
         headerValues = headers.get(header.getName());
       } else {
-        headerValues = new HashSet<String>();
+        headerValues = new HashSet<>();
         headers.put(header.getName(), headerValues);
       }
 
