@@ -382,7 +382,7 @@ public class ExpressionParser {
       Expression expression = parseExpression();
       expressionList.add(expression);
       ParserHelper.bws(tokenizer);
-      if (tokenizer.next(TokenKind.COMMA)) {
+      while (tokenizer.next(TokenKind.COMMA)) {
         ParserHelper.bws(tokenizer);
         expression = parseExpression();
         expressionList.add(expression);
