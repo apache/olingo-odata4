@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.ODataRequest;
  * Represents a distinct MIME part of a Batch Request body - either a Change Set or a Query Operation
  */
 public class BatchRequestPart {
-  private List<ODataRequest> requests = new ArrayList<ODataRequest>();
+  private List<ODataRequest> requests = new ArrayList<>();
   private boolean isChangeSet;
 
   /**
@@ -48,7 +48,7 @@ public class BatchRequestPart {
    */
   public BatchRequestPart(final boolean isChangeSet, final ODataRequest request) {
     this.isChangeSet = isChangeSet;
-    requests = new ArrayList<ODataRequest>();
+    requests = new ArrayList<>();
     requests.add(request);
   }
 

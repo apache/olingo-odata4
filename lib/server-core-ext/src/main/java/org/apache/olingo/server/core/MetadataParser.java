@@ -103,7 +103,7 @@ public class MetadataParser {
   private boolean useLocalCoreVocabularies = true;
   private boolean implicitlyLoadCoreVocabularies = false;
   private boolean recursivelyLoadReferences = false;
-  private Map<String, SchemaBasedEdmProvider> globalReferenceMap = new HashMap<String, SchemaBasedEdmProvider>();
+  private Map<String, SchemaBasedEdmProvider> globalReferenceMap = new HashMap<>();
   
   /**
    * Avoid reading the annotations in the $metadata 

@@ -86,7 +86,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 public class MetadataDocumentJsonSerializer {
   
   private final ServiceMetadata serviceMetadata;
-  private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
+  private final Map<String, String> namespaceToAlias = new HashMap<>();
   private static final String DOLLAR = "$";
   private static final String VERSION = DOLLAR + "Version";
   private static final String REFERENCES = DOLLAR + "Reference";
@@ -197,13 +197,13 @@ public class MetadataDocumentJsonSerializer {
 
   private void appendAnnotationGroups(final JsonGenerator json, 
       final List<EdmAnnotations> annotationGroups) throws SerializerException, IOException {
-    if (annotationGroups.size() > 0) {
+    if (!annotationGroups.isEmpty()) {
       json.writeObjectFieldStart(ANNOTATION);
     }
     for (EdmAnnotations annotationGroup : annotationGroups) {
       appendAnnotationGroup(json, annotationGroup);
     }
-    if (annotationGroups.size() > 0) {
+    if (!annotationGroups.isEmpty()) {
       json.writeEndObject();
     }
   }
@@ -345,7 +345,7 @@ public class MetadataDocumentJsonSerializer {
   private void appendNavigationPropertyBindings(final JsonGenerator json, 
       final EdmBindingTarget bindingTarget) throws SerializerException, IOException {
     if (bindingTarget.getNavigationPropertyBindings() != null && 
-        bindingTarget.getNavigationPropertyBindings().size() > 0) {
+        !bindingTarget.getNavigationPropertyBindings().isEmpty()) {
       json.writeObjectFieldStart(NAVIGATION_PROPERTY_BINDING);
       for (EdmNavigationPropertyBinding binding : bindingTarget.getNavigationPropertyBindings()) {
         json.writeStringField(binding.getPath(), binding.getTarget());
@@ -409,14 +409,14 @@ public class MetadataDocumentJsonSerializer {
 
   private void appendFunctions(final JsonGenerator json, 
       final List<EdmFunction> functions) throws SerializerException, IOException {
-    Map<String, List<EdmFunction>> functionsMap = new HashMap<String, List<EdmFunction>>();
+    Map<String, List<EdmFunction>> functionsMap = new HashMap<>();
     for (EdmFunction function : functions) {
       if (functionsMap.containsKey(function.getName())) {
         List<EdmFunction> actionsWithSpecificActionName = functionsMap.get(function.getName());
         actionsWithSpecificActionName.add(function);
         functionsMap.put(function.getName(), actionsWithSpecificActionName);
       } else {
-        List<EdmFunction> functionList = new ArrayList<EdmFunction>();
+        List<EdmFunction> functionList = new ArrayList<>();
         functionList.add(function);
         functionsMap.put(function.getName(), functionList);
       }
@@ -453,14 +453,14 @@ public class MetadataDocumentJsonSerializer {
 
   private void appendActions(final JsonGenerator json, 
       final List<EdmAction> actions) throws SerializerException, IOException {
-    Map<String, List<EdmAction>> actionsMap = new HashMap<String, List<EdmAction>>();
+    Map<String, List<EdmAction>> actionsMap = new HashMap<>();
     for (EdmAction action : actions) {
       if (actionsMap.containsKey(action.getName())) {
         List<EdmAction> actionsWithSpecificActionName = actionsMap.get(action.getName());
         actionsWithSpecificActionName.add(action);
         actionsMap.put(action.getName(), actionsWithSpecificActionName);
       } else {
-        List<EdmAction> actionList = new ArrayList<EdmAction>();
+        List<EdmAction> actionList = new ArrayList<>();
         actionList.add(action);
         actionsMap.put(action.getName(), actionList);
       }
@@ -626,7 +626,7 @@ public class MetadataDocumentJsonSerializer {
 
   private void appendNavigationProperties(final JsonGenerator json, 
       final EdmStructuredType type) throws SerializerException, IOException {
-    List<String> navigationPropertyNames = new ArrayList<String>(type.getNavigationPropertyNames());
+    List<String> navigationPropertyNames = new ArrayList<>(type.getNavigationPropertyNames());
     if (type.getBaseType() != null) {
       navigationPropertyNames.removeAll(type.getBaseType().getNavigationPropertyNames());
     }
@@ -672,7 +672,7 @@ public class MetadataDocumentJsonSerializer {
 
   private void appendProperties(final JsonGenerator json, 
       final EdmStructuredType type) throws SerializerException, IOException {
-    List<String> propertyNames = new ArrayList<String>(type.getPropertyNames());
+    List<String> propertyNames = new ArrayList<>(type.getPropertyNames());
     if (type.getBaseType() != null) {
       propertyNames.removeAll(type.getBaseType().getPropertyNames());
     }

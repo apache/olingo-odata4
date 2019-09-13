@@ -409,7 +409,7 @@ public class EdmProviderImpl extends AbstractEdm {
       try {
         CsdlEntityType entType = provider.getEntityType(entitySet.getTypeFQN());
         List<CsdlProperty> entTypeProperties = null != entType ? 
-            entType.getProperties() : new ArrayList<CsdlProperty>();
+            entType.getProperties() : new ArrayList<>();
         for (CsdlProperty entTypeProperty : entTypeProperties) {
           if (null != entTypeProperty.getType() && 
               entTypeProperty.getType().equalsIgnoreCase(typeName.getFullQualifiedNameAsString())) {
@@ -465,7 +465,7 @@ public class EdmProviderImpl extends AbstractEdm {
     String schemaName = null;
     String entitySetName = null;
     List<CsdlEntitySet> entitySets = null != csdlEntityContainer ? 
-        csdlEntityContainer.getEntitySets() : new ArrayList<CsdlEntitySet>();
+        csdlEntityContainer.getEntitySets() : new ArrayList<>();
     if (structuralType instanceof CsdlComplexType) {
       removeAnnotationsAddedToCTTypePropFromES(structuralType, typeName, csdlEntityContainer, properties, entitySets);
     } else {
@@ -551,7 +551,7 @@ public class EdmProviderImpl extends AbstractEdm {
       try {
         CsdlEntityType entType = provider.getEntityType(entitySet.getTypeFQN());
         List<CsdlProperty> entTypeProperties = null != entType ? 
-            entType.getProperties() : new ArrayList<CsdlProperty>();
+            entType.getProperties() : new ArrayList<>();
         for (CsdlProperty entTypeProperty : entTypeProperties) {
           if (null != entTypeProperty.getType() && 
               entTypeProperty.getType().endsWith(DOT + structuralType.getName())) {
@@ -792,7 +792,7 @@ public class EdmProviderImpl extends AbstractEdm {
   
   @Override
   protected Map<String, String> createAliasToNamespaceInfo() {
-    final Map<String, String> aliasToNamespaceInfos = new HashMap<String, String>();
+    final Map<String, String> aliasToNamespaceInfos = new HashMap<>();
     try {
       final List<CsdlAliasInfo> aliasInfos = provider.getAliasInfos();
       if (aliasInfos != null) {
@@ -833,7 +833,7 @@ public class EdmProviderImpl extends AbstractEdm {
 
   @Override
   protected List<EdmFunction> createUnboundFunctions(final FullQualifiedName functionName) {
-    List<EdmFunction> result = new ArrayList<EdmFunction>();
+    List<EdmFunction> result = new ArrayList<>();
 
     try {
       List<CsdlFunction> functions = functionsMap.get(functionName);
@@ -880,7 +880,7 @@ public class EdmProviderImpl extends AbstractEdm {
             providerParameters = Collections.emptyList();
           }
           if (parameterNamesCopy.size() == providerParameters.size()) {
-            final List<String> functionParameterNames = new ArrayList<String>();
+            final List<String> functionParameterNames = new ArrayList<>();
             for (CsdlParameter parameter : providerParameters) {
               functionParameterNames.add(parameter.getName());
             }
@@ -902,7 +902,7 @@ public class EdmProviderImpl extends AbstractEdm {
   @Override
   protected Map<String, EdmSchema> createSchemas() {
     try {
-      final Map<String, EdmSchema> providerSchemas = new LinkedHashMap<String, EdmSchema>();
+      final Map<String, EdmSchema> providerSchemas = new LinkedHashMap<>();
       List<CsdlSchema> localSchemas = provider.getSchemas();
       if (localSchemas != null) {
         for (CsdlSchema schema : localSchemas) {

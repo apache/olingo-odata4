@@ -113,8 +113,8 @@ public class BatchParserCommon {
 
   public static List<List<Line>> splitMessageByBoundary(final List<Line> message, final String boundary)
       throws BatchDeserializerException {
-    final List<List<Line>> messageParts = new LinkedList<List<Line>>();
-    List<Line> currentPart = new LinkedList<Line>();
+    final List<List<Line>> messageParts = new LinkedList<>();
+    List<Line> currentPart = new LinkedList<>();
     boolean isEndReached = false;
 
     final String quotedBoundary = Pattern.quote(boundary);
@@ -129,7 +129,7 @@ public class BatchParserCommon {
       } else if (boundaryPattern.matcher(currentLine.toString()).matches()) {
         removeEndingCRLFFromList(currentPart);
         messageParts.add(currentPart);
-        currentPart = new LinkedList<Line>();
+        currentPart = new LinkedList<>();
       } else {
         currentPart.add(currentLine);
       }

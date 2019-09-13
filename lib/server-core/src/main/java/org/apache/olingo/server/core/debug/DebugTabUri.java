@@ -235,7 +235,7 @@ public class DebugTabUri implements DebugTab {
   private void appendParameters(final JsonGenerator gen, final String name, final List<UriParameter> parameters)
       throws IOException {
     if (!parameters.isEmpty()) {
-      Map<String, String> parameterMap = new LinkedHashMap<String, String>();
+      Map<String, String> parameterMap = new LinkedHashMap<>();
       for (final UriParameter parameter : parameters) {
         parameterMap.put(parameter.getName(),
             parameter.getText() == null ? parameter.getAlias() : parameter.getText());
@@ -611,7 +611,7 @@ public class DebugTabUri implements DebugTab {
   }
 
   private Map<String, String> getQueryOptionsMap(final List<? extends QueryOption> queryOptions) {
-    Map<String, String> options = new LinkedHashMap<String, String>();
+    Map<String, String> options = new LinkedHashMap<>();
     for (final QueryOption option : queryOptions) {
       if (option != null) {
         options.put(option.getName(), option.getText());

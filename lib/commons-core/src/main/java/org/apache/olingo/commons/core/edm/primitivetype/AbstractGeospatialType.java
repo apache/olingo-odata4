@@ -117,7 +117,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
-    final List<Point> points = new ArrayList<Point>();
+    final List<Point> points = new ArrayList<>();
     for (final String pointCoo : split(matcher.group(4), ',')) {
       points.add(newPoint(null, pointCoo.substring(1, pointCoo.length() - 1),
           isNullable, maxLength, precision, scale, isUnicode));
@@ -130,7 +130,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       final Integer maxLength, final Integer precision, final Integer scale, final Boolean isUnicode)
           throws EdmPrimitiveTypeException {
 
-    final List<Point> points = new ArrayList<Point>();
+    final List<Point> points = new ArrayList<>();
     for (final String pointCoo : split(lineString, ',')) {
       points.add(newPoint(null, pointCoo, isNullable, maxLength, precision, scale, isUnicode));
     }
@@ -153,7 +153,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
-    final List<LineString> lineStrings = new ArrayList<LineString>();
+    final List<LineString> lineStrings = new ArrayList<>();
     for (String coo : matcher.group(4).contains("),(")
         ? matcher.group(4).split("\\),\\(") : new String[] { matcher.group(4) }) {
 
@@ -177,7 +177,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final String[] first = polygon.split("\\),\\(");
 
-    final List<LineString> interiorRings = new ArrayList<LineString>();
+    final List<LineString> interiorRings = new ArrayList<>();
     for (int i = 0; i < first.length -1; i++) {
     	List<Point> interior = new ArrayList<Point>();
 	    for (final String pointCoo : split(first[i].substring(i==0?1:0, first[i].length()), ',')) {
@@ -207,7 +207,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
 
     final Matcher matcher = getMatcher(PATTERN, value);
 
-    final List<Polygon> polygons = new ArrayList<Polygon>();
+    final List<Polygon> polygons = new ArrayList<>();
     for (String coo : matcher.group(4).contains(")),((") ?
         matcher.group(4).split("\\)\\),\\(\\(") :
         new String[] { matcher.group(4) }) {
@@ -246,7 +246,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       break;
 
     case MULTIPOINT:
-      final List<Point> points = new ArrayList<Point>();
+      final List<Point> points = new ArrayList<>();
       for (final String pointCoo : split(matcher.group(4), ',')) {
         points.add(newPoint(null, pointCoo.substring(1, pointCoo.length() - 1),
             isNullable, maxLength, precision, scale, isUnicode));
@@ -261,7 +261,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       break;
 
     case MULTILINESTRING:
-      final List<LineString> lineStrings = new ArrayList<LineString>();
+      final List<LineString> lineStrings = new ArrayList<>();
       for (final String coo : split(matcher.group(4), ',')) {
         lineStrings.add(newLineString(null, coo.substring(1, coo.length() - 1),
             isNullable, maxLength, precision, scale, isUnicode));
@@ -276,7 +276,7 @@ public abstract class AbstractGeospatialType<T extends Geospatial> extends Singl
       break;
 
     case MULTIPOLYGON:
-      final List<Polygon> polygons = new ArrayList<Polygon>();
+      final List<Polygon> polygons = new ArrayList<>();
       for (final String coo : split(matcher.group(4), ',')) {
         polygons.add(newPolygon(null, coo.substring(1, coo.length() - 1),
             isNullable, maxLength, precision, scale, isUnicode));

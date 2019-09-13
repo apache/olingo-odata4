@@ -89,8 +89,8 @@ public class DeserializerResultImpl implements DeserializerResult {
       result.entitySet = entitySet;
       result.expandOption = expandOption;
       result.property = property;
-      result.entityReferences = (entityReferences == null) ? new ArrayList<URI>() : entityReferences;
-      result.actionParameters = (actionParameters == null) ? new LinkedHashMap<String, Parameter>() : actionParameters;
+      result.entityReferences = (entityReferences == null) ? new ArrayList<>() : entityReferences;
+      result.actionParameters = (actionParameters == null) ? new LinkedHashMap<>() : actionParameters;
 
       return result;
     }

@@ -89,7 +89,7 @@ public class ApplyParser {
 
   private static final Map<TokenKind, StandardMethod> TOKEN_KIND_TO_STANDARD_METHOD;
   static {
-    Map<TokenKind, StandardMethod> temp = new EnumMap<TokenKind, StandardMethod>(TokenKind.class);
+    Map<TokenKind, StandardMethod> temp = new EnumMap<>(TokenKind.class);
     temp.put(TokenKind.SUM, StandardMethod.SUM);
     temp.put(TokenKind.MIN, StandardMethod.MIN);
     temp.put(TokenKind.MAX, StandardMethod.MAX);
@@ -100,7 +100,7 @@ public class ApplyParser {
 
   private static final Map<TokenKind, BottomTop.Method> TOKEN_KIND_TO_BOTTOM_TOP_METHOD;
   static {
-    Map<TokenKind, BottomTop.Method> temp = new EnumMap<TokenKind, BottomTop.Method>(TokenKind.class);
+    Map<TokenKind, BottomTop.Method> temp = new EnumMap<>(TokenKind.class);
     temp.put(TokenKind.BottomCountTrafo, BottomTop.Method.BOTTOM_COUNT);
     temp.put(TokenKind.BottomPercentTrafo, BottomTop.Method.BOTTOM_PERCENT);
     temp.put(TokenKind.BottomSumTrafo, BottomTop.Method.BOTTOM_SUM);

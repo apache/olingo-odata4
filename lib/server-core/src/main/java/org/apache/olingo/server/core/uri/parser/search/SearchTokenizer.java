@@ -617,7 +617,7 @@ public class SearchTokenizer {
     char[] chars = searchQuery.trim().toCharArray();
 
     State state = new SearchExpressionState();
-    List<SearchQueryToken> states = new ArrayList<SearchQueryToken>();
+    List<SearchQueryToken> states = new ArrayList<>();
     for (char aChar : chars) {
       State next = state.nextChar(aChar);
       if (state.isFinished()) {

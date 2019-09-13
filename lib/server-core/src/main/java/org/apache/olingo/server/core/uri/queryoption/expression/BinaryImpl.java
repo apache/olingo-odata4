@@ -81,7 +81,7 @@ public class BinaryImpl implements Binary {
       T localRight = this.right.accept(visitor);
       return visitor.visitBinaryOperator(operator, localLeft, localRight);
     } else if (this.expressions != null) {
-      List<T> expressions = new ArrayList<T>();
+      List<T> expressions = new ArrayList<>();
       for (final Expression expression : this.expressions) {
         expressions.add(expression.accept(visitor));
       }

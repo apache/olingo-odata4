@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class OrderByOptionImpl extends SystemQueryOptionImpl implements OrderByOption {
 
-  private List<OrderByItem> orders = new ArrayList<OrderByItem>();
+  private List<OrderByItem> orders = new ArrayList<>();
 
   public OrderByOptionImpl() {
     setKind(SystemQueryOptionKind.ORDERBY);

@@ -45,7 +45,7 @@ public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicExpression imple
   @Override
   public List<EdmPropertyValue> getPropertyValues() {
     if (propertyValues == null) {
-      List<EdmPropertyValue> localValues = new ArrayList<EdmPropertyValue>();
+      List<EdmPropertyValue> localValues = new ArrayList<>();
       if (record.getPropertyValues() != null) {
         for (CsdlPropertyValue value : record.getPropertyValues()) {
           localValues.add(new EdmPropertyValueImpl(edm, value));

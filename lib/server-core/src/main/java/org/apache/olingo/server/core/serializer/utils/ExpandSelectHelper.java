@@ -59,7 +59,7 @@ public abstract class ExpandSelectHelper {
   }
 
   public static Set<String> getSelectedPropertyNames(final List<SelectItem> selectItems) {
-    Set<String> selected = new HashSet<String>();
+    Set<String> selected = new HashSet<>();
     for (final SelectItem item : selectItems) {
       final UriResource resource = item.getResourcePath().getUriResourceParts().get(0);
       if (resource instanceof UriResourceProperty) {
@@ -84,13 +84,13 @@ public abstract class ExpandSelectHelper {
    */
   public static Set<List<String>> getSelectedPathsWithTypeCasts(
       final List<SelectItem> selectItems, final String propertyName) {
-    Set<List<String>> selectedPaths = new HashSet<List<String>>();
+    Set<List<String>> selectedPaths = new HashSet<>();
     for (final SelectItem item : selectItems) {
       final List<UriResource> parts = item.getResourcePath().getUriResourceParts();
       final UriResource resource = parts.get(0);
       if (resource instanceof UriResourceProperty
           && propertyName.equals(((UriResourceProperty) resource).getProperty().getName())) {
-        List<String> path = new ArrayList<String>();
+        List<String> path = new ArrayList<>();
         if (item.getStartTypeFilter() != null) {
           path.add(item.getStartTypeFilter().getFullQualifiedName().getFullQualifiedNameAsString());
         }
@@ -106,7 +106,7 @@ public abstract class ExpandSelectHelper {
         extractPathsFromResourceParts(selectedPaths, parts, path);
       } else if (resource instanceof UriResourceNavigation
           && propertyName.equals(((UriResourceNavigation) resource).getProperty().getName()) ) {
-        List<String> path = new ArrayList<String>();
+        List<String> path = new ArrayList<>();
         if (item.getStartTypeFilter() != null) {
           path.add(item.getStartTypeFilter().getFullQualifiedName().getFullQualifiedNameAsString());
         }
@@ -147,14 +147,14 @@ public abstract class ExpandSelectHelper {
   }
 
   public static Set<List<String>> getSelectedPaths(final List<SelectItem> selectItems, final String propertyName) {
-    Set<List<String>> selectedPaths = new HashSet<List<String>>();
+    Set<List<String>> selectedPaths = new HashSet<>();
     for (final SelectItem item : selectItems) {
       final List<UriResource> parts = item.getResourcePath().getUriResourceParts();
       final UriResource resource = parts.get(0);
       if (resource instanceof UriResourceProperty
           && propertyName.equals(((UriResourceProperty) resource).getProperty().getName())) {
         if (parts.size() > 1) {
-          List<String> path = new ArrayList<String>();
+          List<String> path = new ArrayList<>();
           for (final UriResource part : parts.subList(1, parts.size())) {
             if (part instanceof UriResourceProperty) {
               path.add(((UriResourceProperty) part).getProperty().getName());
@@ -172,13 +172,13 @@ public abstract class ExpandSelectHelper {
   }
 
   public static Set<List<String>> getSelectedPaths(final List<SelectItem> selectItems) {
-    Set<List<String>> selectedPaths = new HashSet<List<String>>();
+    Set<List<String>> selectedPaths = new HashSet<>();
     for (final SelectItem item : selectItems) {
       final List<UriResource> parts = item.getResourcePath().getUriResourceParts();
       final UriResource resource = parts.get(0);
       if (resource instanceof UriResourceProperty) {
         if (!parts.isEmpty()) {
-          List<String> path = new ArrayList<String>();
+          List<String> path = new ArrayList<>();
           for (final UriResource part : parts.subList(0, parts.size())) {
             if (part instanceof UriResourceProperty) {
               path.add(((UriResourceProperty) part).getProperty().getName());
@@ -204,7 +204,7 @@ public abstract class ExpandSelectHelper {
 
   public static Set<List<String>> getReducedSelectedPaths(final Set<List<String>> selectedPaths,
       final String propertyName) {
-    Set<List<String>> reducedPaths = new HashSet<List<String>>();
+    Set<List<String>> reducedPaths = new HashSet<>();
     for (final List<String> path : selectedPaths) {
       if (propertyName.equals(path.get(0))) {
         if (path.size() > 1) {
@@ -232,7 +232,7 @@ public abstract class ExpandSelectHelper {
   
   public static Set<String> getExpandedPropertyNames(final List<ExpandItem> expandItems)
       throws SerializerException {
-    Set<String> expanded = new HashSet<String>();
+    Set<String> expanded = new HashSet<>();
     for (final ExpandItem item : expandItems) {
       final List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
       final UriResource resource = resourceParts.get(0);
@@ -267,7 +267,7 @@ public abstract class ExpandSelectHelper {
   }
 
   public static Set<List<String>> getExpandedItemsPath(ExpandOption expand) {
-    Set<List<String>> expandPaths = new HashSet<List<String>>();
+    Set<List<String>> expandPaths = new HashSet<>();
     if (expand != null) {
       List<ExpandItem> expandItems = expand.getExpandItems();
       for (ExpandItem item : expandItems) {
@@ -276,7 +276,7 @@ public abstract class ExpandSelectHelper {
         }
         List<UriResource> resourceParts = item.getResourcePath().getUriResourceParts();
         if (resourceParts.get(0) instanceof UriResourceComplexProperty) {
-          List<String> path = new ArrayList<String>();
+          List<String> path = new ArrayList<>();
           for (UriResource resource : resourceParts) {
             if (resource instanceof UriResourceNavigation) {
               path.add(((UriResourceNavigation) resource).getProperty().getName());
@@ -293,7 +293,7 @@ public abstract class ExpandSelectHelper {
   
   public static Set<List<String>> getReducedExpandItemsPaths(final Set<List<String>> expandItemsPaths,
       final String propertyName) {
-    Set<List<String>> reducedPaths = new HashSet<List<String>>();
+    Set<List<String>> reducedPaths = new HashSet<>();
     for (final List<String> path : expandItemsPaths) {
       if (propertyName.equals(path.get(0))) {
         if (path.size() > 1) {

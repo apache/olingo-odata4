@@ -156,7 +156,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_APPLIES_TO = "AppliesTo";
 
   private final ServiceMetadata serviceMetadata;
-  private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
+  private final Map<String, String> namespaceToAlias = new HashMap<>();
 
   public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) throws SerializerException {
     if (serviceMetadata == null || serviceMetadata.getEdm() == null) {
@@ -832,7 +832,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendNavigationProperties(final XMLStreamWriter writer, final EdmStructuredType type)
       throws XMLStreamException {
-    List<String> navigationPropertyNames = new ArrayList<String>(type.getNavigationPropertyNames());
+    List<String> navigationPropertyNames = new ArrayList<>(type.getNavigationPropertyNames());
     if (type.getBaseType() != null) {
       navigationPropertyNames.removeAll(type.getBaseType().getNavigationPropertyNames());
     }
@@ -873,7 +873,7 @@ public class MetadataDocumentXmlSerializer {
   }
 
   private void appendProperties(final XMLStreamWriter writer, final EdmStructuredType type) throws XMLStreamException {
-    List<String> propertyNames = new ArrayList<String>(type.getPropertyNames());
+    List<String> propertyNames = new ArrayList<>(type.getPropertyNames());
     if (type.getBaseType() != null) {
       propertyNames.removeAll(type.getBaseType().getPropertyNames());
     }

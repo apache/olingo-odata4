@@ -97,7 +97,7 @@ import org.apache.olingo.server.core.uri.validator.UriValidationException;
 public class ExpressionParser {
   private static final Map<TokenKind, BinaryOperatorKind> tokenToBinaryOperator;
   static {
-    Map<TokenKind, BinaryOperatorKind> temp = new EnumMap<TokenKind, BinaryOperatorKind>(TokenKind.class);
+    Map<TokenKind, BinaryOperatorKind> temp = new EnumMap<>(TokenKind.class);
     temp.put(TokenKind.OrOperator, BinaryOperatorKind.OR);
     temp.put(TokenKind.AndOperator, BinaryOperatorKind.AND);
 
@@ -122,7 +122,7 @@ public class ExpressionParser {
   // 'cast' and 'isof' are handled specially.
   private static final Map<TokenKind, MethodKind> tokenToMethod;
   static {
-    Map<TokenKind, MethodKind> temp = new EnumMap<TokenKind, MethodKind>(TokenKind.class);
+    Map<TokenKind, MethodKind> temp = new EnumMap<>(TokenKind.class);
     temp.put(TokenKind.CeilingMethod, MethodKind.CEILING);
     temp.put(TokenKind.ConcatMethod, MethodKind.CONCAT);
     temp.put(TokenKind.ContainsMethod, MethodKind.CONTAINS);
@@ -162,7 +162,7 @@ public class ExpressionParser {
   private final OData odata;
 
   private UriTokenizer tokenizer;
-  private Deque<UriResourceLambdaVariable> lambdaVariables = new ArrayDeque<UriResourceLambdaVariable>();
+  private Deque<UriResourceLambdaVariable> lambdaVariables = new ArrayDeque<>();
   private EdmType referringType;
   private Collection<String> crossjoinEntitySetNames;
   private Map<String, AliasQueryOption> aliases;
@@ -254,7 +254,7 @@ public class ExpressionParser {
   private Expression parseIsOfOrCastMethod(final MethodKind kind) throws UriParserException, UriValidationException {
     // The TokenKind 'IsOfMethod' consumes also the opening parenthesis.
     // The first parameter could be an expression or a type literal.
-    List<Expression> parameters = new ArrayList<Expression>();
+    List<Expression> parameters = new ArrayList<>();
     ParserHelper.bws(tokenizer);
     parameters.add(parseExpression());
     if (!(parameters.get(0) instanceof TypeLiteral)) {
@@ -377,7 +377,7 @@ public class ExpressionParser {
    * @throws UriValidationException
    */
   private List<Expression> parseInExpr() throws UriParserException, UriValidationException {
-    List<Expression> expressionList = new ArrayList<Expression>();
+    List<Expression> expressionList = new ArrayList<>();
     while(!tokenizer.next(TokenKind.CLOSE)) {
       Expression expression = parseExpression();
       expressionList.add(expression);
@@ -496,7 +496,7 @@ public class ExpressionParser {
 
   private List<Expression> parseMethodParameters(final MethodKind methodKind)
       throws UriParserException, UriValidationException {
-    List<Expression> parameters = new ArrayList<Expression>();
+    List<Expression> parameters = new ArrayList<>();
     switch (methodKind) {
     // Must have no parameter.
     case NOW:

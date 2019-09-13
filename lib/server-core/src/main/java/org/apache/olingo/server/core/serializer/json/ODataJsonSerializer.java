@@ -100,7 +100,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   private static final Map<Geospatial.Type, String> geoValueTypeToJsonName;
   static {
-    Map<Geospatial.Type, String> temp = new EnumMap<Geospatial.Type, String>(Geospatial.Type.class);
+    Map<Geospatial.Type, String> temp = new EnumMap<>(Geospatial.Type.class);
     temp.put(Geospatial.Type.POINT, Constants.ELEM_POINT);
     temp.put(Geospatial.Type.MULTIPOINT, Constants.ELEM_MULTIPOINT);
     temp.put(Geospatial.Type.LINESTRING, Constants.ELEM_LINESTRING);
@@ -382,7 +382,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     boolean cycle = false;
     if (expand != null) {
       if (ancestors == null) {
-        ancestors = new HashSet<String>();
+        ancestors = new HashSet<>();
       }
       cycle = !ancestors.add(getEntityId(entity, entityType, name));
     }
@@ -509,7 +509,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final SelectOption select, final JsonGenerator json, Linked linked, ExpandOption expand)
       throws IOException, SerializerException {
     final boolean all = ExpandSelectHelper.isAll(select);
-    final Set<String> selected = all ? new HashSet<String>() :
+    final Set<String> selected = all ? new HashSet<>() :
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
     addKeyPropertiesToSelected(selected, type);
     Set<List<String>> expandedPaths = ExpandSelectHelper.getExpandedItemsPath(expand);
@@ -1189,11 +1189,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       json.close();
       outputStream.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
-    } catch (final IOException e) {
-      cachedException =
-          new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
-      throw cachedException;
-    } catch (DecoderException e) {
+    } catch (final IOException | DecoderException e) {
       cachedException =
           new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;

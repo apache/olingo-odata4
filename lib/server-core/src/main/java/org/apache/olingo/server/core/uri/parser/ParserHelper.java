@@ -65,7 +65,7 @@ public class ParserHelper {
   protected static final Map<TokenKind, EdmPrimitiveTypeKind> tokenToPrimitiveType;
   static {
     /* Enum and null are not present in the map. These have to be handled differently. */
-    Map<TokenKind, EdmPrimitiveTypeKind> temp = new EnumMap<TokenKind, EdmPrimitiveTypeKind>(TokenKind.class);
+    Map<TokenKind, EdmPrimitiveTypeKind> temp = new EnumMap<>(TokenKind.class);
     temp.put(TokenKind.BooleanValue, EdmPrimitiveTypeKind.Boolean);
     temp.put(TokenKind.StringValue, EdmPrimitiveTypeKind.String);
     // Very large integer values are of type Edm.Decimal but this is handled elsewhere.
@@ -163,8 +163,8 @@ public class ParserHelper {
       final Edm edm, final EdmType referringType, final boolean withComplex,
       final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
-    List<UriParameter> parameters = new ArrayList<UriParameter>();
-    Set<String> parameterNames = new HashSet<String>();
+    List<UriParameter> parameters = new ArrayList<>();
+    Set<String> parameterNames = new HashSet<>();
     ParserHelper.requireNext(tokenizer, TokenKind.OPEN);
     if (tokenizer.next(TokenKind.CLOSE)) {
       return parameters;
@@ -255,7 +255,7 @@ public class ParserHelper {
         // The alias value is not an allowed literal value, so parse it again as expression.
         aliasTokenizer = new UriTokenizer(alias.getText());
         // Don't pass on the current alias to avoid circular references.
-        Map<String, AliasQueryOption> aliasesInner = new HashMap<String, AliasQueryOption>(aliases);
+        Map<String, AliasQueryOption> aliasesInner = new HashMap<>(aliases);
         aliasesInner.remove(name);
         final Expression expression = new ExpressionParser(edm, odata)
             .parse(aliasTokenizer, referringType, null, aliasesInner);
@@ -299,8 +299,8 @@ public class ParserHelper {
           UriParserSemanticException.MessageKeys.WRONG_NUMBER_OF_KEY_PROPERTIES,
           Integer.toString(keyPropertyRefs.size()), "0");
     }
-    List<UriParameter> keys = new ArrayList<UriParameter>();
-    Map<String, String> referencedNames = new HashMap<String, String>();
+    List<UriParameter> keys = new ArrayList<>();
+    Map<String, String> referencedNames = new HashMap<>();
 
     if (partner != null) {
       // Prepare list of potentially missing keys to be filled from referential constraints.
@@ -378,8 +378,8 @@ public class ParserHelper {
       final Edm edm, final EdmType referringType, final Map<String, AliasQueryOption> aliases)
       throws UriParserException, UriValidationException {
 
-    List<UriParameter> parameters = new ArrayList<UriParameter>();
-    List<String> parameterNames = new ArrayList<String>();
+    List<UriParameter> parameters = new ArrayList<>();
+    List<String> parameterNames = new ArrayList<>();
 
     // To validate that each key predicate is exactly specified once, we use a list to pick from.
     List<String> remainingKeyNames = new ArrayList<String>(edmEntityType.getKeyPredicateNames());
@@ -530,7 +530,7 @@ public class ParserHelper {
   }
 
   protected static List<String> getParameterNames(final List<UriParameter> parameters) {
-    List<String> names = new ArrayList<String>();
+    List<String> names = new ArrayList<>();
     for (final UriParameter parameter : parameters) {
       names.add(parameter.getName());
     }

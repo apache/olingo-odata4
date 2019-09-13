@@ -106,7 +106,7 @@ public class UriValidator {
   private static final Map<SystemQueryOptionKind, Integer> OPTION_INDEX;
   static {
     Map<SystemQueryOptionKind, Integer> temp =
-        new EnumMap<SystemQueryOptionKind, Integer>(SystemQueryOptionKind.class);
+        new EnumMap<>(SystemQueryOptionKind.class);
     temp.put(SystemQueryOptionKind.FILTER, 0);
     temp.put(SystemQueryOptionKind.FORMAT, 1);
     temp.put(SystemQueryOptionKind.EXPAND, 2);

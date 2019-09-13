@@ -28,7 +28,7 @@ import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
 
 public class ExpandTreeBuilderImpl extends ExpandTreeBuilder {
 
-  private final Map<String, ExpandTreeBuilder> childBuilderCache = new HashMap<String, ExpandTreeBuilder>();
+  private final Map<String, ExpandTreeBuilder> childBuilderCache = new HashMap<>();
   private final ExpandItemImpl parentItem;
   private ExpandOptionImpl expandOption = null;
 

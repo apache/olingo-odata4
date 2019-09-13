@@ -281,7 +281,7 @@ public abstract class ServiceRequest {
   }  
 
   public Map<String, String> getPreferences(){
-    HashMap<String, String> map = new HashMap<String, String>();
+    HashMap<String, String> map = new HashMap<>();
     List<String> headers = request.getHeaders(HttpHeader.PREFER);
     if (headers != null) {
       for (String header:headers) {

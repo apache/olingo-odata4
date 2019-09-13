@@ -97,9 +97,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
         internalExecute(uriInfo, odRequest, odResponse);
       }
       return;
-    } catch(ODataLibraryException e) {
-    	oDataException = e;
-    } catch(ODataApplicationException e) {
+    } catch(ODataLibraryException | ODataApplicationException e) {
     	oDataException = e;
     }
     ContentType contentType = ContentType.JSON;

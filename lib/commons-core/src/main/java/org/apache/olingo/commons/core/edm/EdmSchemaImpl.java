@@ -162,7 +162,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmTypeDefinition> createTypeDefinitions() {
-    final List<EdmTypeDefinition> typeDefns = new ArrayList<EdmTypeDefinition>();
+    final List<EdmTypeDefinition> typeDefns = new ArrayList<>();
     final List<CsdlTypeDefinition> providerTypeDefinitions = schema.getTypeDefinitions();
     if (providerTypeDefinitions != null) {
       for (CsdlTypeDefinition def : providerTypeDefinitions) {
@@ -177,7 +177,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmEnumType> createEnumTypes() {
-    final List<EdmEnumType> enumTyps = new ArrayList<EdmEnumType>();
+    final List<EdmEnumType> enumTyps = new ArrayList<>();
     final List<CsdlEnumType> providerEnumTypes = schema.getEnumTypes();
     if (providerEnumTypes != null) {
       for (CsdlEnumType enumType : providerEnumTypes) {
@@ -192,7 +192,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmEntityType> createEntityTypes() {
-    final List<EdmEntityType> edmEntityTypes = new ArrayList<EdmEntityType>();
+    final List<EdmEntityType> edmEntityTypes = new ArrayList<>();
     final List<CsdlEntityType> providerEntityTypes = schema.getEntityTypes();
     if (providerEntityTypes != null) {
       for (CsdlEntityType entityType : providerEntityTypes) {
@@ -207,7 +207,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmComplexType> createComplexTypes() {
-    final List<EdmComplexType> edmComplexTypes = new ArrayList<EdmComplexType>();
+    final List<EdmComplexType> edmComplexTypes = new ArrayList<>();
     final List<CsdlComplexType> providerComplexTypes = schema.getComplexTypes();
     if (providerComplexTypes != null) {
       for (CsdlComplexType complexType : providerComplexTypes) {
@@ -222,7 +222,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmAction> createActions() {
-    final List<EdmAction> edmActions = new ArrayList<EdmAction>();
+    final List<EdmAction> edmActions = new ArrayList<>();
     final List<CsdlAction> providerActions = schema.getActions();
     if (providerActions != null) {
       for (CsdlAction action : providerActions) {
@@ -237,7 +237,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmFunction> createFunctions() {
-    final List<EdmFunction> edmFunctions = new ArrayList<EdmFunction>();
+    final List<EdmFunction> edmFunctions = new ArrayList<>();
     final List<CsdlFunction> providerFunctions = schema.getFunctions();
     if (providerFunctions != null) {
       for (CsdlFunction function : providerFunctions) {
@@ -252,7 +252,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmTerm> createTerms() {
-    final List<EdmTerm> edmTerms = new ArrayList<EdmTerm>();
+    final List<EdmTerm> edmTerms = new ArrayList<>();
     final List<CsdlTerm> providerTerms = schema.getTerms();
     if (providerTerms != null) {
       for (CsdlTerm term : providerTerms) {
@@ -266,7 +266,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmAnnotations> createAnnotationGroups() {
-    final List<EdmAnnotations> edmAnnotationGroups = new ArrayList<EdmAnnotations>();
+    final List<EdmAnnotations> edmAnnotationGroups = new ArrayList<>();
     final List<CsdlAnnotations> providerAnnotations =
         schema.getAnnotationGroups();
     if (providerAnnotations != null) {
@@ -286,7 +286,7 @@ public class EdmSchemaImpl extends AbstractEdmAnnotatable implements EdmSchema {
   }
 
   protected List<EdmAnnotation> createAnnotations() {
-    final List<EdmAnnotation> edmAnnotations = new ArrayList<EdmAnnotation>();
+    final List<EdmAnnotation> edmAnnotations = new ArrayList<>();
     final List<CsdlAnnotation> providerAnnotations =
         schema.getAnnotations();
     if (providerAnnotations != null) {

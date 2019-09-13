@@ -55,7 +55,7 @@ public class EdmApplyImpl extends AbstractEdmAnnotatableDynamicExpression implem
   @Override
   public List<EdmExpression> getParameters() {
     if (parameters == null) {
-      List<EdmExpression> localParameters = new ArrayList<EdmExpression>();
+      List<EdmExpression> localParameters = new ArrayList<>();
       if (csdlExp.getParameters() != null) {
         for (CsdlExpression param : csdlExp.getParameters()) {
           localParameters.add(getExpression(edm, param));

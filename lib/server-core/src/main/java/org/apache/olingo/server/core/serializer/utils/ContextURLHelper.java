@@ -170,7 +170,7 @@ public final class ContextURLHelper {
       } else {
         List<List<String>> complexSelectedPaths = edmProperty != null && 
             edmProperty.getType() instanceof EdmComplexType ?
-            getComplexSelectedPaths(edmProperty, selectedPaths) : new ArrayList<List<String>>();
+            getComplexSelectedPaths(edmProperty, selectedPaths) : new ArrayList<>();
         if (complexSelectedPaths.isEmpty()) {
           for (List<String> path : selectedPaths) {
             complexSelectedPaths.add(path);
@@ -319,7 +319,7 @@ public final class ContextURLHelper {
   }
 
   private static List<String> getPropertyPath(final List<UriResource> path) {
-    List<String> result = new LinkedList<String>();
+    List<String> result = new LinkedList<>();
     int index = 1;
     while (index < path.size() && path.get(index) instanceof UriResourceProperty) {
       result.add(((UriResourceProperty) path.get(index)).getProperty().getName());
@@ -338,9 +338,9 @@ public final class ContextURLHelper {
 
   private static List<List<String>> getComplexSelectedPaths(final EdmProperty edmProperty,
       final Set<List<String>> selectedPaths) {
-    List<List<String>> result = new ArrayList<List<String>>();
+    List<List<String>> result = new ArrayList<>();
     if (selectedPaths == null) {
-      List<String> path = new LinkedList<String>();
+      List<String> path = new LinkedList<>();
       path.add(edmProperty.getName());
       result.add(path);
     } else {
@@ -371,8 +371,8 @@ public final class ContextURLHelper {
   }
   
   private static List<List<String>> getComplexSelectedPaths(EdmNavigationProperty edmProperty) {
-    List<List<String>> result = new ArrayList<List<String>>();    
-    List<String> path = new LinkedList<String>();
+    List<List<String>> result = new ArrayList<>();    
+    List<String> path = new LinkedList<>();
     path.add(edmProperty.getName());
     result.add(path);
     return result;

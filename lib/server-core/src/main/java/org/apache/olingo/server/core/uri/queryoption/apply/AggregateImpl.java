@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression;
  */
 public class AggregateImpl implements Aggregate {
 
-  private List<AggregateExpression> expressions = new ArrayList<AggregateExpression>();
+  private List<AggregateExpression> expressions = new ArrayList<>();
 
   @Override
   public Kind getKind() {

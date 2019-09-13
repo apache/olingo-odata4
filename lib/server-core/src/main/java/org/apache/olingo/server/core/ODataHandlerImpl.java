@@ -60,7 +60,7 @@ public class ODataHandlerImpl implements ODataHandler {
 
   private final OData odata;
   private final ServiceMetadata serviceMetadata;
-  private final List<Processor> processors = new LinkedList<Processor>();
+  private final List<Processor> processors = new LinkedList<>();
   private final ServerCoreDebugger debugger;
 
   private CustomContentTypeSupport customContentTypeSupport;

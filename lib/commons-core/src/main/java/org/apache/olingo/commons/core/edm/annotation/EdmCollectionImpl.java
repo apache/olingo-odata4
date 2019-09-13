@@ -41,7 +41,7 @@ public class EdmCollectionImpl extends AbstractEdmDynamicExpression implements E
   @Override
   public List<EdmExpression> getItems() {
     if (items == null) {
-      List<EdmExpression> localItems = new ArrayList<EdmExpression>();
+      List<EdmExpression> localItems = new ArrayList<>();
       if (csdlCollection.getItems() != null) {
         for (CsdlExpression item : csdlCollection.getItems()) {
           localItems.add(getExpression(edm, item));

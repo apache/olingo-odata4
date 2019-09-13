@@ -97,7 +97,7 @@ public class DebugResponseHelperImpl implements DebugResponseHelper {
   }
 
   private List<DebugTab> createParts(final DebugInformation debugInfo) {
-    List<DebugTab> parts = new ArrayList<DebugTab>();
+    List<DebugTab> parts = new ArrayList<>();
 
     // request
     parts.add(new DebugTabRequest(debugInfo.getRequest()));

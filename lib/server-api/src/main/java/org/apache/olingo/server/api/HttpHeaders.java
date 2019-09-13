@@ -31,7 +31,7 @@ import java.util.Map;
  * @see ODataResponse
  */
 final class HttpHeaders {
-  private final Map<String, List<String>> headers = new LinkedHashMap<String, List<String>>();
+  private final Map<String, List<String>> headers = new LinkedHashMap<>();
 
   /**
    * Adds a header with given name and value.
@@ -44,7 +44,7 @@ final class HttpHeaders {
     final String canonicalName = getCanonicalName(name);
     List<String> header = headers.get(canonicalName);
     if (header == null) {
-      header = new ArrayList<String>();
+      header = new ArrayList<>();
     }
     header.add(value);
     headers.put(canonicalName, header);
@@ -62,7 +62,7 @@ final class HttpHeaders {
     final String canonicalName = getCanonicalName(name);
     List<String> header = headers.get(canonicalName);
     if (header == null) {
-      header = new ArrayList<String>();
+      header = new ArrayList<>();
     }
     header.addAll(values);
     headers.put(canonicalName, header);

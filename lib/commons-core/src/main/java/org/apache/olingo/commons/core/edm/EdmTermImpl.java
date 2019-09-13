@@ -75,7 +75,7 @@ public class EdmTermImpl extends AbstractEdmNamed implements EdmTerm {
   @Override
   public List<TargetType> getAppliesTo() {
     if (appliesTo == null) {
-      ArrayList<TargetType> localAppliesTo = new ArrayList<TargetType>();
+      ArrayList<TargetType> localAppliesTo = new ArrayList<>();
       for (String apply : term.getAppliesTo()) {
         try {
           localAppliesTo.add(TargetType.valueOf(apply));

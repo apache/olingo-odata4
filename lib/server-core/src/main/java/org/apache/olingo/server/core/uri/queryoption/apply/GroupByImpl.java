@@ -31,7 +31,7 @@ import org.apache.olingo.server.api.uri.queryoption.apply.GroupByItem;
 public class GroupByImpl implements GroupBy {
 
   private ApplyOption applyOption;
-  private List<GroupByItem> groupByItems = new ArrayList<GroupByItem>();
+  private List<GroupByItem> groupByItems = new ArrayList<>();
 
   @Override
   public Kind getKind() {

@@ -33,7 +33,7 @@ public class GroupByItemImpl implements GroupByItem {
 
   private UriInfo path;
   private boolean isRollupAll;
-  private List<GroupByItem> rollup = new ArrayList<GroupByItem>();
+  private List<GroupByItem> rollup = new ArrayList<>();
 
   @Override
   public List<UriResource> getPath() {

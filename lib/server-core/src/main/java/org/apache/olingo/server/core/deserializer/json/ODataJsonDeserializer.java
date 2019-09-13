@@ -97,7 +97,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private static final Map<String, Class<? extends Geospatial>> jsonNameToGeoDataType;
   static {
-    Map<String, Class<? extends Geospatial>> temp = new HashMap<String, Class<? extends Geospatial>>();
+    Map<String, Class<? extends Geospatial>> temp = new HashMap<>();
     temp.put(Constants.ELEM_POINT, Point.class);
     temp.put(Constants.ELEM_MULTIPOINT, MultiPoint.class);
     temp.put(Constants.ELEM_LINESTRING, LineString.class);
@@ -174,7 +174,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private List<Entity> consumeEntitySetArray(final EdmEntityType edmEntityType, final JsonNode jsonNode,
       final ExpandTreeBuilder expandBuilder) throws DeserializerException {
     if (jsonNode.isArray()) {
-      List<Entity> entities = new ArrayList<Entity>();
+      List<Entity> entities = new ArrayList<>();
       for (JsonNode arrayElement : jsonNode) {
         if (arrayElement.isArray() || arrayElement.isValueNode()) {
           throw new DeserializerException("Nested Arrays and primitive values are not allowed for an entity value.",
@@ -213,7 +213,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     entity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
     
     // Check and consume @id for v4.01
-    consumeId(edmEntityType, tree, entity);
+    consumeId(tree, entity);
 
     // Check and consume all Properties
     consumeEntityProperties(edmEntityType, tree, entity);
@@ -288,7 +288,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   }
 
-  private void consumeId(EdmEntityType edmEntityType, ObjectNode node, Entity entity) 
+  private void consumeId(ObjectNode node, Entity entity) 
       throws DeserializerException {
     if (node.get(constants.getId()) != null && constants instanceof Constantsv01) {
       try {
@@ -338,7 +338,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       // The binding parameter must not occur in the payload.
       parameterNames = parameterNames.subList(1, parameterNames.size());
     }
-    Map<String, Parameter> parameters = new LinkedHashMap<String, Parameter>();
+    Map<String, Parameter> parameters = new LinkedHashMap<>();
     for (final String paramName : parameterNames) {
       final EdmParameter edmParameter = edmAction.getParameter(paramName);
 
@@ -429,7 +429,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
    */
   private void consumeRemainingJsonNodeFields(final EdmEntityType edmEntityType, final ObjectNode node,
       final Entity entity) throws DeserializerException {
-    final List<String> toRemove = new ArrayList<String>();
+    final List<String> toRemove = new ArrayList<>();
     Iterator<Entry<String, JsonNode>> fieldsIterator = node.fields();
     while (fieldsIterator.hasNext()) {
       Entry<String, JsonNode> field = fieldsIterator.next();
@@ -548,7 +548,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         throw new DeserializerException("Binding annotation: " + key + " must be an array.",
             DeserializerException.MessageKeys.INVALID_ANNOTATION_TYPE, key);
       }
-      List<String> bindingLinkStrings = new ArrayList<String>();
+      List<String> bindingLinkStrings = new ArrayList<>();
       for (JsonNode arrayValue : jsonNode) {
         assertIsNullNode(key, arrayValue);
         if (!arrayValue.isTextual()) {
@@ -649,7 +649,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       throw new DeserializerException("Value for property: " + name + " must be an array but is not.",
           DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, name);
     }
-    List<Object> valueArray = new ArrayList<Object>();
+    List<Object> valueArray = new ArrayList<>();
     Iterator<JsonNode> iterator = jsonNode.iterator();
     switch (type.getKind()) {
     case PRIMITIVE:
@@ -793,7 +793,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             // Therefore the required minimal size of the points array currently is zero.
             return new LineString(dimension, srid, readGeoPointValues(name, dimension, 0, false, topNode));
           } else if (geoDataType.equals(MultiLineString.class)) {
-            List<LineString> lines = new ArrayList<LineString>();
+            List<LineString> lines = new ArrayList<>();
             for (final JsonNode element : topNode) {
               // Line strings can be empty (see above).
               lines.add(new LineString(dimension, srid, readGeoPointValues(name, dimension, 0, false, element)));
@@ -802,13 +802,13 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           } else if (geoDataType.equals(Polygon.class)) {
             return readGeoPolygon(name, dimension, topNode, srid);
           } else if (geoDataType.equals(MultiPolygon.class)) {
-            List<Polygon> polygons = new ArrayList<Polygon>();
+            List<Polygon> polygons = new ArrayList<>();
             for (final JsonNode element : topNode) {
               polygons.add(readGeoPolygon(name, dimension, element, null));
             }
             return new MultiPolygon(dimension, srid, polygons);
           } else if (geoDataType.equals(GeospatialCollection.class)) {
-            List<Geospatial> elements = new ArrayList<Geospatial>();
+            List<Geospatial> elements = new ArrayList<>();
             for (final JsonNode element : topNode) {
               if (element.isObject()) {
                 elements.add(readPrimitiveGeoValue(name, null, (ObjectNode) element));
@@ -858,7 +858,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       final int minimalSize, final boolean closed, JsonNode node)
       throws DeserializerException, EdmPrimitiveTypeException {
     if (node.isArray()) {
-      List<Point> points = new ArrayList<Point>();
+      List<Point> points = new ArrayList<>();
       for (final JsonNode element : node) {
         points.add(readGeoPointValue(name, dimension, element, null));
       }
@@ -914,7 +914,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   private void removeAnnotations(final ObjectNode tree) throws DeserializerException {
-    List<String> toRemove = new ArrayList<String>();
+    List<String> toRemove = new ArrayList<>();
     Iterator<Entry<String, JsonNode>> fieldsIterator = tree.fields();
     while (fieldsIterator.hasNext()) {
       Map.Entry<String, JsonNode> field = fieldsIterator.next();
@@ -1040,7 +1040,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   @Override
   public DeserializerResult entityReferences(final InputStream stream) throws DeserializerException {
     try {
-      List<URI> parsedValues = new ArrayList<URI>();
+      List<URI> parsedValues = new ArrayList<>();
       final ObjectNode tree = parseJsonTree(stream);
       final String key = constants.getId();
       JsonNode jsonNode = tree.get(Constants.VALUE);

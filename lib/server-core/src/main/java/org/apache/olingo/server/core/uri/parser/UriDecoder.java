@@ -37,7 +37,7 @@ public class UriDecoder {
 
   /** Splits the path string at '/' characters and percent-decodes the resulting path segments. */
   protected static List<String> splitAndDecodePath(final String path) throws UriParserSyntaxException {
-    List<String> pathSegmentsDecoded = new ArrayList<String>();
+    List<String> pathSegmentsDecoded = new ArrayList<>();
     for (final String segment : split(path, '/')) {
       pathSegmentsDecoded.add(decode(segment));
     }
@@ -51,7 +51,7 @@ public class UriDecoder {
    */
   protected static List<QueryOption> splitAndDecodeOptions(final String queryOptionString)
       throws UriParserSyntaxException {
-    List<QueryOption> queryOptions = new ArrayList<QueryOption>();
+    List<QueryOption> queryOptions = new ArrayList<>();
     formEncoding = false;
     for (final String option : split(queryOptionString, '&')) {
       final int pos = option.indexOf('=');
@@ -75,7 +75,7 @@ public class UriDecoder {
    * @return list of elements (can be empty)
    */
   private static List<String> split(final String input, final char c) {
-    List<String> list = new LinkedList<String>();
+    List<String> list = new LinkedList<>();
 
     int start = 0;
     int end;

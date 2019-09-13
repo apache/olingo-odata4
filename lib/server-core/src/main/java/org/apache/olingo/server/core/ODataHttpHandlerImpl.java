@@ -108,7 +108,7 @@ public class ODataHttpHandlerImpl implements ODataHttpHandler {
   }
 
   private Map<String, String> createEnvironmentVariablesMap(final HttpServletRequest request) {
-    Map<String, String> environment = new LinkedHashMap<String, String>();
+    Map<String, String> environment = new LinkedHashMap<>();
     environment.put("authType", request.getAuthType());
     environment.put("localAddr", request.getLocalAddr());
     environment.put("localName", request.getLocalName());

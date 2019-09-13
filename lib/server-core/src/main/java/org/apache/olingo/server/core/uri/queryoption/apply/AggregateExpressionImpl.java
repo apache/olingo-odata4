@@ -39,7 +39,7 @@ public class AggregateExpressionImpl implements AggregateExpression {
   private FullQualifiedName customMethod;
   private String alias;
   private AggregateExpression inlineAggregateExpression;
-  private List<AggregateExpression> from = new ArrayList<AggregateExpression>();
+  private List<AggregateExpression> from = new ArrayList<>();
 
   @Override
   public List<UriResource> getPath() {

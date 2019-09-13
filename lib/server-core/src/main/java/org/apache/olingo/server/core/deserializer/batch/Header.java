@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Header implements Iterable<HeaderField>, Cloneable {
-  private Map<String, HeaderField> headers = new HashMap<String, HeaderField>();
+  private Map<String, HeaderField> headers = new HashMap<>();
   private int lineNumber;
 
   public Header(final int lineNumer) {
@@ -76,7 +76,7 @@ public class Header implements Iterable<HeaderField>, Cloneable {
   public List<String> getHeaders(final String name) {
     final HeaderField headerField = getHeaderField(name);
 
-    return (headerField == null) ? new ArrayList<String>() : headerField.getValues();
+    return (headerField == null) ? new ArrayList<>() : headerField.getValues();
   }
 
   public HeaderField getHeaderField(final String name) {
@@ -88,7 +88,7 @@ public class Header implements Iterable<HeaderField>, Cloneable {
   }
 
   public Map<String, String> toSingleMap() {
-    final Map<String, String> singleMap = new HashMap<String, String>();
+    final Map<String, String> singleMap = new HashMap<>();
 
     for (final Map.Entry<String, HeaderField> entries : headers.entrySet()) {
       HeaderField field = entries.getValue();
@@ -99,7 +99,7 @@ public class Header implements Iterable<HeaderField>, Cloneable {
   }
 
   public Map<String, List<String>> toMultiMap() {
-    final Map<String, List<String>> singleMap = new HashMap<String, List<String>>();
+    final Map<String, List<String>> singleMap = new HashMap<>();
 
     for (final Map.Entry<String, HeaderField> entries : headers.entrySet()) {
       HeaderField field = entries.getValue();
@@ -123,7 +123,7 @@ public class Header implements Iterable<HeaderField>, Cloneable {
   public Header clone() throws CloneNotSupportedException{
     Header clone = (Header) super.clone();
     clone.lineNumber = lineNumber;
-    clone.headers = new HashMap<String, HeaderField>();
+    clone.headers = new HashMap<>();
     for (final Map.Entry<String, HeaderField> entries : headers.entrySet()) {
       clone.headers.put(entries.getKey(), entries.getValue().clone());
     }
@@ -154,7 +154,7 @@ public class Header implements Iterable<HeaderField>, Cloneable {
   }
 
   public static List<String> splitValuesByComma(final String headerValue) {
-    final List<String> singleValues = new ArrayList<String>();
+    final List<String> singleValues = new ArrayList<>();
 
     String[] parts = headerValue.split(",");
     for (final String value : parts) {

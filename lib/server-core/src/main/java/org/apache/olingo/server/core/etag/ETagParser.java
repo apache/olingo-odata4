@@ -53,7 +53,7 @@ public class ETagParser {
       return Collections.<String> emptySet();
     }
 
-    Set<String> result = new HashSet<String>();
+    Set<String> result = new HashSet<>();
     for (final String value : values) {
       final Collection<String> part = parse(value);
       if (part.size() == 1 && "*".equals(part.iterator().next())) {
@@ -69,7 +69,7 @@ public class ETagParser {
     if ("*".equals(value.trim())) {
       return Collections.singleton("*");
     } else {
-      Set<String> result = new HashSet<String>();
+      Set<String> result = new HashSet<>();
       String separator = "";
       int start = 0;
       Matcher matcher = ETAG.matcher(value.trim());

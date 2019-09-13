@@ -45,7 +45,7 @@ public final class FunctionMapKey {
     }
     this.bindingParameterTypeName = bindingParameterTypeName;
     this.isBindingParameterCollection = isBindingParameterCollection;
-    this.parameterNames = new ArrayList<String>();
+    this.parameterNames = new ArrayList<>();
     if (parameterNames != null) {
       this.parameterNames.addAll(parameterNames);
       Collections.sort(this.parameterNames);
