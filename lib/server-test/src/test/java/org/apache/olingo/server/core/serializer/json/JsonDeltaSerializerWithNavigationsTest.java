@@ -323,7 +323,7 @@ public class JsonDeltaSerializerWithNavigationsTest {
            + "\"@context\":\"#ESDelta/$link\",\"source\":\"ESDelta(100)\","
            + "\"relationship\":\"NavPropertyETAllPrimOne\","
            + "\"target\":\"ESAllPrim(0)\"}],"          
-           + "\"@odata.nextLink\":\"23042017\""
+           + "\"@nextLink\":\"23042017\""
            + "}";
        Assert.assertNotNull(jsonString);
        Assert.assertEquals(expectedResult, jsonString);
@@ -352,7 +352,7 @@ public class JsonDeltaSerializerWithNavigationsTest {
            + "\"@context\":\"#ESDelta/$link\",\"source\":\"ESDelta(100)\","
            + "\"relationship\":\"NavPropertyETAllPrimOne\","
            + "\"target\":\"ESAllPrim(0)\"}],"          
-           + "\"@odata.nextLink\":\"23042017\""
+           + "\"@nextLink\":\"23042017\""
            + "}";
        Assert.assertNotNull(jsonString);
        Assert.assertEquals(expectedResult, jsonString);

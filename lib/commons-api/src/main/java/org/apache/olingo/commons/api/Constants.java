@@ -334,4 +334,5 @@ public interface Constants {
   String ENTITY = "/$entity";
   String REASON = "Reason";
   String ID = "@id";
+  String NEXTLINK = "@nextLink";
 }

@@ -687,7 +687,7 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
   boolean writeNextLink(final AbstractEntityCollection entitySet, final JsonGenerator json)
       throws IOException {
     if (entitySet.getNext() != null) {
-      json.writeStringField(Constants.JSON_NEXT_LINK, entitySet.getNext().toASCIIString());
+      json.writeStringField(Constants.NEXTLINK, entitySet.getNext().toASCIIString());
       return true;
     } else {
       return false;
