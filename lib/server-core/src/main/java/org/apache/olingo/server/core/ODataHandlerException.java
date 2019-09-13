@@ -44,7 +44,9 @@ public class ODataHandlerException extends ODataLibraryException {
     /** parameter: version */
     ODATA_VERSION_NOT_SUPPORTED,
     /** parameter: prefer header */
-    INVALID_PREFER_HEADER;
+    INVALID_PREFER_HEADER,
+    /** invalid payload */
+    INVALID_PAYLOAD;
 
     @Override
     public String getKey() {

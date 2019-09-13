@@ -31,6 +31,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -1091,8 +1092,7 @@ public class ODataHandlerImplTest {
     EntityProcessor processor = mock(EntityProcessor.class);
     final ODataResponse response = dispatch(HttpMethod.POST, "ESAllPrim", null,
         HttpHeader.CONTENT_TYPE, null, processor);
-    verifyZeroInteractions(processor);
-    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
   }
 
   @Test
@@ -1150,6 +1150,32 @@ public class ODataHandlerImplTest {
     return response;
   }
 
+  @Test
+  public void dispatchEmptyContentWithoutContentType() {
+    final String path = "ESAllPrim";
+    final EntityCollectionProcessor processor = mock(EntityCollectionProcessor.class);
+    
+    ODataRequest request = new ODataRequest();
+    request.setMethod(HttpMethod.POST);
+    request.setRawBaseUri(BASE_URI);
+    request.setRawRequestUri(BASE_URI);
+    request.setRawODataPath(path);
+    request.setBody(new ByteArrayInputStream(new byte[0]));
+
+    final OData odata = OData.newInstance();
+    final ServiceMetadata metadata = odata.createServiceMetadata(
+        new EdmTechProvider(), Collections.<EdmxReference> emptyList());
+
+    ODataHandlerImpl handler = new ODataHandlerImpl(odata, metadata, new ServerCoreDebugger(odata));
+
+    if (processor != null) {
+      handler.register(processor);
+    }
+
+    final ODataResponse response = handler.process(request);
+    assertNotNull(response);
+  }
+  
   private ODataResponse dispatch(final HttpMethod method, final String path, final Processor processor) {
     return dispatch(method, path, null, null, null, processor);
   }

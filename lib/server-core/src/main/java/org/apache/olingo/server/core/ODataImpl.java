@@ -68,7 +68,7 @@ public class ODataImpl extends OData {
   public ODataSerializer createSerializer(final ContentType contentType) throws SerializerException {
     ODataSerializer serializer = null;
 
-    if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
+    if (contentType != null && contentType.isCompatible(ContentType.APPLICATION_JSON)) {
       final String metadata = contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA);
       if (metadata == null
           || ContentType.VALUE_ODATA_METADATA_MINIMAL.equalsIgnoreCase(metadata)
@@ -76,14 +76,16 @@ public class ODataImpl extends OData {
           || ContentType.VALUE_ODATA_METADATA_FULL.equalsIgnoreCase(metadata)) {
         serializer = new ODataJsonSerializer(contentType, new Constantsv00());
       }
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+    } else if (contentType != null && (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML))) {
       serializer = new ODataXmlSerializer();
     }
 
     if (serializer == null) {
-      throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
-          SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      throw new SerializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+          SerializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+          ((contentType != null) ? contentType.toContentTypeString() : null));
     } else {
       return serializer;
     }
@@ -97,7 +99,7 @@ public class ODataImpl extends OData {
     if(versions!=null && versions.size()>0 && getMaxVersion(versions)>4){
       constants = new Constantsv01() ;
     }
-    if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
+    if (contentType != null && contentType.isCompatible(ContentType.APPLICATION_JSON)) {
       final String metadata = contentType.getParameter(ContentType.PARAMETER_ODATA_METADATA);
       if (metadata == null
           || ContentType.VALUE_ODATA_METADATA_MINIMAL.equalsIgnoreCase(metadata)
@@ -105,14 +107,16 @@ public class ODataImpl extends OData {
           || ContentType.VALUE_ODATA_METADATA_FULL.equalsIgnoreCase(metadata)) {
         serializer = new ODataJsonSerializer(contentType, constants);
       }
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+    } else if (contentType != null && (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML))) {
       serializer = new ODataXmlSerializer();
     }
 
     if (serializer == null) {
-      throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
-          SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      throw new SerializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+          SerializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+          ((contentType != null) ? contentType.toContentTypeString() : null));
     } else {
       return serializer;
     }
@@ -125,26 +129,30 @@ public class ODataImpl extends OData {
 
   @Override
   public EdmAssistedSerializer createEdmAssistedSerializer(final ContentType contentType) throws SerializerException {
-    if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
+    if (contentType != null && contentType.isCompatible(ContentType.APPLICATION_JSON)) {
       return new EdmAssistedJsonSerializer(contentType);
     }
-    throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
-        SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+    throw new SerializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+        SerializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+        ((contentType != null) ? contentType.toContentTypeString() : null));
   }
   
   
   @Override
   public EdmDeltaSerializer createEdmDeltaSerializer(final ContentType contentType, final List<String> versions)
       throws SerializerException {
-    if (contentType.isCompatible(ContentType.APPLICATION_JSON)) {
+    if (contentType != null && contentType.isCompatible(ContentType.APPLICATION_JSON)) {
       if(versions!=null && !versions.isEmpty()){
        return getMaxVersion(versions)>4 ?  new JsonDeltaSerializerWithNavigations(contentType):
          new JsonDeltaSerializer(contentType);
       }
       return new JsonDeltaSerializerWithNavigations(contentType);
     }
-    throw new SerializerException("Unsupported format: " + contentType.toContentTypeString(),
-        SerializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+    throw new SerializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+        SerializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+        ((contentType != null) ? contentType.toContentTypeString() : null));
   }
 
   private float getMaxVersion(List<String> versions) {
@@ -193,27 +201,31 @@ public class ODataImpl extends OData {
 
   @Override
   public ODataDeserializer createDeserializer(final ContentType contentType) throws DeserializerException {
-    if (contentType.isCompatible(ContentType.JSON)) {
+    if (contentType != null && contentType.isCompatible(ContentType.JSON)) {
       return new ODataJsonDeserializer(contentType);
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+    } else if (contentType != null && (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML))) {
       return new ODataXmlDeserializer();
     } else {
-      throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
-          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      throw new DeserializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+          ((contentType != null) ? contentType.toContentTypeString() : null));
     }
   }  
   @Override
   public ODataDeserializer createDeserializer(final ContentType contentType,
       ServiceMetadata metadata) throws DeserializerException {
-    if (contentType.isCompatible(ContentType.JSON)) {
+    if (contentType != null && contentType.isCompatible(ContentType.JSON)) {
       return new ODataJsonDeserializer(contentType, metadata);
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+    } else if (contentType != null && (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML))) {
       return new ODataXmlDeserializer(metadata);
     } else {
-      throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
-          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      throw new DeserializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+          ((contentType != null) ? contentType.toContentTypeString() : null));
     }
   }
 
@@ -246,14 +258,16 @@ public class ODataImpl extends OData {
     if(versions!=null && versions.size()>0 && getMaxVersion(versions)>4){
       constants = new Constantsv01() ;
     }
-    if (contentType.isCompatible(ContentType.JSON)) {
+    if (contentType != null && contentType.isCompatible(ContentType.JSON)) {
       return new ODataJsonDeserializer(contentType, constants);
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+    } else if (contentType != null && (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML))) {
       return new ODataXmlDeserializer();
     } else {
-      throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
-          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      throw new DeserializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+          ((contentType != null) ? contentType.toContentTypeString() : null));
     }
   
   }
@@ -265,14 +279,16 @@ public class ODataImpl extends OData {
     if(versions!=null && versions.size()>0 && getMaxVersion(versions)>4){
       constants = new Constantsv01() ;
     }
-    if (contentType.isCompatible(ContentType.JSON)) {
+    if (contentType != null && contentType.isCompatible(ContentType.JSON)) {
       return new ODataJsonDeserializer(contentType, metadata, constants);
-    } else if (contentType.isCompatible(ContentType.APPLICATION_XML)
-        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML)) {
+    } else if (contentType != null && (contentType.isCompatible(ContentType.APPLICATION_XML)
+        || contentType.isCompatible(ContentType.APPLICATION_ATOM_XML))) {
       return new ODataXmlDeserializer(metadata);
     } else {
-      throw new DeserializerException("Unsupported format: " + contentType.toContentTypeString(),
-          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, contentType.toContentTypeString());
+      throw new DeserializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+          DeserializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+          ((contentType != null) ? contentType.toContentTypeString() : null));
     }
   }
 }

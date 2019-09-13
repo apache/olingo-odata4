@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmAction;
@@ -537,11 +538,20 @@ public class ODataDispatcher {
         handler.selectProcessor(MediaEntityProcessor.class)
             .createMediaEntity(request, response, uriInfo, requestFormat, responseFormat);
       } else {
-        final ContentType requestFormat = getSupportedContentType(
+        try {
+         final ContentType requestFormat = (request.getHeader(HttpHeader.CONTENT_TYPE) == null && 
+             (request.getBody() == null || request.getBody().available() == 0)) ?
+            getSupportedContentType(
             request.getHeader(HttpHeader.CONTENT_TYPE),
-            RepresentationType.ENTITY, true);
-        handler.selectProcessor(EntityProcessor.class)
+            RepresentationType.ENTITY, false) : getSupportedContentType(
+                request.getHeader(HttpHeader.CONTENT_TYPE),
+                RepresentationType.ENTITY, true);
+            handler.selectProcessor(EntityProcessor.class)
             .createEntity(request, response, uriInfo, requestFormat, responseFormat);
+        } catch (IOException e) {
+          throw new ODataHandlerException("There is problem in the payload.",
+              ODataHandlerException.MessageKeys.INVALID_PAYLOAD);
+        }
       }
     } else {
       throwMethodNotAllowed(method);
@@ -672,7 +682,7 @@ public class ODataDispatcher {
         throw new ODataHandlerException("ContentTypeHeader parameter is null",
             ODataHandlerException.MessageKeys.MISSING_CONTENT_TYPE);
       }
-      return null;
+      return ContentType.APPLICATION_JSON;
     }
     ContentType contentType;
     try {

@@ -101,7 +101,8 @@ public class ODataExceptionHelper {
         || ODataHandlerException.MessageKeys.MISSING_CONTENT_TYPE.equals(e.getMessageKey())
         || ODataHandlerException.MessageKeys.INVALID_CONTENT_TYPE.equals(e.getMessageKey())
         || ODataHandlerException.MessageKeys.UNSUPPORTED_CONTENT_TYPE.equals(e.getMessageKey())
-        || ODataHandlerException.MessageKeys.INVALID_PREFER_HEADER.equals(e.getMessageKey())) {
+        || ODataHandlerException.MessageKeys.INVALID_PREFER_HEADER.equals(e.getMessageKey())
+        || ODataHandlerException.MessageKeys.INVALID_PAYLOAD.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     } else if (ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode());
