@@ -86,9 +86,10 @@ public class EdmProviderImpl extends AbstractEdm {
     try {
       CsdlEntityContainerInfo entityContainerInfo = provider.getEntityContainerInfo(containerName);
       if (entityContainerInfo != null) {
-        addEntityContainerAnnotations(provider.getEntityContainer(), entityContainerInfo.getContainerName());
+        CsdlEntityContainer entityContainer = provider.getEntityContainer();
+        addEntityContainerAnnotations(entityContainer, entityContainerInfo.getContainerName());
         return new EdmEntityContainerImpl(this, provider, entityContainerInfo.getContainerName(), 
-            provider.getEntityContainer());
+            entityContainer);
       }
       return null;
     } catch (ODataException e) {
