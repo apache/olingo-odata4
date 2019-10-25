@@ -214,21 +214,25 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
    * @return the value as {@link Calendar} in the desired time zone
    * @throws EdmPrimitiveTypeException if the type of the value is not supported
    */
-  protected static <T> Calendar createDateTime(final T value, final boolean isLocal) throws EdmPrimitiveTypeException {
-    Calendar dateTimeValue;
-    if (value instanceof Date) {
-      dateTimeValue = Calendar.getInstance(isLocal ? TimeZone.getDefault() : TimeZone.getTimeZone("GMT"));
-      dateTimeValue.setTime((Date) value);
-    } else if (value instanceof Calendar) {
-      dateTimeValue = (Calendar) ((Calendar) value).clone();
-    } else if (value instanceof Long) {
-      dateTimeValue = Calendar.getInstance(isLocal ? TimeZone.getDefault() : TimeZone.getTimeZone("GMT"));
-      dateTimeValue.setTimeInMillis((Long) value);
-    } else {
-      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
-    }
-    return dateTimeValue;
-  }
+	protected static <T> Calendar createDateTime(final T value, final boolean isLocal)
+			throws EdmPrimitiveTypeException {
+		Calendar dateTimeValue;
+		if (value instanceof Date) {
+			dateTimeValue = Calendar.getInstance(isLocal ? TimeZone.getDefault() : TimeZone.getTimeZone("GMT"));
+			dateTimeValue.setTime((Date) value);
+		} else if (value instanceof Calendar) {
+			Calendar calendar = (Calendar) value;
+			// make sure that the fields are populated before the clone
+			calendar.get(Calendar.YEAR);
+			dateTimeValue = (Calendar) calendar.clone();
+		} else if (value instanceof Long) {
+			dateTimeValue = Calendar.getInstance(isLocal ? TimeZone.getDefault() : TimeZone.getTimeZone("GMT"));
+			dateTimeValue.setTimeInMillis((Long) value);
+		} else {
+			throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
+		}
+		return dateTimeValue;
+	}
 
   /**
    * Appends the given number to the given string builder, assuming that the number has at most two digits,

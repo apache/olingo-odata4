@@ -24,7 +24,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -50,29 +49,29 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
   public void valueToString() throws Exception {
     Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+    setTimeZone(dateTime, "GMT");
     dateTime.set(2012, 1, 29, 1, 2, 3);
     assertEquals("2012-02-29T01:02:03Z", instance.valueToString(dateTime, null, null, null, null, null));
     assertEquals("2012-02-29T01:02:03Z", instance.valueToString(dateTime, null, null, 0, null, null));
     assertEquals("2012-02-29T01:02:03Z", instance.valueToString(dateTime, null, null, 5, null, null));
 
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT-1:30"));
-    assertEquals("2012-02-29T01:02:03-01:30", instance.valueToString(dateTime, null, null, null, null, null));
+    setTimeZone(dateTime, "GMT-1:30");
+    assertEquals("2012-02-28T23:32:03-01:30", instance.valueToString(dateTime, null, null, null, null, null));
 
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT+11:00"));
-    assertEquals("2012-02-29T01:02:03+11:00", instance.valueToString(dateTime, null, null, null, null, null));
+    setTimeZone(dateTime, "GMT+11:00");
+    assertEquals("2012-02-29T12:02:03+11:00", instance.valueToString(dateTime, null, null, null, null, null));
 
     dateTime.set(Calendar.MILLISECOND, 503);
-    assertEquals("2012-02-29T01:02:03.503+11:00", instance.valueToString(dateTime, null, null, null, null, null));
-    assertEquals("2012-02-29T01:02:03.503+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
+    assertEquals("2012-02-29T12:02:03.503+11:00", instance.valueToString(dateTime, null, null, null, null, null));
+    assertEquals("2012-02-29T12:02:03.503+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
 
     dateTime.set(Calendar.MILLISECOND, 530);
-    assertEquals("2012-02-29T01:02:03.53+11:00", instance.valueToString(dateTime, null, null, null, null, null));
-    assertEquals("2012-02-29T01:02:03.53+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
+    assertEquals("2012-02-29T12:02:03.53+11:00", instance.valueToString(dateTime, null, null, null, null, null));
+    assertEquals("2012-02-29T12:02:03.53+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
 
     dateTime.set(Calendar.MILLISECOND, 53);
-    assertEquals("2012-02-29T01:02:03.053+11:00", instance.valueToString(dateTime, null, null, null, null, null));
-    assertEquals("2012-02-29T01:02:03.053+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
+    assertEquals("2012-02-29T12:02:03.053+11:00", instance.valueToString(dateTime, null, null, null, null, null));
+    assertEquals("2012-02-29T12:02:03.053+11:00", instance.valueToString(dateTime, null, null, 3, null, null));
 
     final Long millis = 1330558323007L;
     assertEquals("2012-02-29T23:32:03.007Z", instance.valueToString(millis, null, null, null, null, null));
@@ -103,7 +102,7 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
   public void valueOfString() throws Exception {
     Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+    setTimeZone(dateTime, "GMT");
     dateTime.set(2012, 1, 29, 1, 2, 3);
     assertEquals(dateTime, instance.valueOfString("2012-02-29T01:02:03Z", null, null, null, null, null,
         Calendar.class));
@@ -113,13 +112,13 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
         Calendar.class));
 
     dateTime.clear();
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT-01:30"));
+    setTimeZone(dateTime, "GMT-01:30");
     dateTime.set(2012, 1, 29, 1, 2, 3);
     assertEquals(dateTime.getTime(), instance.valueOfString("2012-02-29T01:02:03-01:30", null, null, null, null, null,
         Date.class));
 
     dateTime.clear();
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT+11:00"));
+    setTimeZone(dateTime, "GMT+11:00");
     dateTime.set(2012, 1, 29, 1, 2, 3);
     assertEquals(dateTime, instance.valueOfString("2012-02-29T01:02:03+11:00", null, null, null, null, null,
         Calendar.class));

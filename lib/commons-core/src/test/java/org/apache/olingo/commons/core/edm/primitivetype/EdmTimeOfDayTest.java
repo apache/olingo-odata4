@@ -49,7 +49,7 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
   public void valueToString() throws Exception {
     Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
-    dateTime.setTimeZone(TimeZone.getTimeZone("GMT+11:30"));
+    setTimeZone(dateTime, "GMT+11:30");
     dateTime.set(1, 2, 3, 4, 5, 6);
     assertEquals("04:05:06", instance.valueToString(dateTime, null, null, null, null, null));
 
@@ -60,7 +60,7 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
 
     Calendar dateTime2 = Calendar.getInstance();
     dateTime2.clear();
-    dateTime2.setTimeZone(TimeZone.getDefault());
+    setTimeZone(dateTime, TimeZone.getDefault());
     dateTime2.set(Calendar.HOUR, 5);
     dateTime2.set(Calendar.MINUTE, 59);
     dateTime2.set(Calendar.SECOND, 23);

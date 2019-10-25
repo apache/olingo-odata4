@@ -23,6 +23,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
@@ -114,5 +117,16 @@ public abstract class PrimitiveTypeBaseTest {
       assertNotNull(e.getLocalizedMessage());
       assertThat(e.getLocalizedMessage(), containsString("' has illegal content."));
     }
+  }
+
+  protected void setTimeZone(Calendar dateTime, String ID) {
+	TimeZone timeZone = TimeZone.getTimeZone(ID);
+	setTimeZone(dateTime, timeZone);
+  }
+
+  protected void setTimeZone(Calendar dateTime, TimeZone timeZone) {
+	dateTime.setTimeZone(timeZone);
+	// ensure that the internal fields are recomputed so that the calendar can be correctly cloned
+    dateTime.get(Calendar.YEAR);
   }
 }
