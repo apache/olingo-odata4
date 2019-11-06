@@ -66,10 +66,13 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
 		zdt = zdt.withZoneSameInstant(ZoneId.of("GMT+11:00"));
 		assertEquals("2012-02-29T12:02:03+11:00", instance.valueToString(zdt, null, null, null, null, null));
 
-		zdt = zdt.plus(503, ChronoUnit.MILLIS);
+		zdt = zdt.plus(123, ChronoUnit.MILLIS);
 
-		assertEquals("2012-02-29T12:02:03.503+11:00", instance.valueToString(zdt, null, null, null, null, null));
-		assertEquals("2012-02-29T12:02:03.503+11:00", instance.valueToString(zdt, null, null, 3, null, null));
+		assertEquals("2012-02-29T12:02:03.123+11:00", instance.valueToString(zdt, null, null, null, null, null));
+		assertEquals("2012-02-29T12:02:03.123+11:00", instance.valueToString(zdt, null, null, 3, null, null));
+		
+		zdt = zdt.plus(456789, ChronoUnit.NANOS);
+		assertEquals("2012-02-29T12:02:03.123456789+11:00", instance.valueToString(zdt, null, null, 9, null, null));
 	}
 
 	@Test
@@ -215,6 +218,17 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
 				instance.valueOfString("1970-01-01T00:00:00.12", null, null, 2, null, null, Time.class));
 	}
 
+	@Test
+	public void valueOfStringToJavaSqlDate() throws Exception {
+		assertEquals(new java.sql.Date(120000L),
+				instance.valueOfString("1970-01-01T00:02", null, null, null, null, null, java.sql.Date.class));
+		// java.sql.Time does not keep track of milliseconds.
+		assertEquals(new java.sql.Date(0),
+				instance.valueOfString("1970-01-01T00:00:00.012", null, null, 3, null, null, java.sql.Date.class));
+		assertEquals(new java.sql.Date(0),
+				instance.valueOfString("1970-01-01T00:00:00.12", null, null, 2, null, null, java.sql.Date.class));
+	}
+	
 	@Test
 	public void valueOfStringInvalidData() throws Exception {
 		expectContentErrorInValueOfString(instance, "2012-02-29T23:32:02X");

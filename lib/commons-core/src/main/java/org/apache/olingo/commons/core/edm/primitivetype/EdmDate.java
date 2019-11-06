@@ -71,6 +71,10 @@ public final class EdmDate extends SingletonPrimitiveType {
 			return (T) GregorianCalendar.from(zdt);
 		} else if (returnType.isAssignableFrom(Long.class)) {
 			return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
+		} else if (returnType.isAssignableFrom(java.sql.Date.class)) {
+			throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
+		} else if (returnType.isAssignableFrom(java.sql.Timestamp.class)) {
+			return (T) java.sql.Timestamp.from(zdt.toInstant());
 		} else if (returnType.isAssignableFrom(java.util.Date.class)) {
 			return (T) java.util.Date.from(zdt.toInstant());
 		} else {

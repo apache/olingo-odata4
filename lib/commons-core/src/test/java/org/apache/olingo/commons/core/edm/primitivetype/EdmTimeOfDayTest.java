@@ -22,7 +22,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -65,17 +70,29 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
 		dateTime2.set(Calendar.HOUR, 5);
 		dateTime2.set(Calendar.MINUTE, 59);
 		dateTime2.set(Calendar.SECOND, 23);
-		final Time time = new Time(dateTime2.getTimeInMillis());
+		
+		final java.sql.Time time = new java.sql.Time(dateTime2.getTimeInMillis());
 		assertEquals("05:59:23", instance.valueToString(time, null, null, null, null, null));
 
 		assertEquals("05:59:23", instance.valueToString(dateTime2.getTimeInMillis(), null, null, null, null, null));
 
-//    expectFacetsErrorInValueToString(instance, dateTime, null, null, 2, null, null);
 //    Timestamp timestamp = new Timestamp(0);
 //    timestamp.setNanos(42);
-//    expectFacetsErrorInValueToString(instance, timestamp, null, null, 8, null, null);
 
 		expectTypeErrorInValueToString(instance, 0);
+	}
+
+	@Test
+	public void valueToStringFromJavaUtilDate() throws Exception {
+		LocalTime time = LocalTime.parse("04:05:06");
+		ZonedDateTime zdt = ZonedDateTime.of(LocalDate.ofEpochDay(0), time, ZoneId.systemDefault());
+		long millis = zdt.toInstant().toEpochMilli();
+		
+		java.util.Date javaUtilDate = new java.util.Date(millis);
+		assertEquals("04:05:06", instance.valueToString(javaUtilDate, null, null, null, null, null));
+		
+		java.sql.Timestamp javaSqlTimestamp = new 	java.sql.Timestamp(millis);
+		assertEquals("04:05:06", instance.valueToString(javaSqlTimestamp, null, null, null, null, null));
 	}
 
 	@Test
@@ -83,7 +100,7 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
 		LocalTime time = LocalTime.parse("04:05:06");
 		assertEquals("04:05:06", instance.valueToString(time, null, null, null, null, null));
 	}
-
+	
 	@Test
 	public void valueToStringFromJavaSqlTime() throws Exception {
 		java.sql.Time time = java.sql.Time.valueOf("04:05:06");
@@ -135,12 +152,27 @@ public class EdmTimeOfDayTest extends PrimitiveTypeBaseTest {
 	public void valueOfStringToLocalTime() throws Exception {
 		LocalTime time = LocalTime.parse("04:05:06");
 		assertEquals(time, instance.valueOfString("04:05:06", null, null, null, null, null, LocalTime.class));
+		
+		time = time.plus(123, ChronoUnit.MILLIS);
+		assertEquals(time, instance.valueOfString("04:05:06.123", null, null, null, null, null, LocalTime.class));
+		
+		time = time.plus(456789, ChronoUnit.NANOS);
+		assertEquals(time, instance.valueOfString("04:05:06.123456789", null, null, null, null, null, LocalTime.class));
 	}
 	
 	@Test
 	public void valueOfStringToJavaSqlTime() throws Exception {
 		java.sql.Time time = java.sql.Time.valueOf("04:05:06");
 		assertEquals(time, instance.valueOfString("04:05:06", null, null, null, null, null, java.sql.Time.class));
+	}
+	
+	@Test
+	public void valueOfStringToJavaUtilDateTime() throws Exception {
+		LocalTime time = LocalTime.parse("04:05:06");
+		ZonedDateTime zdt = ZonedDateTime.of(LocalDate.ofEpochDay(0), time, ZoneId.systemDefault());
+		long millis = zdt.toInstant().toEpochMilli();
+		java.util.Date javaUtilDate = new java.util.Date(millis);		
+		assertEquals(javaUtilDate, instance.valueOfString("04:05:06", null, null, null, null, null, java.util.Date.class));
 	}
 	
 	@Test

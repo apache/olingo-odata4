@@ -93,12 +93,14 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 			return (T) zdt;
 		} else if (returnType == Instant.class) {
 			return (T) zdt.toInstant();
+		} else if (returnType.isAssignableFrom(Timestamp.class)) {
+			return (T) Timestamp.from(zdt.toInstant());
 		} else if (returnType.isAssignableFrom(java.util.Date.class)) {
 			return (T) java.util.Date.from(zdt.toInstant());
 		} else if (returnType.isAssignableFrom(java.sql.Time.class)) {
 			return (T) new java.sql.Time(zdt.toInstant().truncatedTo(ChronoUnit.SECONDS).toEpochMilli());
-		} else if (returnType.isAssignableFrom(Timestamp.class)) {
-			return (T) Timestamp.from(zdt.toInstant());
+		} else if (returnType.isAssignableFrom(java.sql.Date.class)) {
+			return (T) new java.sql.Date(zdt.toInstant().truncatedTo(ChronoUnit.SECONDS).toEpochMilli());
 		} else if (returnType.isAssignableFrom(Long.class)) {
 			return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
 		} else if (returnType.isAssignableFrom(Calendar.class)) {
