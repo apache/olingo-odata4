@@ -82,10 +82,11 @@
     <maven.plugin.api.version>3.2.2</maven.plugin.api.version>
     <maven.plugin.tools.version>3.3</maven.plugin.tools.version>
     <maven.bundle.plugin.version>2.5.3</maven.bundle.plugin.version>
+    <maven-plugin-plugin.version>3.6.0</maven-plugin-plugin.version>
     <hc.client.version>4.5.8</hc.client.version>
     <hc.core.version>4.4.11</hc.core.version>
-    <jackson.version>2.9.8</jackson.version>
-    <jackson-databind.version>2.9.9.3</jackson-databind.version>
+    <jackson.version>2.10.0</jackson.version>
+    <jackson-databind.version>2.10.0</jackson-databind.version>
     <aalto-xml.version>0.9.10</aalto-xml.version>
 
     <android.platform.version>4.1.1.4</android.platform.version>
@@ -310,7 +311,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>2.3</version>
+          <version>3.2.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -371,6 +372,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.2.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.6.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
