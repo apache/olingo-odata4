@@ -72,7 +72,7 @@
 
     <commons.logging.version>1.2</commons.logging.version>
     <commons.vfs.version>2.0</commons.vfs.version>
-    <esigate.version>4.3</esigate.version>
+    <esigate.version>4.4</esigate.version>
     <servlet.version>3.1.0</servlet.version>
     <cxf.version>3.0.0</cxf.version>
     <spring.version>4.0.6.RELEASE</spring.version>
@@ -87,7 +87,7 @@
     <hc.core.version>4.4.11</hc.core.version>
     <jackson.version>2.10.0</jackson.version>
     <jackson-databind.version>2.10.0</jackson-databind.version>
-    <aalto-xml.version>0.9.10</aalto-xml.version>
+    <aalto-xml.version>0.9.11</aalto-xml.version>
 
     <android.platform.version>4.1.1.4</android.platform.version>
     <stax.api.version>1.0-2</stax.api.version>
@@ -638,7 +638,7 @@
                       <title>OData Client Proxy</title>
                       <packages>org.apache.olingo.ext.proxy:org.apache.olingo.ext.proxy.*</packages>
                     </group>
-					<group>
+					          <group>
                       <title>OData Server</title>
                       <packages>org.apache.olingo.server.api:org.apache.olingo.server.api.*</packages>
                     </group>
