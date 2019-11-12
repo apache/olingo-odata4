@@ -94,6 +94,8 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   }
   
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
+    FACTORY.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+    FACTORY.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
     return FACTORY.createXMLEventReader(input);
   }
 

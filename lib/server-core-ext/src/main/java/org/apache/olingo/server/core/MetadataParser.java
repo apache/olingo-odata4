@@ -162,7 +162,7 @@ public class MetadataParser {
   }
 
   public SchemaBasedEdmProvider buildEdmProvider(Reader csdl) throws XMLStreamException {
-    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    XMLInputFactory xmlInputFactory = createXmlInputFactory();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);    
     return buildEdmProvider(reader, this.referenceResolver, this.implicitlyLoadCoreVocabularies,
             this.useLocalCoreVocabularies, true, null);
@@ -170,17 +170,17 @@ public class MetadataParser {
   
   public SchemaBasedEdmProvider addToEdmProvider(SchemaBasedEdmProvider existing, Reader csdl)
       throws XMLStreamException {
-    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    XMLInputFactory xmlInputFactory = createXmlInputFactory();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
     return addToEdmProvider(existing, reader, this.referenceResolver, this.implicitlyLoadCoreVocabularies,
         this.useLocalCoreVocabularies, true, null);
   }
-  
+
   protected SchemaBasedEdmProvider buildEdmProvider(Reader csdl, ReferenceResolver resolver,
                                                     boolean loadCore, boolean useLocal,
                                                     boolean loadReferenceSchemas, String namespace)
           throws XMLStreamException {
-    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    XMLInputFactory xmlInputFactory = createXmlInputFactory();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
     return buildEdmProvider(reader, resolver, loadCore, useLocal, loadReferenceSchemas, namespace);
   }
@@ -189,7 +189,7 @@ public class MetadataParser {
                                                     boolean loadCore, boolean useLocal,
                                                     boolean loadReferenceSchemas, String namespace)
           throws XMLStreamException {
-    XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    XMLInputFactory xmlInputFactory = createXmlInputFactory();
     XMLEventReader reader = xmlInputFactory.createXMLEventReader(csdl);
     return buildEdmProvider(reader, resolver, loadCore, useLocal, loadReferenceSchemas, namespace);
   } 
@@ -249,8 +249,15 @@ public class MetadataParser {
           : fixXmlBase(xmlBase.toString()), resolver, loadCore, useLocal);
     }
     return provider;
-  }  
-  
+  }
+
+  private XMLInputFactory createXmlInputFactory() {
+    XMLInputFactory factory = XMLInputFactory.newInstance();
+    factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+    factory.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
+    return factory;
+  }
+
   private void loadReferencesSchemas(SchemaBasedEdmProvider provider,
       String xmlBase, ReferenceResolver resolver, boolean loadCore,
       boolean useLocal) {    
