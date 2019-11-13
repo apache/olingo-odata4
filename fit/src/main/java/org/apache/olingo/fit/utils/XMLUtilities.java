@@ -60,6 +60,8 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.olingo.fit.metadata.Metadata;
 import org.apache.olingo.fit.metadata.NavigationProperty;
 
+import static javax.xml.stream.XMLInputFactory.*;
+
 public class XMLUtilities extends AbstractUtilities {
 
   private static final Pattern ENTITY_URI_PATTERN = Pattern.compile(".*\\/.*\\(.*\\)");
@@ -80,6 +82,8 @@ public class XMLUtilities extends AbstractUtilities {
   protected XMLEventReader getEventReader(final InputStream is) throws XMLStreamException {
     if (ifactory == null) {
       ifactory = XMLInputFactory.newInstance();
+      ifactory.setProperty(SUPPORT_DTD, false);
+      ifactory.setProperty(IS_SUPPORTING_EXTERNAL_ENTITIES, false);
     }
 
     return ifactory.createXMLEventReader(new InputStreamReader(is, Constants.DECODER));

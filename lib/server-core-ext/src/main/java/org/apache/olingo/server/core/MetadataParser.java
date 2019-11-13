@@ -254,7 +254,7 @@ public class MetadataParser {
   private XMLInputFactory createXmlInputFactory() {
     XMLInputFactory factory = XMLInputFactory.newInstance();
     factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-    factory.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
+    factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
     return factory;
   }
 

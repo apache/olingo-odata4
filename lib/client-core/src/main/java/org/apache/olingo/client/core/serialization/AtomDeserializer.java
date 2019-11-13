@@ -66,6 +66,8 @@ import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
 
+import static javax.xml.stream.XMLInputFactory.*;
+
 public class AtomDeserializer implements ODataDeserializer {
 
   protected static final QName etagQName = new QName(Constants.NS_METADATA, Constants.ATOM_ATTR_ETAG);
@@ -92,12 +94,15 @@ public class AtomDeserializer implements ODataDeserializer {
       new QName(Constants.NS_ATOM_TOMBSTONE, Constants.ATOM_ELEM_DELETED_ENTRY);
 
   protected static final XMLInputFactory FACTORY = new InputFactoryImpl();
+  static {
+    FACTORY.setProperty(IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+    FACTORY.setProperty(SUPPORT_DTD, false);
+    FACTORY.setProperty(IS_REPLACING_ENTITY_REFERENCES, false);
+  }
 
   private final AtomGeoValueDeserializer geoDeserializer;
   
   protected XMLEventReader getReader(final InputStream input) throws XMLStreamException {
-    FACTORY.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
-    FACTORY.setProperty("javax.xml.stream.isReplacingEntityReferences", false);
     return FACTORY.createXMLEventReader(input);
   }
 
