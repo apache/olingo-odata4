@@ -31,6 +31,8 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.io.IOUtils;
 
+import static javax.xml.stream.XMLInputFactory.*;
+
 public class XMLEventReaderWrapper implements XMLEventReader {
 
   private static final Charset ENCODING = Charset.forName(org.apache.olingo.commons.api.Constants.UTF8);
@@ -58,6 +60,8 @@ public class XMLEventReaderWrapper implements XMLEventReader {
     CONTENT_STAG = startBuilder.toString();
 
     final XMLInputFactory factory = XMLInputFactory.newInstance();
+    factory.setProperty(SUPPORT_DTD, false);
+    factory.setProperty(IS_SUPPORTING_EXTERNAL_ENTITIES, false);
 
     final InputStreamReader reader = new InputStreamReader(
         new ByteArrayInputStream((CONTENT_STAG
