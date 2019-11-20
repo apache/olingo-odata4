@@ -19,14 +19,17 @@
 package org.apache.olingo.ext.proxy;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Proxy;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.serialization.ValidatingObjectInputStream;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
@@ -52,6 +55,16 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractService<C extends EdmEnabledODataClient> {
 
+  /**
+   * A set of classes which are allowed to be deserialized by default.
+   */
+  private static final Set<String> DEFAULT_ALLOWED_CLASSES;
+  static {
+    Set<String> allowedClasses = new HashSet<>();
+    allowedClasses.add("org.apache.olingo.*");
+    DEFAULT_ALLOWED_CLASSES = Collections.unmodifiableSet(allowedClasses);
+  }
+
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractService.class);
 
   private final Map<Class<?>, Object> ENTITY_CONTAINERS = new ConcurrentHashMap<Class<?>, Object>();
@@ -75,7 +88,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
       // use commons codec's Base64 in this fashion to stay compatible with Android
       bais = new ByteArrayInputStream(new Base64().decode(compressedMetadata.getBytes("UTF-8")));
       gzis = new GZIPInputStream(bais);
-      ois = new ObjectInputStream(gzis);
+      ois = createObjectInputStream(gzis);
       metadata = (XMLMetadata) ois.readObject();
     } catch (Exception e) {
       LOG.error("While deserializing compressed metadata", e);
@@ -150,5 +163,37 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
       ENTITY_CONTAINERS.put(reference, entityContainer);
     }
     return reference.cast(ENTITY_CONTAINERS.get(reference));
+  }
+
+  /**
+   * Returns a set of classes which are allowed for deserialization.<br/>
+   * By default, only classes from the "org.apache.olingo" package are allowed.
+   * Subclasses should override this method if they expect other classes to be deserialized.
+   *
+   * @return A set of classes which are allowed for deserialization.
+   */
+  protected Set<String> getAllowedClasses() {
+    return DEFAULT_ALLOWED_CLASSES;
+  }
+
+  /**
+   * Wraps a specified {@link InputStream} into a {@link ValidatingObjectInputStream}
+   * which allowed only a limited set of classes for deserialization.
+   * The method calls {@link #getAllowedClasses()} to get a set of classes
+   * which allowed for deserialization.
+   *
+   * @param is The input stream to be wrapped.
+   * @return An instance of {@link ValidatingObjectInputStream}.
+   * @throws IOException If something went wrong.
+   */
+  private ObjectInputStream createObjectInputStream(InputStream is) throws IOException {
+    ValidatingObjectInputStream vois = new ValidatingObjectInputStream(is);
+    Set<String> allowedClasses = new HashSet<String>();
+    allowedClasses.addAll(DEFAULT_ALLOWED_CLASSES);
+    allowedClasses.addAll(getAllowedClasses());
+    for (String clazz : allowedClasses) {
+      vois.accept(clazz);
+    }
+    return vois;
   }
 }
