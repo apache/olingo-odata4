@@ -100,7 +100,7 @@ public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataB
 
       headers = res.getHeader(HttpHeader.RETRY_AFTER);
       if (headers != null && !headers.isEmpty()) {
-        this.retryAfter = Integer.parseInt(headers.iterator().next());
+        this.retryAfter = parseReplyAfter(headers.iterator().next());
       }
 
       headers = res.getHeader(HttpHeader.PREFERENCE_APPLIED);
