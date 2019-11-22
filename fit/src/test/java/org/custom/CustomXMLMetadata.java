@@ -18,78 +18,78 @@
  */
 package org.custom;
 
-import org.apache.olingo.client.api.edm.xml.Reference;
-import org.apache.olingo.client.api.edm.xml.XMLMetadata;
-import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.olingo.client.api.edm.xml.Reference;
+import org.apache.olingo.client.api.edm.xml.XMLMetadata;
+import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
+
 public class CustomXMLMetadata implements XMLMetadata, Serializable {
 
-    /*
-     * This flag shows if a method of the class was called.
-     */
-    private static boolean methodsCalled = false;
+  /*
+   * This flag shows if a method of the class was called.
+   */
+  private static boolean methodsCalled = false;
 
-    /*
-     * Clear the methodsCalled flag.
-     */
-    public static void forgetMethodCalls() {
-        methodsCalled = false;
-    }
+  /*
+   * Clear the methodsCalled flag.
+   */
+  public static void forgetMethodCalls() {
+    methodsCalled = false;
+  }
 
-    /*
-     * Returns true if any method of this class was called.
-     */
-    public static boolean detectedMethodCalls() {
-        return methodsCalled;
-    }
+  /*
+   * Returns true if any method of this class was called.
+   */
+  public static boolean detectedMethodCalls() {
+    return methodsCalled;
+  }
 
-    public CustomXMLMetadata() {
-        methodsCalled = true;
-    }
+  public CustomXMLMetadata() {
+    methodsCalled = true;
+  }
 
-    @Override
-    public CsdlSchema getSchema(int index) {
-        methodsCalled = true;
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public CsdlSchema getSchema(int index) {
+    methodsCalled = true;
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public CsdlSchema getSchema(String key) {
-        methodsCalled = true;
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public CsdlSchema getSchema(String key) {
+    methodsCalled = true;
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<CsdlSchema> getSchemas() {
-        methodsCalled = true;
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public List<CsdlSchema> getSchemas() {
+    methodsCalled = true;
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Map<String, CsdlSchema> getSchemaByNsOrAlias() {
-        methodsCalled = true;
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Map<String, CsdlSchema> getSchemaByNsOrAlias() {
+    methodsCalled = true;
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<Reference> getReferences() {
-        methodsCalled = true;
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public List<Reference> getReferences() {
+    methodsCalled = true;
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<List<String>> getSchemaNamespaces() {
-        methodsCalled = true;
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public List<List<String>> getSchemaNamespaces() {
+    methodsCalled = true;
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public String getEdmVersion() {
-        methodsCalled = true;
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public String getEdmVersion() {
+    methodsCalled = true;
+    throw new UnsupportedOperationException();
+  }
 }

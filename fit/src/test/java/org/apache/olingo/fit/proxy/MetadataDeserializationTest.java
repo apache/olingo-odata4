@@ -18,9 +18,17 @@
  */
 package org.apache.olingo.fit.proxy;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
 import org.apache.olingo.ext.proxy.AbstractService;
@@ -28,137 +36,129 @@ import org.apache.olingo.ext.proxy.api.AbstractTerm;
 import org.custom.CustomXMLMetadata;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.zip.GZIPOutputStream;
-
-import static org.junit.Assert.*;
-
 public class MetadataDeserializationTest {
 
-    @Test
-    public void testDeserializationWithNotAllowedCustomClass() throws IOException {
-        CustomXMLMetadata metadata = new CustomXMLMetadata();
-        assertTrue(CustomXMLMetadata.detectedMethodCalls());
-        CustomXMLMetadata.forgetMethodCalls();
+  @Test
+  public void testDeserializationWithNotAllowedCustomClass() throws IOException {
+    CustomXMLMetadata metadata = new CustomXMLMetadata();
+    assertTrue(CustomXMLMetadata.detectedMethodCalls());
+    CustomXMLMetadata.forgetMethodCalls();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        GZIPOutputStream gos = new GZIPOutputStream(baos);
-        ObjectOutputStream oos = new ObjectOutputStream(gos);
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    GZIPOutputStream gos = new GZIPOutputStream(baos);
+    ObjectOutputStream oos = new ObjectOutputStream(gos);
 
-        oos.writeObject(metadata);
-        oos.flush();
-        gos.finish();
-        gos.flush();
+    oos.writeObject(metadata);
+    oos.flush();
+    gos.finish();
+    gos.flush();
 
-        String compressedCustomMetadata = new Base64().encodeToString(baos.toByteArray());
+    String compressedCustomMetadata = new Base64().encodeToString(baos.toByteArray());
 
-        assertFalse(CustomXMLMetadata.detectedMethodCalls());
-        try {
-            new ServiceImpl(compressedCustomMetadata, "etag", ODataServiceVersion.V40, null, false);
-        } catch (Exception e) {
-            // okay
-        }
-
-        assertFalse(CustomXMLMetadata.detectedMethodCalls());
+    assertFalse(CustomXMLMetadata.detectedMethodCalls());
+    try {
+      new ServiceImpl(compressedCustomMetadata, "etag", ODataServiceVersion.V40, null, false);
+    } catch (Exception e) {
+      // okay
     }
 
-    @Test
-    public void testDeserializationWithAllowedCustomClass() throws IOException {
-        CustomXMLMetadata metadata = new CustomXMLMetadata();
-        assertTrue(CustomXMLMetadata.detectedMethodCalls());
-        CustomXMLMetadata.forgetMethodCalls();
+    assertFalse(CustomXMLMetadata.detectedMethodCalls());
+  }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        GZIPOutputStream gos = new GZIPOutputStream(baos);
-        ObjectOutputStream oos = new ObjectOutputStream(gos);
+  @Test
+  public void testDeserializationWithAllowedCustomClass() throws IOException {
+    CustomXMLMetadata metadata = new CustomXMLMetadata();
+    assertTrue(CustomXMLMetadata.detectedMethodCalls());
+    CustomXMLMetadata.forgetMethodCalls();
 
-        oos.writeObject(metadata);
-        oos.flush();
-        gos.finish();
-        gos.flush();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    GZIPOutputStream gos = new GZIPOutputStream(baos);
+    ObjectOutputStream oos = new ObjectOutputStream(gos);
 
-        String compressedCustomMetadata = new Base64().encodeToString(baos.toByteArray());
+    oos.writeObject(metadata);
+    oos.flush();
+    gos.finish();
+    gos.flush();
 
-        assertFalse(CustomXMLMetadata.detectedMethodCalls());
-        try {
-            new CustomService(compressedCustomMetadata, "etag", ODataServiceVersion.V40, null, false);
-        } catch (Exception e) {
-            // okay
-        }
+    String compressedCustomMetadata = new Base64().encodeToString(baos.toByteArray());
 
-        assertTrue(CustomXMLMetadata.detectedMethodCalls());
+    assertFalse(CustomXMLMetadata.detectedMethodCalls());
+    try {
+      new CustomService(compressedCustomMetadata, "etag", ODataServiceVersion.V40, null, false);
+    } catch (Exception e) {
+      // okay
     }
 
-    private static class ServiceImpl extends AbstractService {
+    assertTrue(CustomXMLMetadata.detectedMethodCalls());
+  }
 
-        ServiceImpl(String compressedMetadata, String metadataETag,
-                              ODataServiceVersion version, String serviceRoot, boolean transactional) {
-            super(compressedMetadata, metadataETag, version, serviceRoot, transactional);
-        }
+  private static class ServiceImpl extends AbstractService {
 
-        @Override
-        public Class<?> getEntityTypeClass(String name) {
-            throw new UnsupportedOperationException();
-        }
+    ServiceImpl(String compressedMetadata, String metadataETag,
+        ODataServiceVersion version, String serviceRoot, boolean transactional) {
+      super(compressedMetadata, metadataETag, version, serviceRoot, transactional);
+    }
 
-        @Override
-        public Class<?> getComplexTypeClass(String name) {
-            throw new UnsupportedOperationException();
-        }
+    @Override
+    public Class<?> getEntityTypeClass(String name) {
+      throw new UnsupportedOperationException();
+    }
 
-        @Override
-        public Class<?> getEnumTypeClass(String name) {
-            throw new UnsupportedOperationException();
-        }
+    @Override
+    public Class<?> getComplexTypeClass(String name) {
+      throw new UnsupportedOperationException();
+    }
 
-        @Override
-        public Class<? extends AbstractTerm> getTermClass(String name) {
-            throw new UnsupportedOperationException();
-        }
+    @Override
+    public Class<?> getEnumTypeClass(String name) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Class<? extends AbstractTerm> getTermClass(String name) {
+      throw new UnsupportedOperationException();
+    }
+  }
+
+  /*
+   * A service which allows custom XML metadata.
+   */
+  public static class CustomService extends AbstractService {
+
+    CustomService(String compressedMetadata, String metadataETag,
+        ODataServiceVersion version, String serviceRoot, boolean transactional) {
+      super(compressedMetadata, metadataETag, version, serviceRoot, transactional);
+    }
+
+    @Override
+    public Class<?> getEntityTypeClass(String name) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Class<?> getComplexTypeClass(String name) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Class<?> getEnumTypeClass(String name) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Class<? extends AbstractTerm> getTermClass(String name) {
+      throw new UnsupportedOperationException();
     }
 
     /*
-     * A service which allows custom XML metadata.
+     * Allows CustomXMLMetadata.
      */
-    public static class CustomService extends AbstractService {
-
-        CustomService(String compressedMetadata, String metadataETag,
-            ODataServiceVersion version, String serviceRoot, boolean transactional) {
-            super(compressedMetadata, metadataETag, version, serviceRoot, transactional);
-        }
-
-        @Override
-        public Class<?> getEntityTypeClass(String name) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Class<?> getComplexTypeClass(String name) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Class<?> getEnumTypeClass(String name) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Class<? extends AbstractTerm> getTermClass(String name) {
-            throw new UnsupportedOperationException();
-        }
-
-        /*
-         * Allows CustomXMLMetadata.
-         */
-        @Override
-        protected Set<String> getAllowedClasses() {
-            Set<String> classes = new HashSet<>();
-            classes.add(CustomXMLMetadata.class.getCanonicalName());
-            return Collections.unmodifiableSet(classes);
-        }
+    @Override
+    protected Set<String> getAllowedClasses() {
+      Set<String> classes = new HashSet<>();
+      classes.add(CustomXMLMetadata.class.getCanonicalName());
+      return Collections.unmodifiableSet(classes);
     }
-
+  }
 
 }
