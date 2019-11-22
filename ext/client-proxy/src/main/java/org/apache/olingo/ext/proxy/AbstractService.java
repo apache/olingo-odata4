@@ -23,7 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
@@ -34,9 +37,9 @@ import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.edm.ClientCsdlEdmProvider;
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
@@ -60,9 +63,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
    */
   private static final Set<String> DEFAULT_ALLOWED_CLASSES;
   static {
-    Set<String> allowedClasses = new HashSet<>();
-    allowedClasses.add("org.apache.olingo.*");
-    DEFAULT_ALLOWED_CLASSES = Collections.unmodifiableSet(allowedClasses);
+    DEFAULT_ALLOWED_CLASSES = Collections.singleton("org.apache.olingo.*");
   }
 
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractService.class);
@@ -101,7 +102,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
     if (metadata != null) {
       ClientCsdlEdmProvider provider = new ClientCsdlEdmProvider(metadata.getSchemaByNsOrAlias());
       edm = new EdmProviderImpl(provider);
-    }else{
+    } else {
       edm = null;
     }
     if (version.compareTo(ODataServiceVersion.V40) < 0) {
@@ -173,7 +174,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
    * @return A set of classes which are allowed for deserialization.
    */
   protected Set<String> getAllowedClasses() {
-    return DEFAULT_ALLOWED_CLASSES;
+    return Collections.emptySet();
   }
 
   /**
@@ -188,7 +189,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
    */
   private ObjectInputStream createObjectInputStream(InputStream is) throws IOException {
     ValidatingObjectInputStream vois = new ValidatingObjectInputStream(is);
-    Set<String> allowedClasses = new HashSet<String>();
+    Set<String> allowedClasses = new HashSet<>();
     allowedClasses.addAll(DEFAULT_ALLOWED_CLASSES);
     allowedClasses.addAll(getAllowedClasses());
     for (String clazz : allowedClasses) {
