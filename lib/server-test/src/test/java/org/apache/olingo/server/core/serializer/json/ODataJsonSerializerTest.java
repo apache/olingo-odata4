@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -142,6 +145,41 @@ public class ODataJsonSerializerTest {
         + "\"PropertyTimeOfDay\":\"03:26:05\""
         + "}";
     Assert.assertEquals(expectedResult, resultString);
+  }
+  
+  @Test
+  public void entitySimpleNewDateTimeAPI() throws Exception {
+	  final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+	  final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+	  entity.getProperty("PropertyDate").setValue(ValueType.PRIMITIVE, LocalDate.parse("2012-12-03"));
+	  entity.getProperty("PropertyDateTimeOffset").setValue(ValueType.PRIMITIVE, Instant.parse("2012-12-03T07:16:23Z"));
+	  entity.getProperty("PropertyTimeOfDay").setValue(ValueType.PRIMITIVE, LocalTime.parse("03:26:05"));
+	  InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+			  EntitySerializerOptions.with()
+			  .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+			  .build()).getContent();
+	  final String resultString = IOUtils.toString(result);
+	  final String expectedResult = "{"
+			  + "\"@odata.context\":\"$metadata#ESAllPrim/$entity\","
+			  + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+			  + "\"PropertyInt16\":32767,"
+			  + "\"PropertyString\":\"First Resource - positive values\","
+			  + "\"PropertyBoolean\":true,"
+			  + "\"PropertyByte\":255,"
+			  + "\"PropertySByte\":127,"
+			  + "\"PropertyInt32\":2147483647,"
+			  + "\"PropertyInt64\":9223372036854775807,"
+			  + "\"PropertySingle\":1.79E20,"
+			  + "\"PropertyDouble\":-1.79E19,"
+			  + "\"PropertyDecimal\":34,"
+			  + "\"PropertyBinary\":\"ASNFZ4mrze8=\","
+			  + "\"PropertyDate\":\"2012-12-03\","
+			  + "\"PropertyDateTimeOffset\":\"2012-12-03T07:16:23Z\","
+			  + "\"PropertyDuration\":\"PT6S\","
+			  + "\"PropertyGuid\":\"01234567-89ab-cdef-0123-456789abcdef\","
+			  + "\"PropertyTimeOfDay\":\"03:26:05\""
+			  + "}";
+	  Assert.assertEquals(expectedResult, resultString);
   }
   
   @Test

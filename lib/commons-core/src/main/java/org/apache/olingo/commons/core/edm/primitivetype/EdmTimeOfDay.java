@@ -19,103 +19,115 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.GregorianCalendar;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 public final class EdmTimeOfDay extends SingletonPrimitiveType {
 
-  private static final Pattern PATTERN = Pattern.compile(
-      "(\\p{Digit}{2}):(\\p{Digit}{2})(?::(\\p{Digit}{2})(\\.(\\p{Digit}{0,}?)0*)?)?");
+	private static final LocalDate EPOCH = LocalDate.ofEpochDay(0l);
+	private static final EdmTimeOfDay INSTANCE = new EdmTimeOfDay();
 
-  private static final EdmTimeOfDay INSTANCE = new EdmTimeOfDay();
+	public static EdmTimeOfDay getInstance() {
+		return INSTANCE;
+	}
 
-  public static EdmTimeOfDay getInstance() {
-    return INSTANCE;
-  }
+	@Override
+	public Class<?> getDefaultType() {
+		return Calendar.class;
+	}
 
-  @Override
-  public Class<?> getDefaultType() {
-    return Calendar.class;
-  }
+	@SuppressWarnings("unchecked")
+	@Override
+	protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+			final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
+			throws EdmPrimitiveTypeException {
+		LocalTime time;
+		try {
+			time = LocalTime.parse(value);
+		} catch (DateTimeParseException ex) {
+			throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
+		}
 
-  @Override
-  protected <T> T internalValueOfString(final String value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode, final Class<T> returnType) throws EdmPrimitiveTypeException {
+		// appropriate types
+		if (returnType.isAssignableFrom(LocalTime.class)) {
+			return (T) time;
+		} else if (returnType.isAssignableFrom(java.sql.Time.class)) {
+			return (T) java.sql.Time.valueOf(time);
+		}
 
-    final Matcher matcher = PATTERN.matcher(value);
-    if (!matcher.matches()) {
-      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
-    }
+		// inappropriate types, which need to be supported for backward compatibility
+		ZonedDateTime zdt = LocalDateTime.of(EPOCH, time).atZone(ZoneId.systemDefault());
+		if (returnType.isAssignableFrom(Calendar.class)) {
+			return (T) GregorianCalendar.from(zdt);
+		} else if (returnType.isAssignableFrom(Long.class)) {
+			return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
+		} else if (returnType.isAssignableFrom(java.sql.Date.class)) {
+			throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
+		} else if (returnType.isAssignableFrom(Timestamp.class)) {
+			return (T) Timestamp.from(zdt.toInstant());
+		} else if (returnType.isAssignableFrom(java.util.Date.class)) {
+			return (T) java.util.Date.from(zdt.toInstant());
+		} else {
+			throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
+		}
+	}
 
-    final Calendar dateTimeValue = Calendar.getInstance();
-    dateTimeValue.clear();
-    dateTimeValue.set(Calendar.HOUR_OF_DAY, Byte.parseByte(matcher.group(1)));
-    dateTimeValue.set(Calendar.MINUTE, Byte.parseByte(matcher.group(2)));
-    dateTimeValue.set(Calendar.SECOND, matcher.group(3) == null ? 0 : Byte.parseByte(matcher.group(3)));
+	@Override
+	protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+			final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+		// appropriate types
+		if (value instanceof LocalTime) {
+			return value.toString();
+		}  else if(value instanceof java.sql.Time) {
+			return value.toString();
+		}
+		
+		// inappropriate types, which need to be supported for backward compatibility
+		if (value instanceof GregorianCalendar) {
+			GregorianCalendar calendar = (GregorianCalendar) value;
+			return calendar.toZonedDateTime().toLocalTime().toString();
+		} 
+		
+		long millis;
+		if (value instanceof Long) {
+			millis = (Long)value;
+		} else if (value instanceof java.util.Date) {
+			millis = ((java.util.Date)value).getTime();
+		} else {
+			throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
+		}
+		
+		ZonedDateTime zdt = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault());
+		
+		return zdt.toLocalTime().toString();
 
-    int nanoSeconds = 0;
-    if (matcher.group(4) != null) {
-      if (matcher.group(4).length() == 1 || matcher.group(4).length() > 13) {
-        throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
-      }
-      final String decimals = matcher.group(5);
-      if (decimals.length() > (precision == null ? 0 : precision)) {
-        throw new EdmPrimitiveTypeException("The literal '" + value + "' does not match the facets' constraints.");
-      }
-      if (returnType.isAssignableFrom(Timestamp.class)) {
-        if (decimals.length() <= 9) {
-          nanoSeconds = Integer.parseInt(decimals + "000000000".substring(decimals.length()));
-        } else {
-          throw new EdmPrimitiveTypeException("The literal '" + value
-              + "' cannot be converted to value type " + returnType + ".");
-        }
-      } else {
-        if (decimals.length() <= 3) {
-          final String milliSeconds = decimals + "000".substring(decimals.length());
-          dateTimeValue.set(Calendar.MILLISECOND, Short.parseShort(milliSeconds));
-        } else {
-          throw new EdmPrimitiveTypeException("The literal '" + value
-              + "' cannot be converted to value type " + returnType + ".");
-        }
-      }
-    }
-
-    try {
-      return EdmDateTimeOffset.convertDateTime(dateTimeValue, nanoSeconds, returnType);
-    } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.", e);
-    } catch (final ClassCastException e) {
-      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.", e);
-    }
-  }
-
-  @Override
-  protected <T> String internalValueToString(final T value,
-      final Boolean isNullable, final Integer maxLength, final Integer precision,
-      final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
-
-    final Calendar dateTimeValue = EdmDateTimeOffset.createDateTime(value, true);
-
-    StringBuilder result = new StringBuilder();
-    EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.HOUR_OF_DAY));
-    result.append(':');
-    EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.MINUTE));
-    result.append(':');
-    EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
-
-    final int fractionalSecs = value instanceof Timestamp ?
-        ((Timestamp) value).getNanos() :
-        dateTimeValue.get(Calendar.MILLISECOND);
-    try {
-      EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, value instanceof Timestamp, precision);
-    } catch (final IllegalArgumentException e) {
-      throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.", e);
-    }
-
-    return result.toString();
-  }
+//
+//		final Calendar dateTimeValue = EdmDateTimeOffset.createDateTime(value, true);
+//
+//		StringBuilder result = new StringBuilder();
+//		EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.HOUR_OF_DAY));
+//		result.append(':');
+//		EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.MINUTE));
+//		result.append(':');
+//		EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
+//
+//		final int fractionalSecs = value instanceof Timestamp ? ((Timestamp) value).getNanos()
+//				: dateTimeValue.get(Calendar.MILLISECOND);
+//		try {
+//			EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, value instanceof Timestamp, precision);
+//		} catch (final IllegalArgumentException e) {
+//			throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.", e);
+//		}
+//
+//		return result.toString();
+	}
 }

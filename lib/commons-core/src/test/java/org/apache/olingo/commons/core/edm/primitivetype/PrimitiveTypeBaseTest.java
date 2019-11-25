@@ -19,16 +19,23 @@
 package org.apache.olingo.commons.core.edm.primitivetype;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 public abstract class PrimitiveTypeBaseTest {
 
-  private void expectErrorInValueToString(final EdmPrimitiveType instance,
+private void expectErrorInValueToString(final EdmPrimitiveType instance,
       final Object value, final Boolean isNullable, final Integer maxLength,
       final Integer precision, final Integer scale, final Boolean isUnicode,
       final String message) {
@@ -115,4 +122,26 @@ public abstract class PrimitiveTypeBaseTest {
       assertThat(e.getLocalizedMessage(), containsString("' has illegal content."));
     }
   }
+
+  protected void setTimeZone(Calendar dateTime, String ID) {
+	TimeZone timeZone = TimeZone.getTimeZone(ID);
+	setTimeZone(dateTime, timeZone);
+  }
+
+  protected void setTimeZone(Calendar dateTime, TimeZone timeZone) {
+	dateTime.setTimeZone(timeZone);
+	// ensure that the internal fields are recomputed so that the calendar can be correctly cloned
+    dateTime.get(Calendar.YEAR);
+  }
+  protected void assertEqualCalendar(Calendar expected, Calendar actual) {
+    assertEquals(normalize(expected), normalize(actual));
+  }
+
+  private ZonedDateTime normalize(Calendar cal) {
+	GregorianCalendar calendar = (GregorianCalendar) cal;
+	ZonedDateTime zdt = calendar.toZonedDateTime();
+	ZoneId normalizedZoneId = calendar.getTimeZone().toZoneId().normalized();
+	return zdt.withZoneSameInstant(normalizedZoneId);
+   }
+
 }
