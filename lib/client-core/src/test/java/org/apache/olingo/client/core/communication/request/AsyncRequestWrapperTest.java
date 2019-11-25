@@ -1,18 +1,18 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
+ * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * regarding copyright ownership. The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * with the License. You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
+ * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -60,25 +60,25 @@ public class AsyncRequestWrapperTest {
 
     ODataClient client = ODataClientFactory.getClient();
     URI uri = new URI("localhost:8080");
-    AsyncBatchRequestWrapperImpl req = new AsyncBatchRequestWrapperImpl(client, 
+    AsyncBatchRequestWrapperImpl req = new AsyncBatchRequestWrapperImpl(client,
         client.getBatchRequestFactory().getBatchRequest("root"));
     assertNotNull(req.addChangeset());
     ODataBatchableRequest request = new ODataInvokeRequestImpl<ClientInvokeResult>(
         client, ClientInvokeResult.class, HttpMethod.GET, uri);
-    req.addRetrieve(request );
+    req.addRetrieve(request);
     req.addOutsideUpdate(request);
     assertNotNull(client.getAsyncRequestFactory().getAsyncRequestWrapper(request));
     ODataBatchRequestImpl batchRequest = new ODataBatchRequestImpl(client, uri);
-    assertNotNull(client.getAsyncRequestFactory().getAsyncBatchRequestWrapper(batchRequest ));
+    assertNotNull(client.getAsyncRequestFactory().getAsyncBatchRequestWrapper(batchRequest));
     assertNotNull(req.wait(10));
   }
-  
+
   @Test
   public void testReq() throws URISyntaxException {
 
     ODataClient client = ODataClientFactory.getClient();
     URI uri = new URI("localhost:8080");
-    AsyncRequestWrapperImpl req = new AsyncRequestWrapperImpl(client, 
+    AsyncRequestWrapperImpl req = new AsyncRequestWrapperImpl(client,
         client.getBatchRequestFactory().getBatchRequest("root"));
     assertNotNull(req);
     ODataBatchableRequest request = new ODataInvokeRequestImpl<ClientInvokeResult>(
@@ -108,7 +108,7 @@ public class AsyncRequestWrapperTest {
 
     HttpResponseFactory factory = new DefaultHttpResponseFactory();
     HttpResponse firstResponse = factory.newHttpResponse(
-        new BasicStatusLine(HttpVersion.HTTP_1_1,202, null), null);
+        new BasicStatusLine(HttpVersion.HTTP_1_1, 202, null), null);
     firstResponse.addHeader(HttpHeader.LOCATION, "http://localhost/monitor");
     firstResponse.addHeader(HttpHeader.RETRY_AFTER, String.valueOf(retryAfter));
     when(httpClient.execute(any(HttpUriRequest.class))).thenReturn(firstResponse);
@@ -162,20 +162,20 @@ public class AsyncRequestWrapperTest {
     AsyncResponseWrapperImpl wrappedResponseImpl = (AsyncResponseWrapperImpl) wrappedResponse;
     assertEquals(retryAfter, wrappedResponseImpl.retryAfter);
   }
-  
+
   @Test
-  public void testWrapper(){
+  public void testWrapper() {
 
     Wrapper wrap = new Wrapper();
     wrap.setWrapped("test");
     assertEquals("test", wrap.getWrapped());
   }
-  
-  @Test
-  public void testException(){
 
-    AsyncRequestException  ex = new AsyncRequestException ("Exception");
+  @Test
+  public void testException() {
+
+    AsyncRequestException ex = new AsyncRequestException("Exception");
     assertEquals("Exception", ex.getMessage());
   }
-  
+
 }

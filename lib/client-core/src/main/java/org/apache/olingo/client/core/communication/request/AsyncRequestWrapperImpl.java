@@ -204,7 +204,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
           try {
             // wait for retry-after
-            Thread.sleep((long)retryAfter * 1000);
+            Thread.sleep((long) retryAfter * 1000);
           } catch (InterruptedException ignore) {
             // ignore
           }
@@ -225,24 +225,16 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     int parseReplyAfter(String value) {
       if (value == null || value.isEmpty()) {
         return DEFAULT_RETRY_AFTER;
-      }
 
-      int n;
       try {
-        n = Integer.parseInt(value);
+        int n = Integer.parseInt(value);
+        if (n < 0) {
+          return DEFAULT_RETRY_AFTER;
+        }
+        return Math.min(n, MAX_RETRY_AFTER);
       } catch (NumberFormatException e) {
         return DEFAULT_RETRY_AFTER;
       }
-
-      if (n < 0) {
-        return DEFAULT_RETRY_AFTER;
-      }
-
-      if (n > MAX_RETRY_AFTER) {
-        return MAX_RETRY_AFTER;
-      }
-
-      return n;
     }
 
     @Override
