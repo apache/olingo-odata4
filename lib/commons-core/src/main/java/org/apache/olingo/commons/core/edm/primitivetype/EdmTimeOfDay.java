@@ -33,101 +33,81 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 
 public final class EdmTimeOfDay extends SingletonPrimitiveType {
 
-	private static final LocalDate EPOCH = LocalDate.ofEpochDay(0l);
-	private static final EdmTimeOfDay INSTANCE = new EdmTimeOfDay();
+  private static final LocalDate EPOCH = LocalDate.ofEpochDay(0l);
+  private static final EdmTimeOfDay INSTANCE = new EdmTimeOfDay();
 
-	public static EdmTimeOfDay getInstance() {
-		return INSTANCE;
-	}
+  public static EdmTimeOfDay getInstance() {
+    return INSTANCE;
+  }
 
-	@Override
-	public Class<?> getDefaultType() {
-		return Calendar.class;
-	}
+  @Override
+  public Class<?> getDefaultType() {
+    return Calendar.class;
+  }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
-			final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
-			throws EdmPrimitiveTypeException {
-		LocalTime time;
-		try {
-			time = LocalTime.parse(value);
-		} catch (DateTimeParseException ex) {
-			throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
-		}
+  @SuppressWarnings("unchecked")
+  @Override
+  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
+      throws EdmPrimitiveTypeException {
+    LocalTime time;
+    try {
+      time = LocalTime.parse(value);
+    } catch (DateTimeParseException ex) {
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
+    }
 
-		// appropriate types
-		if (returnType.isAssignableFrom(LocalTime.class)) {
-			return (T) time;
-		} else if (returnType.isAssignableFrom(java.sql.Time.class)) {
-			return (T) java.sql.Time.valueOf(time);
-		}
+    // appropriate types
+    if (returnType.isAssignableFrom(LocalTime.class)) {
+      return (T) time;
+    } else if (returnType.isAssignableFrom(java.sql.Time.class)) {
+      return (T) java.sql.Time.valueOf(time);
+    }
 
-		// inappropriate types, which need to be supported for backward compatibility
-		ZonedDateTime zdt = LocalDateTime.of(EPOCH, time).atZone(ZoneId.systemDefault());
-		if (returnType.isAssignableFrom(Calendar.class)) {
-			return (T) GregorianCalendar.from(zdt);
-		} else if (returnType.isAssignableFrom(Long.class)) {
-			return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
-		} else if (returnType.isAssignableFrom(java.sql.Date.class)) {
-			throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
-		} else if (returnType.isAssignableFrom(Timestamp.class)) {
-			return (T) Timestamp.from(zdt.toInstant());
-		} else if (returnType.isAssignableFrom(java.util.Date.class)) {
-			return (T) java.util.Date.from(zdt.toInstant());
-		} else {
-			throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
-		}
-	}
+    // inappropriate types, which need to be supported for backward compatibility
+    ZonedDateTime zdt = LocalDateTime.of(EPOCH, time).atZone(ZoneId.systemDefault());
+    if (returnType.isAssignableFrom(Calendar.class)) {
+      return (T) GregorianCalendar.from(zdt);
+    } else if (returnType.isAssignableFrom(Long.class)) {
+      return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
+    } else if (returnType.isAssignableFrom(java.sql.Date.class)) {
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
+    } else if (returnType.isAssignableFrom(Timestamp.class)) {
+      return (T) Timestamp.from(zdt.toInstant());
+    } else if (returnType.isAssignableFrom(java.util.Date.class)) {
+      return (T) java.util.Date.from(zdt.toInstant());
+    } else {
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
+    }
+  }
 
-	@Override
-	protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
-			final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
-		// appropriate types
-		if (value instanceof LocalTime) {
-			return value.toString();
-		}  else if(value instanceof java.sql.Time) {
-			return value.toString();
-		}
-		
-		// inappropriate types, which need to be supported for backward compatibility
-		if (value instanceof GregorianCalendar) {
-			GregorianCalendar calendar = (GregorianCalendar) value;
-			return calendar.toZonedDateTime().toLocalTime().toString();
-		} 
-		
-		long millis;
-		if (value instanceof Long) {
-			millis = (Long)value;
-		} else if (value instanceof java.util.Date) {
-			millis = ((java.util.Date)value).getTime();
-		} else {
-			throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
-		}
-		
-		ZonedDateTime zdt = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault());
-		
-		return zdt.toLocalTime().toString();
+  @Override
+  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+    // appropriate types
+    if (value instanceof LocalTime) {
+      return value.toString();
+    } else if (value instanceof java.sql.Time) {
+      return value.toString();
+    }
 
-//
-//		final Calendar dateTimeValue = EdmDateTimeOffset.createDateTime(value, true);
-//
-//		StringBuilder result = new StringBuilder();
-//		EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.HOUR_OF_DAY));
-//		result.append(':');
-//		EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.MINUTE));
-//		result.append(':');
-//		EdmDateTimeOffset.appendTwoDigits(result, dateTimeValue.get(Calendar.SECOND));
-//
-//		final int fractionalSecs = value instanceof Timestamp ? ((Timestamp) value).getNanos()
-//				: dateTimeValue.get(Calendar.MILLISECOND);
-//		try {
-//			EdmDateTimeOffset.appendFractionalSeconds(result, fractionalSecs, value instanceof Timestamp, precision);
-//		} catch (final IllegalArgumentException e) {
-//			throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.", e);
-//		}
-//
-//		return result.toString();
-	}
+    // inappropriate types, which need to be supported for backward compatibility
+    if (value instanceof GregorianCalendar) {
+      GregorianCalendar calendar = (GregorianCalendar) value;
+      return calendar.toZonedDateTime().toLocalTime().toString();
+    }
+
+    long millis;
+    if (value instanceof Long) {
+      millis = (Long) value;
+    } else if (value instanceof java.util.Date) {
+      millis = ((java.util.Date) value).getTime();
+    } else {
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
+    }
+
+    ZonedDateTime zdt = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault());
+
+    return zdt.toLocalTime().toString();
+  }
 }

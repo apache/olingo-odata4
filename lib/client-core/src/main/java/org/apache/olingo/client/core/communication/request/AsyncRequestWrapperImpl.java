@@ -225,7 +225,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     int parseReplyAfter(String value) {
       if (value == null || value.isEmpty()) {
         return DEFAULT_RETRY_AFTER;
-
+      }
       try {
         int n = Integer.parseInt(value);
         if (n < 0) {

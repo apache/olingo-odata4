@@ -35,80 +35,80 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
  */
 public final class EdmDate extends SingletonPrimitiveType {
 
-	private static final EdmDate INSTANCE = new EdmDate();
+  private static final EdmDate INSTANCE = new EdmDate();
 
-	public static EdmDate getInstance() {
-		return INSTANCE;
-	}
+  public static EdmDate getInstance() {
+    return INSTANCE;
+  }
 
-	@Override
-	public Class<?> getDefaultType() {
-		return Calendar.class;
-	}
+  @Override
+  public Class<?> getDefaultType() {
+    return Calendar.class;
+  }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
-			final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
-			throws EdmPrimitiveTypeException {
-		LocalDate date;
-		try {
-			date = LocalDate.parse(value);
-		} catch (DateTimeParseException ex) {
-			throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
-		}
+  @SuppressWarnings("unchecked")
+  @Override
+  protected <T> T internalValueOfString(final String value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale, final Boolean isUnicode, final Class<T> returnType)
+      throws EdmPrimitiveTypeException {
+    LocalDate date;
+    try {
+      date = LocalDate.parse(value);
+    } catch (DateTimeParseException ex) {
+      throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
+    }
 
-		// appropriate types
-		if (returnType.isAssignableFrom(LocalDate.class)) {
-			return (T) date;
-		} else if (returnType.isAssignableFrom(java.sql.Date.class)) {
-			return (T) java.sql.Date.valueOf(date);
-		}
+    // appropriate types
+    if (returnType.isAssignableFrom(LocalDate.class)) {
+      return (T) date;
+    } else if (returnType.isAssignableFrom(java.sql.Date.class)) {
+      return (T) java.sql.Date.valueOf(date);
+    }
 
-		// inappropriate types, which need to be supported for backward compatibility
-		ZonedDateTime zdt = LocalDateTime.of(date, LocalTime.MIDNIGHT).atZone(ZoneId.systemDefault());
-		if (returnType.isAssignableFrom(Calendar.class)) {
-			return (T) GregorianCalendar.from(zdt);
-		} else if (returnType.isAssignableFrom(Long.class)) {
-			return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
-		} else if (returnType.isAssignableFrom(java.sql.Date.class)) {
-			throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
-		} else if (returnType.isAssignableFrom(java.sql.Timestamp.class)) {
-			return (T) java.sql.Timestamp.from(zdt.toInstant());
-		} else if (returnType.isAssignableFrom(java.util.Date.class)) {
-			return (T) java.util.Date.from(zdt.toInstant());
-		} else {
-			throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
-		}
-	}
+    // inappropriate types, which need to be supported for backward compatibility
+    ZonedDateTime zdt = LocalDateTime.of(date, LocalTime.MIDNIGHT).atZone(ZoneId.systemDefault());
+    if (returnType.isAssignableFrom(Calendar.class)) {
+      return (T) GregorianCalendar.from(zdt);
+    } else if (returnType.isAssignableFrom(Long.class)) {
+      return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
+    } else if (returnType.isAssignableFrom(java.sql.Date.class)) {
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
+    } else if (returnType.isAssignableFrom(java.sql.Timestamp.class)) {
+      return (T) java.sql.Timestamp.from(zdt.toInstant());
+    } else if (returnType.isAssignableFrom(java.util.Date.class)) {
+      return (T) java.util.Date.from(zdt.toInstant());
+    } else {
+      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
+    }
+  }
 
-	@Override
-	protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
-			final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
-		// appropriate types
-		if (value instanceof LocalDate) {
-			return value.toString();
-		} else if(value instanceof java.sql.Date) {
-			return value.toString();
-		}
-		
-		// inappropriate types, which need to be supported for backward compatibility
-		if (value instanceof GregorianCalendar) {
-			GregorianCalendar calendar = (GregorianCalendar) value;
-			return calendar.toZonedDateTime().toLocalDate().toString();
-		} 
-		
-		long millis;
-		if (value instanceof Long) {
-			millis = (Long)value;
-		} else if (value instanceof java.util.Date) {
-			millis = ((java.util.Date)value).getTime();
-		} else {
-			throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
-		}
-		
-		ZonedDateTime zdt = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault());
-		
-		return zdt.toLocalDate().toString();
-	}
+  @Override
+  protected <T> String internalValueToString(final T value, final Boolean isNullable, final Integer maxLength,
+      final Integer precision, final Integer scale, final Boolean isUnicode) throws EdmPrimitiveTypeException {
+    // appropriate types
+    if (value instanceof LocalDate) {
+      return value.toString();
+    } else if (value instanceof java.sql.Date) {
+      return value.toString();
+    }
+
+    // inappropriate types, which need to be supported for backward compatibility
+    if (value instanceof GregorianCalendar) {
+      GregorianCalendar calendar = (GregorianCalendar) value;
+      return calendar.toZonedDateTime().toLocalDate().toString();
+    }
+
+    long millis;
+    if (value instanceof Long) {
+      millis = (Long) value;
+    } else if (value instanceof java.util.Date) {
+      millis = ((java.util.Date) value).getTime();
+    } else {
+      throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
+    }
+
+    ZonedDateTime zdt = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault());
+
+    return zdt.toLocalDate().toString();
+  }
 }
