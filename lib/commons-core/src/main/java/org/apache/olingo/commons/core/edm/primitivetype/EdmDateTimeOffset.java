@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -138,7 +139,7 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
   }
 
   private static String format(LocalDateTime dateTime, ZoneOffset offset, int nanos) {
-    String str = dateTime.toString();
+    String str = dateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     if (nanos > 0) {
       str = removeTrailingZeros(str);
     }
