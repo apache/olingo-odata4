@@ -141,11 +141,14 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
   public class AsyncResponseWrapperImpl implements AsyncResponseWrapper<R> {
 
+    static final int DEFAULT_RETRY_AFTER = 5;
+    static final int MAX_RETRY_AFTER = 10;
+
     protected URI location = null;
 
     protected R response = null;
 
-    protected int retryAfter = 5;
+    protected int retryAfter = DEFAULT_RETRY_AFTER;
 
     protected boolean preferenceApplied = false;
 
@@ -196,12 +199,12 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
           final Header[] headers = res.getHeaders(HttpHeader.RETRY_AFTER);
           if (ArrayUtils.isNotEmpty(headers)) {
-            this.retryAfter = Integer.parseInt(headers[0].getValue());
+            this.retryAfter = parseReplyAfter(headers[0].getValue());
           }
 
           try {
             // wait for retry-after
-            Thread.sleep((long)retryAfter * 1000);
+            Thread.sleep((long) retryAfter * 1000);
           } catch (InterruptedException ignore) {
             // ignore
           }
@@ -217,6 +220,21 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       }
 
       return response;
+    }
+
+    int parseReplyAfter(String value) {
+      if (value == null || value.isEmpty()) {
+        return DEFAULT_RETRY_AFTER;
+
+      try {
+        int n = Integer.parseInt(value);
+        if (n < 0) {
+          return DEFAULT_RETRY_AFTER;
+        }
+        return Math.min(n, MAX_RETRY_AFTER);
+      } catch (NumberFormatException e) {
+        return DEFAULT_RETRY_AFTER;
+      }
     }
 
     @Override
@@ -264,7 +282,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
       headers = res.getHeaders(HttpHeader.RETRY_AFTER);
       if (ArrayUtils.isNotEmpty(headers)) {
-        this.retryAfter = Integer.parseInt(headers[0].getValue());
+        this.retryAfter = parseReplyAfter(headers[0].getValue());
       }
 
       headers = res.getHeaders(HttpHeader.PREFERENCE_APPLIED);
