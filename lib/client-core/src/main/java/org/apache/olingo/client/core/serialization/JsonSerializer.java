@@ -357,7 +357,7 @@ public class JsonSerializer implements ODataSerializer {
       String type = valuable.getType();
       if ((!valuable.isCollection() &&
           (type == null || type.isEmpty()) &&
-          valuable.isPrimitive()) || valuable.isNull()) {
+          valuable.isPrimitive())) {
         type = EdmPrimitiveTypeKind.String.getFullQualifiedName().toString();
       }
       if (type != null && !type.isEmpty() && isODataMetadataFull) {
