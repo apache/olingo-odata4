@@ -152,7 +152,8 @@ public class ODataJsonSerializerTest {
 	  final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
 	  final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
 	  entity.getProperty("PropertyDate").setValue(ValueType.PRIMITIVE, LocalDate.parse("2012-12-03"));
-	  entity.getProperty("PropertyDateTimeOffset").setValue(ValueType.PRIMITIVE, Instant.parse("2012-12-03T07:16:23Z"));
+	  entity.getProperty("PropertyDateTimeOffset")
+	  .setValue(ValueType.PRIMITIVE, Instant.parse("2012-12-03T07:16:23Z"));
 	  entity.getProperty("PropertyTimeOfDay").setValue(ValueType.PRIMITIVE, LocalTime.parse("03:26:05"));
 	  InputStream result = serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
 			  EntitySerializerOptions.with()
