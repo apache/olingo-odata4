@@ -47,8 +47,8 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.core.domain.ClientAnnotationImpl;
 import org.apache.olingo.client.core.serialization.JsonDeserializer;
-import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.client.core.serialization.JsonSerializer;
+import org.apache.olingo.client.core.uri.URIUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Delta;
@@ -966,7 +966,7 @@ public class JSONTest extends AbstractTest {
     ClientProperty testInt16 = client.getObjectFactory().newPrimitiveProperty("testInt16", valueBuilder.build());
     properties.add(testInt16);
 
-    InputStream inputStream = client.getWriter().writeEntity(entityIncNullValue, ContentType.JSON);
+    InputStream inputStream = client.getWriter().writeEntity(entityIncNullValue, ContentType.JSON_FULL_METADATA);
     HttpEntity httpEntity = URIUtils.buildInputStreamEntity(client, inputStream);
 
     final String actual = EntityUtils.toString(httpEntity);
