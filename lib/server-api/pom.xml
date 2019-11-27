@@ -30,7 +30,7 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-lib</artifactId>
-    <version>4.4.0-SNAPSHOT</version>
+    <version>4.7.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -47,8 +47,14 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-codec-http</artifactId>
+    </dependency>
+    <!-- Test dependencies -->
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -69,13 +75,15 @@
         <configuration>
           <instructions>
             <Export-Package>
-              org.apache.olingo.server.api*
+              org.apache.olingo.server.api*,
+              org.apache.olingo.netty.server.api*
             </Export-Package>
             <Import-Package>
               *
             </Import-Package>
             <!-- workaround due to the current server-api server-core interdependency -->
             <DynamicImport-Package>
+              org.apache.olingo.netty.server.core,
               org.apache.olingo.server.core
             </DynamicImport-Package>
           </instructions>

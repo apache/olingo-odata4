@@ -93,9 +93,9 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmNa
 
   @Override
   public String getReferencingPropertyName(final String referencedPropertyName) {
-    final List<CsdlReferentialConstraint> referentialConstraints = navigationProperty.getReferentialConstraints();
-    if (referentialConstraints != null) {
-      for (CsdlReferentialConstraint constraint : referentialConstraints) {
+    final List<CsdlReferentialConstraint> refConstraints = navigationProperty.getReferentialConstraints();
+    if (refConstraints != null) {
+      for (CsdlReferentialConstraint constraint : refConstraints) {
         if (constraint.getReferencedProperty().equals(referencedPropertyName)) {
           return constraint.getProperty();
         }

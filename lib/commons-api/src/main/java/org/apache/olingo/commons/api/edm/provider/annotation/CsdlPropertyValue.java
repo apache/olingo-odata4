@@ -71,4 +71,50 @@ public class CsdlPropertyValue extends CsdlAbstractEdmItem implements CsdlAnnota
     this.value = value;
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlPropertyValue)) {
+      return false;
+    }
+    CsdlPropertyValue csdlPropertyValue = (CsdlPropertyValue) obj;
+    
+    return (this.getProperty() == null ? csdlPropertyValue.getProperty() == null :
+      this.getProperty().equalsIgnoreCase(csdlPropertyValue.getProperty()))
+        && (this.getValue() == null ? csdlPropertyValue.getValue() == null :
+          this.getValue().equals(csdlPropertyValue.getValue()))
+        && (this.getAnnotations() == null ? csdlPropertyValue.getAnnotations() == null :
+            checkAnnotations(csdlPropertyValue.getAnnotations()));
+  }
+  
+  private boolean checkAnnotations(List<CsdlAnnotation> csdlPropertyValueAnnot) {
+    if (csdlPropertyValueAnnot == null) {
+      return false;
+    }
+    if (this.getAnnotations().size() == csdlPropertyValueAnnot.size()) {
+      for (int i = 0; i < this.getAnnotations().size() ; i++) {
+        if (!this.getAnnotations().get(i).equals(
+            csdlPropertyValueAnnot.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((property == null) ? 0 : property.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    result = prime * result + ((annotations == null) ? 0 : 
+      annotations.hashCode());
+    return result;
+  }
 }

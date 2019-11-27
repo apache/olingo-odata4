@@ -76,6 +76,14 @@ public interface EdmEntityContainer extends EdmNamed, EdmAnnotatable {
    * @return returns all entity sets for this container.
    */
   List<EdmEntitySet> getEntitySets();
+  
+  /**
+   * This method <b>DOES NOT</b> support lazy loading
+   *
+   * @return returns all entity sets for this container with 
+   * annotations defined in external file.
+   */
+  List<EdmEntitySet> getEntitySetsWithAnnotations();
 
   /**
    * This method <b>DOES NOT</b> support lazy loading

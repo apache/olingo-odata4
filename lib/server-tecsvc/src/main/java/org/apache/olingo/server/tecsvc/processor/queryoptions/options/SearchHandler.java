@@ -46,10 +46,7 @@ public class SearchHandler {
       while (it.hasNext()) {
         boolean keep = false;
         Entity entity = it.next();
-        ListIterator<Property> properties = entity.getProperties().listIterator();
-        while (properties.hasNext() && !keep) {
-          keep = isTrue(se, properties.next());
-        }
+        keep = isTrue(se, entity);
         if (!keep) {
           it.remove();
         }
@@ -107,6 +104,61 @@ public class SearchHandler {
     }
   }
 
+  private static boolean isTrue(final SearchBinary binary, final Entity entity) throws ODataApplicationException {
+    SearchExpression left = binary.getLeftOperand();
+    SearchExpression right = binary.getRightOperand();
+    if (binary.getOperator() == SearchBinaryOperatorKind.AND) {
+      if (left.isSearchBinary() && right.isSearchBinary()) {
+        return isTrue(left, entity) && isTrue(right, entity);
+      } else if (left.isSearchUnary() && right.isSearchBinary()) {
+        return isTrue(left, entity) && isTrue(right, entity);
+      } else if (left.isSearchBinary() && right.isSearchUnary()) {
+        return isTrue(left, entity) && isTrue(right, entity);
+      } else if (left.isSearchUnary() && right.isSearchUnary()) {
+        return isTrue(left, entity) && isTrue(right, entity);
+      }
+      ListIterator<Property> properties = entity.getProperties().listIterator();
+      boolean leftValid = false;
+      boolean rightValid = false;
+      while (properties.hasNext()) {
+        Property property = properties.next();
+        if (!leftValid) {
+          leftValid = isTrue(left, property);
+        }
+        if (!rightValid) {
+          rightValid = isTrue(right, property);
+        }
+      }
+      return leftValid && rightValid;
+    } else if (binary.getOperator() == SearchBinaryOperatorKind.OR) {
+      if (left.isSearchBinary() && right.isSearchBinary()) {
+        return isTrue(left, entity) || isTrue(right, entity);
+      } else if (left.isSearchUnary() && right.isSearchBinary()) {
+        return isTrue(left, entity) || isTrue(right, entity);
+      } else if (left.isSearchBinary() && right.isSearchUnary()) {
+        return isTrue(left, entity) || isTrue(right, entity);
+      } else if (left.isSearchUnary() && right.isSearchUnary()) {
+        return isTrue(left, entity) || isTrue(right, entity);
+      }
+      ListIterator<Property> properties = entity.getProperties().listIterator();
+      boolean leftValid = false;
+      boolean rightValid = false;
+      while (properties.hasNext()) {
+        Property property = properties.next();
+        if (!leftValid) {
+          leftValid = isTrue(left, property);
+        }
+        if (!rightValid) {
+          rightValid = isTrue(right, property);
+        }
+      }
+      return leftValid || rightValid;
+    } else {
+      throw new ODataApplicationException("Found unknown SearchBinaryOperatorKind: " + binary.getOperator(),
+          HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
+    }
+  }
+
   private static boolean isTrue(final SearchBinary binary, final Property property) throws ODataApplicationException {
     SearchExpression left = binary.getLeftOperand();
     SearchExpression right = binary.getRightOperand();
@@ -119,7 +171,28 @@ public class SearchHandler {
           HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
     }
   }
-
+  
+  private static boolean isTrue(final SearchExpression searchExpression, final Entity entity)
+      throws ODataApplicationException {
+    if (searchExpression.isSearchBinary()) {
+      return isTrue(searchExpression.asSearchBinary(), entity);
+    } else if (searchExpression.isSearchTerm()) {
+      ListIterator<Property> properties = entity.getProperties().listIterator();
+      boolean keep = false;
+      while (properties.hasNext()) {
+        Property property = properties.next();
+        if (!keep) {
+          keep = isTrue(searchExpression.asSearchTerm(), property);
+        }
+      }
+      return keep;
+    } else if (searchExpression.isSearchUnary()) {
+      return !isTrue(searchExpression.asSearchUnary().getOperand(), entity);
+    }
+    throw new ODataApplicationException("Found unknown SearchExpression: " + searchExpression,
+        HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), Locale.ROOT);
+  }
+  
   private static boolean isTrue(final SearchExpression searchExpression, final Property property)
       throws ODataApplicationException {
     if (searchExpression.isSearchBinary()) {

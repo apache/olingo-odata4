@@ -52,7 +52,8 @@ public enum MethodKind {
   GEOLENGTH("geo.length"),
   GEOINTERSECTS("geo.intersects"),
   CAST("cast"),
-  ISOF("isof");
+  ISOF("isof"),
+  SUBSTRINGOF("substringof");
 
   private String syntax;
 

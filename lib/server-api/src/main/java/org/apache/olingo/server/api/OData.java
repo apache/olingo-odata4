@@ -35,6 +35,7 @@ import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.ServiceMetadataETagSupport;
 import org.apache.olingo.server.api.prefer.Preferences;
 import org.apache.olingo.server.api.serializer.EdmAssistedSerializer;
+import org.apache.olingo.server.api.serializer.EdmDeltaSerializer;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -77,6 +78,16 @@ public abstract class OData {
    * @param contentType any format supported by Olingo (XML, JSON ...)
    */
   public abstract ODataSerializer createSerializer(ContentType contentType) throws SerializerException;
+ 
+  /**
+   * Creates a new serializer object for rendering content in the specified format.
+   * Serializers are used in Processor implementations.
+   *
+   * @param contentType any format supported by Olingo (XML, JSON ...)
+   * @param versions any v4 version supported by Olingo (4.0, 4.01 ...)
+   */
+  public abstract ODataSerializer createSerializer(ContentType contentType, 
+      final List<String> versions) throws SerializerException;
 
   /**
    * Creates a new serializer object for rendering content in a fixed format, e.g., for binary output or multipart/mixed
@@ -150,6 +161,27 @@ public abstract class OData {
       ServiceMetadata metadata) throws DeserializerException;
   
   /**
+  * Creates a new deserializer object for reading content in the specified format.
+  * Deserializers are used in Processor implementations.
+    *
+    * @param contentType any content type supported by Olingo (XML, JSON ...)
+    * @param service version
+   */
+  public abstract ODataDeserializer createDeserializer(ContentType contentType, 
+      final List<String> versions) throws DeserializerException;
+
+  /**
+   * Creates a new deserializer object for reading content in the specified format.
+   * Deserializers are used in Processor implementations.
+   *
+   * @param contentType any content type supported by Olingo (XML, JSON ...)
+   * @param metadata ServiceMetada of the service
+   * @param service version
+   */
+  public abstract ODataDeserializer createDeserializer(ContentType contentType,
+      ServiceMetadata metadata, final List<String> versions) throws DeserializerException;
+  
+  /**
    * Creates a primitive-type instance.
    * @param kind the kind of the primitive type
    * @return an {@link EdmPrimitiveType} instance for the type kind
@@ -184,4 +216,13 @@ public abstract class OData {
    */
   public abstract EdmAssistedSerializer createEdmAssistedSerializer(final ContentType contentType)
       throws SerializerException;
+  
+  /**
+   * Creates a new serializer object capable of working without EDM information
+   * for rendering delta content in the specified format.
+   * @param contentType a content type supported by Olingo
+   * @param version versions supported by Olingo
+   */
+  public abstract EdmDeltaSerializer createEdmDeltaSerializer(final ContentType contentType,
+      final List<String> versions) throws SerializerException;
 }

@@ -63,8 +63,10 @@ public class DebugTabStacktrace implements DebugTab {
 
     gen.writeFieldName("stacktrace");
     gen.writeStartArray();
-    for (final StackTraceElement stackTraceElement : exception.getStackTrace()) {
-      appendJsonStackTraceElement(gen, stackTraceElement);
+    if(exception != null){
+      for (final StackTraceElement stackTraceElement : exception.getStackTrace()) {
+        appendJsonStackTraceElement(gen, stackTraceElement);
+      }
     }
     gen.writeEndArray();
 

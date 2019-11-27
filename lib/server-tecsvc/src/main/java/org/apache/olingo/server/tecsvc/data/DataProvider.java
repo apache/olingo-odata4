@@ -31,7 +31,11 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.ComplexValue;
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
+import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
@@ -50,8 +54,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmSingleton;
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -139,11 +143,17 @@ public class DataProvider {
             throw new DataProviderException("Expression in key value is not supported yet!",
                 HttpStatusCode.NOT_IMPLEMENTED);
           }
+          Object keyValue = null;
           final String text = key.getAlias() == null ? key.getText() : ((Literal) key.getExpression()).getText();
-          final Object keyValue = type.valueOfString(type.fromUriLiteral(text),
-              property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
-              property.isUnicode(),
-              Calendar.class.isAssignableFrom(value.getClass()) ? Calendar.class : value.getClass());
+          if (Calendar.class.isAssignableFrom(value.getClass())) {
+            keyValue = type.valueOfString(type.fromUriLiteral(text),
+                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+                property.isUnicode(), Calendar.class);
+          } else {
+            keyValue = type.valueOfString(type.fromUriLiteral(text),
+                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+                property.isUnicode(), value.getClass());
+          }
           if (!value.equals(keyValue)) {
             found = false;
             break;
@@ -312,7 +322,8 @@ public class DataProvider {
   public void update(final String rawBaseUri, final EdmEntitySet edmEntitySet, Entity entity,
       final Entity changedEntity, final boolean patch, final boolean isInsert) throws DataProviderException {
 
-    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final EdmEntityType entityType = changedEntity.getType()!=null ?
+        edm.getEntityType(new FullQualifiedName(changedEntity.getType())):edmEntitySet.getEntityType();
     final List<String> keyNames = entityType.getKeyPredicateNames();
 
     // Update Properties
@@ -468,6 +479,10 @@ public class DataProvider {
   @SuppressWarnings("unchecked")
   public void updateProperty(final EdmProperty edmProperty, Property property, final Property newProperty,
       final boolean patch) throws DataProviderException {
+    if(property == null){
+      throw new DataProviderException("Cannot update type of the entity",
+          HttpStatusCode.BAD_REQUEST);
+    }
     final EdmType type = edmProperty.getType();
     if (edmProperty.isCollection()) {
       // Updating collection properties means replacing all entries with the given ones.
@@ -508,9 +523,15 @@ public class DataProvider {
   private ComplexValue createComplexValue(final EdmProperty edmProperty, final ComplexValue complexValue,
       final boolean patch) throws DataProviderException {
     final ComplexValue result = new ComplexValue();
-    final EdmComplexType edmType = (EdmComplexType) edmProperty.getType();
+    EdmComplexType edmType = (EdmComplexType) edmProperty.getType();
     final List<Property> givenProperties = complexValue.getValue();
-
+    if(complexValue.getTypeName()!=null){
+      EdmComplexType derivedType = edm.getComplexType(new FullQualifiedName(complexValue.getTypeName()));
+      if(derivedType.getBaseType()!=null && edmType.getFullQualifiedName().getFullQualifiedNameAsString()
+          .equals(derivedType.getBaseType().getFullQualifiedName().getFullQualifiedNameAsString())){
+      edmType = derivedType;
+      }
+    }
     // Create ALL properties, even if no value is given. Check if null is allowed
     for (final String propertyName : edmType.getPropertyNames()) {
       final EdmProperty innerEdmProperty = (EdmProperty) edmType.getProperty(propertyName);
@@ -529,7 +550,7 @@ public class DataProvider {
         }
       }
     }
-
+    result.setTypeName(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
     return result;
   }
 
@@ -552,7 +573,54 @@ public class DataProvider {
     entity.setMediaContentType(type);
     entity.setMediaETag("W/\"" + UUID.randomUUID() + "\"");
   }
-
+  
+  public List<DeletedEntity> readDeletedEntities(final EdmEntitySet edmEntitySet) throws DataProviderException {
+    EntityCollection entityCollection = data.get(edmEntitySet.getName());
+    List<DeletedEntity> listOfDeletedEntities = new ArrayList<DeletedEntity>();
+    DeletedEntity entitySetDeleted = new DeletedEntity();
+    if (entityCollection.getEntities().size() > 1) {
+      entitySetDeleted.setId(entityCollection.getEntities().get(0).getId());
+      entitySetDeleted.setReason(Reason.changed);
+      listOfDeletedEntities.add(entitySetDeleted);
+      entitySetDeleted = new DeletedEntity();
+      entitySetDeleted.setId(entityCollection.getEntities().get(1).getId());
+      entitySetDeleted.setReason(Reason.deleted);
+    }
+    listOfDeletedEntities.add(entitySetDeleted);
+    return listOfDeletedEntities;
+  }
+  
+  public List<DeltaLink> readAddedLinks(final EdmEntitySet edmEntitySet) throws DataProviderException {
+    EntityCollection entityCollection = data.get(edmEntitySet.getName());
+    List<DeltaLink> listOfAddedLinks = new ArrayList<DeltaLink>();
+    DeltaLink link = new DeltaLink();
+    if (entityCollection.getEntities().size() > 0) {
+      link.setSource(entityCollection.getEntities().get(0).getId());
+      link.setRelationship("NavPropertyETAllPrimOne");
+      link.setTarget(data.get("ESAllPrim").getEntities().get(1).getId());
+    }
+    listOfAddedLinks.add(link);
+    return listOfAddedLinks;
+  }
+  
+  public List<DeltaLink> readDeletedLinks(final EdmEntitySet edmEntitySet) throws DataProviderException {
+    EntityCollection entityCollection = data.get(edmEntitySet.getName());
+    List<DeltaLink> listOfDeletedLinks = new ArrayList<DeltaLink>();
+    if (entityCollection.getEntities().size() > 1) {
+      DeltaLink link = new DeltaLink();
+      link.setSource(entityCollection.getEntities().get(0).getId());
+      link.setRelationship("NavPropertyETAllPrimOne");
+      link.setTarget(data.get("ESAllPrim").getEntities().get(0).getId());
+      listOfDeletedLinks.add(link);
+      link = new DeltaLink();
+      link.setSource(entityCollection.getEntities().get(1).getId());
+      link.setRelationship("NavPropertyETAllPrimOne");
+      link.setTarget(data.get("ESAllPrim").getEntities().get(1).getId());
+      listOfDeletedLinks.add(link);
+    }
+    return listOfDeletedLinks;
+  }
+  
   public EntityCollection readFunctionEntityCollection(final EdmFunction function, final List<UriParameter> parameters,
       final UriInfoResource uriInfo) throws DataProviderException {
     return FunctionData.entityCollectionFunction(function.getName(),
@@ -603,31 +671,84 @@ public class DataProvider {
     return ActionData.primitiveAction(name, actionParameters);
   }
 
+  public Property processBoundActionPrimitive(final String name, final Map<String, Parameter> actionParameters, 
+      final EdmEntitySet edmEntitySet, final List<UriParameter> keyList)
+      throws DataProviderException {
+    return ActionData.primitiveBoundAction(name, actionParameters, data, edmEntitySet, keyList);
+  }
+  
   public Property processActionComplex(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.complexAction(name, actionParameters);
   }
 
+  public Property processBoundActionComplex(final String name, final Map<String, Parameter> actionParameters,
+      final EdmEntitySet edmEntitySet, 
+      final List<UriParameter> keyList)
+      throws DataProviderException {
+    return ActionData.complexBoundAction(name, actionParameters, data, edmEntitySet, keyList);
+  }
+  
   public Property processActionComplexCollection(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.complexCollectionAction(name, actionParameters);
   }
 
+  public Property processBoundActionComplexCollection(final String name, 
+      final Map<String, Parameter> actionParameters, final EdmEntitySet edmEntitySet, 
+      final List<UriParameter> keyList)
+      throws DataProviderException {
+    return ActionData.complexCollectionBoundAction(name, actionParameters, data, edmEntitySet, keyList);
+  }
+  
   public Property processActionPrimitiveCollection(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.primitiveCollectionAction(name, actionParameters, odata);
   }
 
+  public Property processBoundActionPrimitiveCollection(final String name, 
+      final Map<String, Parameter> actionParameters, final EdmEntitySet edmEntitySet, 
+      final List<UriParameter> keyList)
+      throws DataProviderException {
+    return ActionData.primitiveCollectionBoundAction(name, actionParameters, data, edmEntitySet, keyList, odata);
+  }
+  
   public EntityActionResult processActionEntity(final String name, final Map<String, Parameter> actionParameters)
       throws DataProviderException {
     return ActionData.entityAction(name, actionParameters, data, odata, edm);
   }
 
+  public EntityActionResult processBoundActionEntity(final String name, final Map<String, Parameter> actionParameters, 
+      List<UriParameter> keyList, EdmEntitySet edmEntitySet)
+      throws DataProviderException {
+    return ActionData.entityBoundAction(name, actionParameters, data, odata, edm, keyList, edmEntitySet);
+  }
+  
+  public EntityActionResult processBoundActionWithNavigationEntity(final String name, 
+      final Map<String, Parameter> actionParameters, 
+      List<UriParameter> keyList, EdmEntitySet edmEntitySet, EdmNavigationProperty navProperty)
+      throws DataProviderException {
+    return ActionData.entityBoundActionWithNavigation(name, actionParameters, data, keyList, 
+        edmEntitySet, navProperty);
+  }
+  
   public EntityCollection processActionEntityCollection(final String name,
       final Map<String, Parameter> actionParameters) throws DataProviderException {
     return ActionData.entityCollectionAction(name, actionParameters, odata, edm);
   }
 
+  public EntityCollection processBoundActionEntityCollection(final String name,
+      final Map<String, Parameter> actionParameters, EdmEntitySet edmEntitySet) throws DataProviderException {
+    return ActionData.entityCollectionBoundAction(name, actionParameters, data, odata, edm, edmEntitySet);
+  }
+  
+  public EntityCollection processBoundActionWithNavEntityCollection(final String name,
+      final Map<String, Parameter> actionParameters, EdmEntitySet edmEntitySet, EdmNavigationProperty navProperty) 
+          throws DataProviderException {
+    return ActionData.entityCollectionBoundActionWithNav(name, actionParameters, data, odata, edm, 
+        edmEntitySet, navProperty);
+  }
+  
   public void createReference(final Entity entity, final EdmNavigationProperty navigationProperty, final URI entityId,
       final String rawServiceRoot) throws DataProviderException {
     setLink(navigationProperty, entity, getEntityByReference(entityId.toASCIIString(), rawServiceRoot));
@@ -702,11 +823,169 @@ public class DataProvider {
     }
   }
   
+  public List<Entity> readNavigationEntities(EdmEntitySet entitySet) {
+    
+    EntityCollection entityCollection = data.get(entitySet.getName());
+    List<Entity> entities = new ArrayList<Entity>();
+    Entity otherEntity = entitySet.getName() == "ESAllPrim" ? data.get("ESDelta").getEntities().get(0) :
+      data.get("ESAllPrim").getEntities().get(0);
+    EntityCollection ec1=new EntityCollection();
+    Entity entity1 = new Entity();
+    entity1.setId(entityCollection.getEntities().get(0).getId());//added navigation
+    entity1.addProperty(entityCollection.getEntities().get(0).getProperty(edm.getEntityContainer()
+        .getEntitySet(entitySet.getName()).getEntityType().getPropertyNames().get(0)));
+    Link link = new Link();
+    Entity entity2 = new Entity();
+    entity2.setId(otherEntity.getId());
+    ec1.getEntities().add(entity2);
+    link.setInlineEntitySet(ec1);
+    link.setTitle("NavPropertyETAllPrimMany");
+    entity1.getNavigationLinks().add(link);
+    
+    Entity entity3 = new Entity();
+    EntityCollection ec2=new EntityCollection();
+    entity3.setId(entityCollection.getEntities().get(0).getId());//added navigation
+    DeletedEntity delentity = new DeletedEntity();
+    delentity.setId(otherEntity.getId());
+    delentity.setReason(Reason.deleted);
+    ec2.getEntities().add(delentity);
+    Link delLink = new Link();
+    delLink.setInlineEntitySet(ec2);
+    delLink.setTitle("NavPropertyETAllPrimMany");
+    entity3.getNavigationLinks().add(delLink);
+    entities.add(otherEntity);
+    entities.add(entity1);
+    entities.add(entity3);
+    return entities;
+  }
+  
   public Entity read(EdmSingleton singleton) {
     if (data.containsKey(singleton.getName())) {
     EntityCollection entitySet = data.get(singleton.getName());
     return entitySet.getEntities().get(0);
     }
     return null;
+  }
+
+  public byte[] readStreamProperty(Property property) {
+    Link link;
+    if(property!=null && property.getValue()!=null){
+      link = (Link)property.getValue();
+      if(link.getInlineEntity()!=null){
+        return (byte[]) link.getInlineEntity().getProperty(property.getName()).getValue();
+      }
+    }
+    return null;
+  }
+  
+  public Entity createContNav(final EdmEntitySet edmEntitySet, final EdmEntityType edmEntityType, 
+      final Entity newEntity, List<UriParameter> keys, String navPropertyName) throws DataProviderException {
+    List<Entity> rootEntity = data.get(edmEntitySet.getName()).getEntities();
+    EntityCollection entitySet = data.get(edmEntityType.getName());
+    entitySet.getEntities().add(newEntity);
+    
+    
+    
+    for (Entity entity : rootEntity) {
+      if (isRootEntity(entity, keys)){
+        String id = entity.getId().toASCIIString() + "/" + navPropertyName + 
+            appendKeys(newEntity.getProperties(), edmEntityType.getKeyPredicateNames());
+        newEntity.setId(URI.create(id));
+        
+        Link link = entity.getNavigationLink(navPropertyName);
+        if (link == null) {
+          link = new Link();
+          link.setRel(Constants.NS_NAVIGATION_LINK_REL + navPropertyName);
+          link.setType(Constants.ENTITY_NAVIGATION_LINK_TYPE);
+          link.setTitle(navPropertyName);
+          link.setHref(entity.getId().toASCIIString() + 
+              (navPropertyName != null && navPropertyName.length() > 0 ? "/" + navPropertyName: ""));
+          entity.getNavigationLinks().add(link);
+        }
+        if (link.getInlineEntitySet() != null) {
+          link.getInlineEntitySet().getEntities().add(newEntity);
+        } else {
+          EntityCollection collection = new EntityCollection();
+          collection.getEntities().add(newEntity);
+          link.setInlineEntitySet(collection);
+        }
+      }
+    }
+    
+    return newEntity;
+  }
+
+  private String appendKeys(List<Property> properties, List<String> keyNames) {
+    StringBuilder keyValue = new StringBuilder();
+    keyValue.append("(");
+    for (int i = 0; i < keyNames.size(); i++) {
+      for (Property property : properties) {
+        if (property.getName().equals(keyNames.get(i))) {
+          keyValue.append(property.getName()).append("=");
+          keyValue.append(property.getValue());
+        }
+        if (i < keyNames.size() - 1) {
+          keyValue.append(",");
+        }
+      }
+    }
+    keyValue.append(")");
+    return keyValue.toString();
+  }
+
+  private boolean isRootEntity(Entity entity, List<UriParameter> keys) {
+    boolean found = false;
+    for (UriParameter key : keys) {
+      if (entity.getProperty(key.getName()).getValue().toString().equals(key.getText())) {
+        found = true;
+      } else {
+        found = false;
+      }
+    }
+    return found;
+  }
+  
+  public Entity readDataFromEntity(final EdmEntityType edmEntityType,
+      final List<UriParameter> keys) throws DataProviderException {
+    EntityCollection coll = data.get(edmEntityType.getName());
+    List<Entity> entities = coll.getEntities();
+    try {
+      for (final Entity entity : entities) {
+        boolean found = true;
+        for (final UriParameter key : keys) {
+          EdmKeyPropertyRef refType = edmEntityType.getKeyPropertyRef(key.getName());
+          Object value =  findPropertyRefValue(entity, refType);
+          
+          final EdmProperty property = refType.getProperty();
+          final EdmPrimitiveType type = (EdmPrimitiveType) property.getType();
+          
+          if (key.getExpression() != null && !(key.getExpression() instanceof Literal)) {
+            throw new DataProviderException("Expression in key value is not supported yet!",
+                HttpStatusCode.NOT_IMPLEMENTED);
+          }
+          final String text = key.getAlias() == null ? key.getText() : ((Literal) key.getExpression()).getText();
+          Object keyValue = null;
+          if (Calendar.class.isAssignableFrom(value.getClass())) {
+            keyValue = type.valueOfString(type.fromUriLiteral(text),
+                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+                property.isUnicode(), Calendar.class);
+          } else {
+            keyValue = type.valueOfString(type.fromUriLiteral(text),
+                property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(),
+                property.isUnicode(), value.getClass());
+          }
+          if (!value.equals(keyValue)) {
+            found = false;
+            break;
+          }
+        }
+        if (found) {
+          return entity;
+        }
+      }
+      return null;
+    } catch (final EdmPrimitiveTypeException e) {
+      throw new DataProviderException("Wrong key!", HttpStatusCode.BAD_REQUEST, e);
+    }
   }
 }

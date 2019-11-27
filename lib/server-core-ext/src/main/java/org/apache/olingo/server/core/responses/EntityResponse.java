@@ -224,7 +224,8 @@ public class EntityResponse extends ServiceResponse {
       }
       EdmPrimitiveTypeKind kind = EdmPrimitiveTypeKind.valueOf(propertyType);
       String value =  EdmPrimitiveTypeFactory.getInstance(kind).valueToString(
-          propertyValue, true, property.getMaxLength(), property.getPrecision(), property.getScale(), true);
+          propertyValue, property.isNullable(), property.getMaxLength(), property.getPrecision(), property.getScale(), 
+          property.isUnicode());
       if (kind == EdmPrimitiveTypeKind.String) {
           value = EdmString.getInstance().toUriLiteral(Encoder.encode(value));
       }

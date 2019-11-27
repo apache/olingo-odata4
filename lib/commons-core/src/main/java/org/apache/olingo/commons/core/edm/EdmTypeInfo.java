@@ -41,6 +41,7 @@ public class EdmTypeInfo {
 
     private String typeExpression;
     private Edm edm;
+	private boolean includeAnnotations;
 
     public Builder setTypeExpression(final String typeExpression) {
       this.typeExpression = typeExpression;
@@ -52,8 +53,13 @@ public class EdmTypeInfo {
       return this;
     }
 
+	public Builder setIncludeAnnotations(final boolean includeAnnotations) {
+      this.includeAnnotations = includeAnnotations;
+      return this;
+    }
+	
     public EdmTypeInfo build() {
-      return new EdmTypeInfo(edm, typeExpression);
+      return new EdmTypeInfo(edm, typeExpression, includeAnnotations);
     }
   }
 
@@ -65,7 +71,7 @@ public class EdmTypeInfo {
   private EdmComplexType complexType;
   private EdmEntityType entityType;
 
-  private EdmTypeInfo(final Edm edm, final String typeExpression) {
+  private EdmTypeInfo(final Edm edm, final String typeExpression, final boolean includeAnnotations) {
     String baseType;
     final int collStartIdx = typeExpression.indexOf("Collection(");
     final int collEndIdx = typeExpression.lastIndexOf(')');
@@ -103,17 +109,19 @@ public class EdmTypeInfo {
 
     fullQualifiedName = new FullQualifiedName(namespace, typeName);
 
-    try {
-      primitiveType = EdmPrimitiveTypeKind.valueOf(typeName);
-    } catch (final IllegalArgumentException e) {
-      primitiveType = null;
-    }
+    primitiveType = EdmPrimitiveTypeKind.getByName(typeName);
+
     if (primitiveType == null && edm != null) {
       typeDefinition = edm.getTypeDefinition(fullQualifiedName);
       if (typeDefinition == null) {
         enumType = edm.getEnumType(fullQualifiedName);
         if (enumType == null) {
-          complexType = edm.getComplexType(fullQualifiedName);
+          if (includeAnnotations) {
+            complexType = ((AbstractEdm)edm).
+                getComplexTypeWithAnnotations(fullQualifiedName, true);
+          } else {
+            complexType = edm.getComplexType(fullQualifiedName);
+          }
           if (complexType == null) {
             entityType = edm.getEntityType(fullQualifiedName);
           }

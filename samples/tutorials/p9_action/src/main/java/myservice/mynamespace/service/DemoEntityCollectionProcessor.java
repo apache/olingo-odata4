@@ -170,6 +170,27 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
         // note: we don't need to check uriResourceNavigation.isCollection(),
         // because we are the EntityCollectionProcessor
         responseEntityCollection = storage.getRelatedEntityCollection(sourceEntity, targetEntityType);
+      } else if (lastSegment instanceof UriResourceFunction) {// For bound function
+        UriResourceFunction uriResourceFunction = (UriResourceFunction) lastSegment;
+        // 2nd: fetch the data from backend
+        // first fetch the target entity type 
+        String targetEntityType = uriResourceFunction.getFunction().getReturnType().getType().getName();
+        // contextURL displays the last segment
+        for(EdmEntitySet entitySet : serviceMetadata.getEdm().getEntityContainer().getEntitySets()){
+          if(targetEntityType.equals(entitySet.getEntityType().getName())){
+            responseEdmEntitySet = entitySet;
+            break;
+          }
+        }
+        
+        // error handling for null entities
+        if (targetEntityType == null || responseEdmEntitySet == null) {
+          throw new ODataApplicationException("Entity not found.",
+              HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+        }
+
+        // then fetch the entity collection for the target type
+        responseEntityCollection = storage.readEntitySetData(targetEntityType);
       }
     } else { // this would be the case for e.g. Products(1)/Category/Products
       throw new ODataApplicationException("Not supported",

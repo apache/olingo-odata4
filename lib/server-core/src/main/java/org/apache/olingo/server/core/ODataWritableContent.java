@@ -27,10 +27,10 @@ import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.ODataContent;
-import org.apache.olingo.server.api.ODataLibraryException;
-import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.ODataContentWriteErrorCallback;
 import org.apache.olingo.server.api.ODataContentWriteErrorContext;
+import org.apache.olingo.server.api.ODataLibraryException;
+import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.EntityCollectionSerializerOptions;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
@@ -181,7 +181,7 @@ public class ODataWritableContent implements ODataContent {
         StreamContent input = new StreamContentForJson(entities, entityType,
             (ODataJsonSerializer) serializer, metadata, options);
         return new ODataWritableContent(input);
-      } else if (serializer instanceof ODataXmlSerializer) {
+      }else if (serializer instanceof ODataXmlSerializer) {
         StreamContentForXml input = new StreamContentForXml(entities, entityType,
             (ODataXmlSerializer) serializer, metadata, options);
         return new ODataWritableContent(input);

@@ -84,12 +84,14 @@ public class AsyncResponseSerializer {
     InputStream input = response.getContent();
     if (input != null) {
       ByteBuffer inBuffer = ByteBuffer.allocate(BUFFER_SIZE);
-      ReadableByteChannel ic = Channels.newChannel(input);
-      WritableByteChannel oc = Channels.newChannel(buffer);
-      while (ic.read(inBuffer) > 0) {
-        inBuffer.flip();
-        oc.write(inBuffer);
-        inBuffer.rewind();
+      try (ReadableByteChannel ic = Channels.newChannel(input)) {
+        try (WritableByteChannel oc = Channels.newChannel(buffer)) {
+          while (ic.read(inBuffer) > 0) {
+            inBuffer.flip();
+            oc.write(inBuffer);
+            inBuffer.rewind();
+          }
+        }
       }
     }
   }

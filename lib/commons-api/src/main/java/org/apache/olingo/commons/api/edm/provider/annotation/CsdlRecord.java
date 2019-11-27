@@ -69,4 +69,66 @@ public class CsdlRecord extends CsdlDynamicExpression implements CsdlAnnotatable
     this.propertyValues = propertyValues;
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlRecord)) {
+      return false;
+    }
+    CsdlRecord csdlRecord = (CsdlRecord) obj;
+    return (this.getType() == null ? csdlRecord.getType() == null :
+      this.getType().equals(csdlRecord.getType()))
+        && (this.getAnnotations() == null ? csdlRecord.getAnnotations() == null :
+            checkAnnotations(csdlRecord.getAnnotations()))
+        && (this.getPropertyValues() == null ? csdlRecord.getPropertyValues() == null :
+            checkPropertyValues(csdlRecord.getPropertyValues()));
+  }
+  
+  private boolean checkPropertyValues(List<CsdlPropertyValue> csdlRecordpropertyValues) {
+    if (csdlRecordpropertyValues == null) {
+      return false;
+    }
+    if (this.getPropertyValues().size() == csdlRecordpropertyValues.size()) {
+      for (int i = 0; i < this.getPropertyValues().size(); i++) {
+        if (!this.getPropertyValues().get(i).equals(
+            csdlRecordpropertyValues.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean checkAnnotations(List<CsdlAnnotation> csdlRecordAnnot) {
+    if (csdlRecordAnnot == null) {
+      return false;
+    }
+    if (this.getAnnotations().size() == csdlRecordAnnot.size()) {
+      for (int i = 0; i < this.getAnnotations().size() ; i++) {
+        if (!this.getAnnotations().get(i).equals(csdlRecordAnnot.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    result = prime * result + ((propertyValues == null) ? 0 : 
+      propertyValues.hashCode());
+    result = prime * result + ((annotations == null) ? 0 : 
+      annotations.hashCode());
+    return result;
+  }
 }

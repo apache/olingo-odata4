@@ -81,12 +81,11 @@ public class BatchTransformatorCommon {
   public static void validateHost(final Header headers, final String baseUri) throws BatchDeserializerException {
     final HeaderField hostField = headers.getHeaderField(HttpHeader.HOST);
 
-    if (hostField != null) {
-      if (hostField.getValues().size() > 1
-          || !URI.create(baseUri).getAuthority().equalsIgnoreCase(hostField.getValues().get(0).trim())) {
-        throw new BatchDeserializerException("Invalid Host header",
-            MessageKeys.INVALID_HOST, Integer.toString(headers.getLineNumber()));
-      }
+    if (hostField != null &&
+        (hostField.getValues().size() > 1
+            || !URI.create(baseUri).getAuthority().equalsIgnoreCase(hostField.getValues().get(0).trim()))) {
+      throw new BatchDeserializerException("Invalid Host header",
+          MessageKeys.INVALID_HOST, Integer.toString(headers.getLineNumber()));
     }
   }
 }

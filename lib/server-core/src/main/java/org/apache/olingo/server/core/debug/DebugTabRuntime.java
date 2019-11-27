@@ -124,7 +124,7 @@ public class DebugTabRuntime implements DebugTab {
     private String methodName;
     private long timeStarted;
     private long timeStopped;
-    private List<RuntimeNode> children = new ArrayList<RuntimeNode>();
+    private List<RuntimeNode> children = new ArrayList<>();
 
     protected RuntimeNode() {
       timeStarted = 0;

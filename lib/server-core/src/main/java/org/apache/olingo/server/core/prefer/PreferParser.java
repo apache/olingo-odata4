@@ -68,7 +68,7 @@ public class PreferParser {
       return Collections.emptyMap();
     }
 
-    Map<String, Preference> result = new HashMap<String, Preference>();
+    Map<String, Preference> result = new HashMap<>();
     for (final String value : values) {
       if (value != null && !value.isEmpty()) {
         parse(value, result);
@@ -78,7 +78,7 @@ public class PreferParser {
   }
 
   private static void parse(final String value, final Map<String, Preference> result) {
-    Map<String, Preference> partResult = new HashMap<String, Preference>();
+    Map<String, Preference> partResult = new HashMap<>();
     String separator = "";
     int start = 0;
     Matcher matcher = PREFERENCE.matcher(value.trim());
@@ -115,7 +115,7 @@ public class PreferParser {
   }
 
   private static Map<String, String> parseParameters(final String parameters) {
-    Map<String, String> result = new HashMap<String, String>();
+    Map<String, String> result = new HashMap<>();
     String separator = "";
     int start = 0;
     Matcher matcher = PARAMETER.matcher(parameters.trim());

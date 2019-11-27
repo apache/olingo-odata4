@@ -96,7 +96,7 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
       tree.remove(Constants.VALUE);
     }
 
-    Set<String> toRemove = new HashSet<String>();
+    Set<String> toRemove = new HashSet<>();
     // any remaining entry is supposed to be an annotation or is ignored
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
@@ -122,6 +122,6 @@ public class JsonPropertyDeserializer extends JsonDeserializer {
       }
     }
     tree.remove(toRemove);
-    return new ResWrap<Property>(contextURL, metadataETag, property);
+    return new ResWrap<>(contextURL, metadataETag, property);
   }
 }

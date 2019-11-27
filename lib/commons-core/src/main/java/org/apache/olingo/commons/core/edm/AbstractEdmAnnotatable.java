@@ -44,11 +44,10 @@ public abstract class AbstractEdmAnnotatable implements EdmAnnotatable {
   public EdmAnnotation getAnnotation(final EdmTerm term, String qualifier) {
     EdmAnnotation result = null;
     for (EdmAnnotation annotation : getAnnotations()) {
-      if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())) {
-        if (qualifierEqual(qualifier, annotation.getQualifier())) {
-          result = annotation;
-          break;
-        }
+      if (term.getFullQualifiedName().equals(annotation.getTerm().getFullQualifiedName())
+          && qualifierEqual(qualifier, annotation.getQualifier())) {
+        result = annotation;
+        break;
       }
     }
     return result;

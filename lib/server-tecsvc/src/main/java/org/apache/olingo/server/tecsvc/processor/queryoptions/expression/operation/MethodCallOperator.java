@@ -108,6 +108,15 @@ public class MethodCallOperator {
       }
     }, primBoolean);
   }
+  
+  public VisitorOperand substringof() throws ODataApplicationException {
+    return stringFunction(new StringFunction() {
+      @Override
+      public Object perform(final List<String> params) {
+        return params.get(1).contains(params.get(0));
+      }
+    }, primBoolean);
+  }
 
   public VisitorOperand toLower() throws ODataApplicationException {
     return stringFunction(new StringFunction() {

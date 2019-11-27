@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.api.uri.queryoption.expression;
 
+import java.util.List;
+
 /**
  * Represents a binary expression node in the expression tree
  * <br>
@@ -41,5 +43,11 @@ public interface Binary extends Expression {
    * @return Expression sub tree of the right operand
    */
   public Expression getRightOperand();
+  
+  /**
+   * 
+   * @return list of expressions of the right operand
+   */
+  public List<Expression> getExpressions();
 
 }

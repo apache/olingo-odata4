@@ -18,10 +18,17 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -30,32 +37,34 @@ import java.util.concurrent.TimeoutException;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.AsyncBatchRequestWrapper;
+import org.apache.olingo.client.api.communication.request.AsyncRequestWrapper;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
+import org.apache.olingo.client.api.communication.request.invoke.ODataInvokeRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
 import org.apache.olingo.client.api.communication.response.AsyncResponseWrapper;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
 import org.apache.olingo.client.api.communication.response.ODataEntityCreateResponse;
+import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientProperty;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.PreferenceName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
 public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
@@ -133,7 +142,7 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
         .getEntitySetRequest(uri).execute();
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
     ClientEntitySet responseBody = response.getBody();
-    assertEquals(3, responseBody.getEntities().size());
+    assertEquals(4, responseBody.getEntities().size());
     checkEntityAvailableWith(responseBody, "PropertyInt16", 32767);
 
     // first async request
@@ -165,7 +174,7 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
     ResWrap<EntityCollection> firWrap = client.getDeserializer(getContentType())
         .toEntitySet(firstResponse.getRawResponse());
     EntityCollection firstResponseEntitySet = firWrap.getPayload();
-    assertEquals(3, firstResponseEntitySet.getEntities().size());
+    assertEquals(4, firstResponseEntitySet.getEntities().size());
     Entity firstResponseEntity = firstResponseEntitySet.getEntities().get(0);
     assertShortOrInt(32767, firstResponseEntity.getProperty("PropertyInt16").asPrimitive());
     assertEquals("First Resource - positive values", firstResponseEntity.getProperty("PropertyString").asPrimitive());
@@ -241,6 +250,33 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
     assertShortOrInt(32767, entity.getProperty("PropertyInt16").getPrimitiveValue().toValue());
     assertEquals("First Resource - positive values",
         entity.getProperty("PropertyString").getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void entityAction() throws Exception {
+    Calendar dateTime = Calendar.getInstance();
+    dateTime.clear();
+    dateTime.set(1012, 2, 0, 0, 0, 0);
+    final Map<String, ClientValue> parameters = Collections.singletonMap(
+        "ParameterDate",
+        (ClientValue) getFactory().newPrimitiveValueBuilder()
+            .setType(EdmPrimitiveTypeKind.Date).setValue(dateTime).build());
+    ODataClient client = getClient();
+    URI uri = client.newURIBuilder(TecSvcConst.BASE_URI)
+        .appendActionCallSegment("AIRTESAllPrimParam").build();
+
+    ODataInvokeRequest<ClientEntity> req = client.getInvokeRequestFactory()
+        .getActionInvokeRequest(uri, ClientEntity.class, parameters);
+    AsyncRequestWrapper<ODataRetrieveResponse<ClientEntity>>
+    asyncReqWrp = client.getAsyncRequestFactory().getAsyncRequestWrapper(req);
+    AsyncResponseWrapper<ODataRetrieveResponse<ClientEntity>>
+    asyncRespWrp = asyncReqWrp.execute();
+    waitTillDone(asyncRespWrp, 5);
+    @SuppressWarnings("unchecked")
+    ODataInvokeResponse<ClientEntity> response = (ODataInvokeResponse<ClientEntity>)asyncRespWrp.getODataResponse();
+   
+    assertEquals(HttpStatusCode.CREATED.getStatusCode(), response.getStatusCode());
+    assertEquals(TecSvcConst.BASE_URI  +"/ESAllPrim(1)", response.getHeader(HttpHeader.LOCATION).iterator().next());
   }
 
   /**

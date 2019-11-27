@@ -110,7 +110,11 @@ public interface FilterArgFactory {
   FilterArg geoLength(FilterArg first, FilterArg second);
 
   FilterArg any(FilterArg collection, URIFilter expression);
+  
+  FilterArg any(FilterArg collection, String lambdaVariable, URIFilter expression);
 
   FilterArg all(FilterArg collection, URIFilter expression);
+  
+  FilterArg all(FilterArg collection, String lambdaVariable, URIFilter expression);
 
 }

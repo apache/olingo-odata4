@@ -1,0 +1,1077 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Measures.V1.xml">
+    <edmx:Include Alias="Measures" Namespace="Org.OData.Measures.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Capabilities.V1.xml">
+    <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs02/vocabularies/Org.OData.Aggregation.V1.xml">
+    <edmx:Include Alias="Aggregation" Namespace="Org.OData.Aggregation.V1"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="caps.products.CatalogService" Alias="caps.products.CatalogService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityContainer Name="EntityContainer">
+        <EntitySet Name="Products" EntityType="caps.products.CatalogService.Products">
+          <NavigationPropertyBinding Path="category" Target="Categories"/>
+          <NavigationPropertyBinding Path="priceRange" Target="PriceRanges"/>
+          <NavigationPropertyBinding Path="supplier" Target="Suppliers"/>
+          <NavigationPropertyBinding Path="stock" Target="Stocks"/>
+          <NavigationPropertyBinding Path="images" Target="ProductImages"/>
+          <NavigationPropertyBinding Path="allCategories" Target="ProductsToCategories"/>
+          <NavigationPropertyBinding Path="reviews" Target="Reviews"/>
+        </EntitySet>
+        <EntitySet Name="Categories" EntityType="caps.products.CatalogService.Categories">
+          <NavigationPropertyBinding Path="parent" Target="Categories"/>
+          <NavigationPropertyBinding Path="children" Target="Categories"/>
+        </EntitySet>
+        <EntitySet Name="Suppliers" EntityType="caps.products.CatalogService.Suppliers"/>
+        <EntitySet Name="Stocks" EntityType="caps.products.CatalogService.Stocks">
+          <NavigationPropertyBinding Path="availability" Target="StockAvailabilities"/>
+        </EntitySet>
+        <EntitySet Name="StockAvailabilities" EntityType="caps.products.CatalogService.StockAvailabilities"/>
+        <EntitySet Name="PriceRanges" EntityType="caps.products.CatalogService.PriceRanges"/>
+        <EntitySet Name="Currencies" EntityType="caps.products.CatalogService.Currencies"/>
+        <EntitySet Name="DimensionUnits" EntityType="caps.products.CatalogService.DimensionUnits"/>
+        <EntitySet Name="WeightUnits" EntityType="caps.products.CatalogService.WeightUnits"/>
+        <EntitySet Name="BaseUnits" EntityType="caps.products.CatalogService.BaseUnits"/>
+        <EntitySet Name="ProductImages" EntityType="caps.products.CatalogService.ProductImages">
+          <NavigationPropertyBinding Path="product" Target="Products"/>
+        </EntitySet>
+        <EntitySet Name="ProductsToCategories" EntityType="caps.products.CatalogService.ProductsToCategories">
+          <NavigationPropertyBinding Path="product" Target="Products"/>
+          <NavigationPropertyBinding Path="category" Target="Categories"/>
+        </EntitySet>
+        <EntitySet Name="Reviews" EntityType="caps.products.CatalogService.Reviews">
+          <NavigationPropertyBinding Path="product" Target="Products"/>
+          <NavigationPropertyBinding Path="author" Target="Users"/>
+        </EntitySet>
+        <EntitySet Name="Users" EntityType="caps.products.CatalogService.Users">
+          <NavigationPropertyBinding Path="cart" Target="Carts"/>
+        </EntitySet>
+        <EntitySet Name="Me" EntityType="caps.products.CatalogService.Me">
+          <NavigationPropertyBinding Path="cart" Target="Carts"/>
+        </EntitySet>
+        <EntitySet Name="Carts" EntityType="caps.products.CatalogService.Carts">
+          <NavigationPropertyBinding Path="items" Target="CartItems"/>
+          <NavigationPropertyBinding Path="owner" Target="Users"/>
+        </EntitySet>
+        <EntitySet Name="CartItems" EntityType="caps.products.CatalogService.CartItems">
+          <NavigationPropertyBinding Path="cart" Target="Carts"/>
+          <NavigationPropertyBinding Path="product" Target="Products"/>
+        </EntitySet>
+        <FunctionImport Name="nop" Function="caps.products.CatalogService.nop"/>
+      </EntityContainer>
+      <EntityType Name="Products" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="descr" Type="Edm.String"/>
+        <NavigationProperty Name="category" Type="caps.products.CatalogService.Categories">
+          <ReferentialConstraint Property="category_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="image" Type="Edm.String" MaxLength="255"/>
+        <Property Name="price" Type="Edm.Decimal" Scale="3" Precision="10"/>
+        <Property Name="currency" Type="Edm.String" MaxLength="3"/>
+        <NavigationProperty Name="priceRange" Type="caps.products.CatalogService.PriceRanges">
+          <ReferentialConstraint Property="priceRange_code" ReferencedProperty="code"/>
+        </NavigationProperty>
+        <Property Name="height" Type="Edm.Decimal" Scale="3" Precision="10"/>
+        <Property Name="width" Type="Edm.Decimal" Scale="3" Precision="10"/>
+        <Property Name="depth" Type="Edm.Decimal" Scale="3" Precision="10"/>
+        <Property Name="weight" Type="Edm.Decimal" Scale="3" Precision="10"/>
+        <Property Name="dimensionUnit" Type="Edm.String" MaxLength="3"/>
+        <Property Name="weightUnit" Type="Edm.String" MaxLength="3"/>
+        <Property Name="baseUnit" Type="Edm.String" MaxLength="3"/>
+        <NavigationProperty Name="supplier" Type="caps.products.CatalogService.Suppliers">
+          <ReferentialConstraint Property="supplier_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="stock" Type="caps.products.CatalogService.Stocks">
+          <ReferentialConstraint Property="stock_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="capacity" Type="Edm.String"/>
+        <Property Name="thumbnail" Type="Edm.String" MaxLength="255"/>
+        <NavigationProperty Name="images" Type="Collection(caps.products.CatalogService.ProductImages)">
+          <ReferentialConstraint Property="ID" ReferencedProperty="product_ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="allCategories" Type="Collection(caps.products.CatalogService.ProductsToCategories)">
+          <ReferentialConstraint Property="ID" ReferencedProperty="product_ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="reviews" Type="Collection(caps.products.CatalogService.Reviews)"/>
+        <Property Name="created_byUser" Type="Edm.String" MaxLength="111"/>
+        <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+        <Property Name="modified_byUser" Type="Edm.String" MaxLength="111"/>
+        <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+        <Property Name="category_ID" Type="Edm.String"/>
+        <Property Name="priceRange_code" Type="Edm.Int32"/>
+        <Property Name="supplier_ID" Type="Edm.String" MaxLength="10"/>
+        <Property Name="stock_ID" Type="Edm.String" MaxLength="10"/>
+      </EntityType>
+      <EntityType Name="Categories" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" Nullable="false"/>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="descr" Type="Edm.String"/>
+        <Property Name="thumbnail" Type="Edm.String" MaxLength="255"/>
+        <Property Name="image" Type="Edm.String" MaxLength="255"/>
+        <NavigationProperty Name="parent" Type="caps.products.CatalogService.Categories">
+          <ReferentialConstraint Property="parent_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="children" Type="Collection(caps.products.CatalogService.Categories)"/>
+        <Property Name="parent_ID" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="Suppliers" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="emailAddress" Type="Edm.String" MaxLength="255"/>
+        <Property Name="faxNumber" Type="Edm.String" MaxLength="30"/>
+        <Property Name="phoneNumber" Type="Edm.String" MaxLength="30"/>
+        <Property Name="ID" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="url" Type="Edm.String" MaxLength="255"/>
+      </EntityType>
+      <EntityType Name="Stocks" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="quantity" Type="Edm.Decimal" Scale="3" Precision="13"/>
+        <Property Name="minimumQuantity" Type="Edm.Decimal" Scale="3" Precision="13"/>
+        <NavigationProperty Name="availability" Type="caps.products.CatalogService.StockAvailabilities">
+          <ReferentialConstraint Property="availability_code" ReferencedProperty="code"/>
+        </NavigationProperty>
+        <Property Name="deliveryTime" Type="Edm.Int32"/>
+        <Property Name="availability_code" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="StockAvailabilities" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="description" Type="Edm.String"/>
+        <Property Name="code" Type="Edm.Int32" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="PriceRanges" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="description" Type="Edm.String"/>
+        <Property Name="code" Type="Edm.Int32" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="Currencies" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="description" Type="Edm.String"/>
+        <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="DimensionUnits" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="description" Type="Edm.String"/>
+        <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="WeightUnits" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="description" Type="Edm.String"/>
+        <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="BaseUnits" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="code"/>
+        </Key>
+        <Property Name="name" Type="Edm.String"/>
+        <Property Name="description" Type="Edm.String"/>
+        <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="ProductImages" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="image"/>
+          <PropertyRef Name="product_ID"/>
+        </Key>
+        <NavigationProperty Name="product" Type="caps.products.CatalogService.Products" Nullable="false">
+          <ReferentialConstraint Property="product_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="image" Type="Edm.String" MaxLength="255" Nullable="false"/>
+        <Property Name="product_ID" Type="Edm.String" MaxLength="10" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="ProductsToCategories" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="product_ID"/>
+          <PropertyRef Name="category_ID"/>
+        </Key>
+        <NavigationProperty Name="product" Type="caps.products.CatalogService.Products" Nullable="false">
+          <ReferentialConstraint Property="product_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="category" Type="caps.products.CatalogService.Categories" Nullable="false">
+          <ReferentialConstraint Property="category_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="product_ID" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="category_ID" Type="Edm.String" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="Reviews" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
+        <NavigationProperty Name="product" Type="caps.products.CatalogService.Products">
+          <ReferentialConstraint Property="product_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="author" Type="caps.products.CatalogService.Users">
+          <ReferentialConstraint Property="author_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="date" Type="Edm.DateTimeOffset"/>
+        <Property Name="title" Type="Edm.String" MaxLength="100"/>
+        <Property Name="text" Type="Edm.String"/>
+        <Property Name="rating" Type="Edm.Int32"/>
+        <Property Name="created_byUser" Type="Edm.String" MaxLength="111"/>
+        <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+        <Property Name="modified_byUser" Type="Edm.String" MaxLength="111"/>
+        <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+        <Property Name="product_ID" Type="Edm.String" MaxLength="10"/>
+        <Property Name="author_ID" Type="Edm.String" MaxLength="111"/>
+      </EntityType>
+      <EntityType Name="Users" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="111" Nullable="false"/>
+        <Property Name="firstName" Type="Edm.String" MaxLength="200"/>
+        <Property Name="lastName" Type="Edm.String" MaxLength="200"/>
+        <NavigationProperty Name="cart" Type="caps.products.CatalogService.Carts"/>
+        <Property Name="created_byUser" Type="Edm.String" MaxLength="111"/>
+        <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+        <Property Name="modified_byUser" Type="Edm.String" MaxLength="111"/>
+        <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+      </EntityType>
+      <EntityType Name="Me" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="111" Nullable="false"/>
+        <Property Name="firstName" Type="Edm.String" MaxLength="200"/>
+        <Property Name="lastName" Type="Edm.String" MaxLength="200"/>
+        <NavigationProperty Name="cart" Type="caps.products.CatalogService.Carts"/>
+      </EntityType>
+      <EntityType Name="Carts" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
+        <NavigationProperty Name="items" Type="Collection(caps.products.CatalogService.CartItems)">
+          <ReferentialConstraint Property="ID" ReferencedProperty="cart_ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="owner" Type="caps.products.CatalogService.Users">
+          <ReferentialConstraint Property="owner_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="owner_ID" Type="Edm.String" MaxLength="111"/>
+      </EntityType>
+      <EntityType Name="CartItems" Abstract="false" OpenType="false" HasStream="false">
+        <Key>
+          <PropertyRef Name="cart_ID"/>
+          <PropertyRef Name="product_ID"/>
+        </Key>
+        <NavigationProperty Name="cart" Type="caps.products.CatalogService.Carts" Nullable="false">
+          <ReferentialConstraint Property="cart_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <NavigationProperty Name="product" Type="caps.products.CatalogService.Products" Nullable="false">
+          <ReferentialConstraint Property="product_ID" ReferencedProperty="ID"/>
+        </NavigationProperty>
+        <Property Name="quantity" Type="Edm.Int32"/>
+        <Property Name="cart_ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
+        <Property Name="product_ID" Type="Edm.String" MaxLength="10" Nullable="false"/>
+      </EntityType>
+      <Function Name="nop" IsBound="false" IsComposable="false">
+        <ReturnType Type="Edm.Int32"/>
+      </Function>
+      <Annotations Target="caps.products.CatalogService.Products">
+        <Annotation Term="Common.SemanticKey">
+          <Collection>
+            <PropertyPath>ID</PropertyPath>
+          </Collection>
+        </Annotation>
+        <Annotation Term="Common.Label" String="Product"/>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="image"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="ID"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="category/name"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+            </Record>
+            <Record Type="UI.DataFieldForAnnotation">
+              <PropertyValue Property="Label" String="Supplier"/>
+              <PropertyValue Property="Target" AnnotationPath="supplier/@Communication.Contact"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="stock/availability/code"/>
+              <PropertyValue Property="Criticality" Path="stock/availability/code"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="price"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.SelectionFields">
+          <Collection>
+            <PropertyPath>priceRange_code</PropertyPath>
+            <PropertyPath>stock/availability_code</PropertyPath>
+            <PropertyPath>category_ID</PropertyPath>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.HeaderInfo">
+          <Record Type="UI.HeaderInfoType">
+            <PropertyValue Property="TypeName" String="Product"/>
+            <PropertyValue Property="TypeNamePlural" String="Products"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="name"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="Description">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="ID"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="ImageUrl" Path="image"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.HeaderFacets">
+          <Collection>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="General Information"/>
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#GeneralInformation"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Description"/>
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#ProductHeaderText"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Target" AnnotationPath="stock/@UI.DataPoint#StockAvailability"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Target" AnnotationPath="@UI.DataPoint#Price"/>
+              <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="GeneralInformation">
+          <Record Type="UI.FieldGroupType">
+            <PropertyValue Property="Label" String="General Information"/>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="category_ID"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="supplier_ID"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="ProductHeaderText">
+          <Record Type="UI.FieldGroupType">
+            <PropertyValue Property="Label" String="Description"/>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="descr"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.DataPoint" Qualifier="Price">
+          <Record Type="UI.DataPointType">
+            <PropertyValue Property="Value" Path="price"/>
+            <PropertyValue Property="Title" String="Price"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Facets">
+          <Collection>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Technical Data"/>
+              <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#TechnicalData"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.FieldGroup" Qualifier="TechnicalData">
+          <Record Type="UI.FieldGroupType">
+            <PropertyValue Property="Label" String="Technical Data"/>
+            <PropertyValue Property="Data">
+              <Collection>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="baseUnit"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="height"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="width"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="depth"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                </Record>
+                <Record Type="UI.DataField">
+                  <PropertyValue Property="Value" Path="weight"/>
+                  <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.PresentationVariant">
+          <Record Type="UI.PresentationVariantType">
+            <PropertyValue Property="SortOrder">
+              <Collection>
+                <Record Type="Common.SortOrderType">
+                  <PropertyValue Property="Property" PropertyPath="name"/>
+                  <PropertyValue Property="Descending" Bool="false"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/ID">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.SemanticObject" String="EPMProduct"/>
+        <Annotation Term="Common.Text" Path="name"/>
+        <Annotation Term="Common.Label" String="Product"/>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/name">
+        <Annotation Term="UI.Hidden" Bool="true"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+        <Annotation Term="Common.Label" String="Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.EntityContainer/Products/name">
+        <Annotation Term="Capabilities.SearchRestrictions">
+          <Record Type="Capabilities.SearchRestrictionsType">
+            <PropertyValue Property="Searchable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/descr">
+        <Annotation Term="UI.MultiLineText" Bool="true"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/category">
+        <Annotation Term="Common.Text" Path="category/name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="Categories"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="category_ID"/>
+                  <PropertyValue Property="ValueListProperty" String="ID"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+        <Annotation Term="Common.Label" String="Category"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/image">
+        <Annotation Term="UI.IsImageURL" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Image"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/price">
+        <Annotation Term="Measures.ISOCurrency" Path="currency"/>
+        <Annotation Term="Common.Label" String="Price per Unit"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/currency">
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="Currencies"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="currency"/>
+                  <PropertyValue Property="ValueListProperty" String="code"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="Currency"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/priceRange">
+        <Annotation Term="Common.Text" Path="priceRange/name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="PriceRanges"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="priceRange_code"/>
+                  <PropertyValue Property="ValueListProperty" String="code"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+        <Annotation Term="Common.Label" String="Price Range"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/height">
+        <Annotation Term="Measures.Unit" Path="dimensionUnit"/>
+        <Annotation Term="Common.Label" String="Height"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/width">
+        <Annotation Term="Measures.Unit" Path="dimensionUnit"/>
+        <Annotation Term="Common.Label" String="Width"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/depth">
+        <Annotation Term="Measures.Unit" Path="dimensionUnit"/>
+        <Annotation Term="Common.Label" String="Depth"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/weight">
+        <Annotation Term="Measures.Unit" Path="weightUnit"/>
+        <Annotation Term="Common.Label" String="Weight"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/dimensionUnit">
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="DimensionUnits"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="dimensionUnit"/>
+                  <PropertyValue Property="ValueListProperty" String="code"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+        <Annotation Term="Common.Label" String="Unit of Length"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/weightUnit">
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="WeightUnits"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="weightUnit"/>
+                  <PropertyValue Property="ValueListProperty" String="code"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+        <Annotation Term="Common.Label" String="Unit of Weight"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/baseUnit">
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="BaseUnits"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="baseUnit"/>
+                  <PropertyValue Property="ValueListProperty" String="code"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+        <Annotation Term="Common.Label" String="Base Unit"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/supplier">
+        <Annotation Term="Common.Text" Path="supplier/name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="Suppliers"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="supplier_ID"/>
+                  <PropertyValue Property="ValueListProperty" String="ID"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+        <Annotation Term="Common.Label" String="Supplier"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/stock">
+        <Annotation Term="Common.Label" String="Product Stock"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/capacity">
+        <Annotation Term="Common.Label" String="Capacity"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/thumbnail">
+        <Annotation Term="UI.IsImageURL" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Image"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/reviews">
+        <Annotation Term="Common.Label" String="User Reviews"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/created_byUser">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="User ID"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/created_at">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/modified_byUser">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="User ID"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/modified_at">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/category_ID">
+        <Annotation Term="Common.Text" Path="category/name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="Categories"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="category_ID"/>
+                  <PropertyValue Property="ValueListProperty" String="ID"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+        <Annotation Term="Common.Label" String="Category"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/priceRange_code">
+        <Annotation Term="Common.Text" Path="priceRange/name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="PriceRanges"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="priceRange_code"/>
+                  <PropertyValue Property="ValueListProperty" String="code"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+        <Annotation Term="Common.Label" String="Price Range"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/supplier_ID">
+        <Annotation Term="Common.Text" Path="supplier/name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="Suppliers"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="supplier_ID"/>
+                  <PropertyValue Property="ValueListProperty" String="ID"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+        <Annotation Term="Common.Label" String="Supplier"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Products/stock_ID">
+        <Annotation Term="Common.Label" String="Product Stock"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Categories/ID">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Text" Path="name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.Label" String="Category"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Categories/name">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Category Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Categories/descr">
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Categories/thumbnail">
+        <Annotation Term="UI.IsImageURL" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Image"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Categories/image">
+        <Annotation Term="UI.IsImageURL" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Image"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Suppliers">
+        <Annotation Term="Communication.Contact">
+          <Record Type="Communication.ContactType">
+            <PropertyValue Property="fn" Path="name"/>
+            <PropertyValue Property="tel">
+              <Collection>
+                <Record Type="Communication.PhoneNumberType">
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/fax"/>
+                  <PropertyValue Property="uri" Path="faxNumber"/>
+                </Record>
+                <Record Type="Communication.PhoneNumberType">
+                  <PropertyValue Property="type" EnumMember="Communication.PhoneType/work"/>
+                  <PropertyValue Property="uri" Path="phoneNumber"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+            <PropertyValue Property="email">
+              <Collection>
+                <Record Type="Communication.EmailAddressType">
+                  <PropertyValue Property="type" EnumMember="Communication.ContactInformationType/work"/>
+                  <PropertyValue Property="address" Path="emailAddress"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="Supplier"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Suppliers/name">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Company Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.EntityContainer/Suppliers/name">
+        <Annotation Term="Capabilities.SearchRestrictions">
+          <Record Type="Capabilities.SearchRestrictionsType">
+            <PropertyValue Property="Searchable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Suppliers/emailAddress">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Suppliers/faxNumber">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Suppliers/phoneNumber">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Suppliers/ID">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Supplier"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Suppliers/url">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Stocks">
+        <Annotation Term="UI.DataPoint" Qualifier="StockAvailability">
+          <Record Type="UI.DataPointType">
+            <PropertyValue Property="Value" Path="availability_code"/>
+            <PropertyValue Property="Criticality" Path="availability_code"/>
+            <PropertyValue Property="Title" String="Availability"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.Label" String="Product Stock Availability"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Stocks/ID">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Stocks/quantity">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Stocks/minimumQuantity">
+        <Annotation Term="Common.Label" String="Minimum Stock"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Stocks/availability">
+        <Annotation Term="Common.Text" Path="availability/name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="StockAvailabilities"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="availability_code"/>
+                  <PropertyValue Property="ValueListProperty" String="code"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+        <Annotation Term="Common.Label" String="Availability"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Stocks/deliveryTime">
+        <Annotation Term="Common.Label" String="Delivery Time (in days)"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Stocks/availability_code">
+        <Annotation Term="Common.Text" Path="availability/name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="StockAvailabilities"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="availability_code"/>
+                  <PropertyValue Property="ValueListProperty" String="code"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+        <Annotation Term="Common.Label" String="Availability"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.StockAvailabilities/name">
+        <Annotation Term="Common.Label" String="Availability"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.StockAvailabilities/description">
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.StockAvailabilities/code">
+        <Annotation Term="Common.Text" Path="name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.Label" String="Availability"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.PriceRanges/name">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Price Range"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.PriceRanges/description">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.PriceRanges/code">
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Text" Path="name">
+          <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+        </Annotation>
+        <Annotation Term="Common.Label" String="Price Range"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Currencies/name">
+        <Annotation Term="Common.Label" String="Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Currencies/description">
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Currencies/code">
+        <Annotation Term="Common.Label" String="Currency Code"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.DimensionUnits/name">
+        <Annotation Term="Common.Label" String="Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.DimensionUnits/description">
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.DimensionUnits/code">
+        <Annotation Term="Common.Label" String="Unit of Length"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.WeightUnits/name">
+        <Annotation Term="Common.Label" String="Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.WeightUnits/description">
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.WeightUnits/code">
+        <Annotation Term="Common.Label" String="Unit of Weight"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.BaseUnits/name">
+        <Annotation Term="Common.Label" String="Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.BaseUnits/description">
+        <Annotation Term="Common.Label" String="Description"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.BaseUnits/code">
+        <Annotation Term="Common.Label" String="Base Unit"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.ProductImages/image">
+        <Annotation Term="UI.IsImageURL" Bool="true"/>
+        <Annotation Term="UI.HiddenFilter" Bool="true"/>
+        <Annotation Term="Common.Label" String="Image"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/product">
+        <Annotation Term="Common.Label" String="Reviewed Product"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/author">
+        <Annotation Term="Common.Label" String="Author"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/date">
+        <Annotation Term="Common.Label" String="Date"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/title">
+        <Annotation Term="Common.Label" String="Title"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/text">
+        <Annotation Term="Common.Label" String="Text"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/rating">
+        <Annotation Term="Common.Label" String="Number of Stars"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/created_byUser">
+        <Annotation Term="Common.Label" String="User ID"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/modified_byUser">
+        <Annotation Term="Common.Label" String="User ID"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/product_ID">
+        <Annotation Term="Common.Label" String="Reviewed Product"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Reviews/author_ID">
+        <Annotation Term="Common.Label" String="Author"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Users/ID">
+        <Annotation Term="Common.Label" String="User ID"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Users/firstName">
+        <Annotation Term="Common.Label" String="First Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Users/lastName">
+        <Annotation Term="Common.Label" String="Last Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Users/cart">
+        <Annotation Term="Common.Label" String="Shopping Cart"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Users/created_byUser">
+        <Annotation Term="Common.Label" String="User ID"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Users/modified_byUser">
+        <Annotation Term="Common.Label" String="User ID"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Me/ID">
+        <Annotation Term="Common.Label" String="User ID"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Me/firstName">
+        <Annotation Term="Common.Label" String="First Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Me/lastName">
+        <Annotation Term="Common.Label" String="Last Name"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Me/cart">
+        <Annotation Term="Common.Label" String="Shopping Cart"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Carts/owner">
+        <Annotation Term="Common.Label" String="Owner"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.Carts/owner_ID">
+        <Annotation Term="Common.Label" String="Owner"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.CartItems/product">
+        <Annotation Term="Common.Label" String="Product"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.CartItems/quantity">
+        <Annotation Term="Common.Label" String="Quantity"/>
+      </Annotations>
+      <Annotations Target="caps.products.CatalogService.CartItems/product_ID">
+        <Annotation Term="Common.Label" String="Product"/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

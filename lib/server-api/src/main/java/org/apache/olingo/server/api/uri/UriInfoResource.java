@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.DeltaTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
@@ -69,7 +70,12 @@ public interface UriInfoResource {
    * @return Object containing information of the $count option
    */
   CountOption getCountOption();
-
+  
+  /**
+   * @return Object containing information of the $deltatoken option
+   */
+  DeltaTokenOption getDeltaTokenOption();
+  
   /**
    * @return Object containing information of the $orderby option
    */

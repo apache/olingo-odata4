@@ -84,14 +84,12 @@ class JsonGeoValueSerializer {
   }
 
   private void polygon(final JsonGenerator jgen, final Polygon polygon) throws IOException {
-    if (!polygon.getExterior().isEmpty()) {
+    jgen.writeStartArray();
+    lineString(jgen, polygon.getExterior());
+    jgen.writeEndArray();
+    for (int i = 0; i < polygon.getNumberOfInteriorRings(); i++) {
       jgen.writeStartArray();
-      lineString(jgen, polygon.getExterior());
-      jgen.writeEndArray();
-    }
-    if (!polygon.getInterior().isEmpty()) {
-      jgen.writeStartArray();
-      lineString(jgen, polygon.getInterior());
+      lineString(jgen, polygon.getInterior(i));
       jgen.writeEndArray();
     }
   }

@@ -82,17 +82,22 @@ public class URIBuilderImpl implements URIBuilder {
 
   private final Configuration configuration;
 
-  protected final List<Segment> segments = new ArrayList<Segment>();
+  protected final List<Segment> segments = new ArrayList<>();
 
   /**
    * Insertion-order map of query options.
    */
-  protected final Map<String, String> queryOptions = new LinkedHashMap<String, String>();
+  protected final Map<String, String> queryOptions = new LinkedHashMap<>();
 
+  /**
+   * Insertion-order map of custom query options.
+   */
+  protected final Map<String, String> customQueryOptions = new LinkedHashMap<>();
+  
   /**
    * Insertion-order map of parameter aliases.
    */
-  protected final Map<String, String> parameters = new LinkedHashMap<String, String>();
+  protected final Map<String, String> parameters = new LinkedHashMap<>();
 
   @Override
   public URIBuilder addQueryOption(final QueryOption option, final String value) {
@@ -294,16 +299,18 @@ public class URIBuilderImpl implements URIBuilder {
     }
 
     try {
-      if ((queryOptions.size() + parameters.size()) > 0) {
+      if ((customQueryOptions.size() + queryOptions.size() + parameters.size()) > 0) {
         segmentsBuilder.append("?");
-        List<NameValuePair> list1 = new LinkedList<NameValuePair>();
+        List<NameValuePair> list1 = new LinkedList<>();
         for (Map.Entry<String, String> option : queryOptions.entrySet()) {
           list1.add(new BasicNameValuePair("$" + option.getKey(), option.getValue()));
         }
         for (Map.Entry<String, String> parameter : parameters.entrySet()) {
           list1.add(new BasicNameValuePair("@" + parameter.getKey(), parameter.getValue()));
         }
-
+        for (Map.Entry<String, String> customOption : customQueryOptions.entrySet()) {
+          list1.add(new BasicNameValuePair(customOption.getKey(), customOption.getValue()));
+        }
         // don't use UriBuilder.build():
         // it will try to call URLEncodedUtils.format(Iterable<>,Charset) method,
         // which works in desktop java application, however, throws NoSuchMethodError in android OS,
@@ -365,7 +372,7 @@ public class URIBuilderImpl implements URIBuilder {
   public URIBuilder appendKeySegment(final Map<String, Pair<EdmEnumType, String>> enumValues,
       final Map<String, Object> segmentValues) {
 
-    final Map<String, Object> values = new LinkedHashMap<String, Object>();
+    final Map<String, Object> values = new LinkedHashMap<>();
     for (Map.Entry<String, Pair<EdmEnumType, String>> entry : enumValues.entrySet()) {
       values.put(entry.getKey(), entry.getValue().getKey().toUriLiteral(entry.getValue().getValue()));
     }
@@ -446,7 +453,7 @@ public class URIBuilderImpl implements URIBuilder {
   @Override
   public URIBuilder expandWithOptions(String expandItem, boolean pathRef,
       boolean pathCount, Map<QueryOption, Object> options) {
-    final Map<String, Object> _options = new LinkedHashMap<String, Object>();
+    final Map<String, Object> _options = new LinkedHashMap<>();
     for (Map.Entry<QueryOption, Object> entry : options.entrySet()) {
       _options.put("$" + entry.getKey().toString(), entry.getValue());
     }
@@ -457,5 +464,11 @@ public class URIBuilderImpl implements URIBuilder {
   @Override
   public URIBuilder expandWithSelect(final String expandItem, final String... selectItems) {
     return expand(expandItem + "($select=" + StringUtils.join(selectItems, ",") + ")");
+  }
+
+  @Override
+  public URIBuilder addCustomQueryOption(String customName, String customValue) {
+    customQueryOptions.put(customName, customValue);
+    return this;
   }
 }

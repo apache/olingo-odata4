@@ -1,0 +1,135 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Customers",
+  "@odata.metadataEtag": "W/\"4ca0a3ff-346c-43b1-afb3-ae9fc956343e\"",
+  "@odata.count": 2,
+  "@com.contoso.display.highlight": true,
+  "@com.contoso.PersonalInfo.PhoneNumbers": ["(203)555-1718", "(203)555-1719"],
+  "value": [{
+      "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)",
+      "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=1)",
+      "@odata.mediaEditLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(1)/$value",
+	  "@odata.mediaContentType": "*/*",
+	  "@odata.mediaEtag": "\"8zOOKKvgOtptr4gt8IrnapX3jds=\"",
+      "PersonID@odata.type": "Int32",
+      "PersonID": 1,
+      "FirstName@odata.type": "String",
+	  "FirstName@com.contoso.display.style": {
+	    "@odata.type": "#com.contoso.display.styleType",
+	    "title": true,
+	    "order": 1
+	  },
+      "FirstName": "Bob",
+      "LastName@odata.type": "String",
+      "LastName": "Cat",
+      "MiddleName@odata.type": "String",
+      "MiddleName": null,
+      "HomeAddress": {
+        "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.HomeAddress",
+        "Street@odata.type": "String",
+        "Street": "1 Microsoft Way",
+        "City@odata.type": "String",
+        "City": "London",
+        "PostalCode@odata.type": "String",
+        "PostalCode": "98052",
+        "FamilyName@odata.type": "String",
+        "FamilyName": "Cats",
+        "Country@odata.associationLink": "Customers(1)/HomeAddress/Country/$ref",
+        "Country@odata.navigationLink": "Customers(1)/HomeAddress/Country"
+      },
+      "Home@odata.type": "GeographyPoint",
+      "Home": {
+        "type": "Point",
+        "coordinates": [23.1, 32.1],
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        }
+      },
+      "Numbers": ["111-111-1111"],
+      "Emails": ["abc@abc.com"],
+      "City@odata.type": "String",
+      "City": "London",
+      "Birthday@odata.type": "DateTimeOffset",
+      "Birthday": "1957-04-03T00:00:00Z",
+      "TimeBetweenLastTwoOrders@odata.type": "Duration",
+      "TimeBetweenLastTwoOrders": "PT0.0000001S",
+      "Details@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(1)/Details/$ref",
+	  "Details@com.contoso.display.style": {
+		    "@odata.type": "#com.contoso.display.styleType",
+		    "order": 2
+	  	},
+	  	"Details@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(1)/Details",
+	  	"Details": {
+	  		"@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Details",
+	        "@odata.id": "Details(10)",
+	  		"Id@odata.type": "Int32",
+	  		"Id" : 10,
+	  		"Available@odata.type": "Boolean",
+	  		"Available" : false
+	  	}
+    }, {
+      "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=2)",
+      "@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(PersonID=2)",
+      "@odata.mediaEditLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(1)/$value",
+	  "@odata.mediaContentType": "*/*",
+	  "@odata.mediaEtag": "\"8zOOKKvgOtptr4gt8IrnapX3jds=\"",
+      "PersonID@odata.type": "Int32",
+      "PersonID": 2,
+      "FirstName@odata.type": "String",
+      "FirstName": "Jill",
+      "LastName@odata.type": "String",
+      "LastName": "Jones",
+      "MiddleName@odata.type": "String",
+      "MiddleName": null,
+      "HomeAddress": null,
+      "Home": {
+        "type": "Point",
+        "coordinates": [161.8, 15.0],
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        }
+      },
+      "Numbers": [],
+      "Emails": [],
+      "City@odata.type": "String",
+      "City": "Sydney",
+      "Birthday@odata.type": "DateTimeOffset",
+      "Birthday": "1983-01-15T00:00:00Z",
+      "TimeBetweenLastTwoOrders@odata.type": "Duration",
+      "TimeBetweenLastTwoOrders": "PT0.0000002S",
+      "Orders@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(2)/Orders",
+	  "Orders" : [
+		  	{
+		  	"@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Orders",
+		  	"@odata.id": "Orders(10)",
+		  	"OrderId@odata.type": "Int32",
+		  	"OrderId" : 10,
+		  	"Quantity@odata.type": "Int32",
+		  	"Quantity" : 2
+		  	},
+		  	{
+		  	"@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Orders",
+		  	"@odata.id": "Orders(20)",
+		  	"OrderId@odata.type": "Int32",
+		  	"OrderId" : 20,
+		  	"Quantity@odata.type": "Int32",
+		  	"Quantity" : 2
+		  	}
+	  	],
+	  	"#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
+		"title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
+		"target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(2)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+		},
+		"#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
+			"title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
+			"target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Customers(2)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+		}
+    }],
+     "@odata.deltaLink": "Customers?$expand=Orders&$deltatoken=8015",
+     "@odata.nextLink": "Customers?$skiptoken=5"
+}

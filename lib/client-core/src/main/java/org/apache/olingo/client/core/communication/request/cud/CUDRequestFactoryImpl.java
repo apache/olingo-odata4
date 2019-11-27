@@ -56,7 +56,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
   public <E extends ClientEntity> ODataEntityCreateRequest<E> getEntityCreateRequest(
       final URI targetURI, final E entity) {
 
-    return new ODataEntityCreateRequestImpl<E>(client, targetURI, entity);
+    return new ODataEntityCreateRequestImpl<>(client, targetURI, entity);
   }
 
   @Override
@@ -66,10 +66,10 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
     final ODataEntityUpdateRequest<E> req;
 
     if (client.getConfiguration().isUseXHTTPMethod()) {
-      req = new ODataEntityUpdateRequestImpl<E>(client, HttpMethod.POST, targetURI, changes);
+      req = new ODataEntityUpdateRequestImpl<>(client, HttpMethod.POST, targetURI, changes);
       req.setXHTTPMethod(type.getMethod().name());
     } else {
-      req = new ODataEntityUpdateRequestImpl<E>(client, type.getMethod(), targetURI, changes);
+      req = new ODataEntityUpdateRequestImpl<>(client, type.getMethod(), targetURI, changes);
     }
 
     return req;
@@ -86,10 +86,10 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
     final ODataEntityUpdateRequest<E> req;
 
     if (client.getConfiguration().isUseXHTTPMethod()) {
-      req = new ODataEntityUpdateRequestImpl<E>(client, HttpMethod.POST, entity.getEditLink(), entity);
+      req = new ODataEntityUpdateRequestImpl<>(client, HttpMethod.POST, entity.getEditLink(), entity);
       req.setXHTTPMethod(type.getMethod().name());
     } else {
-      req = new ODataEntityUpdateRequestImpl<E>(client, type.getMethod(), entity.getEditLink(), entity);
+      req = new ODataEntityUpdateRequestImpl<>(client, type.getMethod(), entity.getEditLink(), entity);
     }
 
     return req;
@@ -189,7 +189,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
   public <E extends ClientEntity> ODataMediaEntityCreateRequest<E> getMediaEntityCreateRequest(
       final URI targetURI, final InputStream media) {
 
-    return new ODataMediaEntityCreateRequestImpl<E>(client, targetURI, media);
+    return new ODataMediaEntityCreateRequestImpl<>(client, targetURI, media);
   }
 
   @Override
@@ -213,10 +213,10 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
     final ODataMediaEntityUpdateRequest<E> req;
 
     if (client.getConfiguration().isUseXHTTPMethod()) {
-      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.POST, URIUtils.addValueSegment(editURI), media);
+      req = new ODataMediaEntityUpdateRequestImpl<>(client, HttpMethod.POST, URIUtils.addValueSegment(editURI), media);
       req.setXHTTPMethod(HttpMethod.PUT.name());
     } else {
-      req = new ODataMediaEntityUpdateRequestImpl<E>(client, HttpMethod.PUT, URIUtils.addValueSegment(editURI), media);
+      req = new ODataMediaEntityUpdateRequestImpl<>(client, HttpMethod.PUT, URIUtils.addValueSegment(editURI), media);
     }
 
     return req;
@@ -241,7 +241,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
       final URI reference) {
     final URI contextURI = client.newURIBuilder(serviceRoot.toASCIIString()).appendMetadataSegment()
                                                                             .appendRefSegment().build();
-    ResWrap<URI> wrappedPayload = new ResWrap<URI>(contextURI, null, reference);
+    ResWrap<URI> wrappedPayload = new ResWrap<>(contextURI, null, reference);
 
     return new ODataReferenceAddingRequestImpl(client, HttpMethod.POST, targetURI, wrappedPayload);
   }
@@ -251,7 +251,7 @@ public class CUDRequestFactoryImpl implements CUDRequestFactory {
       final URI reference) {
     // See OData Protocol 11.4.6.3
     final URI contextURI = client.newURIBuilder(serviceRoot.toASCIIString()).appendMetadataSegment().build();
-    ResWrap<URI> wrappedPayload = new ResWrap<URI>(contextURI, null, reference);
+    ResWrap<URI> wrappedPayload = new ResWrap<>(contextURI, null, reference);
 
     return new ODataReferenceAddingRequestImpl(client, HttpMethod.PUT, targetURI, wrappedPayload);
   }

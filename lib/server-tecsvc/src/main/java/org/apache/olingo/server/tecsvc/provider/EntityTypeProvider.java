@@ -33,6 +33,8 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETAllKey = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAllKey");
   public static final FullQualifiedName nameETAllNullable = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETAllNullable");
+  public static final FullQualifiedName nameETDeriveCollComp = new FullQualifiedName(SchemaProvider.NAMESPACE,
+      "ETDeriveCollComp");
   public static final FullQualifiedName nameETAllPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETAllPrim");
   public static final FullQualifiedName nameETAllPrimDefaultValues = new FullQualifiedName(SchemaProvider.NAMESPACE, 
          "ETAllPrimDefaultValues");
@@ -85,9 +87,20 @@ public class EntityTypeProvider {
       "ETMixEnumDefCollComp");
   public static final FullQualifiedName nameETStream = new FullQualifiedName(SchemaProvider.NAMESPACE,
       "ETWithStream");
+  public static final FullQualifiedName nameETDelta =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETDelta"); 
   
   public static final FullQualifiedName nameETPeople = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETPeople");
-
+  
+ public static final FullQualifiedName nameETCont = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETCont");
+  
+  public static final FullQualifiedName nameETBaseCont = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETBaseCont");
+  
+  public static final FullQualifiedName nameETTwoCont = new FullQualifiedName(SchemaProvider.NAMESPACE, "ETTwoCont");
+  
+  public static final FullQualifiedName nameETStreamOnComplexProp = 
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "ETStreamOnComplexProp");
+  
   public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if(entityTypeName.equals(nameETAllPrimDefaultValues)){        
         return new CsdlEntityType()
@@ -169,6 +182,15 @@ public class EntityTypeProvider {
           .setProperties(Arrays.asList(
               PropertyProvider.propertyInt16_NotNullable, PropertyProvider.collPropertyString,
               PropertyProvider.propertyComp_CTTwoPrim, PropertyProvider.collPropertyComp_CTTwoPrim));
+
+    } else if (entityTypeName.equals(nameETDeriveCollComp)) {
+      return new CsdlEntityType()
+          .setName("ETDeriveCollComp")
+          .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+             PropertyProvider.propertyInt16_NotNullable,
+             PropertyProvider.propertyComp_CTTwoPrim_Ano,
+             PropertyProvider.collPropertyComp_CTTwoPrim_Ano));
 
     } else if (entityTypeName.equals(nameETTwoKeyTwoPrim)) {
       return new CsdlEntityType()
@@ -369,7 +391,10 @@ public class EntityTypeProvider {
               PropertyProvider.navPropertyETTwoKeyNavOneCT_ETTwoKeyNav,
               PropertyProvider.collectionNavPropertyETTwoKeyNavMany_CT_ETTwoKeyNav,
               PropertyProvider.navPropertyETTwoKeyNavContOne_ETTwoKeyNav,
-              PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_ETTwoKeyNav
+              PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_ETTwoKeyNav,
+              PropertyProvider.navPropertyETTwoKeyNavContOne_ETCont,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_ETCont,
+              PropertyProvider.collectionNavPropertyETTwoKeyNavContMany_ETBaseCont
               ));
 
     } else if (entityTypeName.equals(nameETTwoKeyNavCont)) {
@@ -492,6 +517,61 @@ public class EntityTypeProvider {
             PropertyProvider.propertyId,
             PropertyProvider.propertyName))
           .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyFriends));
+    } else if (entityTypeName.equals(nameETDelta)) {
+      return new CsdlEntityType()
+          .setName("ETDelta")
+          .setBaseType(nameETTwoPrim)
+          .setNavigationProperties(
+              Arrays.asList(
+                  PropertyProvider.navPropertyETBaseCont_ETTwoCont,
+                  PropertyProvider.collectionNavPropertyETBaseContMany_ETTwoCont));
+    } else if (entityTypeName.equals(nameETCont)) {
+      return new CsdlEntityType()
+          .setName("ETCont").setBaseType(nameETBaseCont)
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyBoolean, PropertyProvider.propertyByte, PropertyProvider.propertySByte
+              ))
+          .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyETCont_ETTwoPrim,
+              PropertyProvider.collectionNavPropertyETContMany_ETTwoPrim));
+    } else if (entityTypeName.equals(nameETBaseCont)) {
+      return new CsdlEntityType()
+          .setName("ETBaseCont")
+          .setKey(Arrays.asList(
+              new CsdlPropertyRef().setName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString,
+              PropertyProvider.propertyInt32, PropertyProvider.propertyInt64,
+              PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDecimal_Scale,
+              PropertyProvider.propertyBinary, PropertyProvider.propertyDate, PropertyProvider.propertyDateTimeOffset,
+              PropertyProvider.propertyDuration, PropertyProvider.propertyGuid, PropertyProvider.propertyTimeOfDay
+              ))
+          .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyETBaseCont_ETTwoPrim,
+              PropertyProvider.collectionNavPropertyETBaseContMany_ETTwoPrim,
+              PropertyProvider.collectionNavPropertyETBaseContMany_ETTwoCont,
+              PropertyProvider.navPropertyETBaseCont_ETTwoCont));
+    } else if (entityTypeName.equals(nameETTwoCont)) {
+      return new CsdlEntityType()
+          .setName("ETTwoCont")
+          .setKey(Arrays.asList(
+              new CsdlPropertyRef().setName("PropertyInt16"),
+              new CsdlPropertyRef().setName("PropertyString")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable, PropertyProvider.propertyString_NotNullable,
+              PropertyProvider.propertyInt32, PropertyProvider.propertyInt64,
+              PropertyProvider.propertySingle, PropertyProvider.propertyDouble, PropertyProvider.propertyDecimal_Scale,
+              PropertyProvider.propertyBinary, PropertyProvider.propertyDate, PropertyProvider.propertyDateTimeOffset,
+              PropertyProvider.propertyDuration, PropertyProvider.propertyGuid, PropertyProvider.propertyTimeOfDay
+              ));
+    } else if (entityTypeName.equals(nameETStreamOnComplexProp)) {
+      return new CsdlEntityType()
+          .setName("ETStreamOnComplexProp")
+          .setKey(Arrays.asList(
+              new CsdlPropertyRef().setName("PropertyInt16")))
+          .setProperties(Arrays.asList(
+              PropertyProvider.propertyInt16_NotNullable, 
+              PropertyProvider.propertyInt32, PropertyProvider.propertyEntityStream,
+              PropertyProvider.propertyCompWithStream_CTWithStreamProp
+              ));
     }
     return null;
   }

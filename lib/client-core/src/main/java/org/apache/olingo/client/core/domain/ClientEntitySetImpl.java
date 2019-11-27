@@ -44,11 +44,11 @@ public class ClientEntitySetImpl extends AbstractClientPayload implements Client
 
   private URI deltaLink;
 
-  private final List<ClientEntity> entities = new ArrayList<ClientEntity>();
+  private final List<ClientEntity> entities = new ArrayList<>();
 
-  private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
+  private final List<ClientAnnotation> annotations = new ArrayList<>();
   
-  private final List<ClientOperation> operations = new ArrayList<ClientOperation>();
+  private final List<ClientOperation> operations = new ArrayList<>();
 
   public ClientEntitySetImpl() {
     super(null);

@@ -46,7 +46,7 @@ public class DynamicStructuredType implements EdmStructuredType, Cloneable {
 
   public DynamicStructuredType addProperty(final EdmProperty property) {
     if (properties == null) {
-      properties = new LinkedHashMap<String, EdmProperty>();
+      properties = new LinkedHashMap<>();
     }
     properties.put(property.getName(), property);
     return this;
@@ -65,7 +65,7 @@ public class DynamicStructuredType implements EdmStructuredType, Cloneable {
     if (properties == null || properties.isEmpty()) {
       return startType.getPropertyNames();
     } else {
-      List<String> names = new ArrayList<String>(startType.getPropertyNames());
+      List<String> names = new ArrayList<>(startType.getPropertyNames());
       names.addAll(properties.keySet());
       return Collections.unmodifiableList(names);
     }

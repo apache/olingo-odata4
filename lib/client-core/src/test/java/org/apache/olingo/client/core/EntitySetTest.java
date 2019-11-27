@@ -26,16 +26,39 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.data.EntityCollection;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
 public class EntitySetTest extends AbstractTest {
 
+private EdmEnabledODataClient getEdmEnabledClient1() {
+    return new EdmEnabledODataClientImpl(null, null, null) {
+
+      private Edm edm;
+
+      @Override
+      public Edm getEdm(final String metadataETag) {
+        return getCachedEdm();
+      }
+
+      @Override
+      public Edm getCachedEdm() {
+        if (edm == null) {
+          edm = getReader().readMetadata(getClass().getResourceAsStream("metadata_sample.xml"));
+        }
+        return edm;
+      }
+
+    };
+  }
+  
   private void read(final ContentType contentType) throws IOException, ODataDeserializerException {
     final InputStream input = getClass().getResourceAsStream("Customers." + getSuffix(contentType));
     final ClientEntitySet entitySet = client.getBinder().getODataEntitySet(
@@ -49,6 +72,21 @@ public class EntitySetTest extends AbstractTest {
         client.getBinder().getODataEntitySet(new ResWrap<EntityCollection>((URI) null, null,
             client.getBinder().getEntitySet(entitySet)));
     assertEquals(entitySet, written);
+  }
+
+  @Test
+  public void testOperations() throws Exception {
+    final InputStream input = getClass().
+        getResourceAsStream("CustomersWithOperations." + getSuffix(ContentType.APPLICATION_JSON));
+    final ClientEntitySet entitySet = client.getBinder().getODataEntitySet(
+        client.getDeserializer(ContentType.APPLICATION_JSON).toEntitySet(input));
+    assertNotNull(entitySet);
+
+    assertEquals(2, entitySet.getEntities().size());
+    assertNull(entitySet.getNext());
+    assertEquals(1, entitySet.getOperations().size());
+    assertEquals("Microsoft.Test.OData.Services.ODataWCFService.BAESAllPrimRTETAllPrim",
+        entitySet.getOperations().get(0).getTitle());
   }
 
   @Test
@@ -86,5 +124,45 @@ public class EntitySetTest extends AbstractTest {
   @Test
   public void jsonRef() throws Exception {
     ref(ContentType.JSON);
+  }
+  
+  @Test
+  public void testContainmentNav() throws Exception {
+    final InputStream input = getClass().getResourceAsStream("containmentNav1." + 
+	getSuffix(ContentType.JSON_FULL_METADATA));
+    final ClientEntitySet entity = getEdmEnabledClient1().getBinder().
+	getODataEntitySet(client.getDeserializer(
+	ContentType.JSON_FULL_METADATA).toEntitySet(input));
+    assertNotNull(entity);
+    assertEquals("olingo.odata.test1.ETTwoCont", 
+        entity.getEntities().get(0).getTypeName().getFullQualifiedNameAsString());
+    assertEquals("olingo.odata.test1.ETTwoCont", 
+        entity.getEntities().get(1).getTypeName().getFullQualifiedNameAsString());
+  }
+  
+  @Test
+  public void testClientEntitySet() throws Exception {
+    final EdmEnabledODataClientImpl client = new EdmEnabledODataClientImpl(null, 
+        getEdmEnabledClient1().getCachedEdm(), null);
+    assertNotNull(client);
+    assertNull(client.getServiceRoot());
+    client.newURIBuilder();
+    assertNotNull(client.getCachedEdm());
+    assertNotNull(client.getEdm(null));
+    assertNotNull(client.getInvokeRequestFactory());
+  }
+  
+  @Test
+  public void testContainmentNavOnSingleton() throws Exception {
+    final InputStream input = getClass().getResourceAsStream("containmentNav4." + 
+  getSuffix(ContentType.JSON_FULL_METADATA));
+    final ClientEntitySet entity = getEdmEnabledClient1().getBinder().
+  getODataEntitySet(client.getDeserializer(
+  ContentType.JSON_FULL_METADATA).toEntitySet(input));
+    assertNotNull(entity);
+    assertEquals("olingo.odata.test1.ETCont", 
+        entity.getEntities().get(0).getTypeName().getFullQualifiedNameAsString());
+    assertEquals("olingo.odata.test1.ETCont", 
+        entity.getEntities().get(1).getTypeName().getFullQualifiedNameAsString());
   }
 }

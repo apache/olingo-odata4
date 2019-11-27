@@ -80,7 +80,7 @@ public class BatchRequest extends ServiceRequest {
         try {
           txnId = handler.startTransaction();
           partResponse = processChangeSet(part, handler);
-          if (partResponse.getResponses().get(0).getStatusCode() > 400) {
+          if (partResponse.getResponses().get(0).getStatusCode() >= 400) {
             handler.rollback(txnId);
           } else {
             handler.commit(txnId);

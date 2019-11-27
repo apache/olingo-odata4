@@ -319,4 +319,45 @@ public class EdmImplCallCreateTest {
       return null;
     }
   }
+  @Test
+  public void callCreateComplexTypeWithAnnotations() {
+    EdmComplexType complexType = edm.getComplexTypeWithAnnotations(FQN);
+    assertNotNull(complexType);
+    assertEquals(FQN.getNamespace(), complexType.getNamespace());
+    assertEquals(FQN.getName(), complexType.getName());
+
+    assertNull(edm.getComplexType(WRONG_FQN));
+  }
+  
+  @Test
+  public void callCreateComplexTypeWithAnnotationsDerivedFromES() {
+    EdmComplexType complexType = ((AbstractEdm)edm).
+        getComplexTypeWithAnnotations(FQN, true);
+    assertNotNull(complexType);
+    assertEquals(FQN.getNamespace(), complexType.getNamespace());
+    assertEquals(FQN.getName(), complexType.getName());
+
+    assertNull(edm.getComplexType(WRONG_FQN));
+  }
+  
+  @Test
+  public void callCreateEntityTypeWithAnnotation() {
+    EdmEntityType entityType = edm.getEntityTypeWithAnnotations(FQN);
+    assertNotNull(entityType);
+    assertEquals(FQN.getNamespace(), entityType.getNamespace());
+    assertEquals(FQN.getName(), entityType.getName());
+
+    assertNull(edm.getEntityType(WRONG_FQN));
+  }
+  
+  @Test
+  public void callCreateEntityTypeWithAnnotationDerivedFromES() {
+    EdmEntityType entityType = ((AbstractEdm)edm).
+        getEntityTypeWithAnnotations(FQN, true);
+    assertNotNull(entityType);
+    assertEquals(FQN.getNamespace(), entityType.getNamespace());
+    assertEquals(FQN.getName(), entityType.getName());
+
+    assertNull(edm.getEntityType(WRONG_FQN));
+  }
 }

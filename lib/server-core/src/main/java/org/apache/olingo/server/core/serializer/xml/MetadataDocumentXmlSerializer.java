@@ -96,6 +96,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_PROPERTY_REF = "PropertyRef";
   private static final String XML_KEY = "Key";
   private static final String XML_SCALE = "Scale";
+  private static final String XML_SRID = "SRID";
   private static final String XML_PRECISION = "Precision";
   private static final String XML_MAX_LENGTH = "MaxLength";
   private static final String XML_DEFAULT_VALUE = "DefaultValue";
@@ -139,6 +140,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String ABSTRACT = "Abstract";
 
   private static final String XML_ANNOTATIONS = "Annotations";
+  private static final String OPEN_TYPE = "OpenType";
 
   private static final String EDMX = "Edmx";
   private static final String PREFIX_EDMX = "edmx";
@@ -154,7 +156,7 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_APPLIES_TO = "AppliesTo";
 
   private final ServiceMetadata serviceMetadata;
-  private final Map<String, String> namespaceToAlias = new HashMap<String, String>();
+  private final Map<String, String> namespaceToAlias = new HashMap<>();
 
   public MetadataDocumentXmlSerializer(final ServiceMetadata serviceMetadata) throws SerializerException {
     if (serviceMetadata == null || serviceMetadata.getEdm() == null) {
@@ -581,7 +583,14 @@ public class MetadataDocumentXmlSerializer {
 
       EdmEntitySet returnedEntitySet = functionImport.getReturnedEntitySet();
       if (returnedEntitySet != null) {
-        writer.writeAttribute(XML_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
+        String returnedEntitySetNamespace = returnedEntitySet.getEntityContainer().getNamespace();
+        if ((null != returnedEntitySetNamespace && returnedEntitySetNamespace.equals(containerNamespace)) || (
+            namespaceToAlias.get(returnedEntitySetNamespace) != null && 
+            namespaceToAlias.get(returnedEntitySetNamespace).equals(containerNamespace))) {
+          writer.writeAttribute(XML_ENTITY_SET, returnedEntitySet.getName());
+        } else {
+          writer.writeAttribute(XML_ENTITY_SET, containerNamespace + "." + returnedEntitySet.getName());
+        }
       }
       // Default is false and we do not write the default
       if (functionImport.isIncludeInServiceDocument()) {
@@ -772,7 +781,11 @@ public class MetadataDocumentXmlSerializer {
       if (complexType.isAbstract()) {
         writer.writeAttribute(ABSTRACT, TRUE);
       }
-
+      
+      if (complexType.isOpenType()) {
+          writer.writeAttribute(OPEN_TYPE, TRUE);
+      }
+      
       appendProperties(writer, complexType);
 
       appendNavigationProperties(writer, complexType);
@@ -801,6 +814,10 @@ public class MetadataDocumentXmlSerializer {
         writer.writeAttribute(ABSTRACT, TRUE);
       }
 
+      if (entityType.isOpenType()) {
+          writer.writeAttribute(OPEN_TYPE, TRUE);
+      }      
+      
       appendKey(writer, entityType);
 
       appendProperties(writer, entityType);
@@ -815,7 +832,7 @@ public class MetadataDocumentXmlSerializer {
 
   private void appendNavigationProperties(final XMLStreamWriter writer, final EdmStructuredType type)
       throws XMLStreamException {
-    List<String> navigationPropertyNames = new ArrayList<String>(type.getNavigationPropertyNames());
+    List<String> navigationPropertyNames = new ArrayList<>(type.getNavigationPropertyNames());
     if (type.getBaseType() != null) {
       navigationPropertyNames.removeAll(type.getBaseType().getNavigationPropertyNames());
     }
@@ -856,7 +873,7 @@ public class MetadataDocumentXmlSerializer {
   }
 
   private void appendProperties(final XMLStreamWriter writer, final EdmStructuredType type) throws XMLStreamException {
-    List<String> propertyNames = new ArrayList<String>(type.getPropertyNames());
+    List<String> propertyNames = new ArrayList<>(type.getPropertyNames());
     if (type.getBaseType() != null) {
       propertyNames.removeAll(type.getBaseType().getPropertyNames());
     }
@@ -896,6 +913,10 @@ public class MetadataDocumentXmlSerializer {
       if (property.getScale() != null) {
         writer.writeAttribute(XML_SCALE, "" + property.getScale());
       }
+      
+      if (property.getSrid() != null) {
+          writer.writeAttribute(XML_SRID, "" + property.getSrid());
+      }
 
       appendAnnotations(writer, property);
       writer.writeEndElement();
@@ -934,7 +955,7 @@ public class MetadataDocumentXmlSerializer {
       writer.writeAttribute(XML_UNDERLYING_TYPE, getFullQualifiedName(enumType.getUnderlyingType(), false));
 
       for (String memberName : enumType.getMemberNames()) {
-        writer.writeEmptyElement(XML_MEMBER);
+        writer.writeStartElement(XML_MEMBER);
         writer.writeAttribute(XML_NAME, memberName);
 
         EdmMember member = enumType.getMember(memberName);
@@ -943,6 +964,7 @@ public class MetadataDocumentXmlSerializer {
         }
 
         appendAnnotations(writer, member);
+        writer.writeEndElement();
       }
 
       writer.writeEndElement();

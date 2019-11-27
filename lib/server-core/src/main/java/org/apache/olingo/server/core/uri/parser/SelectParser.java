@@ -55,7 +55,7 @@ public class SelectParser {
 
   public SelectOption parse(UriTokenizer tokenizer, final EdmStructuredType referencedType,
       final boolean referencedIsCollection) throws UriParserException, UriValidationException {
-    List<SelectItem> selectItems = new ArrayList<SelectItem>();
+    List<SelectItem> selectItems = new ArrayList<>();
     SelectItem item;
     do {
       item = parseItem(tokenizer, referencedType, referencedIsCollection);
@@ -170,7 +170,7 @@ public class SelectParser {
   }
 
   private List<String> parseFunctionParameterNames(UriTokenizer tokenizer) throws UriParserException {
-    List<String> names = new ArrayList<String>();
+    List<String> names = new ArrayList<>();
     if (tokenizer.next(TokenKind.OPEN)) {
       do {
         ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);

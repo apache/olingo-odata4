@@ -37,10 +37,24 @@ public class ClientCsdlXMLMetadata extends CsdlAbstractEdmItem implements Serial
 
   private static final long serialVersionUID = 6025723060298454901L;
   protected final Edmx edmx;
+  private  List<List<String>> schemaNameSpaces = null;
 
   public ClientCsdlXMLMetadata(final Edmx edmx) {
     this.edmx = edmx;
   }
+  public ClientCsdlXMLMetadata(final Edmx edmx,final List<List<String>> schemaNameSpaces) {
+	    this.edmx = edmx;
+	    this.schemaNameSpaces = schemaNameSpaces;
+  }
+  
+ 
+  
+  @Override
+  public List<List<String>> getSchemaNamespaces() {
+		return schemaNameSpaces;
+	}
+	
+
 
   @Override
   public List<CsdlSchema> getSchemas() {
@@ -59,7 +73,7 @@ public class ClientCsdlXMLMetadata extends CsdlAbstractEdmItem implements Serial
 
   @Override
   public Map<String, CsdlSchema> getSchemaByNsOrAlias() {
-    final Map<String, CsdlSchema> schemaByNsOrAlias = new HashMap<String, CsdlSchema>();
+    final Map<String, CsdlSchema> schemaByNsOrAlias = new HashMap<>();
     for (CsdlSchema schema : getSchemas()) {
       schemaByNsOrAlias.put(schema.getNamespace(), schema);
       if (StringUtils.isNotBlank(schema.getAlias())) {
@@ -72,5 +86,10 @@ public class ClientCsdlXMLMetadata extends CsdlAbstractEdmItem implements Serial
   @Override
   public List<Reference> getReferences() {
     return this.edmx.getReferences();
+  }
+  
+  @Override
+  public String getEdmVersion() {
+	return this.edmx.getVersion();
   }
 }

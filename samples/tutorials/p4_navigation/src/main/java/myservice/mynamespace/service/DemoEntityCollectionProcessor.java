@@ -81,6 +81,7 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
 
     EdmEntitySet responseEdmEntitySet = null; // we'll need this to build the ContextURL
     EntityCollection responseEntityCollection = null; // we'll need this to set the response body
+    EdmEntityType responseEdmEntityType = null;
 
     // 1st retrieve the requested EntitySet from the uriInfo (representation of the parsed URI)
     List<UriResource> resourceParts = uriInfo.getUriResourceParts();
@@ -107,8 +108,13 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
         UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) lastSegment;
         EdmNavigationProperty edmNavigationProperty = uriResourceNavigation.getProperty();
         EdmEntityType targetEntityType = edmNavigationProperty.getType();
-        // from Categories(1) to Products
-        responseEdmEntitySet = Util.getNavigationTargetEntitySet(startEdmEntitySet, edmNavigationProperty);
+        if (!edmNavigationProperty.containsTarget()) {
+       // from Categories(1) to Products
+          responseEdmEntitySet = Util.getNavigationTargetEntitySet(startEdmEntitySet, edmNavigationProperty);
+        } else {
+          responseEdmEntitySet = startEdmEntitySet;
+          responseEdmEntityType = targetEntityType;
+        }
 
         // 2nd: fetch the data from backend
         // first fetch the entity where the first segment of the URI points to
@@ -130,13 +136,20 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }
 
+    ContextURL contextUrl = null;
+    EdmEntityType edmEntityType = null;
     // 3rd: create and configure a serializer
-    ContextURL contextUrl = ContextURL.with().entitySet(responseEdmEntitySet).build();
+    if (isContNav(uriInfo)) {
+      contextUrl = ContextURL.with().entitySetOrSingletonOrType(request.getRawODataPath()).build();
+      edmEntityType = responseEdmEntityType;
+    } else {
+      contextUrl = ContextURL.with().entitySet(responseEdmEntitySet).build(); 
+      edmEntityType = responseEdmEntitySet.getEntityType();
+    }
     final String id = request.getRawBaseUri() + "/" + responseEdmEntitySet.getName();
     EntityCollectionSerializerOptions opts = EntityCollectionSerializerOptions.with()
         .contextURL(contextUrl).id(id).build();
-    EdmEntityType edmEntityType = responseEdmEntitySet.getEntityType();
-
+    
     ODataSerializer serializer = odata.createSerializer(responseFormat);
     SerializerResult serializerResult = serializer.entityCollection(this.srvMetadata, edmEntityType,
         responseEntityCollection, opts);
@@ -145,6 +158,19 @@ public class DemoEntityCollectionProcessor implements EntityCollectionProcessor 
     response.setContent(serializerResult.getContent());
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+  }
+
+  private boolean isContNav(UriInfo uriInfo) {
+    List<UriResource> resourceParts = uriInfo.getUriResourceParts();
+    for (UriResource resourcePart : resourceParts) {
+      if (resourcePart instanceof UriResourceNavigation) {
+        UriResourceNavigation navResource = (UriResourceNavigation) resourcePart;
+        if (navResource.getProperty().containsTarget()) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
 }

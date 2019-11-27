@@ -46,7 +46,7 @@ public class ServerErrorXmlSerializerTest {
     error.setCode("Code").setMessage("ErrorMessage");
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
-    assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<error xmlns=\"http://docs.oasis-open.org/odata/ns/metadata\">"
         + "<code>Code</code>"
         + "<message>ErrorMessage</message>"
@@ -72,7 +72,7 @@ public class ServerErrorXmlSerializerTest {
 
     InputStream stream = ser.error(error).getContent();
     String jsonString = IOUtils.toString(stream);
-    assertEquals("<?xml version='1.0' encoding='UTF-8'?>"
+    assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<error xmlns=\"http://docs.oasis-open.org/odata/ns/metadata\">"
         + "<code>code</code>"
         + "<message>err message</message>"

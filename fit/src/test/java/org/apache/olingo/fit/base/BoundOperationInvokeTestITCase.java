@@ -403,6 +403,7 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
             new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Product"),
             false,
             Collections.<String, ClientValue> singletonMap("accessRight", accessRight));
+    getProductDetailsReq.setFormat(ContentType.JSON_FULL_METADATA);
     final ClientProperty getProductDetailsRes = getProductDetailsReq.execute().getBody();
     assertNotNull(getProductDetailsRes);
     assertTrue(getProductDetailsRes.hasEnumValue());

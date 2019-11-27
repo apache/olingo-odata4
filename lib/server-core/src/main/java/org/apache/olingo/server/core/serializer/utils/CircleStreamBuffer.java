@@ -44,7 +44,7 @@ public class CircleStreamBuffer {
   private boolean writeClosed = false;
   private boolean readClosed = false;
 
-  private Queue<ByteBuffer> bufferQueue = new LinkedBlockingQueue<ByteBuffer>();
+  private Queue<ByteBuffer> bufferQueue = new LinkedBlockingQueue<>();
   private ByteBuffer currentWriteBuffer;
 
   private final InternalInputStream inStream;

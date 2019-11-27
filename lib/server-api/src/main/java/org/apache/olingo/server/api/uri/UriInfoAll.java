@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.DeltaTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.SkipOption;
@@ -68,4 +69,9 @@ public interface UriInfoAll {
    * @return Object containing information of the $top option
    */
   TopOption getTopOption();
+  
+  /**
+   * @return Object containing information of the $deltatoken option
+   */
+  DeltaTokenOption getDeltaTokenOption();
 }

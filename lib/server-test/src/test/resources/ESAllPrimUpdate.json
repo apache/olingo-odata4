@@ -1,0 +1,56 @@
+{
+	"@context" : "$metadata#ESAllPrim",
+	"value" : [{
+			"PropertyInt16" : 32767,
+			"PropertyString" : "First Resource - positive values",
+			"PropertyBoolean" : true,
+			"PropertyByte" : 255,
+			"PropertySByte" : 127,
+			"PropertyInt32" : 2147483647,
+			"PropertyInt64" : 9223372036854775807,
+			"PropertySingle" : 1.79000000E+20,
+			"PropertyDouble" : -1.7900000000000000E+19,
+			"PropertyDecimal" : 34,
+			"PropertyBinary" : "ASNFZ4mrze8=",
+			"PropertyDate" : "2012-12-03",
+			"PropertyDateTimeOffset" : "2012-12-03T07:16:23Z",
+			"PropertyDuration" : "P0DT0H0M6S",
+			"PropertyGuid" : "01234567-89ab-cdef-0123-456789abcdef",
+			"PropertyTimeOfDay" : "03:26:05"
+		}, {
+			"PropertyInt16" : -32768,
+			"PropertyString" : "Second Resource - negative values",
+			"PropertyBoolean" : false,
+			"PropertyByte" : 0,
+			"PropertySByte" : -128,
+			"PropertyInt32" : -2147483648,
+			"PropertyInt64" : -9223372036854775808,
+			"PropertySingle" : -1.79000000E+08,
+			"PropertyDouble" : -1.7900000000000000E+05,
+			"PropertyDecimal" : -34,
+			"PropertyBinary" : "ASNFZ4mrze8=",
+			"PropertyDate" : "2015-11-05",
+			"PropertyDateTimeOffset" : "2005-12-03T07:17:08Z",
+			"PropertyDuration" : "P0DT0H0M9S",
+			"PropertyGuid" : "76543201-23ab-cdef-0123-456789dddfff",
+			"PropertyTimeOfDay" : "23:49:14"
+		}, {
+			"PropertyInt16" : 0,
+			"PropertyString" : "",
+			"PropertyBoolean" : false,
+			"PropertyByte" : 0,
+			"PropertySByte" : 0,
+			"PropertyInt32" : 0,
+			"PropertyInt64" : 0,
+			"PropertySingle" : 0.00000000E+00,
+			"PropertyDouble" : 0.0000000000000000E+00,
+			"PropertyDecimal" : 0,
+			"PropertyBinary" : "",
+			"PropertyDate" : "1970-01-01",
+			"PropertyDateTimeOffset" : "2005-12-03T00:00:00Z",
+			"PropertyDuration" : "P0DT0H0M0S",
+			"PropertyGuid" : "76543201-23ab-cdef-0123-456789cccddd",
+			"PropertyTimeOfDay" : "00:01:01"
+		}
+	]
+}

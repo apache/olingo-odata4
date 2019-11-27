@@ -28,12 +28,12 @@
 
       <!--Documentation -->
 
-      <Term Name="Description" Type="Edm.String">
+      <Term Name="Description" Type="Edm.String" MaxLength="500" SRID="1" Nullable="true">
         <Annotation Term="Core.Description" String="A brief description of a model element" />
         <Annotation Term="Core.IsLanguageDependent" />
       </Term>
 
-      <Term Name="LongDescription" Type="Edm.String">
+      <Term Name="LongDescription" Type="Edm.String" BaseTerm="Description">
         <Annotation Term="Core.Description" String="A lengthy description of a model element" />
         <Annotation Term="Core.IsLanguageDependent" />
       </Term>
@@ -105,7 +105,7 @@
         <Annotation Term="Core.IsMediaType" />
       </Term>
 
-      <Term Name="MediaType" Type="Edm.String" AppliesTo="Property">
+      <Term Name="MediaType" Type="Edm.String" AppliesTo="Property" Precision="500" Scale="0">
         <Annotation Term="Core.IsMediaType" />
         <Annotation Term="Core.RequiresType" String="Edm.Binary" />
       </Term>

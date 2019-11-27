@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerExceptio
 public class BatchBodyPart implements BatchPart {
   private final String boundary;
   private final boolean isStrict;
-  private final List<Line> remainingMessage = new LinkedList<Line>();
+  private final List<Line> remainingMessage = new LinkedList<>();
 
   private Header headers;
   private boolean isChangeSet;
@@ -75,7 +75,7 @@ public class BatchBodyPart implements BatchPart {
   private List<BatchQueryOperation> consumeChangeSet(final List<Line> remainingMessage)
       throws BatchDeserializerException {
     final List<List<Line>> changeRequests = splitChangeSet(remainingMessage);
-    final List<BatchQueryOperation> requestList = new LinkedList<BatchQueryOperation>();
+    final List<BatchQueryOperation> requestList = new LinkedList<>();
 
     for (List<Line> changeRequest : changeRequests) {
       requestList.add(new BatchChangeSetPart(changeRequest, isStrict).parse());
@@ -105,7 +105,7 @@ public class BatchBodyPart implements BatchPart {
 
   private List<BatchQueryOperation> consumeQueryOperation(final List<Line> remainingMessage)
       throws BatchDeserializerException {
-    final List<BatchQueryOperation> requestList = new LinkedList<BatchQueryOperation>();
+    final List<BatchQueryOperation> requestList = new LinkedList<>();
     requestList.add(new BatchQueryOperation(remainingMessage, isStrict).parse());
 
     return requestList;

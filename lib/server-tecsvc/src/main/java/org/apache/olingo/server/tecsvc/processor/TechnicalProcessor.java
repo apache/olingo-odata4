@@ -21,6 +21,8 @@ package org.apache.olingo.server.tecsvc.processor;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.data.DeletedEntity;
+import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
@@ -46,6 +48,8 @@ import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
+import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
+import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 
 /**
@@ -107,8 +111,7 @@ public abstract class TechnicalProcessor implements Processor {
             (UriResourceNavigation) resourcePaths.get(navigationCount);
         blockTypeFilters(uriResourceNavigation);
         if (uriResourceNavigation.getProperty().containsTarget()) {
-          throw new ODataApplicationException("Containment navigation is not supported.",
-              HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
+          return entitySet;
         }
         EdmBindingTarget target = null ;
         if(entitySet!=null){
@@ -186,6 +189,8 @@ public abstract class TechnicalProcessor implements Processor {
     }
 
     int navigationCount = 0;
+	int navigationResCount = getNavigationResourceCount(resourcePaths);
+    Link previous = null;
     while (++navigationCount < readAtMostNavigations
         && resourcePaths.get(navigationCount) instanceof UriResourceNavigation) {
       final UriResourceNavigation uriNavigationResource = (UriResourceNavigation) resourcePaths.get(navigationCount);
@@ -199,12 +204,39 @@ public abstract class TechnicalProcessor implements Processor {
           key.isEmpty() ?
               link.getInlineEntity() :
               dataProvider.read(navigationProperty.getType(), link.getInlineEntitySet(), key);
+      EdmEntityType edmEntityType = getEntityTypeBasedOnNavPropertyTypeCast(uriNavigationResource);
+      entity = edmEntityType != null ? dataProvider.readDataFromEntity(edmEntityType, key) : entity;
       if (entity == null) {
-        throw new ODataApplicationException("Nothing found.", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+        if (key.isEmpty() && (previous != null || navigationResCount == 1)) {
+          throw new ODataApplicationException("No Content", HttpStatusCode.NO_CONTENT.getStatusCode(), Locale.ROOT);
+        } else {
+          throw new ODataApplicationException("Not Found", HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+        }
       }
+	  previous = link;
     }
 
     return entity;
+  }
+  
+  private int getNavigationResourceCount(List<UriResource> resourcePaths) {
+    int count = 0;
+    for (UriResource resource : resourcePaths) {
+      if (resource instanceof UriResourceNavigation) {
+        count ++;
+      }
+    }
+    return count;
+  }
+  
+  private EdmEntityType getEntityTypeBasedOnNavPropertyTypeCast(UriResourceNavigation uriNavigationResource) {
+    if (uriNavigationResource.getTypeFilterOnCollection() != null) {
+      return (EdmEntityType) uriNavigationResource.getTypeFilterOnCollection();
+    } else if (uriNavigationResource.getTypeFilterOnEntry() != null) {
+      return (EdmEntityType) uriNavigationResource.getTypeFilterOnEntry();
+    }
+    return null;
+    
   }
 
   protected EdmEntitySet getEntitySetBasedOnTypeCast(UriResourceEntitySet uriResource) {
@@ -229,6 +261,23 @@ public abstract class TechnicalProcessor implements Processor {
     return entitySet;
   }
   
+  protected List<DeletedEntity> readDeletedEntities(final UriInfoResource uriInfo) throws ODataApplicationException {
+    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+    return dataProvider.readDeletedEntities(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+  }
+
+
+  protected List<DeltaLink> readAddedLinks(final UriInfoResource uriInfo) throws ODataApplicationException {
+    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+    return dataProvider.readAddedLinks(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+  }
+  
+  protected List<DeltaLink> readDeletedLinks(final UriInfoResource uriInfo) throws ODataApplicationException {
+    final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
+    return dataProvider.readDeletedLinks(((UriResourceEntitySet) resourcePaths.get(0)).getEntitySet());
+  }
+  
+  
   protected EntityCollection readEntityCollection(final UriInfoResource uriInfo) throws ODataApplicationException {
     final List<UriResource> resourcePaths = uriInfo.getUriResourceParts();
     if (resourcePaths.size() > 1 && resourcePaths.get(1) instanceof UriResourceNavigation) {
@@ -241,6 +290,24 @@ public abstract class TechnicalProcessor implements Processor {
         return dataProvider.readFunctionEntityCollection(uriResource.getFunction(), uriResource.getParameters(),
             uriInfo);
       } else {
+        if (uriInfo.getFilterOption() != null) {
+          if (uriInfo.getFilterOption().getExpression() instanceof Binary) {
+            Binary expression = (Binary) uriInfo.getFilterOption().getExpression();
+            if (expression.getLeftOperand() instanceof Member) {
+              Member member = (Member) expression.getLeftOperand();
+              if (member.getStartTypeFilter() != null) {
+                EdmEntityType entityType = (EdmEntityType) member.getStartTypeFilter();
+                EdmEntityContainer container = this.serviceMetadata.getEdm().getEntityContainer();
+                List<EdmEntitySet> entitySets = container.getEntitySets();
+                for (EdmEntitySet entitySet : entitySets) {
+                  if (entityType.getName().equals(entitySet.getEntityType().getName())) {
+                    return dataProvider.readAll(entitySet);
+                  }
+                }
+              }
+            }
+          }
+        }
         EdmEntitySet entitySet = getEntitySetBasedOnTypeCast(((UriResourceEntitySet)resourcePaths.get(0)));
         return dataProvider.readAll(entitySet);
       }
@@ -262,10 +329,7 @@ public abstract class TechnicalProcessor implements Processor {
   private void blockTypeFilters(final UriResource uriResource) throws ODataApplicationException {
     if (uriResource instanceof UriResourceFunction
         && (((UriResourceFunction) uriResource).getTypeFilterOnCollection() != null
-        || ((UriResourceFunction) uriResource).getTypeFilterOnEntry() != null)
-        || uriResource instanceof UriResourceNavigation
-        && (((UriResourceNavigation) uriResource).getTypeFilterOnCollection() != null
-        || ((UriResourceNavigation) uriResource).getTypeFilterOnEntry() != null)) {
+        || ((UriResourceFunction) uriResource).getTypeFilterOnEntry() != null)) {
       throw new ODataApplicationException("Type filters are not supported.",
           HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(), Locale.ROOT);
     }

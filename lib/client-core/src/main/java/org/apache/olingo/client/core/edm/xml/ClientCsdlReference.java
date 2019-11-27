@@ -42,9 +42,9 @@ class ClientCsdlReference extends CsdlAbstractEdmItem implements Serializable, R
   private static final long serialVersionUID = 7720274712545267654L;
 
   private URI uri;
-  private final List<Include> includes = new ArrayList<Include>();
-  private final List<IncludeAnnotations> includeAnnotations = new ArrayList<IncludeAnnotations>();
-  private final List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
+  private final List<Include> includes = new ArrayList<>();
+  private final List<IncludeAnnotations> includeAnnotations = new ArrayList<>();
+  private final List<CsdlAnnotation> annotations = new ArrayList<>();
 
   @Override
   public List<CsdlAnnotation> getAnnotations() {

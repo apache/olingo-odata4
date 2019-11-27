@@ -30,6 +30,7 @@ import org.apache.olingo.client.api.communication.request.retrieve.RetrieveReque
 import org.apache.olingo.client.api.domain.ClientObjectFactory;
 import org.apache.olingo.client.api.serialization.ClientODataDeserializer;
 import org.apache.olingo.client.api.serialization.ODataBinder;
+import org.apache.olingo.client.api.serialization.ODataMetadataValidation;
 import org.apache.olingo.client.api.serialization.ODataReader;
 import org.apache.olingo.client.api.serialization.ODataSerializer;
 import org.apache.olingo.client.api.serialization.ODataWriter;
@@ -47,6 +48,7 @@ import org.apache.olingo.client.core.serialization.AtomSerializer;
 import org.apache.olingo.client.core.serialization.ClientODataDeserializerImpl;
 import org.apache.olingo.client.core.serialization.JsonSerializer;
 import org.apache.olingo.client.core.serialization.ODataBinderImpl;
+import org.apache.olingo.client.core.serialization.ODataMetadataValidationImpl;
 import org.apache.olingo.client.core.serialization.ODataReaderImpl;
 import org.apache.olingo.client.core.serialization.ODataWriterImpl;
 import org.apache.olingo.client.core.uri.FilterFactoryImpl;
@@ -80,6 +82,8 @@ public class ODataClientImpl implements ODataClient {
   protected final Configuration configuration = new ConfigurationImpl();
 
   private final ODataWriter writer = new ODataWriterImpl(this);
+  
+  private final ODataMetadataValidation metadataValidation = new ODataMetadataValidationImpl();
 
   @Override
   public Configuration getConfiguration() {
@@ -175,5 +179,10 @@ public class ODataClientImpl implements ODataClient {
   @Override
   public BatchRequestFactory getBatchRequestFactory() {
     return batchReqFact;
+  }
+
+  @Override
+  public ODataMetadataValidation metadataValidation() {
+    return metadataValidation;
   }
 }

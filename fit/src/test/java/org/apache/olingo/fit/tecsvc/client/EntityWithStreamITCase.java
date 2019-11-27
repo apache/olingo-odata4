@@ -109,4 +109,127 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
         link.getType().name());
     assertEquals("eTag", link.getMediaETag());    
   } 
+  
+  /**
+   * These tests can be uncommented once client API's are fixed for V4.01
+   */
+  /*@Test
+  public void readExpandOfStreamPropOnComplexProperty() {
+    ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendEntitySetSegment("ESStreamOnComplexProp").appendKeySegment(7)
+            .expand("PropertyCompWithStream/PropertyStream,"
+                + "PropertyEntityStream,"
+                + "PropertyCompWithStream/NavPropertyETStreamOnComplexPropOne($expand=PropertyStream),"
+                + "PropertyCompWithStream/NavPropertyETStreamOnComplexPropMany/$count")
+            .build());
+    
+    assertNotNull(request);
+    setCookieHeader(request);
+    request.addCustomHeader("OData-Version", "4.01");
+    request.setAccept("application/json;odata.metadata=full");
+    
+    final ODataRetrieveResponse<ClientEntity> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json; odata.metadata=full", response.getContentType());
+
+    final ClientEntity entity = response.getBody();
+    assertNotNull(entity);
+
+    assertNotNull(entity.getProperties());
+    assertEquals(10, entity.getProperties().size());
+
+    ClientProperty property = entity.getProperty("PropertyEntityStream");
+    assertNotNull(property);
+    assertEquals(String.valueOf("eTag"), 
+        entity.getProperty("PropertyEntityStream@mediaEtag").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("image/jpeg"), 
+        entity.getProperty("PropertyEntityStream@mediaContentType").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("\ufffdioz\ufffd\"\ufffd"), 
+        entity.getProperty("PropertyEntityStream").getPrimitiveValue().toValue());
+    
+    property = entity.getProperty("PropertyCompWithStream");
+    assertNotNull(property);
+    assertEquals(String.valueOf("eTag"), 
+        property.getComplexValue().get("PropertyStream@mediaEtag").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("image/jpeg"), 
+        property.getComplexValue().get("PropertyStream@mediaContentType").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("\ufffdioz\ufffd\"\ufffd"), 
+        property.getComplexValue().get("PropertyStream").getPrimitiveValue().toValue());
+    ClientComplexValue complexValue = property.getComplexValue();
+    assertNotNull(complexValue);
+    
+    assertNotNull(complexValue.get("NavPropertyETStreamOnComplexPropOne@navigationLink"));
+    assertNotNull(complexValue.get("NavPropertyETStreamOnComplexPropMany@navigationLink"));
+    
+    property = complexValue.get("NavPropertyETStreamOnComplexPropOne");
+    assertNotNull(property);
+    assertNotNull(property.getComplexValue());
+    assertEquals(String.valueOf("eTag"), 
+        property.getComplexValue().get("PropertyStream@mediaEtag").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("image/jpeg"), 
+        property.getComplexValue().get("PropertyStream@mediaContentType").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("\ufffdioz\ufffd\"\ufffd"), 
+        property.getComplexValue().get("PropertyStream").getPrimitiveValue().toValue());
+    
+    property = complexValue.get("NavPropertyETStreamOnComplexPropMany@count");
+    assertNotNull(property);
+    assertEquals(Integer.parseInt("2"), property.getPrimitiveValue().toValue());
+  }
+  
+  @Test
+  public void readExpandOfStreamPropOnComplexPropertyWithRef() {
+    ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
+        .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
+            .appendEntitySetSegment("ESStreamOnComplexProp").appendKeySegment(7)
+            .expand("PropertyCompWithStream/NavPropertyETStreamOnComplexPropMany/$ref")
+            .build());
+    
+    assertNotNull(request);
+    setCookieHeader(request);
+    request.addCustomHeader("OData-Version", "4.01");
+    request.setAccept("application/json;odata.metadata=full");
+    
+    final ODataRetrieveResponse<ClientEntity> response = request.execute();
+    saveCookieHeader(response);
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals("application/json; odata.metadata=full", response.getContentType());
+
+    final ClientEntity entity = response.getBody();
+    assertNotNull(entity);
+
+    assertNotNull(entity.getProperties());
+    assertEquals(9, entity.getProperties().size());
+
+    ClientProperty property = entity.getProperty("PropertyEntityStream");
+    assertNull(property);
+    assertEquals(String.valueOf("eTag"), 
+        entity.getProperty("PropertyEntityStream@mediaEtag").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("image/jpeg"), 
+        entity.getProperty("PropertyEntityStream@mediaContentType").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("http://mediaserver:1234/editLink"), 
+        entity.getProperty("PropertyEntityStream@mediaEditLink").getPrimitiveValue().toValue());
+    
+    property = entity.getProperty("PropertyCompWithStream");
+    assertNotNull(property);
+    assertEquals(String.valueOf("eTag"), 
+        property.getComplexValue().get("PropertyStream@mediaEtag").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("image/jpeg"), 
+        property.getComplexValue().get("PropertyStream@mediaContentType").getPrimitiveValue().toValue());
+    assertEquals(String.valueOf("http://mediaserver:1234/editLink"), 
+        property.getComplexValue().get("PropertyStream@mediaEditLink").getPrimitiveValue().toValue());
+    ClientComplexValue complexValue = property.getComplexValue();
+    assertNotNull(complexValue);
+    
+    assertNotNull(complexValue.get("NavPropertyETStreamOnComplexPropOne@navigationLink"));
+    assertNotNull(complexValue.get("NavPropertyETStreamOnComplexPropMany@navigationLink"));
+    
+    property = complexValue.get("NavPropertyETStreamOnComplexPropMany");
+    assertNotNull(property);
+    assertEquals(2, property.getCollectionValue().size());
+    for (ClientValue value : property.getCollectionValue()) {
+      assertEquals("id", value.asComplex().getAnnotations().get(0).getTerm());
+    }
+  }*/
 }

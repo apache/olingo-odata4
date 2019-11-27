@@ -783,9 +783,6 @@ public class Services {
         } else {
           jsonSerializer.write(writer, container);
         }
-        writer.flush();
-        writer.close();
-
         return xml.createResponse(
             location,
             new ByteArrayInputStream(content.toByteArray()),

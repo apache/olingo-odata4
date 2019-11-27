@@ -917,4 +917,18 @@ public class UriParserTest {
     testUri.run("ESTwoKeyNav", "custom=ABC")
         .isCustomParameter(0, "custom", "ABC");
   }
+  
+  @Test
+  public void testValidationOnFunctions() throws Exception {
+    testUri.runEx("FICRTETTwoKeyNavParam(ParameterInt16='32')")
+    .isExValidation(UriValidationException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  
+    testUri.runEx("FICRTETTwoKeyNavParam(ParameterInt16=null)")
+    .isExValidation(UriValidationException.MessageKeys.MISSING_PARAMETER);
+  
+    testUri.runEx("FICRTETTwoKeyNavParam(ParameterInt16=@p1)", "@p1='32'")
+    .isExSemantic(UriParserSemanticException.MessageKeys.UNKNOWN_PART);
+    
+    testUri.run("FICRTETTwoKeyNavParam(ParameterInt16=32)");
+  }
 }

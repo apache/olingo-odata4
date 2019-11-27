@@ -120,9 +120,34 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
         valueOfString(input, null, null, null, null, null, Polygon.class);
     assertNotNull(polygon);
     assertEquals("0", polygon.getSrid().toString());
-    Iterator<Point> itor = polygon.getInterior().iterator();
+    Iterator<Point> itor = polygon.getInterior(0).iterator();
     assertEquals(1, itor.next().getX(), 0);
     assertEquals(1, itor.next().getY(), 0);
+    itor = polygon.getExterior().iterator();
+    itor.next();
+    assertEquals(2, itor.next().getX(), 0);
+    assertEquals(3, itor.next().getY(), 0);
+
+    assertEquals(input, EdmGeographyPolygon.getInstance().valueToString(polygon, null, null, null, null, null));
+  }
+  
+  @Test
+  public void polygonMultipleHoles() throws EdmPrimitiveTypeException {
+    final String input = "geography'SRID=4326;Polygon((1.0 1.0,1.0 1.0),(2.0 2.0,2.0 2.0)"
+      + ",(1.0 1.0,2.0 2.0,3.0 3.0,1.0 1.0))'";
+
+    expectContentErrorInValueOfString(EdmGeometryPolygon.getInstance(), input);
+
+    final Polygon polygon = EdmGeographyPolygon.getInstance().
+        valueOfString(input, null, null, null, null, null, Polygon.class);
+    assertNotNull(polygon);
+    assertEquals("4326", polygon.getSrid().toString());
+    Iterator<Point> itor = polygon.getInterior(0).iterator();
+    assertEquals(1, itor.next().getX(), 0);
+    assertEquals(1, itor.next().getY(), 0);
+    itor = polygon.getInterior(1).iterator();
+    assertEquals(2, itor.next().getX(), 0);
+    assertEquals(2, itor.next().getY(), 0);
     itor = polygon.getExterior().iterator();
     itor.next();
     assertEquals(2, itor.next().getX(), 0);
@@ -145,8 +170,8 @@ public class EdmGeoTest extends PrimitiveTypeBaseTest {
     assertNotNull(multiPolygon);
     assertEquals("0", multiPolygon.getSrid().toString());
     final Iterator<Polygon> itor = multiPolygon.iterator();
-    assertEquals(1, itor.next().getInterior().iterator().next().getX(), 0);
-    assertEquals(1, itor.next().getInterior().iterator().next().getX(), 0);
+    assertEquals(1, itor.next().getInterior(0).iterator().next().getX(), 0);
+    assertEquals(1, itor.next().getInterior(0).iterator().next().getX(), 0);
 
     assertEquals(input, EdmGeometryMultiPolygon.getInstance().
         valueToString(multiPolygon, null, null, null, null, null));

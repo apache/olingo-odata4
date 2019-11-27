@@ -1,0 +1,60 @@
+{
+  "@odata.context": "$metadata#People/$entity",
+  "@odata.id": "http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/TripPinServiceRW/People('russellwhyte')",
+  "UserName@odata.type": "String",
+  "UserName": "russellwhyte",
+  "FirstName@odata.type": "String",
+  "FirstName": "Russell",
+  "LastName@odata.type": "String",
+  "LastName": "Whyte",
+  "AddressInfo": [
+    {
+      "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.Location",
+      "Address@odata.type": "String",
+      "Address": "187 Suffolk Ln.",
+      "City": {
+        "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.City",
+        "CountryRegion@odata.type": "String",
+        "CountryRegion": "United States",
+        "Name@odata.type": "String",
+        "Name": "Boise",
+        "Region@odata.type": "String",
+        "Region": "ID"
+      }
+    },
+    {
+      "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.EventLocation",
+      "BuildingInfo@odata.type": "String",
+      "BuildingInfo": "187 Suffolk Ln12.",
+      "Address@odata.type": "String",
+      "Address": "187 Suffolk Ln12.",
+      "City": {
+        "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.City",
+        "CountryRegion@odata.type": "String",
+        "CountryRegion": "United States",
+        "Name@odata.type": "String",
+        "Name": "Boise",
+        "Region@odata.type": "String",
+        "Region": "ID"
+      }
+    },
+    {
+      "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.AirportLocation",
+	  "Address@odata.type": "String",
+      "Address": "187 Suffolk Ln123.",
+      "City": {
+        "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.City",
+        "CountryRegion@odata.type": "String",
+        "CountryRegion": "United States",
+        "Name@odata.type": "String",
+        "Name": "Boise",
+        "Region@odata.type": "String",
+        "Region": "ID"
+      }
+    }
+  ],
+  "Gender@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.PersonGender",
+  "Gender": "Male",
+  "Concurrency@odata.type": "Int64",
+  "Concurrency": 636293755917400747
+}

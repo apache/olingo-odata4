@@ -120,6 +120,9 @@ public class FunctionProvider {
 
   public static final FullQualifiedName nameBFESTwoKeyNavRTESTwoKeyNav =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "BFESTwoKeyNavRTESTwoKeyNav");
+  
+  public static final FullQualifiedName nameBFESBaseRTESTwoBase =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "BFESBaseRTESTwoBase");
 
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCTNavFiveProp = new FullQualifiedName(
       SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCTNavFiveProp");
@@ -982,6 +985,20 @@ public class FunctionProvider {
               .setComposable(true)
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
+                      .setNullable(false)));
+
+    } else if (functionName.equals(nameBFESBaseRTESTwoBase)) {
+      return Collections.singletonList(
+          new CsdlFunction()
+              .setName("BFESBaseRTESTwoBase")
+              .setBound(true)
+              .setParameters(Collections.singletonList(
+                  new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETBase)
+                  .setNullable(false)))
+              .setComposable(true)
+              .setEntitySetPath("BindingParam/olingo.odata.test1.ETTwoBase")
+              .setReturnType(
+                  new CsdlReturnType().setType(EntityTypeProvider.nameETTwoBase)
                       .setNullable(false)));
 
     } else if (functionName.equals(nameBFCESKeyNavRTESTwoKeyNav)) {

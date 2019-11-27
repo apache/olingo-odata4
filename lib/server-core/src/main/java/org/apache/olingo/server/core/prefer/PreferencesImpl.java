@@ -78,7 +78,8 @@ public class PreferencesImpl implements Preferences {
 
   @Override
   public boolean hasTrackChanges() {
-    return preferences.containsKey(PreferenceName.TRACK_CHANGES.getName());
+    return (preferences.containsKey(PreferenceName.TRACK_CHANGES.getName())
+        ||preferences.containsKey(PreferenceName.TRACK_CHANGES_PREF.getName()));
   }
 
   @Override

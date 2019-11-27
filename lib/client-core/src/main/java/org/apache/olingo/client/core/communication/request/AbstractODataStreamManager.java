@@ -18,10 +18,7 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +29,9 @@ import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.client.core.ConfigurationImpl;
+import org.apache.olingo.client.core.communication.util.PipedInputStream;
+import org.apache.olingo.client.core.communication.util.PipedOutputStream;
 
 /**
  * OData request payload management abstract class.
@@ -62,7 +62,7 @@ public abstract class AbstractODataStreamManager<T extends ODataResponse> extend
    * @param futureWrap wrapper of the Future object of the HttpResponse.
    */
   public AbstractODataStreamManager(final Wrapper<Future<HttpResponse>> futureWrap) {
-    this(futureWrap, new PipedOutputStream());
+    this(futureWrap, new PipedOutputStream(null, ConfigurationImpl.DEFAULT_BUFFER_SIZE));
   }
 
   /**
@@ -76,8 +76,8 @@ public abstract class AbstractODataStreamManager<T extends ODataResponse> extend
 
     this.futureWrap = futureWrap;
     try {
-      this.body = new PipedInputStream(getBodyStreamWriter());
-    } catch (IOException e) {
+      this.body = new PipedInputStream(getBodyStreamWriter(), ConfigurationImpl.DEFAULT_BUFFER_SIZE);
+    } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     this.defaultBody = this.body;

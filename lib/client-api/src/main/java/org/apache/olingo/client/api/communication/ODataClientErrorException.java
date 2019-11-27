@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication;
 
+import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
@@ -34,6 +35,8 @@ public class ODataClientErrorException extends ODataRuntimeException {
   private final StatusLine statusLine;
 
   private final ODataError error;
+  
+  private Header[] headerInfo;
 
   /**
    * Constructor.
@@ -79,5 +82,21 @@ public class ODataClientErrorException extends ODataRuntimeException {
    */
   public ODataError getODataError() {
     return error;
+  }
+  
+  /**
+   * Sets headers
+   * @param headerInfo
+   */
+  public void setHeaderInfo(Header[] headerInfo) {
+    this.headerInfo = headerInfo;
+  }
+  
+  /**
+   * Returns headers
+   * @return Header[]
+   */
+  public Header[] getHeaderInfo() {
+    return headerInfo;
   }
 }

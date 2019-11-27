@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -30,10 +31,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -80,6 +85,7 @@ import org.apache.olingo.server.api.processor.ReferenceProcessor;
 import org.apache.olingo.server.api.processor.ServiceDocumentProcessor;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.core.debug.ServerCoreDebugger;
+import org.apache.olingo.server.tecsvc.processor.TechnicalActionProcessor;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
@@ -371,6 +377,29 @@ public class ODataHandlerImplTest {
         new ODataHandlerImpl(odata, serviceMetadata, new ServerCoreDebugger(odata)).process(request);
     assertNotNull(response);
     assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
+  }
+  
+  @Test
+  public void handlerExtTest() throws Exception {
+    final OData odata = OData.newInstance();
+    final ServiceMetadata serviceMetadata = odata.createServiceMetadata(
+        new CsdlAbstractEdmProvider() {
+          @Override
+          public CsdlEntitySet getEntitySet(final FullQualifiedName entityContainer, final String entitySetName)
+              throws ODataException {
+            throw new ODataException("msg");
+          }
+        },
+        Collections.<EdmxReference> emptyList());
+
+    ODataRequest request = new ODataRequest();
+    request.setMethod(HttpMethod.GET);
+    request.setRawODataPath("EdmException");
+    ODataHandlerImpl handler =  new ODataHandlerImpl(odata, serviceMetadata, new ServerCoreDebugger(odata));
+    Processor extension =  new TechnicalActionProcessor(null, serviceMetadata);
+    handler.register(extension);
+    assertNull(handler.getLastThrownException());
+    assertNull(handler.getUriInfo());
   }
 
   @Test
@@ -1063,8 +1092,7 @@ public class ODataHandlerImplTest {
     EntityProcessor processor = mock(EntityProcessor.class);
     final ODataResponse response = dispatch(HttpMethod.POST, "ESAllPrim", null,
         HttpHeader.CONTENT_TYPE, null, processor);
-    verifyZeroInteractions(processor);
-    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
+    assertEquals(HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode());
   }
 
   @Test
@@ -1122,6 +1150,32 @@ public class ODataHandlerImplTest {
     return response;
   }
 
+  @Test
+  public void dispatchEmptyContentWithoutContentType() {
+    final String path = "ESAllPrim";
+    final EntityCollectionProcessor processor = mock(EntityCollectionProcessor.class);
+    
+    ODataRequest request = new ODataRequest();
+    request.setMethod(HttpMethod.POST);
+    request.setRawBaseUri(BASE_URI);
+    request.setRawRequestUri(BASE_URI);
+    request.setRawODataPath(path);
+    request.setBody(new ByteArrayInputStream(new byte[0]));
+
+    final OData odata = OData.newInstance();
+    final ServiceMetadata metadata = odata.createServiceMetadata(
+        new EdmTechProvider(), Collections.<EdmxReference> emptyList());
+
+    ODataHandlerImpl handler = new ODataHandlerImpl(odata, metadata, new ServerCoreDebugger(odata));
+
+    if (processor != null) {
+      handler.register(processor);
+    }
+
+    final ODataResponse response = handler.process(request);
+    assertNotNull(response);
+  }
+  
   private ODataResponse dispatch(final HttpMethod method, final String path, final Processor processor) {
     return dispatch(method, path, null, null, null, processor);
   }
@@ -1137,5 +1191,174 @@ public class ODataHandlerImplTest {
     final ODataResponse response = dispatch(method, path, processor);
     assertEquals(statusCode.getStatusCode(), response.getStatusCode());
     assertNotNull(response.getContent());
+  }
+  
+  @Test
+  public void validateInvalidOdataVersion1() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> header = new HashMap<String, String>();
+    header.put(HttpHeader.ODATA_VERSION, "3.0");
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, header, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+    assertEquals(400, response.getStatusCode());
+    assertNotNull(response.getContent());
+    String doc = IOUtils.toString(response.getContent());
+    assertTrue(doc.contains("OData version '3.0' is not supported."));
+  }
+  
+  @Test
+  public void validateInvalidOdataVersion2() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> header = new HashMap<String, String>();
+    header.put(HttpHeader.ODATA_VERSION, "5.0");
+    
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, header, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+    assertEquals(400, response.getStatusCode());
+    assertNotNull(response.getContent());
+    String doc = IOUtils.toString(response.getContent());
+    assertTrue(doc.contains("OData version '5.0' is not supported."));
+  }
+  
+  @Test
+  public void validateInvalidOdataMaxVersion1() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> header = new HashMap<String, String>();
+    header.put(HttpHeader.ODATA_MAX_VERSION, "3.0");
+    
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, header, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+    assertEquals(400, response.getStatusCode());
+    assertNotNull(response.getContent());
+    String doc = IOUtils.toString(response.getContent());
+    assertTrue(doc.contains("OData version '3.0' is not supported."));
+  }
+  
+  @Test
+  public void validateValidOdataMaxVersion2() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> header = new HashMap<String, String>();
+    header.put(HttpHeader.ODATA_MAX_VERSION, "5.0");
+    
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, header, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+  }
+  
+  @Test
+  public void validateValidOdataVersionAndMaxVersion1() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> headers = new HashMap<String, String>();
+    headers.put(HttpHeader.ODATA_VERSION, "4.0");
+    headers.put(HttpHeader.ODATA_MAX_VERSION, "5.0");
+    
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, headers, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+  }
+  
+  @Test
+  public void validateInvalidOdataVersionAndMaxVersion2() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> headers = new HashMap<String, String>();
+    headers.put(HttpHeader.ODATA_VERSION, "3.0");
+    headers.put(HttpHeader.ODATA_MAX_VERSION, "4.0");
+    
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, headers, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+    assertEquals(400, response.getStatusCode());
+    assertNotNull(response.getContent());
+    String doc = IOUtils.toString(response.getContent());
+    assertTrue(doc.contains("OData version '3.0' is not supported."));
+  }
+  
+  @Test
+  public void validateInvalidOdataVersionAndMaxVersion3() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> headers = new HashMap<String, String>();
+    headers.put(HttpHeader.ODATA_VERSION, "5.0");
+    headers.put(HttpHeader.ODATA_MAX_VERSION, "5.0");
+    
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, headers, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+    assertEquals(400, response.getStatusCode());
+    assertNotNull(response.getContent());
+    String doc = IOUtils.toString(response.getContent());
+    assertTrue(doc.contains("OData version '5.0' is not supported."));
+  }
+  
+  @Test
+  public void validateValidOdataVersionAndMaxVersion2() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> headers = new HashMap<String, String>();
+    headers.put(HttpHeader.ODATA_VERSION, "4.0");
+    headers.put(HttpHeader.ODATA_MAX_VERSION, "4.01");
+    
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, headers, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+  }
+  
+  @Test
+  public void validateValidOdataVersionAndMaxVersion3() throws Exception {
+    final String uri = "ESAllPrim(0)";
+    final EntityProcessor processor = mock(EntityProcessor.class);
+
+    final Map<String, String> headers = new HashMap<String, String>();
+    headers.put(HttpHeader.ODATA_VERSION, "4.0");
+    headers.put(HttpHeader.ODATA_MAX_VERSION, "4.0");
+    
+    final ODataResponse response = dispatchToValidateHeaders
+        (HttpMethod.GET, uri, null, headers, processor);
+    assertEquals("4.0", response.getHeader(HttpHeader.ODATA_VERSION));
+  }
+  
+  private ODataResponse dispatchToValidateHeaders(final HttpMethod method, final String path, final String query,
+      final Map<String, String> headers, final Processor processor) throws ODataHandlerException {
+    ODataRequest request = new ODataRequest();
+    request.setMethod(method);
+    request.setRawBaseUri(BASE_URI);
+    for (Entry<String, String> header : headers.entrySet()) {
+      request.addHeader(header.getKey(), header.getValue());
+    }
+    if (path.isEmpty()) {
+      request.setRawRequestUri(BASE_URI);
+    }
+    request.setRawODataPath(path);
+    request.setRawQueryPath(query);
+
+    final OData odata = OData.newInstance();
+    final ServiceMetadata metadata = odata.createServiceMetadata(
+        new EdmTechProvider(), Collections.<EdmxReference> emptyList());
+
+    ODataHandlerImpl handler = new ODataHandlerImpl(odata, metadata, new ServerCoreDebugger(odata));
+
+    if (processor != null) {
+      handler.register(processor);
+    }
+
+    final ODataResponse response = handler.process(request);
+    return response;
   }
 }

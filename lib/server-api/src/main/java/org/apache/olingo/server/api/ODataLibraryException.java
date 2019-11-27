@@ -112,13 +112,11 @@ public abstract class ODataLibraryException extends ODataException {
 
   private ODataErrorMessage buildMessage(final ResourceBundle bundle, final Locale locale) {
     String message = null;
-
+    StringBuilder builder = new StringBuilder();
+    Formatter f = new Formatter(builder, locale);
     try {
       message = bundle.getString(getClass().getSimpleName() + '.' + messageKey.getKey());
-      StringBuilder builder = new StringBuilder();
-      Formatter f = new Formatter(builder, locale);
       f.format(message, parameters);
-      f.close();
       Locale usedLocale = bundle.getLocale();
       if (Locale.ROOT.equals(usedLocale)) {
         usedLocale = DEFAULT_LOCALE;
@@ -129,6 +127,8 @@ public abstract class ODataLibraryException extends ODataException {
     } catch (MissingFormatArgumentException e) {
       return new ODataErrorMessage("Missing replacement for place holder in message '" + message +
           "' for following arguments '" + Arrays.toString(parameters) + "'!", DEFAULT_LOCALE);
+    }finally{
+      f.close();
     }
   }
 

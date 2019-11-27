@@ -37,11 +37,15 @@ import org.apache.olingo.commons.api.edm.EdmSchema;
 import org.apache.olingo.commons.api.edm.EdmTerm;
 import org.apache.olingo.commons.api.edm.EdmTypeDefinition;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.provider.CsdlAnnotation;
 
 public abstract class AbstractEdm implements Edm {
 
   protected Map<String, EdmSchema> schemas;
   protected List<EdmSchema> schemaList;
+  private boolean isEntityDerivedFromES;
+  private boolean isComplexDerivedFromES;
+  private boolean isPreviousES;
 
   private final Map<FullQualifiedName, EdmEntityContainer> entityContainers =
       Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEntityContainer>());
@@ -80,7 +84,22 @@ public abstract class AbstractEdm implements Edm {
       Collections.synchronizedMap(new HashMap<TargetQualifierMapKey, EdmAnnotations>());
 
   private Map<String, String> aliasToNamespaceInfo = null;
+  
+  private final Map<FullQualifiedName, EdmEntityType> entityTypesWithAnnotations =
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEntityType>());
+  
+  private final Map<FullQualifiedName, EdmEntityType> entityTypesDerivedFromES =
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmEntityType>());
+  
+  private final Map<FullQualifiedName, EdmComplexType> complexTypesWithAnnotations =
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmComplexType>());
+  
+  private final Map<FullQualifiedName, EdmComplexType> complexTypesDerivedFromES =
+      Collections.synchronizedMap(new HashMap<FullQualifiedName, EdmComplexType>());
 
+  private Map<String, List<CsdlAnnotation>> annotationMap = 
+      new HashMap<String, List<CsdlAnnotation>>();
+  
   @Override
   public List<EdmSchema> getSchemas() {
     if (schemaList == null) {
@@ -176,6 +195,56 @@ public abstract class AbstractEdm implements Edm {
   }
 
   @Override
+  public EdmEntityType getEntityTypeWithAnnotations(final FullQualifiedName namespaceOrAliasFQN) {
+    final FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
+    EdmEntityType entityType = entityTypesWithAnnotations.get(fqn);
+    if (entityType == null) {
+      entityType = createEntityType(fqn);
+      if (entityType != null) {
+          entityTypesWithAnnotations.put(fqn, entityType);
+      }
+    }
+    setIsPreviousES(false);
+    return entityType;
+  }
+  
+  protected EdmEntityType getEntityTypeWithAnnotations(final FullQualifiedName namespaceOrAliasFQN, 
+      boolean isEntityDerivedFromES) {
+    this.isEntityDerivedFromES = isEntityDerivedFromES;
+    final FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
+    if (!isPreviousES() && getEntityContainer() != null) {
+       getEntityContainer().getEntitySetsWithAnnotations();
+    }
+    EdmEntityType entityType = entityTypesDerivedFromES.get(fqn);
+    if (entityType == null) {
+      entityType = createEntityType(fqn);
+      if (entityType != null) {
+          entityTypesDerivedFromES.put(fqn, entityType);
+      }
+    }
+    this.isEntityDerivedFromES = false;
+    return entityType;
+  }
+  
+  protected EdmComplexType getComplexTypeWithAnnotations(final FullQualifiedName namespaceOrAliasFQN, 
+      boolean isComplexDerivedFromES) {
+    this.isComplexDerivedFromES = isComplexDerivedFromES;
+    final FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
+    if (!isPreviousES() && getEntityContainer() != null) {
+       getEntityContainer().getEntitySetsWithAnnotations();
+    }
+    EdmComplexType complexType = complexTypesDerivedFromES.get(fqn);
+    if (complexType == null) {
+      complexType = createComplexType(fqn);
+      if (complexType != null) {
+          complexTypesDerivedFromES.put(fqn, complexType);
+      }
+    }
+    this.isComplexDerivedFromES = false;
+    return complexType;
+  }
+  
+  @Override
   public EdmComplexType getComplexType(final FullQualifiedName namespaceOrAliasFQN) {
     final FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
     EdmComplexType complexType = complexTypes.get(fqn);
@@ -188,6 +257,20 @@ public abstract class AbstractEdm implements Edm {
     return complexType;
   }
 
+  @Override
+  public EdmComplexType getComplexTypeWithAnnotations(final FullQualifiedName namespaceOrAliasFQN) {
+    final FullQualifiedName fqn = resolvePossibleAlias(namespaceOrAliasFQN);
+    EdmComplexType complexType = complexTypesWithAnnotations.get(fqn);
+    if (complexType == null) {
+      complexType = createComplexType(fqn);
+      if (complexType != null) {
+          complexTypesWithAnnotations.put(fqn, complexType);
+      }
+    }
+    setIsPreviousES(false);
+    return complexType;
+  }
+  
   @Override
   public EdmAction getUnboundAction(final FullQualifiedName actionName) {
     final FullQualifiedName fqn = resolvePossibleAlias(actionName);
@@ -451,5 +534,25 @@ public abstract class AbstractEdm implements Edm {
       }
     }
     return functions;
+  }
+  
+  protected boolean isEntityDerivedFromES() {
+    return isEntityDerivedFromES;
+  }
+  
+  protected boolean isComplexDerivedFromES() {
+    return isComplexDerivedFromES;
+  }
+  
+  protected void setIsPreviousES(boolean isPreviousES) {
+    this.isPreviousES = isPreviousES;
+  }
+  
+  protected boolean isPreviousES() {
+    return isPreviousES;
+  }
+  
+  protected Map<String, List<CsdlAnnotation>> getAnnotationsMap() {
+    return annotationMap;
   }
 }

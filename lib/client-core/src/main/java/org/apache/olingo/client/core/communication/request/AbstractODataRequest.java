@@ -55,8 +55,9 @@ import org.apache.olingo.commons.api.http.HttpMethod;
  */
 public abstract class AbstractODataRequest extends AbstractRequest implements ODataRequest {
 
-  protected final ODataClient odataClient;
+  private static final byte[] CRLF = {13, 10};
   private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  protected final ODataClient odataClient;
 
   /**
    * OData request method.
@@ -110,6 +111,11 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   @Override
   public URI getURI() {
     return uri;
+  }
+  
+  @Override
+  public HttpUriRequest getHttpRequest() {
+    return request;
   }
 
   @Override
@@ -221,7 +227,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
 
       baos.write(requestBuilder.toString().getBytes(DEFAULT_CHARSET));
 
-      baos.write(ODataStreamer.CRLF);
+      baos.write(CRLF);
 
       // Set Content-Type and Accept headers with default values, if not yet set
       if (StringUtils.isBlank(odataHeaders.getHeader(HttpHeader.CONTENT_TYPE))) {
@@ -236,7 +242,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
 
         if (StringUtils.isNotBlank(value)) {
           baos.write((name + ": " + value).getBytes(DEFAULT_CHARSET));
-          baos.write(ODataStreamer.CRLF);
+          baos.write(CRLF);
         }
       }
 

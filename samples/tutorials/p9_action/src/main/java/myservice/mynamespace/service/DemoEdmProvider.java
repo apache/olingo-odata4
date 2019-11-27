@@ -70,19 +70,39 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
   public static final String ACTION_RESET = "Reset";
   public static final FullQualifiedName ACTION_RESET_FQN = new FullQualifiedName(NAMESPACE, ACTION_RESET);
   
+  //Bound Action
+  public static final String ACTION_PROVIDE_DISCOUNT = "DiscountProducts";
+  public static final FullQualifiedName ACTION_PROVIDE_DISCOUNT_FQN = new FullQualifiedName(NAMESPACE, ACTION_PROVIDE_DISCOUNT);
+  
+  //Bound Action
+  public static final String ACTION_PROVIDE_DISCOUNT_FOR_PRODUCT = "DiscountProduct";
+  public static final FullQualifiedName ACTION_PROVIDE_DISCOUNT_FOR_PRODUCT_FQN = new FullQualifiedName(NAMESPACE, ACTION_PROVIDE_DISCOUNT_FOR_PRODUCT);
+  
   // Function
   public static final String FUNCTION_COUNT_CATEGORIES = "CountCategories";
   public static final FullQualifiedName FUNCTION_COUNT_CATEGORIES_FQN 
                                                 = new FullQualifiedName(NAMESPACE, FUNCTION_COUNT_CATEGORIES);
+  //Bound Function
+  public static final String FUNCTION_PROVIDE_DISCOUNT = "GetDiscountProducts";
+  public static final FullQualifiedName FUNCTION_PROVIDE_DISCOUNT_FQN = new FullQualifiedName(NAMESPACE, FUNCTION_PROVIDE_DISCOUNT);
+  
+  public static final String FUNCTION_PROVIDE_DISCOUNT_FOR_PRODUCT = "GetDiscountProduct";
+  public static final FullQualifiedName FUNCTION_PROVIDE_DISCOUNT_FOR_PRODUCT_FQN = new FullQualifiedName(NAMESPACE, FUNCTION_PROVIDE_DISCOUNT_FOR_PRODUCT);
   
   // Function/Action Parameters
   public static final String PARAMETER_AMOUNT = "Amount";
   
+  //Bound Action Binding Parameter
+  public static final String PARAMETER_CATEGORY = "ParamCategory";
+  
+  //Bound Function Binding Parameter
+  public static final String PARAMETER_BIND = "BindingParameter";
+  
   @Override
   public List<CsdlAction> getActions(final FullQualifiedName actionName) {
+ // It is allowed to overload actions, so we have to provide a list of Actions for each action name
+    final List<CsdlAction> actions = new ArrayList<CsdlAction>();
     if(actionName.equals(ACTION_RESET_FQN)) {
-      // It is allowed to overload actions, so we have to provide a list of Actions for each action name
-      final List<CsdlAction> actions = new ArrayList<CsdlAction>();
       
       // Create parameters
       final List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
@@ -95,6 +115,50 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
       final CsdlAction action = new CsdlAction();
       action.setName(ACTION_RESET_FQN.getName());
       action.setParameters(parameters);
+      actions.add(action);
+      
+      return actions;
+    } else if (actionName.equals(ACTION_PROVIDE_DISCOUNT_FQN)) {
+      // Create parameters
+      final List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
+      CsdlParameter parameter = new CsdlParameter();
+      parameter.setName(PARAMETER_CATEGORY);
+      parameter.setType(ET_CATEGORY_FQN);
+      parameter.setCollection(true);
+      parameters.add(parameter);
+      parameter = new CsdlParameter();
+      parameter.setName(PARAMETER_AMOUNT);
+      parameter.setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
+      parameters.add(parameter);
+      
+      // Create the Csdl Action
+      final CsdlAction action = new CsdlAction();
+      action.setName(ACTION_PROVIDE_DISCOUNT_FQN.getName());
+      action.setBound(true);
+      action.setParameters(parameters);
+      action.setReturnType(new CsdlReturnType().setType(ET_PRODUCT_FQN).setCollection(true));
+      actions.add(action);
+      
+      return actions;
+    } else if (actionName.equals(ACTION_PROVIDE_DISCOUNT_FOR_PRODUCT_FQN)) {
+      // Create parameters
+      final List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
+      CsdlParameter parameter = new CsdlParameter();
+      parameter.setName(PARAMETER_CATEGORY);
+      parameter.setType(ET_CATEGORY_FQN);
+      parameter.setCollection(false);
+      parameters.add(parameter);
+      parameter = new CsdlParameter();
+      parameter.setName(PARAMETER_AMOUNT);
+      parameter.setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
+      parameters.add(parameter);
+      
+      // Create the Csdl Action
+      final CsdlAction action = new CsdlAction();
+      action.setName(ACTION_PROVIDE_DISCOUNT_FOR_PRODUCT_FQN.getName());
+      action.setBound(true);
+      action.setParameters(parameters);
+      action.setReturnType(new CsdlReturnType().setType(ET_PRODUCT_FQN).setCollection(false));
       actions.add(action);
       
       return actions;
@@ -141,6 +205,65 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
       functions.add(function);
 
       return functions;
+    } else if (functionName.equals(FUNCTION_PROVIDE_DISCOUNT_FQN)) {
+
+      final List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
+
+      // Create the parameter for the function
+      final List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
+      CsdlParameter parameter = new CsdlParameter();
+      parameter.setName(PARAMETER_BIND);
+      parameter.setNullable(false);
+      parameter.setType(ET_CATEGORY_FQN);
+      parameter.setCollection(true);
+      parameters.add(parameter);
+      parameter = new CsdlParameter();
+      parameter.setName(PARAMETER_AMOUNT);
+      parameter.setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
+      parameters.add(parameter);
+
+      // Create the return type of the function
+      final CsdlReturnType returnType = new CsdlReturnType();
+      returnType.setCollection(true).setType(ET_PRODUCT_FQN);
+
+      // Create the function
+      final CsdlFunction function = new CsdlFunction();
+      function.setName(FUNCTION_PROVIDE_DISCOUNT_FQN.getName())
+          .setParameters(parameters)
+          .setBound(true).setReturnType(returnType);
+      functions.add(function);
+
+      return functions;
+
+    } else if (functionName.equals(FUNCTION_PROVIDE_DISCOUNT_FOR_PRODUCT_FQN)) {
+
+      final List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
+
+      // Create the parameter for the function
+      final List<CsdlParameter> parameters = new ArrayList<CsdlParameter>();
+      CsdlParameter parameter = new CsdlParameter();
+      parameter.setName(PARAMETER_BIND);
+      parameter.setNullable(false);
+      parameter.setType(ET_CATEGORY_FQN);
+      parameters.add(parameter);
+      parameter = new CsdlParameter();
+      parameter.setName(PARAMETER_AMOUNT);
+      parameter.setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
+      parameters.add(parameter);
+
+      // Create the return type of the function
+      final CsdlReturnType returnType = new CsdlReturnType();
+      returnType.setType(ET_PRODUCT_FQN);
+
+      // Create the function
+      final CsdlFunction function = new CsdlFunction();
+      function.setName(FUNCTION_PROVIDE_DISCOUNT_FOR_PRODUCT_FQN.getName())
+          .setParameters(parameters)
+          .setBound(true).setReturnType(returnType);
+      functions.add(function);
+
+      return functions;
+
     }
 
     return null;
@@ -174,6 +297,8 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
                                             .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
       CsdlProperty description = new CsdlProperty().setName("Description")
                                                    .setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
+      CsdlProperty price = new CsdlProperty().setName("Price")
+          .setType(EdmPrimitiveTypeKind.Int32.getFullQualifiedName());
 
       // create PropertyRef for Key element
       CsdlPropertyRef propertyRef = new CsdlPropertyRef();
@@ -189,7 +314,7 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
       // configure EntityType
       entityType = new CsdlEntityType();
       entityType.setName(ET_PRODUCT_NAME);
-      entityType.setProperties(Arrays.asList(id, name, description));
+      entityType.setProperties(Arrays.asList(id, name, description, price));
       entityType.setKey(Arrays.asList(propertyRef));
       entityType.setNavigationProperties(navPropList);
 
@@ -279,11 +404,15 @@ public class DemoEdmProvider extends CsdlAbstractEdmProvider {
     // add actions
     List<CsdlAction> actions = new ArrayList<CsdlAction>();
     actions.addAll(getActions(ACTION_RESET_FQN));
+    actions.addAll(getActions(ACTION_PROVIDE_DISCOUNT_FQN));
+    actions.addAll(getActions(ACTION_PROVIDE_DISCOUNT_FOR_PRODUCT_FQN));
     schema.setActions(actions);
     
     // add functions
     List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
     functions.addAll(getFunctions(FUNCTION_COUNT_CATEGORIES_FQN));
+    functions.addAll(getFunctions(FUNCTION_PROVIDE_DISCOUNT_FQN));
+    functions.addAll(getFunctions(FUNCTION_PROVIDE_DISCOUNT_FOR_PRODUCT_FQN));
     schema.setFunctions(functions);
     
     // add EntityContainer

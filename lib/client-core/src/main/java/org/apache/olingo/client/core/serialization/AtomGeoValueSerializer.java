@@ -103,11 +103,11 @@ class AtomGeoValueSerializer {
         writer.writeEndElement();
         writer.writeEndElement();
       }
-      if (!polygon.getInterior().isEmpty()) {
+      for (int i = 0; i < polygon.getNumberOfInteriorRings(); i++) {
         writer.writeStartElement(Constants.PREFIX_GML, Constants.ELEM_POLYGON_INTERIOR, Constants.NS_GML);
         writer.writeStartElement(Constants.PREFIX_GML, Constants.ELEM_POLYGON_LINEARRING, Constants.NS_GML);
 
-        points(writer, polygon.getInterior().iterator(), false);
+        points(writer, polygon.getInterior(i).iterator(), false);
 
         writer.writeEndElement();
         writer.writeEndElement();

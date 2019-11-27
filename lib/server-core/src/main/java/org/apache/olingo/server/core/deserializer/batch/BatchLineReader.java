@@ -63,7 +63,7 @@ public class BatchLineReader {
   }
 
   public List<String> toList() throws IOException {
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
     String currentLine = readLine();
     if (currentLine != null) {
       currentBoundary = currentLine.trim();
@@ -77,7 +77,7 @@ public class BatchLineReader {
   }
 
   public List<Line> toLineList() throws IOException {
-    final List<Line> result = new ArrayList<Line>();
+    final List<Line> result = new ArrayList<>();
     String currentLine = readLine();
     if (currentLine != null) {
       currentBoundary = currentLine.trim();

@@ -246,12 +246,22 @@ public class FilterArgFactoryImpl implements FilterArgFactory {
 
   @Override
   public FilterArg any(final FilterArg collection, final URIFilter expression) {
-    return new FilterLambda(collection, "any", expression);
+    return new FilterLambda(collection, "any", expression, null);
   }
 
   @Override
   public FilterArg all(final FilterArg collection, final URIFilter expression) {
-    return new FilterLambda(collection, "all", expression);
+    return new FilterLambda(collection, "all", expression, null);
+  }
+
+  @Override
+  public FilterArg any(FilterArg collection, String lambdaVariable, URIFilter expression) {
+    return new FilterLambda(collection, "any", expression, lambdaVariable);
+  }
+
+  @Override
+  public FilterArg all(FilterArg collection, String lambdaVariable, URIFilter expression) {
+    return new FilterLambda(collection, "all", expression, lambdaVariable);
   }
 
 }

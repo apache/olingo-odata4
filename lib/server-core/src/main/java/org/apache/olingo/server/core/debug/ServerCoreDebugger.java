@@ -41,7 +41,7 @@ import org.apache.olingo.server.api.uri.UriInfo;
 public class ServerCoreDebugger {
 
   private static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");
-  private final List<RuntimeMeasurement> runtimeInformation = new ArrayList<RuntimeMeasurement>();
+  private final List<RuntimeMeasurement> runtimeInformation = new ArrayList<>();
   private final OData odata;
 
   private boolean isDebugMode = false;
@@ -62,7 +62,7 @@ public class ServerCoreDebugger {
       }
     }
   }
-
+  
   public ODataResponse createDebugResponse(final ODataRequest request, final ODataResponse response,
       final Exception exception, final UriInfo uriInfo, final Map<String, String> serverEnvironmentVariables) {
     // Failsafe so we do not generate unauthorized debug messages

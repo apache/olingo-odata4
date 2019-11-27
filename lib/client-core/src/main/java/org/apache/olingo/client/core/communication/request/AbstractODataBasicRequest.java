@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBasicRequest;
-import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -45,6 +44,7 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
     extends AbstractODataRequest implements ODataBasicRequest<T> {
 
   private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  private static final byte[] CRLF = {13, 10};
 
   /**
    * Constructor.
@@ -81,7 +81,7 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
    *
    * @return InputStream for entire payload.
    */
-  protected abstract InputStream getPayload();
+  public abstract InputStream getPayload();
 
   /**
    * Serializes the full request into the given batch request.
@@ -105,9 +105,9 @@ public abstract class AbstractODataBasicRequest<T extends ODataResponse>
       req.rawAppend(toByteArray());
       if (StringUtils.isNotBlank(contentId)) {
         req.rawAppend((ODataBatchConstants.CHANGESET_CONTENT_ID_NAME + ": " + contentId).getBytes(DEFAULT_CHARSET));
-        req.rawAppend(ODataStreamer.CRLF);
+        req.rawAppend(CRLF);
       }
-      req.rawAppend(ODataStreamer.CRLF);
+      req.rawAppend(CRLF);
 
       final InputStream payload = getPayload();
       if (payload != null) {

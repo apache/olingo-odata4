@@ -127,7 +127,7 @@ public class ClientObjectFactoryImpl implements ClientObjectFactory {
 
   @Override
   public ClientCollectionValue<ClientValue> newCollectionValue(final String typeName) {
-    return new ClientCollectionValueImpl<ClientValue>(typeName);
+    return new ClientCollectionValueImpl<>(typeName);
   }
 
   @Override

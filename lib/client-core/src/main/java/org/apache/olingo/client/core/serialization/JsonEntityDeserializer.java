@@ -140,9 +140,9 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       tree.remove(Constants.JSON_MEDIA_ETAG);
     }
 
-    final Set<String> toRemove = new HashSet<String>();
+    final Set<String> toRemove = new HashSet<>();
 
-    final Map<String, List<Annotation>> annotations = new HashMap<String, List<Annotation>>();
+    final Map<String, List<Annotation>> annotations = new HashMap<>();
     for (final Iterator<Map.Entry<String, JsonNode>> itor = tree.fields(); itor.hasNext();) {
       final Map.Entry<String, JsonNode> field = itor.next();
       final Matcher customAnnotation = CUSTOM_ANNOTATION.matcher(field.getKey());
@@ -236,7 +236,7 @@ public class JsonEntityDeserializer extends JsonDeserializer {
       throw new IOException(e);
     }
 
-    return new ResWrap<Entity>(contextURL, metadataETag, entity);
+    return new ResWrap<>(contextURL, metadataETag, entity);
   }
   
   private Link getOrCreateMediaLink(final Entity entity, final String name) {

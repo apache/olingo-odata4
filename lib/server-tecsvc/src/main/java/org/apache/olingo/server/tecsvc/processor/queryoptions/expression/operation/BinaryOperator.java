@@ -21,9 +21,12 @@ package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operat
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -84,8 +87,9 @@ public class BinaryOperator {
     primDouble = oData.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Double);
   }
 
-  private TypedOperand right;
+  private TypedOperand right = null;
   private TypedOperand left;
+  private List<TypedOperand> rightValues = null;
 
   public BinaryOperator(final VisitorOperand leftOperand, final VisitorOperand rightOperand)
       throws ODataApplicationException {
@@ -96,6 +100,15 @@ public class BinaryOperator {
     right = right.castToCommonType(left);
   }
 
+  public BinaryOperator(final VisitorOperand leftOperand, final List<VisitorOperand> rightOperand)
+      throws ODataApplicationException {
+    rightValues = new ArrayList<TypedOperand>();
+    left = leftOperand.asTypedOperand();
+    for (VisitorOperand right : rightOperand) {
+      rightValues.add(right.asTypedOperand());
+    }
+  }
+  
   public VisitorOperand andOperator() throws ODataApplicationException {
     Boolean result = null;
     if (left.is(primBoolean) && right.is(primBoolean)) {
@@ -352,5 +365,37 @@ public class BinaryOperator {
       throw new ODataApplicationException("Operator not valid", HttpStatusCode.BAD_REQUEST.getStatusCode(),
           Locale.ROOT);
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  public VisitorOperand inOperator() throws ODataApplicationException {
+    if (null != rightValues) {
+      for (TypedOperand rightOperand : rightValues) {
+        if (rightOperand.getTypedValue(String.class).equals(left.getTypedValue(String.class))) {
+          return new TypedOperand(true, primBoolean);
+        }
+      } 
+    } else {
+      if (right.getValue() instanceof String) {
+        String value = (String) right.getValue();
+        value = value.substring(value.indexOf("[") + 1, value.indexOf("]"));
+        String values[] = value.split(",");
+        for (String val : values) {
+          if (val.equals(left.getValue())) {
+            return new TypedOperand(true, primBoolean);
+          }
+        }
+      } else if (right.getValue() instanceof ArrayList && left.isIntegerType()) {
+        List<BigInteger> list = (List<BigInteger>) right.getTypedValue(ArrayList.class);
+        for (BigInteger val : list) {
+          if (val == left.getTypedValue(BigInteger.class)) {
+            return new TypedOperand(true, primBoolean);
+          }
+        }
+      } else if (right.getValue() == null && left.isNull()) {
+        return new TypedOperand(true, primBoolean);
+      }
+    }
+    return new TypedOperand(false, primBoolean);
   }
 }

@@ -132,5 +132,17 @@ public interface ExpressionVisitor<T> {
    * @throws ODataApplicationException Thrown by the application
    */
   T visitEnum(EdmEnumType type, List<String> enumValues) throws ExpressionVisitException, ODataApplicationException;
+  
+  /**
+   * Called for each traversed {@link Binary} expression
+   * @param operator Operator kind
+   * @param left Application return value of left sub tree
+   * @param right Application return value of right sub tree
+   * @return Application return value of type T
+   * @throws ExpressionVisitException Thrown if an exception while traversing occured
+   * @throws ODataApplicationException Thrown by the application
+   */
+  T visitBinaryOperator(BinaryOperatorKind operator, T left, List<T> right)
+      throws ExpressionVisitException, ODataApplicationException;
 
 }

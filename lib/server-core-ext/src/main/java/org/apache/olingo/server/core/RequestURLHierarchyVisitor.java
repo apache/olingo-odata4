@@ -46,7 +46,9 @@ import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceRoot;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.UriResourceValue;
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
+import org.apache.olingo.server.api.uri.queryoption.DeltaTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
 import org.apache.olingo.server.api.uri.queryoption.FormatOption;
@@ -218,6 +220,11 @@ public class RequestURLHierarchyVisitor implements RequestURLVisitor {
         break;
       }
     }
+    
+    if (info.getApplyOption() != null) {
+        //per the docs, apply is first
+        visit(info.getApplyOption());
+    }
 
     // http://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Toc372793682
     if (info.getSearchOption() != null) {
@@ -259,7 +266,14 @@ public class RequestURLHierarchyVisitor implements RequestURLVisitor {
     if (info.getSkipTokenOption() != null) {
       visit(info.getSkipTokenOption());
     }
-
+    
+    if (info.getDeltaTokenOption() != null) {
+      visit(info.getDeltaTokenOption());
+    }
+  }
+  
+  @Override
+  public void visit(ApplyOption option) {
   }
 
   @Override
@@ -313,7 +327,11 @@ public class RequestURLHierarchyVisitor implements RequestURLVisitor {
   @Override
   public void visit(UriResourceRef info) {
   }
-
+  
+  @Override
+  public void visit(DeltaTokenOption option) {
+  }
+  
   @Override
   public void visit(UriResourceRoot info) {
   }

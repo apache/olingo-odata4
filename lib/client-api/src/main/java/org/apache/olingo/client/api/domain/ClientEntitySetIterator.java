@@ -192,17 +192,30 @@ public class ClientEntitySetIterator<T extends ClientEntitySet, E extends Client
       } while (c >= 0);
 
       if (foundNewOne) {
-        int count = 1;
+        int objectCount = 1;
+        int stringCount = 0;
         c = 0;
 
-        while (count > 0 && c >= 0) {
+        boolean previousCharIsEscape = false;
+        
+        while (objectCount > 0 && c >= 0) {
           c = input.read();
-          if (c == '{') {
-            count++;
-          } else if (c == '}') {
-            count--;
+          if (c == '{' && stringCount <= 0) {
+              objectCount++;
+          } else if (c == '}' && stringCount <= 0) {
+            objectCount--;
+            // Detect JSON Strings to be able to correctly detect an Entity
+          } else if (c == '"' && stringCount <= 0  && !previousCharIsEscape) {
+            stringCount++;
+          } else if (c == '"' && stringCount > 0  && !previousCharIsEscape) {
+            stringCount--;
           }
           entity.write(c);
+          if (c == '\\' && !previousCharIsEscape) {
+            previousCharIsEscape = true;
+          } else {
+            previousCharIsEscape = false;
+          }
         }
 
         if (c >= 0) {

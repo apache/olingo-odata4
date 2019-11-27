@@ -28,7 +28,7 @@ public interface ODataStreamer {
   /**
    * CR/LF.
    */
-  public static final byte[] CRLF = {13, 10};
+  byte[] CRLF = {13, 10};
 
   /**
    * Gets the piped stream to be used to stream the payload.

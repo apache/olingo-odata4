@@ -72,7 +72,7 @@ package org.apache.olingo.commons.api.edm;
 public interface EdmPrimitiveType extends EdmType {
 
   String EDM_NAMESPACE = "Edm";
-
+  
   /**
    * Checks type compatibility.
    *
@@ -164,4 +164,20 @@ public interface EdmPrimitiveType extends EdmType {
    * @throws EdmPrimitiveTypeException if a required prefix or required surrounding quotation marks are missing
    */
   String fromUriLiteral(String literal) throws EdmPrimitiveTypeException;
+  
+  /**
+   * Validates literal value for Decimal values in V4.01
+   *
+   * @param value the literal value
+   * @param isNullable whether the <code>null</code> value is allowed
+   * @param maxLength the maximum length
+   * @param precision the precision
+   * @param scale the scale (could be variable or floating)
+   * @param isUnicode whether non-ASCII characters are allowed (relevant only for Edm.String)
+   * @return <code>true</code> if the validation is successful
+   */
+  default boolean validateDecimals(String value, Boolean isNullable, Integer maxLength, 
+      Integer precision, String scale, Boolean isUnicode) {
+        return false;
+  }
 }

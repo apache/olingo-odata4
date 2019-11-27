@@ -1,0 +1,24 @@
+{
+	"PropertyEnumString" : "2",
+	"PropertyDefString" : "string",
+	"CollPropertyEnumString" : ["1", "2"],
+	"CollPropertyDefString" : ["string1", "string2"],
+	"PropertyCompMixedEnumDef" : {
+		"PropertyEnumString" : "2",
+		"PropertyDefString" : "string",
+		"CollPropertyEnumString" : ["1", "2"],
+		"CollPropertyDefString" : ["string1", "string2"]
+	},
+	"CollPropertyCompMixedEnumDef" : [{
+			"PropertyEnumString" : "2",
+			"PropertyDefString" : "string",
+			"CollPropertyEnumString" : ["1", "2"],
+			"CollPropertyDefString" : ["string1", "string2"]
+		}, {
+			"PropertyEnumString" : "2",
+			"PropertyDefString" : "string",
+			"CollPropertyEnumString" : ["1", "2"],
+			"CollPropertyDefString" : ["string1", "string2"]
+		}
+	]
+}

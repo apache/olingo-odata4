@@ -59,10 +59,8 @@ public abstract class ServiceResponse {
 
   protected void close() {
     if (!this.closed) {
-      if (this.strictApplyPreferences) {
-        if (!preferences.isEmpty()) {
-          assert(this.response.getAllHeaders().get("Preference-Applied") != null);
-        }
+      if (this.strictApplyPreferences && !preferences.isEmpty()) {
+        assert (this.response.getAllHeaders().get("Preference-Applied") != null);
       }
       this.closed = true;
     }

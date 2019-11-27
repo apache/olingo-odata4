@@ -73,9 +73,7 @@ public abstract class OperationRequest extends ServiceRequest {
     if (!hasReturnType()) {
       return null;
     }
-
-    //final UriHelper helper = odata.createUriHelper();
-
+   
     if (isReturnTypePrimitive() || isReturnTypeComplex()) {
       // Part 1 {10.14, 10.14} since the function return properties does not
       // represent a Entity property
@@ -85,18 +83,6 @@ public abstract class OperationRequest extends ServiceRequest {
       }
       return builder.build();
     }
-
-    /*
-    // EdmTypeKind.ENTITY;
-    if (isBound()) {
-      // Bound means, we know the EnitySet of the return type. Part 1 {10.2,
-      // 10.3}
-      EdmEntitySet entitySet = this.uriResourceFunction.getFunctionImport().getReturnedEntitySet();
-      ContextURL.Builder builder = DataRequest.buildEntitySetContextURL(helper, entitySet,
-          this.uriInfo, isCollection(), false);
-      return builder.build();
-    }
-    */
 
     // EdmTypeKind.ENTITY; Not Bound
     // Here we do not know the EntitySet, then follow directions from

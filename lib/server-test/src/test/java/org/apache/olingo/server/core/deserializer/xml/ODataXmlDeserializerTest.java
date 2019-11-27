@@ -18,6 +18,11 @@
  */
 package org.apache.olingo.server.core.deserializer.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -131,7 +136,68 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Assert.assertEquals(valueOf("03:26:05", EdmPrimitiveTypeKind.TimeOfDay),
         result.getProperty("PropertyTimeOfDay").asPrimitive());
   }
+  
+  @Test
+  public void derivedEntityETTwoPrim() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    
+    String payload = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+        "<atom:entry xmlns:atom=\"http://www.w3.org/2005/Atom\"\n" + 
+        "  xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        "  xmlns:data=\"http://docs.oasis-open.org/odata/ns/data\"> " +        
+        "  <atom:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
+        "    term=\"#olingo.odata.test1.ETBase\" />\n" + 
+        "  <atom:content type=\"application/xml\">\n" + 
+        "    <metadata:properties>\n" + 
+        "      <data:PropertyInt16>32767</data:PropertyInt16>\n" + 
+        "      <data:PropertyString>First Resource - positive values</data:PropertyString>\n" + 
+        "      <data:AdditionalPropertyString_5>Additional</data:AdditionalPropertyString_5>\n" + 
+        "    </metadata:properties>\n" + 
+        "  </atom:content>\n" + 
+        "</atom:entry>\n"; 
+    
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+        edmEntitySet.getEntityType()).getEntity();
 
+    Assert.assertEquals("olingo.odata.test1.ETBase", result.getType());
+    Assert.assertEquals(3, result.getProperties().size());
+    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
+    Assert.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
+    Assert.assertNotNull(
+        result.getProperty("AdditionalPropertyString_5").asPrimitive());
+  }
+  
+  @Test
+  public void derivedEntityETTwoPrimNull() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    
+    String payload = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+        "<atom:entry xmlns:atom=\"http://www.w3.org/2005/Atom\"\n" + 
+        "  xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        "  xmlns:data=\"http://docs.oasis-open.org/odata/ns/data\"> " +        
+        "  <atom:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
+        "    term=\"#olingo.odata.test1.ETBase\" />\n" + 
+        "  <atom:content type=\"application/xml\">\n" + 
+        "    <metadata:properties>\n" + 
+        "      <data:PropertyInt16/>\n" + 
+        "      <data:PropertyString/>\n" + 
+        "      <data:AdditionalPropertyString_5/>\n" + 
+        "    </metadata:properties>\n" + 
+        "  </atom:content>\n" + 
+        "</atom:entry>\n"; 
+    
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+        edmEntitySet.getEntityType()).getEntity();
+
+    Assert.assertEquals(3, result.getProperties().size());
+    
+    Assert.assertNull(result.getProperty("PropertyInt16").asPrimitive());
+    Assert.assertNull(result.getProperty("PropertyString").asPrimitive());
+    Assert.assertNull(
+        result.getProperty("AdditionalPropertyString_5").asPrimitive());
+  }
+  
+  
   @Test
   public void entitySimpleWithTypes() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
@@ -341,7 +407,293 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Assert.assertEquals((short) 789, getCVProperty((ComplexValue) properties.get(2), "PropertyInt16").asPrimitive());
     Assert.assertEquals("TEST 3", getCVProperty((ComplexValue) properties.get(2), "PropertyString").asPrimitive());
   }
+  
 
+  @Test
+  public void derivedEntityMixPrimCollComp() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixPrimCollComp");
+    final String payload = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+        "<atom:entry xmlns:atom=\"http://www.w3.org/2005/Atom\"\n" + 
+        "  xmlns:metadata=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        "  xmlns:data=\"http://docs.oasis-open.org/odata/ns/data\" \n" + 
+        "  metadata:metadata-etag=\"WmetadataETag\">\n" + 
+        "  <atom:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
+        "    term=\"#olingo.odata.test1.ETMixPrimCollComp\" />\n" + 
+        "  <atom:content type=\"application/xml\">\n" + 
+        "    <metadata:properties>\n" + 
+        "      <data:PropertyInt16>32767</data:PropertyInt16>\n" + 
+        "      <data:CollPropertyString type=\"#Collection(String)\">\n" + 
+        "        <metadata:element>Employee1@company.example</metadata:element>\n" + 
+        "        <metadata:element>Employee2@company.example</metadata:element>\n" + 
+        "        <metadata:element>Employee3@company.example</metadata:element>\n" + 
+        "      </data:CollPropertyString>\n" + 
+        "      <data:PropertyComp metadata:type=\"#olingo.odata.test1.CTBase\">\n" + 
+        "        <data:PropertyInt16>111</data:PropertyInt16>\n" + 
+        "        <data:PropertyString>TEST A</data:PropertyString>\n" + 
+        "        <data:AdditionalPropString>Additional</data:AdditionalPropString>\n" + 
+        "      </data:PropertyComp>\n" + 
+        "       <data:CollPropertyComp metadata:type=\"#Collection(olingo.odata.test1.CTTwoPrim)\">\n" + 
+        "          <metadata:element  metadata:type=\"olingo.odata.test1.CTBase\">\n" + 
+        "            <data:PropertyInt16>123</data:PropertyInt16>\n" + 
+        "            <data:PropertyString>TEST 1</data:PropertyString>\n" + 
+        "            <data:AdditionalPropString>Additional test</data:AdditionalPropString>\n" + 
+        "          </metadata:element>\n" + 
+        "          <metadata:element>\n" + 
+        "            <data:PropertyInt16>456</data:PropertyInt16>\n" + 
+        "            <data:PropertyString>TEST 2</data:PropertyString>\n" + 
+        "          </metadata:element>\n" + 
+        "          <metadata:element>\n" + 
+        "            <data:PropertyInt16>789</data:PropertyInt16>\n" + 
+        "            <data:PropertyString>TEST 3</data:PropertyString>\n" + 
+        "          </metadata:element>\n" + 
+        "        </data:CollPropertyComp>\n" + 
+        "    </metadata:properties>\n" + 
+        "  </atom:content>\n" + 
+        "</atom:entry>\n"; 
+
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+        edmEntitySet.getEntityType()).getEntity();
+
+    Assert.assertEquals(4, result.getProperties().size());
+    Assert.assertEquals(0, result.getNavigationLinks().size());
+
+    Assert.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
+        "Employee3@company.example"), result.getProperty("CollPropertyString").getValue());
+
+    Property comp = result.getProperty("PropertyComp");
+    Assert.assertEquals("olingo.odata.test1.CTBase", comp.getType());
+    ComplexValue cv = comp.asComplex();
+    
+    Assert.assertEquals(3, cv.getValue().size());
+    Assert.assertEquals((short) 111, getCVProperty(cv, "PropertyInt16").asPrimitive());
+    Assert.assertEquals("TEST A", getCVProperty(cv, "PropertyString").asPrimitive());
+    Assert.assertEquals("Additional", getCVProperty(cv, "AdditionalPropString").asPrimitive());
+    
+    comp = result.getProperty("CollPropertyComp");
+    Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", comp.getType());
+
+    List<?> properties = comp.asCollection();
+    Assert.assertEquals(3, properties.size());
+    
+    Assert.assertEquals((short) 123, getCVProperty((ComplexValue) properties.get(0), "PropertyInt16").asPrimitive());
+    Assert.assertEquals("TEST 1", getCVProperty((ComplexValue) properties.get(0), "PropertyString").asPrimitive());
+    Assert.assertEquals("Additional test", getCVProperty((ComplexValue) properties.get(0), "AdditionalPropString")
+        .asPrimitive());
+
+    Assert.assertEquals((short) 789, getCVProperty((ComplexValue) properties.get(2), "PropertyInt16").asPrimitive());
+    Assert.assertEquals("TEST 3", getCVProperty((ComplexValue) properties.get(2), "PropertyString").asPrimitive());
+  }
+  
+  @Test
+  public void deriveEntityESAllPrimDeepInsert() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final String payload = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" \n" + 
+        "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" \n" + 
+        "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESAllPrim/$entity\" \n" + 
+        "m:metadata-etag=\"W/&quot;f67e7bc4-37c8-46a8-bcd5-d77875906099&quot;\">\n" + 
+        "    <a:id>ESAllPrim(32767)</a:id>\n" + 
+
+        "    <a:link rel=\"edit\" href=\"ESAllPrim(32767)\"/>\n" + 
+        "    <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimMany\" \n" + 
+        " type=\"application/atom+xml;type=feed\" title=\"NavPropertyETTwoPrimMany\" \n" + 
+        " href=\"ESAllPrim(32767)/NavPropertyETTwoPrimMany\">\n" + 
+        "       <m:inline>\n" + 
+        "          <a:feed>\n" + 
+        "             <a:entry>\n" + 
+        "                <a:id>ESTwoPrim(-365)</a:id>           \n" +         
+        "                    <a:link rel=\"edit\" href=\"ESTwoPrim(-365)\"/>\n" + 
+        "                    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
+        "         term=\"#olingo.odata.test1.ETTwoPrim\"/>\n" + 
+        "                    <a:content type=\"application/xml\">\n" + 
+        "                        <m:properties>\n" + 
+        "                            <d:PropertyInt16 m:type=\"Int16\">-365</d:PropertyInt16>\n" + 
+        "                            <d:PropertyString>Test String2</d:PropertyString>\n" + 
+        "                        </m:properties>\n" + 
+        "                    </a:content>\n" + 
+        "       </a:entry>\n" + 
+        "        <a:entry>\n" + 
+        "                    <a:id>ESTwoPrim(-365)</a:id>    \n" +                
+        "                    <a:link rel=\"edit\" href=\"ESTwoPrim(-365)\"/>\n" + 
+        "                    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" \n" + 
+        "         term=\"#olingo.odata.test1.ETBase\"/>\n" + 
+        "                    <a:content type=\"application/xml\">\n" + 
+        "                        <m:properties>\n" + 
+        "                            <d:PropertyInt16 m:type=\"Int16\">-365</d:PropertyInt16>\n" + 
+        "                            <d:PropertyString>Test String2</d:PropertyString>\n" + 
+        "                            <d:AdditionalPropertyString_5>Test String2</d:AdditionalPropertyString_5>\n" + 
+        "                        </m:properties>\n" + 
+        "                    </a:content>\n" + 
+        "       </a:entry>\n" + 
+        "            </a:feed>\n" + 
+        "        </m:inline>\n" + 
+        "   </a:link>\n" + 
+        "   <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETTwoPrimOne\" \n" + 
+        "   type=\"application/atom+xml;type=entry\" title=\"NavPropertyETTwoPrimOne\" href=\"ESTwoPrim(32767)\">\n" + 
+        "        <m:inline>\n" + 
+        "            <a:entry>\n" + 
+        "                <a:id>ESTwoPrim(32767)</a:id>\n" + 
+        "                <a:link rel=\"edit\" href=\"ESTwoPrim(32767)\"/>\n" + 
+        "                <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" \n" + 
+        "                 term=\"#olingo.odata.test1.ETBase\"/>\n" + 
+        "                <a:content type=\"application/xml\">\n" + 
+        "                    <m:properties>\n" + 
+        "                        <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
+        "                        <d:PropertyString>Test String4</d:PropertyString>\n" + 
+        "                        <d:AdditionalPropertyString_5>Test String2</d:AdditionalPropertyString_5>\n" + 
+        "                    </m:properties>\n" + 
+        "                </a:content>\n" + 
+        "            </a:entry>\n" + 
+        "        </m:inline>\n" + 
+        "    </a:link>\n" + 
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" + 
+        "     term=\"#olingo.odata.test1.ETAllPrim\"/>\n" + 
+        "    <a:content type=\"application/xml\">\n" + 
+        "        <m:properties>\n" + 
+        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
+        "            <d:PropertyString>First Resource - positive values</d:PropertyString>\n" + 
+        "            <d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>\n" + 
+        "            <d:PropertyByte m:type=\"Byte\">255</d:PropertyByte>\n" + 
+        "            <d:PropertySByte m:type=\"SByte\">127</d:PropertySByte>\n" + 
+        "            <d:PropertyInt32 m:type=\"Int32\">2147483647</d:PropertyInt32>\n" + 
+        "            <d:PropertyInt64 m:type=\"Int64\">9223372036854775807</d:PropertyInt64>\n" + 
+        "            <d:PropertySingle m:type=\"Single\">1.79E20</d:PropertySingle>\n" + 
+        "            <d:PropertyDouble m:type=\"Double\">-1.79E19</d:PropertyDouble>\n" + 
+        "            <d:PropertyDecimal m:type=\"Decimal\">34</d:PropertyDecimal>\n" + 
+        "            <d:PropertyBinary m:type=\"Binary\">ASNFZ4mrze8=</d:PropertyBinary>\n" + 
+        "            <d:PropertyDate m:type=\"Date\">2012-12-03</d:PropertyDate>\n"+
+        "            <d:PropertyDuration m:type=\"Duration\">PT6S</d:PropertyDuration>\n" + 
+        "            <d:PropertyGuid m:type=\"Guid\">01234567-89ab-cdef-0123-456789abcdef</d:PropertyGuid>\n" + 
+        "            <d:PropertyTimeOfDay m:type=\"TimeOfDay\">03:26:05</d:PropertyTimeOfDay>\n" + 
+        "        </m:properties>\n" + 
+        "    </a:content>\n" + 
+        "</a:entry>\n" ;
+
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+        edmEntitySet.getEntityType()).getEntity();
+    Assert.assertEquals(15, result.getProperties().size());
+    Assert.assertEquals(2, result.getNavigationLinks().size());
+    assertNotNull(result.getNavigationLinks().get(0).getInlineEntitySet()
+        .getEntities().get(1).getProperty("AdditionalPropertyString_5"));
+    assertNotNull(result.getNavigationLinks().get(1).getInlineEntity().getProperty("AdditionalPropertyString_5"));
+  }
+
+  @Test
+  public void derivedEntityESCompCollDerived() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollDerived");
+    final String payload = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESCompCollDerived/$entity\"\n" +  
+        "m:metadata-etag=\"W/&quot;1c2796fd-da13-4741-9da2-99cac365f296&quot;\">\n" + 
+        "    <a:id>ESCompCollDerived(32767)</a:id>\n" + 
+        "    <a:title/>\n" + 
+        "    <a:summary/>\n" + 
+        "    <a:updated>2017-07-18T13:18:13Z</a:updated>\n" + 
+        "    <a:author>\n" + 
+        "        <a:name/>\n" + 
+        "    </a:author>\n" + 
+        "    <a:link rel=\"edit\" href=\"ESCompCollDerived(32767)\"/>\n" + 
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETDeriveCollComp\"/>\n" + 
+        "    <a:content type=\"application/xml\">\n" + 
+        "        <m:properties>\n" + 
+        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
+        "            <d:CollPropertyCompAno>\n" + 
+        "                <m:element m:type=\"#olingo.odata.test1.CTTwoPrimAno\">\n" + 
+        "                    <d:PropertyString>TEST9876</d:PropertyString>\n" + 
+        "                </m:element>\n" + 
+        "                <m:element  m:type=\"#olingo.odata.test1.CTBaseAno\">\n" + 
+        "                    <d:AdditionalPropString>TEST9889</d:AdditionalPropString>\n" + 
+        "                    <d:PropertyString>TEST9889</d:PropertyString>\n" + 
+        "                </m:element>\n" + 
+        "            </d:CollPropertyCompAno>\n" + 
+        "        </m:properties>\n" + 
+        "    </a:content>\n" + 
+        "</a:entry>\n" ;
+
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+        edmEntitySet.getEntityType()).getEntity();
+
+    Assert.assertEquals(2, result.getProperties().size());
+    Assert.assertEquals(0, result.getNavigationLinks().size());
+
+    Assert.assertEquals(("[[PropertyString=TEST9876], [AdditionalPropString=TEST9889, PropertyString=TEST9889]]"), 
+        result.getProperty("CollPropertyCompAno").getValue().toString());
+
+    Property comp = result.getProperty("CollPropertyCompAno");
+    Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrimAno)", comp.getType());
+    List<? extends Object> cv = comp.asCollection();
+    
+    Assert.assertEquals(2, cv.size());
+    for (Object arrayElement : cv) {
+
+      assertTrue(arrayElement instanceof ComplexValue);
+      List<Property> castedArrayElement = ((ComplexValue) arrayElement).getValue();
+      if(castedArrayElement.size() == 1){
+        assertEquals("PropertyString=TEST9876", castedArrayElement.get(0).toString());
+      }else{
+        assertEquals(2, castedArrayElement.size());
+        assertEquals("AdditionalPropString=TEST9889", castedArrayElement.get(0).toString());
+      }
+    
+    }
+  }
+  
+  @Test
+  public void derivedEntityESCompCollDerivedNullEmpty() throws Exception {
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESCompCollDerived");
+    final String payload = "<?xml version='1.0' encoding='UTF-8'?>\n" + 
+        "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\"\n" + 
+        "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" m:context=\"$metadata#ESCompCollDerived/$entity\"\n" +  
+        "m:metadata-etag=\"W/&quot;1c2796fd-da13-4741-9da2-99cac365f296&quot;\">\n" + 
+        "    <a:id>ESCompCollDerived(32767)</a:id>\n" + 
+        "    <a:title/>\n" + 
+        "    <a:summary/>\n" + 
+        "    <a:updated>2017-07-18T13:18:13Z</a:updated>\n" + 
+        "    <a:author>\n" + 
+        "        <a:name/>\n" + 
+        "    </a:author>\n" + 
+        "    <a:link rel=\"edit\" href=\"ESCompCollDerived(32767)\"/>\n" + 
+        "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
+        "    term=\"#olingo.odata.test1.ETDeriveCollComp\"/>\n" + 
+        "    <a:content type=\"application/xml\">\n" + 
+        "        <m:properties>\n" + 
+        "            <d:PropertyInt16 m:type=\"Int16\">32767</d:PropertyInt16>\n" + 
+        "            <d:CollPropertyCompAno>\n" + 
+        "                <m:element m:type=\"#olingo.odata.test1.CTBaseAno\">\n" + 
+        "                    <d:PropertyString/>\n" + 
+        "                   <d:AdditionalPropString/>\n" +
+        "                </m:element>\n" + 
+        "                <m:element  m:type=\"#olingo.odata.test1.CTBaseAno\">\n" + 
+        "                </m:element>\n" + 
+        "            </d:CollPropertyCompAno>\n" + 
+        "        </m:properties>\n" + 
+        "    </a:content>\n" + 
+        "</a:entry>\n" ;
+
+    Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
+        edmEntitySet.getEntityType()).getEntity();
+
+    Assert.assertEquals(2, result.getProperties().size());
+    Assert.assertEquals(0, result.getNavigationLinks().size());
+
+
+    Property comp = result.getProperty("CollPropertyCompAno");
+    Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrimAno)", comp.getType());
+    List<? extends Object> cv = comp.asCollection();
+    
+    Assert.assertEquals(2, cv.size());
+    for (Object arrayElement : cv) {
+
+      assertTrue(arrayElement instanceof ComplexValue);
+      List<Property> castedArrayElement = ((ComplexValue) arrayElement).getValue();
+      if(castedArrayElement.size()>0){
+        assertEquals(2, castedArrayElement.size());
+        assertNull(castedArrayElement.get(0).getValue());
+      }
+    }
+  }
+   
   @Test
   public void entityMixEnumDefCollComp() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESMixEnumDefCollComp");

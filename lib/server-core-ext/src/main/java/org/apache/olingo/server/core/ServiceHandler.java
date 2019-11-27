@@ -279,7 +279,7 @@ public interface ServiceHandler extends Processor {
   void rollback(String txnId) throws ODataLibraryException, ODataApplicationException;;
 
   /**
-   * This is not complete, more URL parsing changes required. Cross join between two entities.
+   * Cross join between two entities.
    * @param dataRequest
    * @param entitySetNames
    * @param response
@@ -311,4 +311,14 @@ public interface ServiceHandler extends Processor {
    * @param response
    */
   void processError(ODataServerError error, ErrorResponse response);
+
+  /**
+   * Apply request
+   * 
+   * @param dataRequest
+   * @param response
+   * @throws ODataLibraryException
+   * @throws ODataApplicationException
+   */
+  void apply(DataRequest dataRequest, ODataResponse response) throws ODataLibraryException, ODataApplicationException;
 }

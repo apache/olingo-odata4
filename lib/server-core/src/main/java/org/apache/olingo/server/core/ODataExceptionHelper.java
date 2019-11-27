@@ -83,6 +83,13 @@ public class ODataExceptionHelper {
     return serverError;
   }
 
+  public static ODataServerError createServerErrorObject(final AcceptHeaderContentNegotiatorException e,
+      final Locale requestedLocale) {
+    ODataServerError serverError = basicTranslatedError(e, requestedLocale);
+    serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
+    return serverError;
+  }
+  
   public static ODataServerError createServerErrorObject(final ODataHandlerException e, final Locale requestedLocale) {
     ODataServerError serverError = basicTranslatedError(e, requestedLocale);
     if (ODataHandlerException.MessageKeys.FUNCTIONALITY_NOT_IMPLEMENTED.equals(e.getMessageKey())
@@ -93,7 +100,9 @@ public class ODataExceptionHelper {
         || ODataHandlerException.MessageKeys.AMBIGUOUS_XHTTP_METHOD.equals(e.getMessageKey())
         || ODataHandlerException.MessageKeys.MISSING_CONTENT_TYPE.equals(e.getMessageKey())
         || ODataHandlerException.MessageKeys.INVALID_CONTENT_TYPE.equals(e.getMessageKey())
-        || ODataHandlerException.MessageKeys.UNSUPPORTED_CONTENT_TYPE.equals(e.getMessageKey())) {
+        || ODataHandlerException.MessageKeys.UNSUPPORTED_CONTENT_TYPE.equals(e.getMessageKey())
+        || ODataHandlerException.MessageKeys.INVALID_PREFER_HEADER.equals(e.getMessageKey())
+        || ODataHandlerException.MessageKeys.INVALID_PAYLOAD.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
     } else if (ODataHandlerException.MessageKeys.HTTP_METHOD_NOT_ALLOWED.equals(e.getMessageKey())) {
       serverError.setStatusCode(HttpStatusCode.METHOD_NOT_ALLOWED.getStatusCode());
@@ -125,7 +134,11 @@ public class ODataExceptionHelper {
   }
 
   public static ODataServerError createServerErrorObject(final ODataLibraryException e, final Locale requestedLocale) {
-    return basicTranslatedError(e, requestedLocale);
+    ODataServerError serverError = basicTranslatedError(e, requestedLocale);
+    if(e instanceof SerializerException || e instanceof DeserializerException){
+      serverError.setStatusCode(HttpStatusCode.BAD_REQUEST.getStatusCode());
+    }
+    return serverError;
   }
 
   public static ODataServerError createServerErrorObject(final ODataApplicationException e) {

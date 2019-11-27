@@ -45,7 +45,7 @@ public final class FunctionMapKey {
     }
     this.bindingParameterTypeName = bindingParameterTypeName;
     this.isBindingParameterCollection = isBindingParameterCollection;
-    this.parameterNames = new ArrayList<String>();
+    this.parameterNames = new ArrayList<>();
     if (parameterNames != null) {
       this.parameterNames.addAll(parameterNames);
       Collections.sort(this.parameterNames);
@@ -77,16 +77,15 @@ public final class FunctionMapKey {
         && (isBindingParameterCollection == null
         && other.isBindingParameterCollection == null)
         || (isBindingParameterCollection != null
-        && isBindingParameterCollection.equals(other.isBindingParameterCollection))) {
+        && isBindingParameterCollection.equals(other.isBindingParameterCollection))
+            && parameterNames.size() == other.parameterNames.size()) {
 
-      if (parameterNames.size() == other.parameterNames.size()) {
-        for (String name : parameterNames) {
-          if (!other.parameterNames.contains(name)) {
-            return false;
-          }
+      for (String name : parameterNames) {
+        if (!other.parameterNames.contains(name)) {
+          return false;
         }
-        return true;
       }
+      return true;
     }
     return false;
   }

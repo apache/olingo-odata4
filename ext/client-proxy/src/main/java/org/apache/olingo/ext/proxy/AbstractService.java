@@ -19,21 +19,27 @@
 package org.apache.olingo.ext.proxy;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Proxy;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.serialization.ValidatingObjectInputStream;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.edm.xml.XMLMetadata;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.edm.ClientCsdlEdmProvider;
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.constants.ODataServiceVersion;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.ext.proxy.api.AbstractTerm;
@@ -51,6 +57,14 @@ import org.slf4j.LoggerFactory;
  * @param <C> actual client class
  */
 public abstract class AbstractService<C extends EdmEnabledODataClient> {
+
+  /**
+   * A set of classes which are allowed to be deserialized by default.
+   */
+  private static final Set<String> DEFAULT_ALLOWED_CLASSES;
+  static {
+    DEFAULT_ALLOWED_CLASSES = Collections.singleton("org.apache.olingo.*");
+  }
 
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractService.class);
 
@@ -75,7 +89,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
       // use commons codec's Base64 in this fashion to stay compatible with Android
       bais = new ByteArrayInputStream(new Base64().decode(compressedMetadata.getBytes("UTF-8")));
       gzis = new GZIPInputStream(bais);
-      ois = new ObjectInputStream(gzis);
+      ois = createObjectInputStream(gzis);
       metadata = (XMLMetadata) ois.readObject();
     } catch (Exception e) {
       LOG.error("While deserializing compressed metadata", e);
@@ -88,7 +102,7 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
     if (metadata != null) {
       ClientCsdlEdmProvider provider = new ClientCsdlEdmProvider(metadata.getSchemaByNsOrAlias());
       edm = new EdmProviderImpl(provider);
-    }else{
+    } else {
       edm = null;
     }
     if (version.compareTo(ODataServiceVersion.V40) < 0) {
@@ -150,5 +164,37 @@ public abstract class AbstractService<C extends EdmEnabledODataClient> {
       ENTITY_CONTAINERS.put(reference, entityContainer);
     }
     return reference.cast(ENTITY_CONTAINERS.get(reference));
+  }
+
+  /**
+   * Returns a set of classes which are allowed for deserialization.<br/>
+   * By default, only classes from the "org.apache.olingo" package are allowed.
+   * Subclasses should override this method if they expect other classes to be deserialized.
+   *
+   * @return A set of classes which are allowed for deserialization.
+   */
+  protected Set<String> getAllowedClasses() {
+    return Collections.emptySet();
+  }
+
+  /**
+   * Wraps a specified {@link InputStream} into a {@link ValidatingObjectInputStream}
+   * which allowed only a limited set of classes for deserialization.
+   * The method calls {@link #getAllowedClasses()} to get a set of classes
+   * which allowed for deserialization.
+   *
+   * @param is The input stream to be wrapped.
+   * @return An instance of {@link ValidatingObjectInputStream}.
+   * @throws IOException If something went wrong.
+   */
+  private ObjectInputStream createObjectInputStream(InputStream is) throws IOException {
+    ValidatingObjectInputStream vois = new ValidatingObjectInputStream(is);
+    Set<String> allowedClasses = new HashSet<>();
+    allowedClasses.addAll(DEFAULT_ALLOWED_CLASSES);
+    allowedClasses.addAll(getAllowedClasses());
+    for (String clazz : allowedClasses) {
+      vois.accept(clazz);
+    }
+    return vois;
   }
 }

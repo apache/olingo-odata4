@@ -58,6 +58,18 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertTrue(content.contains("\"PropertyString\":\"TEST 1->streamed\""));
     assertTrue(content.contains("\"PropertyString\":\"TEST 2->streamed\""));
   }
+  
+  @Test
+  public void streamESWithStreamJson() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESWithStream?$expand=PropertyStream&$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.connect();
+
+    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+  }
 
   @Test
   public void streamESStreamXml() throws Exception {
@@ -236,6 +248,66 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertTrue(content.contains("\"@odata.nextLink\""));
     assertTrue(content.contains("ESStreamServerSidePaging?$count=false&$format=json&%24skiptoken=1%2A10"));
     assertFalse(content.contains("\"@odata.count\":504"));
+    }
+  
+  @Test
+  public void expandStreamPropOnComplexTypeJson() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamOnComplexProp(7)?$expand=PropertyCompWithStream/PropertyStream,"
+        + "PropertyEntityStream,PropertyCompWithStream/NavPropertyETStreamOnComplexPropOne($expand=PropertyStream),"
+        + "PropertyCompWithStream/NavPropertyETStreamOnComplexPropMany/$count&$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty("OData-Version", "4.01");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("\"NavPropertyETStreamOnComplexPropOne\":{"
+        + "\"PropertyInt16\":7,"
+        + "\"PropertyStream@mediaEtag\":\"eTag\","
+        + "\"PropertyStream@mediaContentType\":\"image/jpeg\","
+        + "\"PropertyStream\":\"\ufffdioz\ufffd\\\"\ufffd\"}"));
+    assertTrue(content.contains("\"NavPropertyETStreamOnComplexPropMany@count\":2"));
+    assertTrue(content.contains("\"PropertyCompWithStream\":{"
+        + "\"PropertyStream@mediaEtag\":\"eTag\","
+        + "\"PropertyStream@mediaContentType\":\"image/jpeg\","
+        + "\"PropertyStream\":\"\ufffdioz\ufffd\\\"\ufffd\","
+        + "\"PropertyComp\":{\"PropertyInt16\":333,\"PropertyString\":\"TEST123\"}"));
+    assertFalse(content.contains("\"PropertyInt16\":7,"
+        + "\"PropertyInt32\":10,"
+        + "\"PropertyEntityStream@mediaEtag\":\"eTag\","
+        + "\"PropertyEntityStream@mediaContentType\":\"image/jpeg\","
+        + "\"PropertyEntityStream\":\"ufffdioz\ufffd\\\"\ufffd\""));
+    }
+  
+  @Test
+  public void expandStreamPropOnComplexTypeWithRefJson() throws Exception {
+    URL url = new URL(SERVICE_URI + "ESStreamOnComplexProp(7)?$expand="
+        + "PropertyCompWithStream/NavPropertyETStreamOnComplexPropMany/$ref&$format=json");
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod(HttpMethod.GET.name());
+    connection.setRequestProperty("OData-Version", "4.01");
+    connection.connect();
+
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
+    assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
+
+    final String content = IOUtils.toString(connection.getInputStream());
+
+    assertTrue(content.contains("\"PropertyInt16\":7,"
+        + "\"PropertyInt32\":10,\"PropertyEntityStream@mediaEtag\":\"eTag\","
+        + "\"PropertyEntityStream@mediaContentType\":\"image/jpeg\","
+        + "\"PropertyCompWithStream\":{\"PropertyStream@mediaEtag\":\"eTag\","
+        + "\"PropertyStream@mediaContentType\":\"image/jpeg\","
+        + "\"PropertyComp\":{\"PropertyInt16\":333,\"PropertyString\":\"TEST123\"},"
+        + "\"NavPropertyETStreamOnComplexPropMany\":["
+        + "{\"@id\":\"ESWithStream(32767)\"},"
+        + "{\"@id\":\"ESWithStream(7)\"}]}"));
     }
   
   @Override

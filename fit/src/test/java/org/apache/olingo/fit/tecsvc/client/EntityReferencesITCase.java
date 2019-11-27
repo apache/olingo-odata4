@@ -68,7 +68,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
                           .appendRefSegment()
                           .orderBy(PROPERTY_INT16).build();
     
-    sendRequest(uri, 3, "ESAllPrim(-32768)", "ESAllPrim(0)", "ESAllPrim(32767)");
+    sendRequest(uri, 4, "ESAllPrim(-32768)", "ESAllPrim(0)", "ESAllPrim(10)", "ESAllPrim(32767)");
   }
   
   @Test
@@ -78,7 +78,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
                           .appendRefSegment()
                           .orderBy(PROPERTY_INT16 + DESCENDING).build();
     
-    sendRequest(uri, 3, "ESAllPrim(32767)", "ESAllPrim(0)", "ESAllPrim(-32768)");
+    sendRequest(uri, 4, "ESAllPrim(32767)", "ESAllPrim(10)", "ESAllPrim(0)", "ESAllPrim(-32768)");
   }
   
   @Test
@@ -122,7 +122,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
         .getEntitySetRequest(uri)
         .execute();
     
-    assertEquals(Integer.valueOf(3), response.getBody().getCount());
+    assertEquals(Integer.valueOf(4), response.getBody().getCount());
   }
   
   @Test
@@ -132,7 +132,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
                           .appendRefSegment()
                           .orderBy(PROPERTY_INT16).skip(2).build();
     
-    sendRequest(uri, 1, "ESAllPrim(32767)");
+    sendRequest(uri, 2, "ESAllPrim(10)", "ESAllPrim(32767)");
   }
   
   @Test
@@ -168,16 +168,15 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   @Test
   public void responseNonExistingEntity() {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
-                          .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0)
+                          .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(-32768)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_ONE).appendRefSegment().build();
     
     try {
       getClient().getRetrieveRequestFactory()
             .getEntityRequest(uri)
             .execute();
-      fail();
     } catch (ODataClientErrorException e) {
-      assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
+      assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), e.getStatusLine().getStatusCode());
     }
   }
     

@@ -40,7 +40,12 @@ public enum ODataServiceVersion {
   /**
    * OData Version 4.0
    */
-  V40("4.0");
+  V40("4.0"),
+  /**
+   * OData Version 4.01
+   */
+  V401("4.01");
+
 
   private static final Pattern DATASERVICEVERSIONPATTERN = Pattern.compile("(\\p{Digit}+\\.\\p{Digit}+)(:?;.*)?");
 
@@ -57,7 +62,8 @@ public enum ODataServiceVersion {
       return V10.toString().equals(possibleDataServiceVersion)
           || V20.toString().equals(possibleDataServiceVersion)
           || V30.toString().equals(possibleDataServiceVersion)
-          || V40.toString().equals(possibleDataServiceVersion);
+          || V40.toString().equals(possibleDataServiceVersion)
+          || V401.toString().equals(possibleDataServiceVersion);
     } else {
       throw new IllegalArgumentException(version);
     }
@@ -81,6 +87,21 @@ public enum ODataServiceVersion {
     return me > other;
   }
 
+  public static boolean isValidODataVersion(String value) {
+    final double version4 = Double.parseDouble(extractDataServiceVersionString(ODataServiceVersion.V40.toString()));
+    final double version401 = Double.parseDouble(extractDataServiceVersionString(ODataServiceVersion.V401.toString()));
+    final double other = Double.parseDouble(extractDataServiceVersionString(value));
+    
+    return (Double.compare(other, version4) == 0) || (Double.compare(other, version401) == 0);
+  }
+  
+  public static boolean isValidMaxODataVersion(String value) {
+    final double version4 = Double.parseDouble(extractDataServiceVersionString(ODataServiceVersion.V40.toString()));
+    final double other = Double.parseDouble(extractDataServiceVersionString(value));
+    
+    return other >= version4;
+  }
+  
   /**
    * Extract data service version and return it.
    *

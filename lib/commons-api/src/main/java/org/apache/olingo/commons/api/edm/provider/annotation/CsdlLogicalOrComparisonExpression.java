@@ -145,4 +145,51 @@ public class CsdlLogicalOrComparisonExpression extends CsdlDynamicExpression imp
     }
     return this;
   }
+  
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlLogicalOrComparisonExpression)) {
+      return false;
+    }
+    CsdlLogicalOrComparisonExpression csdlLogComp = (CsdlLogicalOrComparisonExpression) obj;
+    return (this.getLeft() == null ? csdlLogComp.getLeft() == null :
+      this.getLeft().equals(csdlLogComp.getLeft()))
+        && (this.getRight() == null ? csdlLogComp.getRight() == null : 
+          this.getRight().equals(csdlLogComp.getRight()))
+        && (this.getType() == null ? csdlLogComp.getType() == null : 
+          this.getType().equals(csdlLogComp.getType()))
+        && (this.getAnnotations() == null ? csdlLogComp.getAnnotations() == null : 
+            checkAnnotations(csdlLogComp.getAnnotations()));
+  }
+  
+  private boolean checkAnnotations(List<CsdlAnnotation> csdlLogCompAnnot) {
+    if (csdlLogCompAnnot == null) {
+      return false;
+    }
+    if (this.getAnnotations().size() == csdlLogCompAnnot.size()) {
+      for (int i = 0; i < this.getAnnotations().size() ; i++) {
+        if (!this.getAnnotations().get(i).equals(csdlLogCompAnnot.get(i))) {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    result = prime * result + ((left == null) ? 0 : left.hashCode());
+    result = prime * result + ((right == null) ? 0 : right.hashCode());
+    result = prime * result + ((annotations == null) ? 0 : 
+      annotations.hashCode());
+    return result;
+  }
 }

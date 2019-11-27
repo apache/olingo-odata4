@@ -71,12 +71,13 @@ public class ServiceDocumentJsonSerializer {
     }
 
     gen.writeArrayFieldStart(Constants.VALUE);
-
-    final EdmEntityContainer container = metadata.getEdm().getEntityContainer();
-    if (container != null) {
-      writeEntitySets(gen, container);
-      writeFunctionImports(gen, container);
-      writeSingletons(gen, container);
+    if(metadata != null){
+      final EdmEntityContainer container = metadata.getEdm().getEntityContainer();
+      if (container != null) {
+        writeEntitySets(gen, container);
+        writeFunctionImports(gen, container);
+        writeSingletons(gen, container);
+      }
     }
   }
 

@@ -156,9 +156,9 @@ public class DemoEntityProcessor implements EntityProcessor {
       List<UriParameter> keyPredicates = uriResourceEntitySet.getKeyPredicates();
       responseEntity = storage.readEntityData(startEdmEntitySet, keyPredicates);
     } else if (segmentCount == 2) { // navigation
-      UriResource navSegment = resourceParts.get(1); // in our example we don't support more complex URIs
-      if (navSegment instanceof UriResourceNavigation) {
-        UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) navSegment;
+      UriResource segment = resourceParts.get(1); // in our example we don't support more complex URIs
+      if (segment instanceof UriResourceNavigation) {
+        UriResourceNavigation uriResourceNavigation = (UriResourceNavigation) segment;
         EdmNavigationProperty edmNavigationProperty = uriResourceNavigation.getProperty();
         responseEdmEntityType = edmNavigationProperty.getType();
         // contextURL displays the last segment
@@ -181,6 +181,30 @@ public class DemoEntityProcessor implements EntityProcessor {
         } else { // e.g. DemoService.svc/Categories(3)/Products(5)
           responseEntity = storage.getRelatedEntity(sourceEntity, responseEdmEntityType, navKeyPredicates);
         }
+      }else if (segment instanceof UriResourceFunction) {
+        UriResourceFunction uriResourceFunction = (UriResourceFunction) segment;
+
+        // 2nd: fetch the data from backend.
+        // first fetch the target entity type 
+        String targetEntityType = uriResourceFunction.getFunction().getReturnType().getType().getName();
+       
+        // contextURL displays the last segment
+        for(EdmEntitySet entitySet : serviceMetadata.getEdm().getEntityContainer().getEntitySets()){
+          if(targetEntityType.equals(entitySet.getEntityType().getName())){
+            responseEdmEntityType = entitySet.getEntityType();
+            responseEdmEntitySet = entitySet;
+            break;
+          }
+        }
+        
+        // error handling for null entities
+        if (targetEntityType == null || responseEdmEntitySet == null) {
+          throw new ODataApplicationException("Entity not found.",
+              HttpStatusCode.NOT_FOUND.getStatusCode(), Locale.ROOT);
+        }
+
+        // then fetch the entity collection for the target type
+        responseEntity = storage.readEntityData(targetEntityType);
       }
     } else {
       // this would be the case for e.g. Products(1)/Category/Products(1)/Category

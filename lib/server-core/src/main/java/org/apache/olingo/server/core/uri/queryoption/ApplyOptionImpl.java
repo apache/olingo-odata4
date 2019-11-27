@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.server.api.uri.queryoption.ApplyItem;
 import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
@@ -29,6 +30,7 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 public class ApplyOptionImpl extends SystemQueryOptionImpl implements ApplyOption {
 
   private List<ApplyItem> transformations = new ArrayList<ApplyItem>();
+  private EdmStructuredType edmStructuredType;
 
   public ApplyOptionImpl() {
     setKind(SystemQueryOptionKind.APPLY);
@@ -42,5 +44,14 @@ public class ApplyOptionImpl extends SystemQueryOptionImpl implements ApplyOptio
   public ApplyOptionImpl add(final ApplyItem transformation) {
     transformations.add(transformation);
     return this;
+  }
+
+  public void setEdmStructuredType(EdmStructuredType referencedType) {
+    this.edmStructuredType = referencedType;
+  }
+  
+  @Override
+  public EdmStructuredType getEdmStructuredType() {
+    return edmStructuredType;
   }
 }

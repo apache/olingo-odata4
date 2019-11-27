@@ -62,7 +62,7 @@ public class ODataReferenceAddingRequestImpl extends AbstractODataBasicRequest<O
    * No payload: null will be returned.
    */
   @Override
-  protected InputStream getPayload() {
+  public InputStream getPayload() {
     if (reference == null) {
       return null;
     } else {

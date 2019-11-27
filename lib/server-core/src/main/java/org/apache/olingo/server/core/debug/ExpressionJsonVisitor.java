@@ -330,6 +330,7 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
     case NE:
     case AND:
     case OR:
+    case IN:
       return BOOLEAN_NAME;
     }
     return UNKNOWN_NAME;
@@ -342,5 +343,20 @@ public class ExpressionJsonVisitor implements ExpressionVisitor<JsonNode> {
   private String getType(final UriResource segment) {
     final EdmType type = segment instanceof UriResourcePartTyped ? ((UriResourcePartTyped) segment).getType() : null;
     return type == null ? UNKNOWN_NAME : type.getFullQualifiedName().getFullQualifiedNameAsString();
+  }
+
+  @Override
+  public JsonNode visitBinaryOperator(BinaryOperatorKind operator, JsonNode left, List<JsonNode> right)
+      throws ExpressionVisitException, ODataApplicationException {
+    ObjectNode result = nodeFactory.objectNode()
+        .put(NODE_TYPE_NAME, BINARY_NAME)
+        .put(OPERATOR_NAME, operator.toString())
+        .put(TYPE_NAME, getType(operator));
+    result.set(LEFT_NODE_NAME, left);
+    ArrayNode jsonExprs = result.putArray(RIGHT_NODE_NAME);
+    for (final JsonNode exp : right) {
+      jsonExprs.add(exp);
+    }
+    return result;
   }
 }

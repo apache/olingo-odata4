@@ -39,7 +39,7 @@ public class ClientCsdlEdmx extends CsdlAbstractEdmItem implements Serializable,
 
   private static final long serialVersionUID = -6293476719276092572L;
 
-  private final List<Reference> references = new ArrayList<Reference>();
+  private final List<Reference> references = new ArrayList<>();
 
   private String version;
 
@@ -76,7 +76,7 @@ public class ClientCsdlEdmx extends CsdlAbstractEdmItem implements Serializable,
 
       final ClientCsdlEdmx edmx = new ClientCsdlEdmx();
 
-      for (; jp.getCurrentToken() != JsonToken.END_OBJECT; jp.nextToken()) {
+      for (; (jp.getCurrentToken() != null && jp.getCurrentToken() != JsonToken.END_OBJECT); jp.nextToken()) {
         final JsonToken token = jp.getCurrentToken();
         if (token == JsonToken.FIELD_NAME) {
           if ("Version".equals(jp.getCurrentName())) {

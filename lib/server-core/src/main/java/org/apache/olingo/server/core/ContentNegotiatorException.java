@@ -31,7 +31,11 @@ public class ContentNegotiatorException extends ODataLibraryException {
     /** no parameter */
     NO_CONTENT_TYPE_SUPPORTED,
     /** parameter: format string */
-    UNSUPPORTED_FORMAT_OPTION;
+    UNSUPPORTED_FORMAT_OPTION,
+    /**parameter: accept charset */
+    UNSUPPORTED_ACCEPT_CHARSET,
+    /** parameter: accept header charset */
+    UNSUPPORTED_ACCEPT_HEADER_CHARSET;
 
     @Override
     public String getKey() {

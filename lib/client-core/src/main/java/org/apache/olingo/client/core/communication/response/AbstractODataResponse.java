@@ -22,8 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,10 +34,12 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.NoContentException;
+import org.apache.olingo.client.core.ConfigurationImpl;
+import org.apache.olingo.client.core.communication.util.PipedInputStream;
+import org.apache.olingo.client.core.communication.util.PipedOutputStream;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchController;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
@@ -61,6 +61,8 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
   protected final ODataClient odataClient;
 
+  private static final byte[] CRLF = {13, 10};
+
   /**
    * HTTP client.
    */
@@ -75,7 +77,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Response headers.
    */
   protected final Map<String, Collection<String>> headers =
-      new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
+      new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
   /**
    * Response code.
@@ -101,6 +103,8 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Batch info (if to be batched).
    */
   protected ODataBatchController batchInfo = null;
+  
+  private byte[] inputContent = null;
 
   public AbstractODataResponse(
       final ODataClient odataClient, final HttpClient httpclient, final HttpResponse res) {
@@ -149,11 +153,8 @@ public abstract class AbstractODataResponse implements ODataResponse {
   public final ODataResponse initFromHttpResponse(final HttpResponse res) {
     try {
       this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
-    } catch (final IllegalStateException e) {
-      HttpClientUtils.closeQuietly(res);
-      LOG.error("Error retrieving payload", e);
-      throw new ODataRuntimeException(e);
-    } catch (final IOException e) {
+      this.inputContent = null;
+    } catch (final IllegalStateException | IOException e) {
       HttpClientUtils.closeQuietly(res);
       LOG.error("Error retrieving payload", e);
       throw new ODataRuntimeException(e);
@@ -163,7 +164,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
       if (headers.containsKey(header.getName())) {
         headerValues = headers.get(header.getName());
       } else {
-        headerValues = new HashSet<String>();
+        headerValues = new HashSet<>();
         headers.put(header.getName(), headerValues);
       }
 
@@ -223,7 +224,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
       while (batchLineIterator.hasNext()) {
         bos.write(batchLineIterator.nextLine().getBytes(Constants.UTF8));
-        bos.write(ODataStreamer.CRLF);
+        bos.write(CRLF);
       }
 
       try {
@@ -252,16 +253,20 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
   @Override
   public InputStream getRawResponse() {
+
+
+    InputStream inputStream = null;
     if (HttpStatus.SC_NO_CONTENT == getStatusCode()) {
       throw new NoContentException();
     }
 
-    if (payload == null && batchInfo.isValidBatch()) {
+    if (payload == null && batchInfo != null && batchInfo.isValidBatch()) {
       // get input stream till the end of item
-      payload = new PipedInputStream();
+      payload = new PipedInputStream(null);
 
       try {
-        final PipedOutputStream os = new PipedOutputStream((PipedInputStream) payload);
+        final PipedOutputStream os = new PipedOutputStream((PipedInputStream) payload,
+                ConfigurationImpl.DEFAULT_BUFFER_SIZE);
 
         new Thread(new Runnable() {
           @Override
@@ -275,12 +280,25 @@ public abstract class AbstractODataResponse implements ODataResponse {
             }
           }
         }).start();
-      } catch (IOException e) {
+      } catch (Exception e) {
         LOG.error("Error streaming payload response", e);
         throw new IllegalStateException(e);
       }
+    } else if (payload != null) {
+      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+      try {
+        org.apache.commons.io.IOUtils.copy(payload, byteArrayOutputStream);
+       if(inputContent == null){
+         inputContent  = byteArrayOutputStream.toByteArray();
+       }
+        inputStream = new ByteArrayInputStream(inputContent);
+        return inputStream;
+      } catch (IOException e) {
+        HttpClientUtils.closeQuietly(res);
+        LOG.error("Error retrieving payload", e);
+        throw new ODataRuntimeException(e);
+      }
     }
-
     return payload;
   }
 }

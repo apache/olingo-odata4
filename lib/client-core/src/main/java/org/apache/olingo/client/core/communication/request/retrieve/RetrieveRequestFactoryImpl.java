@@ -93,27 +93,27 @@ public class RetrieveRequestFactoryImpl implements RetrieveRequestFactory {
 
   @Override
   public ODataEntitySetRequest<ClientEntitySet> getEntitySetRequest(final URI uri) {
-    return new ODataEntitySetRequestImpl<ClientEntitySet>(client, uri);
+    return new ODataEntitySetRequestImpl<>(client, uri);
   }
 
   @Override
   public ODataEntitySetIteratorRequest<ClientEntitySet, ClientEntity> getEntitySetIteratorRequest(final URI uri) {
-    return new ODataEntitySetIteratorRequestImpl<ClientEntitySet, ClientEntity>(client, uri);
+    return new ODataEntitySetIteratorRequestImpl<>(client, uri);
   }
 
   @Override
   public ODataEntityRequest<ClientSingleton> getSingletonRequest(final URI uri) {
-    return new ODataEntityRequestImpl<ClientSingleton>(client, uri);
+    return new ODataEntityRequestImpl<>(client, uri);
   }
 
   @Override
   public ODataEntityRequest<ClientEntity> getEntityRequest(final URI uri) {
-    return new ODataEntityRequestImpl<ClientEntity>(client, uri);
+    return new ODataEntityRequestImpl<>(client, uri);
   }
 
   @Override
   public ODataPropertyRequest<ClientProperty> getPropertyRequest(final URI uri) {
-    return new ODataPropertyRequestImpl<ClientProperty>(client, uri);
+    return new ODataPropertyRequestImpl<>(client, uri);
   }
 
   @Override

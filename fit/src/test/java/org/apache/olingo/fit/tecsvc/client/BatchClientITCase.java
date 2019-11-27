@@ -421,7 +421,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
     assertEquals(1, oDataResponse.getHeader(HttpHeader.ODATA_VERSION).size());
     assertEquals("4.0", oDataResponse.getHeader(HttpHeader.ODATA_VERSION).iterator().next());
     assertEquals(1, oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).size());
-    assertEquals(isJson() ? "517" : "2138", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
+    assertEquals(isJson() ? "517" : "2114", oDataResponse.getHeader(HttpHeader.CONTENT_LENGTH).iterator().next());
     assertContentType(oDataResponse.getContentType());
   }
 

@@ -25,7 +25,7 @@
 
   <groupId>org.apache.olingo</groupId>
   <artifactId>odata-parent</artifactId>
-  <version>4.4.0-SNAPSHOT</version>
+  <version>4.7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Olingo-OData</name>
@@ -66,25 +66,28 @@
   </modules>
 
   <properties>
-    <commons.codec.version>1.9</commons.codec.version>
-    <commons.io.version>2.4</commons.io.version>
-    <commons.lang3.version>3.3.2</commons.lang3.version>
+    <commons.codec.version>1.12</commons.codec.version>
+    <commons.io.version>2.6</commons.io.version>
+    <commons.lang3.version>3.9</commons.lang3.version>
 
     <commons.logging.version>1.2</commons.logging.version>
     <commons.vfs.version>2.0</commons.vfs.version>
-    <esigate.version>4.3</esigate.version>
+    <esigate.version>4.4</esigate.version>
     <servlet.version>3.1.0</servlet.version>
     <cxf.version>3.0.0</cxf.version>
     <spring.version>4.0.6.RELEASE</spring.version>
+    <netty.version>4.1.39.Final</netty.version>
 
     <velocity.version>1.7</velocity.version>
     <maven.plugin.api.version>3.2.2</maven.plugin.api.version>
     <maven.plugin.tools.version>3.3</maven.plugin.tools.version>
     <maven.bundle.plugin.version>2.5.3</maven.bundle.plugin.version>
-    <hc.client.version>4.2.6</hc.client.version>
-    <hc.core.version>4.2.5</hc.core.version>
-    <jackson.version>2.7.8</jackson.version>
-    <aalto-xml.version>0.9.10</aalto-xml.version>
+    <maven-plugin-plugin.version>3.6.0</maven-plugin-plugin.version>
+    <hc.client.version>4.5.8</hc.client.version>
+    <hc.core.version>4.4.11</hc.core.version>
+    <jackson.version>2.10.0</jackson.version>
+    <jackson-databind.version>2.10.0</jackson-databind.version>
+    <aalto-xml.version>0.9.11</aalto-xml.version>
 
     <android.platform.version>4.1.1.4</android.platform.version>
     <stax.api.version>1.0-2</stax.api.version>
@@ -102,7 +105,7 @@
 
     <!-- Project build settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.build.source>1.6</project.build.source>
+    <project.build.source>1.8</project.build.source>
     <olingo.deploy.skip>true</olingo.deploy.skip>
 
     <!-- Setting needed for Java 8 release builds -->
@@ -111,6 +114,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-codec-http</artifactId>
+        <version>${netty.version}</version>
+      </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
@@ -152,7 +160,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
+        <version>${jackson-databind.version}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -303,7 +311,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>2.3</version>
+          <version>3.2.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -323,12 +331,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.12.1</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.3.2</version>
+          <version>3.8.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -364,6 +372,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.2.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.6.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -507,13 +520,15 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
+        <configuration combine.self="override">
           <outputFileFormat>xml</outputFileFormat>
           <consoleOutput>true</consoleOutput>
           <enableRSS>false</enableRSS>
           <linkXRef>false</linkXRef>
           <configLocation>src/checkstyle/config.xml</configLocation>
-          <sourceDirectory>${basedir}/src</sourceDirectory>
+          <sourceDirectories>
+			<sourceDirectory>${basedir}/src</sourceDirectory>
+		  </sourceDirectories>
           <encoding>${project.build.sourceEncoding}</encoding>
           <failOnViolation>true</failOnViolation>
           <violationSeverity>warning</violationSeverity>
@@ -574,6 +589,7 @@
                 <exclude>**/ref/**</exclude>
                 <exclude>**/server-ref/**</exclude>
                 <exclude>**/dependency-reduced-pom.xml</exclude>
+                <exclude>**/.settings/**</exclude>
               </excludes>
             </configuration>
           </execution>
@@ -622,7 +638,7 @@
                       <title>OData Client Proxy</title>
                       <packages>org.apache.olingo.ext.proxy:org.apache.olingo.ext.proxy.*</packages>
                     </group>
-					<group>
+					          <group>
                       <title>OData Server</title>
                       <packages>org.apache.olingo.server.api:org.apache.olingo.server.api.*</packages>
                     </group>

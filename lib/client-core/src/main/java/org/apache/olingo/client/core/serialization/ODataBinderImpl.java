@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
@@ -342,7 +343,7 @@ public class ODataBinderImpl implements ODataBinder {
     } else if (value.isPrimitive()) {
       valueResource = value.asPrimitive().toValue();
     } else if (value.isComplex()) {
-      List<Property> complexProperties = new ArrayList<Property>();
+      List<Property> complexProperties = new ArrayList<>();
       for (final ClientProperty propertyValue : value.asComplex()) {
         complexProperties.add(getProperty(propertyValue));
       }
@@ -355,7 +356,7 @@ public class ODataBinderImpl implements ODataBinder {
 
     } else if (value.isCollection()) {
       final ClientCollectionValue<? extends ClientValue> _value = value.asCollection();
-      ArrayList<Object> lcValueResource = new ArrayList<Object>();
+      ArrayList<Object> lcValueResource = new ArrayList<>();
 
       for (final ClientValue collectionValue : _value) {
         lcValueResource.add(getValue(collectionValue));
@@ -495,10 +496,10 @@ public class ODataBinderImpl implements ODataBinder {
             inlineEntitySet)));
   }
 
-  private EdmEntityType findEntityType(
+  private EdmType findEntityType(
       final String entitySetOrSingletonOrType, final EdmEntityContainer container) {
 
-    EdmEntityType type = null;
+    EdmType type = null;
 
     final String firstToken = StringUtils.substringBefore(entitySetOrSingletonOrType, "/");
     EdmBindingTarget bindingTarget = container.getEntitySet(firstToken);
@@ -513,9 +514,14 @@ public class ODataBinderImpl implements ODataBinder {
       final String[] splitted = entitySetOrSingletonOrType.split("/");
       if (splitted.length > 1) {
         for (int i = 1; i < splitted.length && type != null; i++) {
-          final EdmNavigationProperty navProp = type.getNavigationProperty(splitted[i]);
+          final EdmNavigationProperty navProp = ((EdmStructuredType) type).getNavigationProperty(splitted[i]);
           if (navProp == null) {
-            type = null;
+            EdmProperty property = ((EdmStructuredType) type).getStructuralProperty(splitted[i]);
+            if (property != null) {
+              type = property.getType();
+            } else {
+              type = null;
+            }
           } else {
             type = navProp.getType();
           }
@@ -547,17 +553,17 @@ public class ODataBinderImpl implements ODataBinder {
           for (EdmSchema schema : edm.getSchemas()) {
             final EdmEntityContainer container = schema.getEntityContainer();
             if (container != null) {
-              final EdmEntityType entityType = findEntityType(contextURL.getEntitySetOrSingletonOrType(), container);
+              final EdmType structuredType = findEntityType(contextURL.getEntitySetOrSingletonOrType(), container);
 
-              if (entityType != null) {
+              if (structuredType != null) {
                 if (contextURL.getNavOrPropertyPath() == null) {
-                  type = entityType;
+                  type = structuredType;
                 } else {
                   final EdmNavigationProperty navProp =
-                      entityType.getNavigationProperty(contextURL.getNavOrPropertyPath());
+                      ((EdmStructuredType) structuredType).getNavigationProperty(contextURL.getNavOrPropertyPath());
 
                   type = navProp == null
-                      ? entityType
+                      ? structuredType
                       : navProp.getType();
                 }
               }
@@ -697,7 +703,7 @@ public class ODataBinderImpl implements ODataBinder {
       entity.setMediaETag(resource.getPayload().getMediaETag());
     }
 
-    Map<String, Integer> countMap = new HashMap<String, Integer>();
+    Map<String, Integer> countMap = new HashMap<>();
     for (final Property property : resource.getPayload().getProperties()) {
       EdmType propertyType = null;
       if (edmType instanceof EdmEntityType) {
@@ -715,14 +721,12 @@ public class ODataBinderImpl implements ODataBinder {
           if (idx != -1) {
             String navigationName = property.getName().substring(0, idx);
             edmProperty = ((EdmEntityType) edmType).getProperty(navigationName);
-            if (edmProperty != null) {
-              if (edmProperty instanceof EdmNavigationProperty) {
-                ClientLink link = entity.getNavigationLink(navigationName);
-                if (link == null) {
-                  countMap.put(navigationName, (Integer)property.getValue());
-                } else {
-                  link.asInlineEntitySet().getEntitySet().setCount((Integer)property.getValue());
-                }
+            if (edmProperty != null && edmProperty instanceof EdmNavigationProperty) {
+              ClientLink link = entity.getNavigationLink(navigationName);
+              if (link == null) {
+                countMap.put(navigationName, (Integer) property.getValue());
+              } else {
+                link.asInlineEntitySet().getEntitySet().setCount((Integer) property.getValue());
               }
             }            
           }
@@ -732,8 +736,8 @@ public class ODataBinderImpl implements ODataBinder {
     }
     
     if (!countMap.isEmpty()) {
-      for (String name:countMap.keySet()) {
-        entity.addLink(createLinkFromEmptyNavigationProperty(name, countMap.get(name)));
+      for (Entry<String, Integer> entry : countMap.entrySet()) {
+        entity.addLink(createLinkFromEmptyNavigationProperty(entry.getKey(), entry.getValue()));
       }
     }
 

@@ -1,0 +1,34 @@
+--batch_8194-cf13-1f56
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET ESAllPrim(32767) HTTP/1.1
+Accept: application/json
+
+
+--batch_8194-cf13-1f56
+Content-Type: multipart/mixed; boundary=changeset_f980-1cb6-94dd
+
+--changeset_f980-1cb6-94dd
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+Content-ID: changeRequest1
+
+PUT ESAllPrim(32767) HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{"PropertyString":"MODIFIED"}
+
+--changeset_f980-1cb6-94dd--
+
+--batch_8194-cf13-1f56
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET ESAllPrim(32767)/PropertyString HTTP/1.1
+Accept: application/json
+Prefer: return=minimal
+
+
+--batch_8194-cf13-1f56--

@@ -212,7 +212,7 @@ public class ODataHttpHandlerImplTest {
       String rawODataPath = p[4];
       String rawQueryPath = "".equals(p[5]) ? null : p[5];
       String rawRequestUri = requestUrl + (queryString == null ? "" : "?" + queryString);
-      String rawServiceResolutionUri = "".equals(p[3]) ? null : p[3];
+      String rawServiceResolutionUri = ("0".equals(p[6])) ? p[2] : p[3];
 
       when(hr.getAttribute("requestMapping")).thenReturn(p[2]);
       ODataHttpHandlerImpl.fillUriInformation(odr, hr, Integer.parseInt(p[6]));

@@ -57,11 +57,18 @@
           </Apply>
         </Annotation>
         <Annotation Term="org.example.display.Threshold">
-          <Cast Type="Edm.Decimal">
+          <Cast Type="Edm.Decimal" Precision="10" Scale="2">
             <Path>Average</Path>
+            <Annotation Term="TestCast">
+	          <TestCast>
+	            <Path>Testing Cast of Average Field</Path>
+	          </TestCast>        
+        	</Annotation>
           </Cast>
         </Annotation>
         <Annotation Term="Vocabulary1.Tags">
+        <Cast Type="Edm.String" MaxLength="500" SRID="1">
+          </Cast>
           <Collection>
             <String>MasterData</String>
           </Collection>
@@ -81,8 +88,13 @@
           </If>
         </Annotation>
         <Annotation Term="Self.IsPreferredCustomer">
-          <IsOf Type="Self.PreferredCustomer">
+          <IsOf Type="Self.PreferredCustomer" MaxLength="200" Precision="200" Scale="0" SRID="1">
             <Path>Customer</Path>
+            <Annotation Term="Test">
+	          <Test>
+	            <Path>IsPreferred</Path>
+	          </Test>        
+        	</Annotation>
           </IsOf>
         </Annotation>
         <Annotation Term="org.example.display.DisplayName">

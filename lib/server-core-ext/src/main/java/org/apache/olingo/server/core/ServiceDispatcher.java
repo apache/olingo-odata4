@@ -51,6 +51,8 @@ import org.apache.olingo.server.api.uri.UriResourcePrimitiveProperty;
 import org.apache.olingo.server.api.uri.UriResourceRef;
 import org.apache.olingo.server.api.uri.UriResourceSingleton;
 import org.apache.olingo.server.api.uri.UriResourceValue;
+import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
+import org.apache.olingo.server.api.uri.queryoption.FormatOption;
 import org.apache.olingo.server.core.requests.ActionRequest;
 import org.apache.olingo.server.core.requests.BatchRequest;
 import org.apache.olingo.server.core.requests.DataRequest;
@@ -79,11 +81,9 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
   }
 
   public void execute(ODataRequest odRequest, ODataResponse odResponse) {
-    ContentType contentType = ContentType.JSON;
+    FormatOption formatOption = null;
+    ODataException oDataException = null;
     try {
-      contentType = ContentNegotiator.doContentNegotiation(null,
-          odRequest, this.customContentSupport, RepresentationType.ERROR);
-      
       String path = odRequest.getRawODataPath();      
       String query = odRequest.getRawQueryPath();      
       if(path.indexOf("$entity") != -1) {
@@ -92,23 +92,29 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
         UriInfo uriInfo = new Parser(this.metadata.getEdm(), odata)
           .parseUri(path, query, null, odRequest.getRawBaseUri());
         
-        contentType = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
-            odRequest, this.customContentSupport, RepresentationType.ERROR);      
+        formatOption = uriInfo.getFormatOption();
         
         internalExecute(uriInfo, odRequest, odResponse);
       }
-    } catch(ODataLibraryException e) {
-      handleException(e, contentType, odRequest, odResponse);
-    } catch(ODataApplicationException e) {
-      handleException(e, contentType, odRequest, odResponse);
+      return;
+    } catch(ODataLibraryException | ODataApplicationException e) {
+    	oDataException = e;
     }
+    ContentType contentType = ContentType.JSON;
+    try {
+      contentType = ContentNegotiator.doContentNegotiation(formatOption, 
+          odRequest, this.customContentSupport, RepresentationType.ERROR);
+    } catch (ContentNegotiatorException e) {
+      // ignore, default to JSON
+    }
+    handleException(oDataException, contentType, odRequest, odResponse);
   }
   
   protected void handleException(ODataException e, ContentType contentType,
       ODataRequest odRequest, ODataResponse odResponse) {
-    ErrorHandler handler = new ErrorHandler(this.odata, this.metadata,
+    ErrorHandler errorHandler = new ErrorHandler(this.odata, this.metadata,
         this.handler, contentType);
-    handler.handleException(e, odRequest, odResponse);    
+    errorHandler.handleException(e, odRequest, odResponse);    
   }
   
   private void internalExecute(UriInfo uriInfo, ODataRequest odRequest,
@@ -119,7 +125,7 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
 
     // part1, 8.2.6
     String isolation = odRequest.getHeader(HttpHeader.ODATA_ISOLATION);
-    if (isolation != null && isolation.equals("snapshot") && !this.handler.supportsDataIsolation()) {
+    if (isolation != null && "snapshot".equals(isolation) && !this.handler.supportsDataIsolation()) {
       odResponse.setStatusCode(HttpStatusCode.PRECONDITION_FAILED.getStatusCode());
       return;
     }
@@ -255,17 +261,6 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
   public void visit(UriInfoEntityId info) {
     DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
     this.request = dataRequest;
-
-    /*
-    // this can relative or absolute form
-    String id = info.getIdOption().getValue();
-    try {
-      URL url = new URL(id);
-      this.idOption = url.getPath();
-    } catch (MalformedURLException e) {
-      this.idOption = id;
-    }
-    */
     super.visit(info);
   }
 
@@ -274,6 +269,11 @@ public class ServiceDispatcher extends RequestURLHierarchyVisitor {
     DataRequest dataRequest = new DataRequest(this.odata, this.metadata);
     dataRequest.setCrossJoin(info);
     this.request = dataRequest;
+  }
+  
+  @Override
+  public void visit(ApplyOption option) {
+    ((DataRequest)this.request).setApply(option);
   }
   
   private void executeIdOption(String query, ODataRequest odRequest,

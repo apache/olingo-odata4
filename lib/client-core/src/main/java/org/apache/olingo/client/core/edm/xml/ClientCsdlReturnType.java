@@ -59,17 +59,21 @@ class ClientCsdlReturnType extends CsdlReturnType implements Serializable {
             returnType.setNullable(BooleanUtils.toBoolean(jp.nextTextValue()));
           } else if ("MaxLength".equals(jp.getCurrentName())) {
             final String maxLenght = jp.nextTextValue();
-            returnType.setMaxLength(maxLenght.equalsIgnoreCase("max") ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
+            returnType.setMaxLength("max".equalsIgnoreCase(maxLenght) ? Integer.MAX_VALUE : Integer.valueOf(maxLenght));
           } else if ("Precision".equals(jp.getCurrentName())) {
             returnType.setPrecision(Integer.valueOf(jp.nextTextValue()));
           } else if ("Scale".equals(jp.getCurrentName())) {
             final String scale = jp.nextTextValue();
-            returnType.setScale(scale.equalsIgnoreCase("variable") ? 0 : Integer.valueOf(scale));
+            returnType.setScale("variable".equalsIgnoreCase(scale) || "floating".equalsIgnoreCase(scale) ?
+                0 : Integer.valueOf(scale));
           } else if ("SRID".equals(jp.getCurrentName())) {
             final String srid = jp.nextTextValue();
             if (srid != null) {
               returnType.setSrid(SRID.valueOf(srid));
             }
+          } else if ("Annotation".equals(jp.getCurrentName())) {
+            jp.nextToken();
+            returnType.getAnnotations().add(jp.readValueAs(ClientCsdlAnnotation.class));
           }
         }
       }

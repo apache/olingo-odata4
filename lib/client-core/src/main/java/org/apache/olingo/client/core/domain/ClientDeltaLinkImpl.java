@@ -34,7 +34,7 @@ public class ClientDeltaLinkImpl extends ClientItem implements ClientDeltaLink {
 
   private URI target;
 
-  private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
+  private final List<ClientAnnotation> annotations = new ArrayList<>();
 
   public ClientDeltaLinkImpl() {
     super(null);

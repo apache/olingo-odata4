@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 
 public class ExpandOptionImpl extends SystemQueryOptionImpl implements ExpandOption {
 
-  private final List<ExpandItem> expandItems = new ArrayList<ExpandItem>();
+  private final List<ExpandItem> expandItems = new ArrayList<>();
 
   public ExpandOptionImpl() {
     setKind(SystemQueryOptionKind.EXPAND);

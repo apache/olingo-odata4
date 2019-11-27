@@ -1,0 +1,6 @@
+{
+  "@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.Person",
+  "@odata.id": "http://services.odata.org/V4/(S(fe5rsnxo3fkkkk2bvmh1nl1y))/TripPinServiceRW/People('russellwhyte')",
+  "Gender@odata.type": "#Microsoft.OData.SampleService.Models.TripPin.PersonGender",
+  "Gender": null
+}

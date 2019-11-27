@@ -18,15 +18,21 @@
  */
 package org.apache.olingo.server.tecsvc.processor.queryoptions.expression;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
 import org.apache.olingo.commons.api.edm.EdmFunction;
+import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
@@ -37,7 +43,11 @@ import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceFunction;
+import org.apache.olingo.server.api.uri.UriResourceLambdaAny;
+import org.apache.olingo.server.api.uri.UriResourceLambdaVariable;
+import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourceProperty;
+import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
@@ -46,6 +56,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
 import org.apache.olingo.server.api.uri.queryoption.expression.Member;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.UnaryOperatorKind;
+import org.apache.olingo.server.core.uri.UriResourceLambdaVarImpl;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.TypedOperand;
 import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand.UntypedOperand;
@@ -56,12 +67,19 @@ import org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operati
 
 public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> {
 
-  private final Entity entity;
+  private Entity entity;
   private final UriInfoResource uriInfo;
   private final Edm edm;
+  private ComplexValue complexValue;
 
   public ExpressionVisitorImpl(final Entity entity, final UriInfoResource uriInfo, final Edm edm) {
     this.entity = entity;
+    this.uriInfo = uriInfo;
+    this.edm = edm;
+  }
+
+  public ExpressionVisitorImpl(final ComplexValue complexValue, final UriInfoResource uriInfo, final Edm edm) {
+    this.complexValue = complexValue;
     this.uriInfo = uriInfo;
     this.edm = edm;
   }
@@ -97,6 +115,8 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
       return binaryOperator.arithmeticOperator(operator);
     case HAS:
       return binaryOperator.hasOperator();
+    case IN:
+      return binaryOperator.inOperator();
 
     default:
       return throwNotImplemented();
@@ -167,6 +187,8 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
       return methodCallOperation.floor();
     case CEILING:
       return methodCallOperation.ceiling();
+    case SUBSTRINGOF:
+      return methodCallOperation.substringof();
 
     default:
       return throwNotImplemented();
@@ -184,6 +206,7 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
     return new UntypedOperand(literal.getText());
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public VisitorOperand visitMember(final Member member) throws ExpressionVisitException,
       ODataApplicationException {
@@ -197,18 +220,39 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
       Property currentProperty = entity.getProperty(currentEdmProperty.getName());
       for (int i = 1; i < uriResourceParts.size(); i++) {
         if (currentProperty.isComplex()) {
-          currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(i)).getProperty();
-          final List<Property> complex = currentProperty.asComplex().getValue();
-          for (final Property innerProperty : complex) {
-            if (innerProperty.getName().equals(currentEdmProperty.getName())) {
-              currentProperty = innerProperty;
-              break;
+          if (uriResourceParts.get(i) instanceof UriResourceLambdaAny) {
+            UriResourceLambdaAny any = ((UriResourceLambdaAny) uriResourceParts.get(i));
+            if (any.getExpression() instanceof Binary) {
+              Binary expression = (Binary) any.getExpression();
+              if (currentProperty.isCollection()) {
+                final List<ComplexValue> complex = (List<ComplexValue>) currentProperty.asCollection();
+                Iterator<ComplexValue> itr = complex.iterator();
+                while (itr.hasNext()) {
+                  final ComplexValue value = itr.next();
+                  VisitorOperand operand = expression.accept(new ExpressionVisitorImpl(value, uriInfo, edm));
+                  final TypedOperand typedOperand = operand.asTypedOperand();
+                  if (typedOperand.is(OData.newInstance().createPrimitiveTypeInstance
+                      (EdmPrimitiveTypeKind.Boolean))) {
+                    if (Boolean.TRUE.equals(typedOperand.getTypedValue(Boolean.class))) {
+                      return operand;
+                    }
+                  }
+                }
+              } 
+            }
+          } else {
+            currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(i)).getProperty();
+            final List<Property> complex = currentProperty.asComplex().getValue();
+            for (final Property innerProperty : complex) {
+              if (innerProperty.getName().equals(currentEdmProperty.getName())) {
+                currentProperty = innerProperty;
+                break;
+              }
             }
           }
         }
       }
       return new TypedOperand(currentProperty.getValue(), currentEdmProperty.getType(), currentEdmProperty);
-
     } else if (initialPart instanceof UriResourceFunction) {
       final EdmFunction function = ((UriResourceFunction) initialPart).getFunction();
       if (uriResourceParts.size() > 1) {
@@ -225,6 +269,39 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
             dataProvider.readFunctionPrimitiveComplex(function, parameters, uriInfo),
         type);
 
+    } else if (initialPart instanceof UriResourceLambdaVariable) {
+      EdmComplexType complexType = (EdmComplexType) ((UriResourceLambdaVarImpl)initialPart).getTypeFilter();
+      EdmProperty currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(1)).getProperty();
+      Property currentProperty = null;
+      List<Property> properties = complexValue.getValue();
+      for (final Property innerProperty : properties) {
+        if (innerProperty.getName().equals(currentEdmProperty.getName()) && 
+            complexType.getProperty(innerProperty.getName()) != null) {
+          currentProperty = innerProperty;
+          break;
+        }
+      }
+      return new TypedOperand(currentProperty == null ? null : currentProperty.getValue(), 
+          currentEdmProperty.getType(), currentEdmProperty);
+    } else if (initialPart instanceof UriResourceNavigation) {
+      EdmNavigationProperty currentEdmNavProperty = ((UriResourceNavigation) initialPart).getProperty();
+      EdmProperty currentEdmProperty = null;
+      Link link = entity.getNavigationLink(currentEdmNavProperty.getName());
+      Entity inlineEntity = link != null ? link.getInlineEntity() : null;
+      Property currentProperty = null;
+      for (int i = 1; i < uriResourceParts.size(); i++) {
+        currentEdmProperty = ((UriResourceProperty) uriResourceParts.get(i)).getProperty();
+        if (null != inlineEntity) {
+          for (Property property : inlineEntity.getProperties()) {
+            if (property.getName().equalsIgnoreCase(currentEdmProperty.getName())) {
+              currentProperty = property;
+              break;
+            } 
+          }
+        }
+      }
+      return new TypedOperand(currentProperty != null ? currentProperty.getValue() : null, 
+          currentEdmProperty.getType(), currentEdmProperty);
     } else {
       return throwNotImplemented();
     }
@@ -232,7 +309,11 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
 
   @Override
   public VisitorOperand visitAlias(final String aliasName) throws ExpressionVisitException, ODataApplicationException {
-    return new UntypedOperand(uriInfo.getValueForAlias(aliasName));
+    if (entity.getProperty(uriInfo.getValueForAlias(aliasName)) != null) {
+      return new UntypedOperand(String.valueOf(entity.getProperty(uriInfo.getValueForAlias(aliasName)).getValue()));
+    } else {
+      return new UntypedOperand(uriInfo.getValueForAlias(aliasName));
+    }
   }
 
   @Override
@@ -266,5 +347,16 @@ public class ExpressionVisitorImpl implements ExpressionVisitor<VisitorOperand> 
   private VisitorOperand throwNotImplemented() throws ODataApplicationException {
     throw new ODataApplicationException("Not implemented", HttpStatusCode.NOT_IMPLEMENTED.getStatusCode(),
         Locale.ROOT);
+  }
+
+  @Override
+  public VisitorOperand visitBinaryOperator(BinaryOperatorKind operator, VisitorOperand left,
+      List<VisitorOperand> right) throws ExpressionVisitException, ODataApplicationException {
+    BinaryOperator binaryOperator = new BinaryOperator(left, right);
+    switch (operator) {
+    case IN : return binaryOperator.inOperator();
+    default:
+      return throwNotImplemented();
+    }
   }
 }

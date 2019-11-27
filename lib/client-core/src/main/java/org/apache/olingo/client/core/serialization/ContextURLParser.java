@@ -79,7 +79,7 @@ public class ContextURLParser {
       } else {
         firstToken = isEntity ? rest : StringUtils.substringBeforeLast(rest, ")") + ")";
 
-        final List<String> parts = new ArrayList<String>();
+        final List<String> parts = new ArrayList<>();
         for (String split : firstToken.split("\\)/")) {
           parts.add(split.replaceAll("\\(.*", ""));
         }

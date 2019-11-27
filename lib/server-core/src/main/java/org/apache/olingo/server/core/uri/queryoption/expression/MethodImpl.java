@@ -54,6 +54,7 @@ public class MethodImpl implements Method {
     case CONTAINS:
     case STARTSWITH:
     case ENDSWITH:
+    case SUBSTRINGOF:
       kind = EdmPrimitiveTypeKind.Boolean;
       break;
     case LENGTH:
@@ -124,7 +125,7 @@ public class MethodImpl implements Method {
 
   @Override
   public <T> T accept(final ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
-    List<T> userParameters = new ArrayList<T>();
+    List<T> userParameters = new ArrayList<>();
     if (parameters != null) {
       for (final Expression parameter : parameters) {
         userParameters.add(parameter.accept(visitor));

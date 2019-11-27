@@ -34,7 +34,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.olingo.client.api.ODataBatchConstants;
-import org.apache.olingo.client.api.communication.request.ODataStreamer;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -47,6 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ODataBatchUtilities {
 
+  private static final byte[] CRLF = {13, 10};
   public static enum BatchItemType {
     NONE,
     CHANGESET,
@@ -137,9 +137,9 @@ public class ODataBatchUtilities {
 
             notEndLine = isNotEndLine(controller, currentLine);
 
-            if (notEndLine && os != null) {
+            if (notEndLine && os != null && currentLine!=null) {
               os.write(currentLine.getBytes(Constants.UTF8));
-              os.write(ODataStreamer.CRLF);
+              os.write(CRLF);
             }
           }
 
@@ -166,7 +166,7 @@ public class ODataBatchUtilities {
    */
   public static Map<String, Collection<String>> readHeaders(final ODataBatchLineIterator iterator) {
     final Map<String, Collection<String>> target =
-            new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
+            new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     readHeaders(iterator, target);
     return target;
@@ -214,7 +214,7 @@ public class ODataBatchUtilities {
       if (targetMap.containsKey(key)) {
         value = targetMap.get(key);
       } else {
-        value = new HashSet<String>();
+        value = new HashSet<>();
         targetMap.put(key, value);
       }
       value.add(headerLine.substring(sep + 1, headerLine.length()).trim());
@@ -256,11 +256,14 @@ public class ODataBatchUtilities {
   public static Map.Entry<Integer, String> readResponseLine(final ODataBatchLineIterator iterator) {
     final String line = readBatchPart(new ODataBatchController(iterator, null), 1);
     LOG.debug("Response line '{}'", line);
+    
+    if(line !=null){
 
-    final Matcher matcher = RESPONSE_PATTERN.matcher(line.trim());
+      final Matcher matcher = RESPONSE_PATTERN.matcher(line.trim());
 
-    if (matcher.matches()) {
-      return new AbstractMap.SimpleEntry<Integer, String>(Integer.valueOf(matcher.group(1)), matcher.group(2));
+      if (matcher.matches()) {
+        return new AbstractMap.SimpleEntry<>(Integer.valueOf(matcher.group(1)), matcher.group(2));
+      }
     }
 
     throw new IllegalArgumentException("Invalid response line '" + line + "'");
@@ -277,7 +280,7 @@ public class ODataBatchUtilities {
           final ODataBatchLineIterator iterator, final String boundary) {
 
     final Map<String, Collection<String>> headers =
-            new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
+            new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     final String line = ODataBatchUtilities.readBatchPart(new ODataBatchController(iterator, boundary), true);
 

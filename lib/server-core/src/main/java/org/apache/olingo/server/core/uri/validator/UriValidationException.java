@@ -58,7 +58,9 @@ public class UriValidationException extends ODataLibraryException {
     /** parameter: missing parameter name */
     MISSING_PARAMETER,
     /** parameter: missing alias name */
-    MISSING_ALIAS;
+    MISSING_ALIAS,
+    /** invalid value for Property**/
+    INVALID_VALUE_FOR_PROPERTY;
 
     @Override
     public String getKey() {

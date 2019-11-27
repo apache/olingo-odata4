@@ -20,10 +20,10 @@ package org.apache.olingo.client.core.communication.request;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PipedOutputStream;
 import java.util.Arrays;
 
 import org.apache.olingo.client.api.communication.request.ODataStreamer;
+import org.apache.olingo.client.core.communication.util.PipedOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +36,7 @@ public abstract class AbstractODataStreamer implements ODataStreamer {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractODataStreamer.class);
+  private static final byte[] CRLF = {13, 10};
 
   /**
    * OutputStream to be used to write objects to the stream.

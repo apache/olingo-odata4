@@ -74,7 +74,7 @@ public class ODataEntitySetIteratorRequestImpl<ES extends ClientEntitySet, E ext
     @Override
     public ClientEntitySetIterator<ES, E> getBody() {
       if (entitySetIterator == null) {
-        entitySetIterator = new ClientEntitySetIterator<ES, E>(
+        entitySetIterator = new ClientEntitySetIterator<>(
                 odataClient, getRawResponse(), ContentType.parse(getContentType()));
       }
       return entitySetIterator;

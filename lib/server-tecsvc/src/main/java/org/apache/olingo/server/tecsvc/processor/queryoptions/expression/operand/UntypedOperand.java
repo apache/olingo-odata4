@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.tecsvc.processor.queryoptions.expression.operand;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -51,6 +53,31 @@ public class UntypedOperand extends VisitorOperand {
       return new TypedOperand(newValue, type);
     }
 
+    throw new ODataApplicationException("Cast failed", HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(),
+        Locale.ROOT);
+  }
+  
+  @SuppressWarnings( "unchecked")
+  @Override
+  public TypedOperand asTypedOperandForCollection(EdmPrimitiveType type) throws ODataApplicationException {
+    List<Object> newValue = new ArrayList<Object>();
+    List<Object> list = (List<Object>) value;
+    for (Object val : list) {
+      final String literal = (String) val;
+      
+      // First try the null literal.
+      if (null != tryCast(literal, primNull)) {
+        newValue.add(tryCast(literal, primNull));
+        type = primNull;
+      }
+      // Then try the given type.
+      if (null != tryCast(literal, type)) {
+        newValue.add(tryCast(literal, type));
+      }
+    }
+    if (!newValue.isEmpty()) {
+      return new TypedOperand(newValue, type);
+    } 
     throw new ODataApplicationException("Cast failed", HttpStatusCode.INTERNAL_SERVER_ERROR.getStatusCode(),
         Locale.ROOT);
   }

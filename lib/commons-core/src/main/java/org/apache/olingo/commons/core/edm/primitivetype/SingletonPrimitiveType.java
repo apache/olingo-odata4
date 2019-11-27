@@ -25,6 +25,8 @@ import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
  */
 public abstract class SingletonPrimitiveType extends AbstractPrimitiveType {
 
+  protected String name;
+
   @Override
   public boolean equals(final Object obj) {
     return this == obj || obj != null && getClass() == obj.getClass();
@@ -42,7 +44,10 @@ public abstract class SingletonPrimitiveType extends AbstractPrimitiveType {
 
   @Override
   public String getName() {
-    return getClass().getSimpleName().substring(3);
+    if(name == null) {
+      name = getClass().getSimpleName().substring(3);
+    }
+    return name;
   }
 
   @Override

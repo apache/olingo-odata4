@@ -19,6 +19,7 @@
 package org.apache.olingo.server.core.deserializer.batch;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -175,5 +176,11 @@ public class HeaderTest {
     assertEquals("77", splittedValues.get(3));
     assertEquals("99", splittedValues.get(4));
     assertEquals("ysd", splittedValues.get(5));
+  }
+  
+  @Test
+  public void testHashCode() {
+    HeaderField header = new HeaderField("filed", 0);
+    assertNotNull(header.hashCode());
   }
 }

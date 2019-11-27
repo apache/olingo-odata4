@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
-import java.io.IOException;
 import java.net.URI;
 
 import org.apache.http.HttpResponse;
@@ -28,7 +27,6 @@ import org.apache.olingo.client.api.communication.request.retrieve.ODataProperty
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
 import org.apache.olingo.client.api.data.ResWrap;
 import org.apache.olingo.client.api.domain.ClientProperty;
-import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -76,11 +74,9 @@ public class ODataPropertyRequestImpl<T extends ClientProperty>
       if (property == null) {
         try {
           final ResWrap<Property> resource = odataClient.getDeserializer(ContentType.parse(getContentType()))
-                  .toProperty(res.getEntity().getContent());
+                  .toProperty(getRawResponse());
 
           property = (T) odataClient.getBinder().getODataProperty(resource);
-        } catch (IOException e) {
-          throw new HttpClientException(e);
         } catch (final ODataDeserializerException e) {
           throw new IllegalArgumentException(e);
         } finally {

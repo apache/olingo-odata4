@@ -55,7 +55,7 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
     extends AbstractODataBasicRequest<ODataInvokeResponse<T>>
     implements ODataInvokeRequest<T>, ODataBatchableRequest {
 
-  private final Class<T> reference;
+  protected final Class<T> reference;
 
   /**
    * Function parameters.
@@ -79,7 +79,7 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
     super(odataClient, method, uri);
 
     this.reference = reference;
-    this.parameters = new LinkedHashMap<String, ClientValue>();
+    this.parameters = new LinkedHashMap<>();
   }
 
   @Override
@@ -112,7 +112,7 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
   protected abstract ContentType getPOSTParameterFormat();
 
   @Override
-  protected InputStream getPayload() {
+  public InputStream getPayload() {
     if (!this.parameters.isEmpty() && this.method == HttpMethod.POST) {
       // Additional, non-binding parameters MUST be sent as JSON
       final ClientEntity tmp = odataClient.getObjectFactory().newEntity(null);

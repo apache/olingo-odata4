@@ -35,11 +35,11 @@ import org.apache.olingo.server.api.prefer.Preferences.Return;
  */
 public final class PreferencesApplied {
 
-  private static final Set<String> SAFE_PREFERENCE_NAMES = new HashSet<String>();
+  private static final Set<String> SAFE_PREFERENCE_NAMES = new HashSet<>();
   private Map<String, String> applied;
 
   private PreferencesApplied() {
-    applied = new LinkedHashMap<String, String>();
+    applied = new LinkedHashMap<>();
   }
 
   /**

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<edmx:Edmx
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+	<edmx:Reference
+		Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs02/vocabularies/Org.OData.Capabilities.V1.xml">
+		<edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm"
+			Namespace="com.test.vocabularies.DataIntegration.v1" Alias="Integration">
+			<Annotation Term="Core.Description">
+				<String>Terms describing data extraction capabilities</String>
+			</Annotation>
+			<Term Name="Extractable" Type="Edm.Boolean" DefaultValue="false"
+				AppliesTo="EntitySet">
+				<Annotation Term="Core.Description"
+					String="Defines if entity set is extractable" />
+			</Term>
+			<Term Name="OriginalDataType" Type="Edm.String" DefaultValue=""
+				AppliesTo="Property">
+				<Annotation Term="Core.Description"
+					String="Defines the type in the source systewm" />
+			</Term>
+			<Term Name="SourceSystem" Type="Edm.String" DefaultValue=""
+				AppliesTo="Container">
+				<Annotation Term="Core.Description"
+					String="Defines the source system" />
+			</Term>
+			<EnumType Name="DeltaMethodType">
+				<Member Name="NONE">
+					<Annotation Term="Core.Description"
+						String="Delta is nor supported" />
+				</Member>
+				<Member Name="INSERT">
+					<Annotation Term="Core.Description"
+						String="Delta is only supported for inserts" />
+				</Member>
+				<Member Name="INSERT_UPDATE">
+					<Annotation Term="Core.Description"
+						String="Delta is supported for inserts and updates" />
+				</Member>
+				<Member Name="INSERT_UPDATE_DELETE">
+					<Annotation Term="Core.Description"
+						String="Delta is supported for inserts, updates and deletes" />
+				</Member>
+			</EnumType>
+			<Term Name="DeltaMethod" Type="Integration.DeltaMethodType"
+				AppliesTo="EntitySet">
+				<Annotation Term="Core.Description"
+					String="Defines iwhich delta method the entity set supports" />
+			</Term>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

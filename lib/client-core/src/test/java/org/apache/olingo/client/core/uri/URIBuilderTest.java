@@ -434,4 +434,85 @@ public class URIBuilderTest extends AbstractTest {
     assertEquals("http://host/service/EntitySet/functionName(parameterName%3D%40first)/"
         + "NavSeg/%24count?%40first='1'", newUri.toASCIIString());
   }
+  
+  @Test
+  public void testCustomQueryOption() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        addCustomQueryOption("x", "y").build();
+    assertEquals("http://host/service/EntitySet?x=y", uri.toASCIIString());
+  }
+  
+  @Test
+  public void testCustomQueryOptionWithFilter() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        filter("PropertyString eq '1'").
+        addCustomQueryOption("x", "y").build();
+    assertEquals("http://host/service/EntitySet?%24filter=PropertyString%20eq%20'1'&x=y", 
+        uri.toASCIIString());
+  }
+  
+  @Test
+  public void testDuplicateCustomQueryOption() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        addCustomQueryOption("x", "z").
+        addCustomQueryOption("x", "y").build();
+    assertEquals("http://host/service/EntitySet?x=y", uri.toASCIIString());
+  }
+  
+  @Test
+  public void testCustomQueryOptionWithFilterAndFunction() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).
+        appendOperationCallSegment("functionName").count().filter("PropertyString eq '1'").
+        addCustomQueryOption("x", "y").build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/functionName()"
+        + "/%24count?%24filter=PropertyString%20eq%20'1'&x=y", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void testCustomQueryOptionWithFunctionWithNavAndRef() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("EntitySet").
+        appendOperationCallSegment("functionName").
+        appendNavigationSegment("NavSeg").appendRefSegment().addCustomQueryOption("x", "y").build();
+    final Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
+    final ClientPrimitiveValue value = client.getObjectFactory().
+        newPrimitiveValueBuilder().buildString("parameterValue");
+    parameters.put("parameterName", value);
+    URI newUri = URIUtils.buildFunctionInvokeURI(uri, parameters);
+    assertNotNull(newUri);
+    assertEquals("http://host/service/EntitySet/functionName(parameterName%3D'parameterValue')"
+        + "/NavSeg/%24ref?x=y", newUri.toASCIIString());
+  }
+  
+  @Test
+  public void testCustomQueryOptionOnRoot() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).
+        addCustomQueryOption("x", "y").build();
+    assertEquals("http://host/service?x=y", uri.toASCIIString());
+  }
+  
+  @Test
+  public void testTwoCustomQueryOption() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).
+        addCustomQueryOption("x", "y").
+        addCustomQueryOption("y", "z").build();
+    assertEquals("http://host/service?x=y&y=z", uri.toASCIIString());
+  }
+  
+  @Test
+  public void testCustomQueryOptionWithEncodedNameValue() throws ODataDeserializerException {
+    final ODataClient client = ODataClientFactory.getClient();
+    final URI uri = client.newURIBuilder(SERVICE_ROOT).
+        addCustomQueryOption("x!/?", "@?$").build();
+    assertEquals("http://host/service?x%21%2F%3F=%40%3F%24", uri.toASCIIString());
+  }
 }

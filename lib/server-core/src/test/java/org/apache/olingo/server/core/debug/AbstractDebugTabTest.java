@@ -40,10 +40,10 @@ public abstract class AbstractDebugTabTest {
       tab.appendHtml(writer);
     } else {
       // Create JSON generator (the object mapper is necessary to write expression trees).
-      JsonGenerator json = new ObjectMapper().getFactory().createGenerator(writer);
-      tab.appendJson(json);
-      json.flush();
-      json.close();
+      try (JsonGenerator json = new ObjectMapper().getFactory().createGenerator(writer)) {
+        tab.appendJson(json);
+        json.flush();
+      }
     }
     writer.flush();
     return writer.toString();

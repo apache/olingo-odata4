@@ -24,6 +24,7 @@ import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequest;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchRequestItem;
+import org.apache.olingo.client.core.communication.util.PipedOutputStream;
 import org.apache.olingo.client.core.communication.request.AbstractODataStreamer;
 
 /**
@@ -54,7 +55,7 @@ public abstract class AbstractODataBatchRequestItem extends AbstractODataStreame
    * @param req OData batch request.
    */
   public AbstractODataBatchRequestItem(final ODataBatchRequest req) {
-    super(req.getOutputStream());
+    super((PipedOutputStream) req.getOutputStream());
     this.open = true;
     this.req = req;
   }

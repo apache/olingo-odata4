@@ -36,7 +36,7 @@ public class AsyncRequestFactoryImpl implements AsyncRequestFactory {
 
   @Override
   public <R extends ODataResponse> AsyncRequestWrapper<R> getAsyncRequestWrapper(final ODataRequest odataRequest) {
-    return new AsyncRequestWrapperImpl<R>(client, odataRequest);
+    return new AsyncRequestWrapperImpl<>(client, odataRequest);
   }
 
   @Override

@@ -126,6 +126,7 @@ public class UriTokenizer {
     LessThanOperator,
     LessThanOrEqualsOperator,
     HasOperator,
+    InOperator,
     AddOperator,
     SubOperator,
     MulOperator,
@@ -170,6 +171,7 @@ public class UriTokenizer {
     ToupperMethod,
     TrimMethod,
     YearMethod,
+    SubstringofMethod,
 
     IsDefinedMethod, // for the aggregation extension
 
@@ -507,6 +509,9 @@ public class UriTokenizer {
     case HasOperator:
       found = nextBinaryOperator("has");
       break;
+    case InOperator:
+      found = nextBinaryOperator("in");
+      break;
     case AddOperator:
       found = nextBinaryOperator("add");
       break;
@@ -637,6 +642,9 @@ public class UriTokenizer {
       break;
     case YearMethod:
       found = nextMethod("year");
+      break;
+    case SubstringofMethod:
+      found = nextMethod("substringof");
       break;
 
     // Method for the aggregation extension
@@ -1065,10 +1073,8 @@ public class UriTokenizer {
     if (nextConstantIgnoreCase("duration") && nextCharacter('\'')) {
       nextSign();
       if (nextCharacter('P') || nextCharacter('p')) {
-        if (nextIntegerValue(false)) {
-          if (!(nextCharacter('D') || nextCharacter('d'))) {
-            return false;
-          }
+        if (nextIntegerValue(false) && (!(nextCharacter('D') || nextCharacter('d')))) {
+          return false;
         }
         if (nextCharacter('T') || nextCharacter('t')) {
           boolean hasNumber = false;
@@ -1085,10 +1091,8 @@ public class UriTokenizer {
             }
           }
           if (hasNumber || nextIntegerValue(false)) {
-            if (nextCharacter('.')) {
-              if (!nextIntegerValue(false)) {
-                return false;
-              }
+            if (nextCharacter('.') && !nextIntegerValue(false)) {
+              return false;
             }
             if (!(nextCharacter('S') || nextCharacter('s'))) {
               return false;

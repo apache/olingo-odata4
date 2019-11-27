@@ -28,19 +28,39 @@ public class FilterLambda implements FilterArg {
   private final String operator;
 
   private final URIFilter expression;
+  
+  private final String lambdaVariable;
+  
+  public static final String COLON = ":"; 
+  
+  public static final String OPENBRAC = "(";
+  
+  public static final String CLOSEBRAC = ")";
+  
+  public static final String SLASH = "/";
 
-  public FilterLambda(final FilterArg collection, final String operator, final URIFilter expression) {
+  public FilterLambda(final FilterArg collection, final String operator, final URIFilter expression,
+      final String predicate) {
     this.collection = collection;
     this.operator = operator;
     this.expression = expression;
+    this.lambdaVariable = predicate;
   }
-
+  
   @Override
   public String build() {
-    return new StringBuilder(collection.build()).
-            append('/').
-            append(operator).
-            append(expression.build()).
-            toString();
+    StringBuilder builder = new StringBuilder(collection.build()).
+        append(SLASH).
+        append(operator);
+    if (this.lambdaVariable != null && this.lambdaVariable.length() > 0) {
+      builder.append(OPENBRAC).
+          append(lambdaVariable).append(COLON).
+          append(expression.build()).
+          append(CLOSEBRAC);
+    } else {
+      builder.
+          append(expression.build());
+    }
+    return builder.toString();
   }
 }

@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.uri.queryoption.apply.Concat;
  */
 public class ConcatImpl implements Concat {
 
-  private List<ApplyOption> options = new ArrayList<ApplyOption>();
+  private List<ApplyOption> options = new ArrayList<>();
 
   @Override
   public Kind getKind() {

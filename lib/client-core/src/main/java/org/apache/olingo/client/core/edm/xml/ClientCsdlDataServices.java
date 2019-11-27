@@ -38,7 +38,7 @@ class ClientCsdlDataServices extends CsdlAbstractEdmItem implements Serializable
 
   private static final long serialVersionUID = 4200317286476885204L;
 
-  private final List<CsdlSchema> schemas = new ArrayList<CsdlSchema>();
+  private final List<CsdlSchema> schemas = new ArrayList<>();
   
   private String dataServiceVersion;
 

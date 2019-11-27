@@ -40,6 +40,7 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
+import org.apache.olingo.server.api.uri.queryoption.DeltaTokenOption;
 import org.apache.olingo.server.api.uri.queryoption.CustomQueryOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
@@ -60,17 +61,17 @@ public class UriInfoImpl implements UriInfo {
   private UriInfoKind kind;
 
   // for $entity
-  private List<String> entitySetNames = new ArrayList<String>();
+  private List<String> entitySetNames = new ArrayList<>();
   // for $entity
   private EdmEntityType entityTypeCast;
 
   private UriResource lastResourcePart;
-  private List<UriResource> pathParts = new ArrayList<UriResource>();
+  private List<UriResource> pathParts = new ArrayList<>();
 
   private Map<SystemQueryOptionKind, SystemQueryOption> systemQueryOptions =
-      new EnumMap<SystemQueryOptionKind, SystemQueryOption>(SystemQueryOptionKind.class);
-  private Map<String, AliasQueryOption> aliases = new HashMap<String, AliasQueryOption>();
-  private List<CustomQueryOption> customQueryOptions = new ArrayList<CustomQueryOption>();
+      new EnumMap<>(SystemQueryOptionKind.class);
+  private Map<String, AliasQueryOption> aliases = new HashMap<>();
+  private List<CustomQueryOption> customQueryOptions = new ArrayList<>();
 
   private String fragment;
 
@@ -189,6 +190,7 @@ public class UriInfoImpl implements UriInfo {
     case SELECT:
     case SKIP:
     case SKIPTOKEN:
+    case DELTATOKEN:
     case TOP:
     case LEVELS:
     case APPLY:
@@ -309,5 +311,10 @@ public class UriInfoImpl implements UriInfo {
   @Override
   public String getFragment() {
     return fragment;
+  }
+  
+  @Override
+  public DeltaTokenOption getDeltaTokenOption() {
+    return (DeltaTokenOption) systemQueryOptions.get(SystemQueryOptionKind.DELTATOKEN);
   }
 }

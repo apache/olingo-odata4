@@ -19,8 +19,10 @@
 package org.apache.olingo.server.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -46,19 +48,19 @@ import org.apache.olingo.commons.api.edmx.EdmxReferenceInclude;
 import org.apache.olingo.commons.api.ex.ODataException;
 
 public class SchemaBasedEdmProvider implements CsdlEdmProvider {
-  private final List<CsdlSchema> edmSchemas = new ArrayList<CsdlSchema>();
-  private final Map<String, EdmxReference> references = new ConcurrentHashMap<String, EdmxReference>();
+  private final List<CsdlSchema> edmSchemas = new ArrayList<>();
+  private final Map<String, EdmxReference> references = new ConcurrentHashMap<>();
   private final Map<String, SchemaBasedEdmProvider> referenceSchemas = 
-      new ConcurrentHashMap<String, SchemaBasedEdmProvider>();
+      new ConcurrentHashMap<>();
   private final Map<String, SchemaBasedEdmProvider> coreVocabularySchemas = 
-      new ConcurrentHashMap<String, SchemaBasedEdmProvider>();
+      new ConcurrentHashMap<>();
   
   protected void addSchema(CsdlSchema schema) {
     this.edmSchemas.add(schema);
   }
   
   public List<EdmxReference> getReferences(){
-    return new ArrayList<EdmxReference>(references.values());
+    return new ArrayList<>(references.values());
   }
   
   protected void addReferenceSchema(String ns, SchemaBasedEdmProvider provider) {
@@ -88,38 +90,44 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   }  
   
   CsdlSchema getSchema(String ns, boolean checkReferences) {
+    if (checkReferences) {
+      return getSchemaRecursively(ns, new HashSet<String>());
+    } else {
+      return getSchemaDirectly(ns);
+    }
+  }
+
+  CsdlSchema getSchemaDirectly(String ns) {
     for (CsdlSchema s : this.edmSchemas) {
       if (s.getNamespace().equals(ns)) {
         return s;
       }
     }
-    CsdlSchema s = null; 
-    if (checkReferences) {
-      s = getReferenceSchema(ns);
-      if (s == null) {
-        s = getVocabularySchema(ns);
-      }
-    }
-    return s;
+    return null;
   }
 
-  CsdlSchema getReferenceSchema(String ns) {
-    if (ns == null) {
-      return null;
+  CsdlSchema getSchemaRecursively(String ns, Set<String> parsedPath) {
+    // find the schema by namespace in current provider
+    CsdlSchema schema = getSchemaDirectly(ns);
+    if (schema != null) {
+      return schema;
     }
-    
-    if (this.referenceSchemas.get(ns) != null) {
-      return this.referenceSchemas.get(ns).getSchema(ns);  
-    }
-    
-    // it is possible that we may be looking for Reference schema of Reference
-    for (SchemaBasedEdmProvider provider:this.referenceSchemas.values()) {
-      CsdlSchema schema = provider.getSchema(ns);
+
+    // find the schema by namespace in the reference schema provider
+    for (Map.Entry<String, SchemaBasedEdmProvider> entry : this.referenceSchemas.entrySet()) {
+      String namespace = entry.getKey();
+      if (parsedPath.contains(namespace)) {
+        continue;
+      }
+      SchemaBasedEdmProvider provider = entry.getValue();
+      parsedPath.add(namespace);
+      schema = provider.getSchemaRecursively(ns, parsedPath);
       if (schema != null) {
         return schema;
       }
     }
-    return null;
+
+    return getVocabularySchema(ns);
   }
   
   @Override
@@ -156,7 +164,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public List<CsdlFunction> getFunctions(FullQualifiedName fqn) throws ODataException {
-    ArrayList<CsdlFunction> foundFuncs = new ArrayList<CsdlFunction>();
+    ArrayList<CsdlFunction> foundFuncs = new ArrayList<>();
     CsdlSchema schema = getSchema(fqn.getNamespace());
     if (schema != null) {
       List<CsdlFunction> functions = schema.getFunctions();
@@ -284,7 +292,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public List<CsdlAliasInfo> getAliasInfos() throws ODataException {
-    ArrayList<CsdlAliasInfo> list = new ArrayList<CsdlAliasInfo>();
+    ArrayList<CsdlAliasInfo> list = new ArrayList<>();
     for (CsdlSchema s : this.edmSchemas) {
       if (s.getAlias() != null) {
         CsdlAliasInfo ai = new CsdlAliasInfo();
@@ -330,18 +338,16 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public List<CsdlSchema> getSchemas() throws ODataException {
-    return new ArrayList<CsdlSchema>(this.edmSchemas);
+    return new ArrayList<>(this.edmSchemas);
   }
 
   @Override
   public CsdlEntityType getEntityType(final FullQualifiedName fqn) throws ODataException {
     CsdlSchema schema = getSchema(fqn.getNamespace());
-    if (schema != null) {
-      if (schema.getEntityTypes() != null) {
-        for (CsdlEntityType type : schema.getEntityTypes()) {
-          if (type.getName().equals(fqn.getName())) {
-            return type;
-          }
+    if (schema != null && schema.getEntityTypes() != null) {
+      for (CsdlEntityType type : schema.getEntityTypes()) {
+        if (type.getName().equals(fqn.getName())) {
+          return type;
         }
       }
     }
@@ -351,12 +357,10 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
   @Override
   public CsdlComplexType getComplexType(final FullQualifiedName fqn) throws ODataException {
     CsdlSchema schema = getSchema(fqn.getNamespace());
-    if (schema != null) {
-      if (schema.getComplexTypes() != null) {
-        for (CsdlComplexType type : schema.getComplexTypes()) {
-          if (type.getName().equals(fqn.getName())) {
-            return type;
-          }
+    if (schema != null && schema.getComplexTypes() != null) {
+      for (CsdlComplexType type : schema.getComplexTypes()) {
+        if (type.getName().equals(fqn.getName())) {
+          return type;
         }
       }
     }
@@ -365,7 +369,7 @@ public class SchemaBasedEdmProvider implements CsdlEdmProvider {
 
   @Override
   public List<CsdlAction> getActions(final FullQualifiedName fqn) throws ODataException {
-    ArrayList<CsdlAction> actions = new ArrayList<CsdlAction>();
+    ArrayList<CsdlAction> actions = new ArrayList<>();
     CsdlSchema schema = getSchema(fqn.getNamespace());
     if (schema != null) {
       List<CsdlAction> types = schema.getActions();

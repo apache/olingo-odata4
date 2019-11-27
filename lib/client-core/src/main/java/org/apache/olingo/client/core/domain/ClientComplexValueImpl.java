@@ -36,19 +36,19 @@ public class ClientComplexValueImpl extends AbstractClientValue implements Clien
   /**
    * Navigation links (might contain in-line entities or entity sets).
    */
-  private final List<ClientLink> navigationLinks = new ArrayList<ClientLink>();
+  private final List<ClientLink> navigationLinks = new ArrayList<>();
 
   /**
    * Association links.
    */
-  private final List<ClientLink> associationLinks = new ArrayList<ClientLink>();
+  private final List<ClientLink> associationLinks = new ArrayList<>();
 
-  private final List<ClientAnnotation> annotations = new ArrayList<ClientAnnotation>();
+  private final List<ClientAnnotation> annotations = new ArrayList<>();
 
   /**
    * Complex type fields.
    */
-  private final Map<String, ClientProperty> fields = new LinkedHashMap<String, ClientProperty>();
+  private final Map<String, ClientProperty> fields = new LinkedHashMap<>();
 
   /**
    * Constructor.
@@ -137,7 +137,7 @@ public class ClientComplexValueImpl extends AbstractClientValue implements Clien
 
   @Override
   public Map<String, Object> asJavaMap() {
-    final Map<String, Object> result = new LinkedHashMap<String, Object>();
+    final Map<String, Object> result = new LinkedHashMap<>();
     for (Map.Entry<String, ClientProperty> entry : fields.entrySet()) {
       Object value = null;
       if (entry.getValue().hasPrimitiveValue()) {
@@ -207,10 +207,10 @@ public class ClientComplexValueImpl extends AbstractClientValue implements Clien
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
-    result = prime * result + ((associationLinks == null) ? 0 : associationLinks.hashCode());
-    result = prime * result + ((fields == null) ? 0 : fields.hashCode());
-    result = prime * result + ((navigationLinks == null) ? 0 : navigationLinks.hashCode());
+    result = prime * result + (annotations.hashCode());
+    result = prime * result + (associationLinks.hashCode());
+    result = prime * result + (fields.hashCode());
+    result = prime * result + (navigationLinks.hashCode());
     return result;
   }
 

@@ -58,7 +58,7 @@ public class EdmConstantExpressionImpl extends AbstractEdmExpression implements 
       if (csdlExp.getValue() == null) {
         throw new EdmException("Expression value must not be null");
       }
-      final List<String> localEnumValues = new ArrayList<String>();
+      final List<String> localEnumValues = new ArrayList<>();
       for (String split : csdlExp.getValue().split(" ")) {
         final String[] enumSplit = split.split("/");
         if (enumSplit.length != 2) {

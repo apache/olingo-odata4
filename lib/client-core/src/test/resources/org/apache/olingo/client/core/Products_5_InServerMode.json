@@ -1,0 +1,104 @@
+{
+	"@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Products/$entity",
+	"@odata.metadataEtag": "W/\"3d81e743-9e4a-477e-9e7c-1e999edd13ce\"",
+	"@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Product",
+	"@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)",
+	"@com.contoso.display.highlight": true,
+  	"@com.contoso.PersonalInfo.PhoneNumbers": ["(203)555-1718", "(203)555-1719"],
+	"ProductID@odata.type": "Int32",
+	"ProductID": 5,
+	"Name@odata.type": "String",
+	"Name@com.contoso.display.style": {
+	    "@odata.type": "#com.contoso.display.styleType",
+	    "title": true,
+	    "order": 1
+	  },
+	"Name": "Cheetos",
+	"QuantityPerUnit@odata.type": "String",
+	"QuantityPerUnit": "100g Bag",
+	"UnitPrice@odata.type": "Single",
+	"UnitPrice": 3.24,
+	"QuantityInStock@odata.type": "Int32",
+	"QuantityInStock": 100,
+	"Discontinued@odata.type": "Boolean",
+	"Discontinued": true,
+	"UserAccess@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.AccessLevel",
+	"UserAccess": "None",
+	"SkinColor@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Color",
+	"SkinColor": "Red",
+	"CoverColors@odata.type": "#Collection(Microsoft.Test.OData.Services.ODataWCFService.Color)",
+	"CoverColors": ["Green", "Blue", "Blue"],
+	"VendorAddress": {
+	    "@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.HomeAddress",
+	    "Street@odata.type": "String",
+	    "Street": "1 Microsoft Way",
+	    "City@odata.type": "String",
+	    "City": "London",
+	    "PostalCode@odata.type": "String",
+	    "PostalCode": "98052",
+	    "VendorName@odata.type": "String",
+	    "VendorName": "Cats",
+	    "Country@odata.associationLink": "Products(5)/VendorAddress/Country/$ref",
+        "Country@odata.navigationLink": "Products(5)/VendorAddress/Country"
+	},
+	"Shop@odata.type": "GeographyPoint",
+	"Shop": {
+	    "type": "Point",
+	    "coordinates": [23.1, 32.1],
+	    "crs": {
+	      "type": "name",
+	      "properties": {
+	        "name": "EPSG:4326"
+	      }
+	    }
+	  },
+	"Time@odata.type": "DateTimeOffset",
+  	"Time": "1957-04-03T00:00:00Z",
+	"TimeBetweenLastTwoOrders@odata.type": "Duration",
+  	"TimeBetweenLastTwoOrders": "PT0.0000001S",
+	"@odata.editLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)",
+	"@odata.mediaEditLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/$value",
+	"@odata.mediaContentType": "*/*",
+	"@odata.mediaEtag": "\"8zOOKKvgOtptr4gt8IrnapX3jds=\"",
+	"Details@odata.associationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Details/$ref",
+	"Details@com.contoso.display.style": {
+	    "@odata.type": "#com.contoso.display.styleType",
+	    "order": 2
+  	},
+  	"Details@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Details",
+  	"Details": {
+  		"@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Details",
+        "@odata.id": "Details(10)",
+  		"Id@odata.type": "Int32",
+  		"Id" : 10,
+  		"Available@odata.type": "Boolean",
+  		"Available" : false
+  	},
+  	"Orders@odata.navigationLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Orders",
+  	"Orders" : [
+	  	{
+	  	"@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Orders",
+	  	"@odata.id": "Orders(10)",
+	  	"OrderId@odata.type": "Int32",
+	  	"OrderId" : 10,
+	  	"Quantity@odata.type": "Int32",
+	  	"Quantity" : 2
+	  	},
+	  	{
+	  	"@odata.type": "#Microsoft.Test.OData.Services.ODataWCFService.Orders",
+	  	"@odata.id": "Orders(20)",
+	  	"OrderId@odata.type": "Int32",
+	  	"OrderId" : 20,
+	  	"Quantity@odata.type": "Int32",
+	  	"Quantity" : 2
+	  	}
+  	],
+	"#Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight": {
+		"title": "Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight",
+		"target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.AddAccessRight"
+	},
+	"#Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails": {
+		"title": "Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails",
+		"target": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Products(5)/Microsoft.Test.OData.Services.ODataWCFService.GetProductDetails"
+	}
+}

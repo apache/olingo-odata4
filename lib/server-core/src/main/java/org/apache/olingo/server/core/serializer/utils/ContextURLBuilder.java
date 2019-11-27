@@ -30,7 +30,7 @@ import org.apache.olingo.commons.core.Encoder;
  * protocol specification</a>).
  */
 public final class ContextURLBuilder {
-
+  
   private ContextURLBuilder() { /* private ctor for helper class */}
 
   public static URI create(final ContextURL contextURL) {
@@ -68,12 +68,23 @@ public final class ContextURLBuilder {
       result.append('(').append(contextURL.getKeyPath()).append(')');
     }
     if (contextURL.getNavOrPropertyPath() != null) {
+      if (contextURL.getServiceRoot() == null || 
+          !contextURL.getServiceRoot().isAbsolute()) {
+        String[] paths = contextURL.getNavOrPropertyPath().split("/");
+        for (String path : paths) {
+          result.insert(0, "../");
+        }
+      }
       result.append('/').append(contextURL.getNavOrPropertyPath());
     }
     if (contextURL.getSelectList() != null) {
       result.append('(').append(contextURL.getSelectList()).append(')');
     }
     if (contextURL.isReference()) {
+      if (contextURL.getServiceRoot() == null ||
+          !contextURL.getServiceRoot().isAbsolute()) {
+        result.insert(0, "../");
+      }
       if (contextURL.getEntitySetOrSingletonOrType() != null) {
         throw new IllegalArgumentException("ContextURL: $ref with Entity Set");
       }

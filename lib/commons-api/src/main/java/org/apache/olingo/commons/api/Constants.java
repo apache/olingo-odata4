@@ -319,4 +319,20 @@ public interface Constants {
   String ASSOCIATION_LINK_TYPE = ContentType.APPLICATION_XML.toContentTypeString();
   String ENTITY_COLLECTION_BINDING_LINK_TYPE = ContentType.APPLICATION_XML.toContentTypeString();
   String ENTITY_BINDING_LINK_TYPE = ContentType.APPLICATION_XML.toContentTypeString();
+  
+ //For v4.01 Delta
+  
+  String LINK = "/$link";
+  String DELETEDLINK = "/$deletedLink";
+  String DELTA = "/$delta";
+  String DELTAVALUE = "delta";
+  String AT = "@";
+  String DELETEDENTITY = "/$deletedEntity";
+  String DELTALINK = "@deltaLink";
+  String HASH = "#";
+  String REMOVED = "removed";
+  String ENTITY = "/$entity";
+  String REASON = "Reason";
+  String ID = "@id";
+  String NEXTLINK = "@nextLink";
 }

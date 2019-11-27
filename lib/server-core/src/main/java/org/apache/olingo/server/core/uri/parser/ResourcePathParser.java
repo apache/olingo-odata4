@@ -124,7 +124,7 @@ public class ResourcePathParser {
     ParserHelper.requireNext(tokenizer, TokenKind.CROSSJOIN);
     ParserHelper.requireNext(tokenizer, TokenKind.OPEN);
     // At least one entity-set name is mandatory. Try to fetch all.
-    List<String> entitySetNames = new ArrayList<String>();
+    List<String> entitySetNames = new ArrayList<>();
     do {
       ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
       final String name = tokenizer.getText();
@@ -406,6 +406,7 @@ public class ResourcePathParser {
       }
     }
     ParserHelper.validateFunctionParameters(function, parameters, edm, null, aliases);
+    ParserHelper.validateFunctionParameterFacets(function, parameters, edm, aliases);
     UriResourceFunctionImpl resource = new UriResourceFunctionImpl(edmFunctionImport, function, parameters);
     if (tokenizer.next(TokenKind.OPEN)) {
       if (function.getReturnType() != null

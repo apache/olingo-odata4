@@ -83,7 +83,7 @@ public class DebugTabResponse implements DebugTab {
   }
 
   private Map<String, String> map(final Map<String, List<String>> headers) {
-    Map<String, String> result = new HashMap<String, String>();
+    Map<String, String> result = new HashMap<>();
     for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
       if (entry.getValue().size() == 1) {
         result.put(entry.getKey(), entry.getValue().get(0));

@@ -128,4 +128,28 @@ public class CsdlConstantExpression extends CsdlExpression {
     return this;
   }
 
+  @Override
+  public boolean equals (Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof CsdlConstantExpression)) {
+      return false;
+    }
+    CsdlConstantExpression csdlConstExp = (CsdlConstantExpression) obj;
+    
+    return (this.getValue() == null ? csdlConstExp.getValue() == null :
+      this.getValue().equals(csdlConstExp.getValue()))
+        && (this.getType() == null ? csdlConstExp.getType() == null :
+          this.getType().equals(csdlConstExp.getType()));
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    return result;
+  }
 }

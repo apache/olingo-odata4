@@ -53,8 +53,17 @@ public class SearchTokenizerTest {
     assertQuery("A").resultsIn(word("A"));
     assertQuery("AN").resultsIn(word("AN"));
     assertQuery("O").resultsIn(word("O"));
+    assertQuery("notAw0rd").resultsIn(word("notAw0rd"));
+    assertQuery("not,").resultsIn(word("not,"));
+    assertQuery("not.").resultsIn(word("not."));
+    assertQuery("B-B").resultsIn(word("B-B"));
+    assertQuery("ǅ").resultsIn(word("ǅ"));
     // invalid
-    assertQuery("notAw0rd").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("%2F").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("%3A").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("not%5B").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("not%7B").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("not%6A").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
   }
 
   private Validator.Tuple word(final String literal) {

@@ -29,7 +29,7 @@ import org.apache.olingo.server.api.uri.queryoption.apply.ComputeExpression;
  */
 public class ComputeImpl implements Compute {
 
-  private List<ComputeExpression> expressions = new ArrayList<ComputeExpression>();
+  private List<ComputeExpression> expressions = new ArrayList<>();
 
   @Override
   public Kind getKind() {

@@ -61,7 +61,7 @@ public class JsonODataErrorDeserializer extends JsonDeserializer {
         error.setTarget(errorNode.get(Constants.ERROR_TARGET).textValue());
       }
       if (errorNode.hasNonNull(Constants.ERROR_DETAILS)) {
-        List<ODataErrorDetail> details = new ArrayList<ODataErrorDetail>();
+        List<ODataErrorDetail> details = new ArrayList<>();
         JsonODataErrorDetailDeserializer detailDeserializer = new JsonODataErrorDetailDeserializer(serverMode);
         for (JsonNode jsonNode : errorNode.get(Constants.ERROR_DETAILS)) {
           details.add(detailDeserializer.doDeserialize(jsonNode.traverse(parser.getCodec()))
@@ -71,7 +71,7 @@ public class JsonODataErrorDeserializer extends JsonDeserializer {
         error.setDetails(details);
       }
       if (errorNode.hasNonNull(Constants.ERROR_INNERERROR)) {
-        HashMap<String, String> innerErrorMap = new HashMap<String, String>();
+        HashMap<String, String> innerErrorMap = new HashMap<>();
         final JsonNode innerError = errorNode.get(Constants.ERROR_INNERERROR);
         for (final Iterator<String> itor = innerError.fieldNames(); itor.hasNext();) {
           final String keyTmp = itor.next();

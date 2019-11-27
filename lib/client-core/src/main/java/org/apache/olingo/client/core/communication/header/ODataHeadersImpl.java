@@ -29,7 +29,7 @@ public class ODataHeadersImpl implements ODataHeaders {
   /**
    * OData request/response header key/value pairs.
    */
-  private final Map<String, String> headers = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+  private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
   @Override
   public ODataHeaders setHeader(final String name, final String value) {

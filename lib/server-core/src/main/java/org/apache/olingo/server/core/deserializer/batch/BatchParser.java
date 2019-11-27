@@ -54,7 +54,7 @@ public class BatchParser {
 
   private List<BatchRequestPart> parseBatch(final InputStream in, final String boundary,
       final BatchRequestTransformator transformator) throws IOException, BatchDeserializerException {
-    final List<BatchRequestPart> resultList = new LinkedList<BatchRequestPart>();
+    final List<BatchRequestPart> resultList = new LinkedList<>();
     final List<List<Line>> bodyPartStrings = splitBodyParts(in, boundary);
 
     for (List<Line> bodyPartString : bodyPartStrings) {

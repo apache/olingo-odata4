@@ -62,7 +62,7 @@ public class HeaderField implements Cloneable {
   @Override
   public HeaderField clone() throws CloneNotSupportedException{
     HeaderField clone = (HeaderField) super.clone();
-    clone.values = new ArrayList<String>(values.size());
+    clone.values = new ArrayList<>(values.size());
     clone.values.addAll(values);
     return clone;
   }

@@ -42,22 +42,25 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
     ODataRetrieveResponse<ClientEntitySet> response = null;
 
     response = sendRequest(ES_ALL_PRIM, "PropertyDate");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
     assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
     clientEntity = response.getBody().getEntities().get(1);
+    assertEquals("10", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    
+    clientEntity = response.getBody().getEntities().get(2);
     assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    clientEntity = response.getBody().getEntities().get(2);
+    clientEntity = response.getBody().getEntities().get(3);
     assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
   @Test
   public void simpleOrderByDescending() {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyDate desc");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
     assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
@@ -72,7 +75,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void multipleOrderBy() {
     final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyByte,PropertyInt16");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
     assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
@@ -81,6 +84,9 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
     assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
     clientEntity = response.getBody().getEntities().get(2);
+    assertEquals("10", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    
+    clientEntity = response.getBody().getEntities().get(3);
     assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 
@@ -88,15 +94,18 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   public void multipleOrderByDescending() {
     final ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyByte,PropertyInt16 desc");
-    assertEquals(3, response.getBody().getEntities().size());
+    assertEquals(4, response.getBody().getEntities().size());
 
     ClientEntity clientEntity = response.getBody().getEntities().get(0);
+    assertEquals("10", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
+    
+    clientEntity = response.getBody().getEntities().get(1);
     assertEquals("0", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    clientEntity = response.getBody().getEntities().get(1);
+    clientEntity = response.getBody().getEntities().get(2);
     assertEquals("-32768", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
 
-    clientEntity = response.getBody().getEntities().get(2);
+    clientEntity = response.getBody().getEntities().get(3);
     assertEquals("32767", ((ClientValuable) clientEntity.getProperty("PropertyInt16")).getValue().toString());
   }
 

@@ -59,7 +59,7 @@ public class EdmEntityTypeImpl extends AbstractEdmStructuredType implements EdmE
         entityBaseType = (EdmEntityType) baseType;
       }
       if (baseType == null
-          || (baseType.isAbstract() && ((EdmEntityType) baseType).getKeyPropertyRefs().size() == 0)) {
+          || (baseType.isAbstract() && ((EdmEntityType) baseType).getKeyPropertyRefs().isEmpty())) {
         final List<CsdlPropertyRef> key = entityType.getKey();
         if (key != null) {
           final List<EdmKeyPropertyRef> edmKey = new ArrayList<EdmKeyPropertyRef>();

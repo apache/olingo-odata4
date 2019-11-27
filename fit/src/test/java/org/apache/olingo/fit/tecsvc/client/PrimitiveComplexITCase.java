@@ -90,7 +90,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
 
     if (isJson()) {
       String actualResult = IOUtils.toString(response.getRawResponse(), "UTF-8");
-      assertTrue(actualResult.startsWith("{\"@odata.context\":\"$metadata#ESTwoPrim(32766)/PropertyString\","));
+      assertTrue(actualResult.startsWith("{\"@odata.context\":\"../$metadata#ESTwoPrim(32766)/PropertyString\","));
       assertTrue(actualResult.endsWith("\"value\":\"Test String1\"}"));
     } else {
       ClientProperty property = response.getBody();
@@ -179,7 +179,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
 
     if (isJson()) {
       String actualResult = IOUtils.toString(response.getRawResponse(), "UTF-8");
-      assertTrue(actualResult.startsWith("{\"@odata.context\":\"$metadata#ESMixPrimCollComp(7)/PropertyComp\","));
+      assertTrue(actualResult.startsWith("{\"@odata.context\":\"../$metadata#ESMixPrimCollComp(7)/PropertyComp\","));
       assertTrue(actualResult.endsWith("\"PropertyInt16\":222,\"PropertyString\":\"TEST B\"}"));
     } else {
       ClientProperty property = response.getBody();

@@ -52,6 +52,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class EntityTest extends AbstractTest {
+  
+  private static final String SERVICE_URI = "http://services.odata.org/V4/"
+      + "(S(jf0ernw5hgyg1ekhqmzrdsch))/TripPinServiceRW/";
 
   private EdmEnabledODataClient getEdmEnabledClient() {
     return new EdmEnabledODataClientImpl(null, null, null) {
@@ -67,6 +70,27 @@ public class EntityTest extends AbstractTest {
       public Edm getCachedEdm() {
         if (edm == null) {
           edm = getReader().readMetadata(getClass().getResourceAsStream("staticservice-metadata.xml"));
+        }
+        return edm;
+      }
+
+    };
+  }
+  
+  private EdmEnabledODataClient getEdmEnabledClient1() {
+    return new EdmEnabledODataClientImpl(null, null, null) {
+
+      private Edm edm;
+
+      @Override
+      public Edm getEdm(final String metadataETag) {
+        return getCachedEdm();
+      }
+
+      @Override
+      public Edm getCachedEdm() {
+        if (edm == null) {
+          edm = getReader().readMetadata(getClass().getResourceAsStream("metadata_sample.xml"));
         }
         return edm;
       }
@@ -400,5 +424,35 @@ public class EntityTest extends AbstractTest {
     assertNull(property.getValue());
     assertTrue(property.isPrimitive());
     assertEquals(property.getValueType(), ValueType.PRIMITIVE);
+  }
+  
+  @Test
+  public void testContainmentNav() throws Exception {
+    final InputStream input = getClass().getResourceAsStream(
+	"containmentNav." + getSuffix(ContentType.JSON_FULL_METADATA));
+    final ClientEntity entity = getEdmEnabledClient1().getBinder().getODataEntity(
+        client.getDeserializer(ContentType.JSON_FULL_METADATA).toEntity(input));
+    assertNotNull(entity);
+    assertEquals("olingo.odata.test1.ETCont", entity.getTypeName().getFullQualifiedNameAsString());
+  }
+  
+  @Test
+  public void testContainmentNavOnComplexType() throws Exception {
+    final InputStream input = getClass().getResourceAsStream(
+  "containmentNav2." + getSuffix(ContentType.JSON_FULL_METADATA));
+    final ClientEntity entity = getEdmEnabledClient1().getBinder().getODataEntity(
+        client.getDeserializer(ContentType.JSON_FULL_METADATA).toEntity(input));
+    assertNotNull(entity);
+    assertEquals("olingo.odata.test1.ETCont", entity.getTypeName().getFullQualifiedNameAsString());
+  }
+  
+  @Test
+  public void testContainmentNavOnSingleton() throws Exception {
+    final InputStream input = getClass().getResourceAsStream(
+  "containmentNav3." + getSuffix(ContentType.JSON_FULL_METADATA));
+    final ClientEntity entity = getEdmEnabledClient1().getBinder().getODataEntity(
+        client.getDeserializer(ContentType.JSON_FULL_METADATA).toEntity(input));
+    assertNotNull(entity);
+    assertEquals("olingo.odata.test1.ETCont", entity.getTypeName().getFullQualifiedNameAsString());
   }
 }

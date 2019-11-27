@@ -281,7 +281,7 @@ public abstract class ServiceRequest {
   }  
 
   public Map<String, String> getPreferences(){
-    HashMap<String, String> map = new HashMap<String, String>();
+    HashMap<String, String> map = new HashMap<>();
     List<String> headers = request.getHeaders(HttpHeader.PREFER);
     if (headers != null) {
       for (String header:headers) {
@@ -340,11 +340,11 @@ public abstract class ServiceRequest {
       rawPath = rawPath.substring(e+path.length());
     }
 
-    UriInfo uriInfo = new Parser(serviceMetadata.getEdm(), odata).parseUri(rawPath, uri.getQuery(), null, 
+    UriInfo reqUriInfo = new Parser(serviceMetadata.getEdm(), odata).parseUri(rawPath, uri.getQuery(), null, 
         getODataRequest().getRawBaseUri());
     ServiceDispatcher dispatcher = new ServiceDispatcher(odata, serviceMetadata, null, customContentType);
-    dispatcher.visit(uriInfo);
-    dispatcher.request.setUriInfo(uriInfo);
+    dispatcher.visit(reqUriInfo);
+    dispatcher.request.setUriInfo(reqUriInfo);
     return (DataRequest)dispatcher.request;
   }
 }

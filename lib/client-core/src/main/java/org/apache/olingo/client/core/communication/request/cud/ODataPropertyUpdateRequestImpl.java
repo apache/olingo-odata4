@@ -84,7 +84,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   }
 
   @Override
-  protected InputStream getPayload() {
+  public InputStream getPayload() {
     try {
       return odataClient.getWriter().writeProperty(property, ContentType.parse(getContentType()));
     } catch (final ODataSerializerException e) {

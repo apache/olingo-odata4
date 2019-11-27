@@ -43,8 +43,8 @@ public class BatchRequestTransformator {
   }
 
   public List<BatchRequestPart> transform(final BatchBodyPart bodyPart) throws BatchDeserializerException {
-    final List<ODataRequest> requests = new LinkedList<ODataRequest>();
-    final List<BatchRequestPart> resultList = new ArrayList<BatchRequestPart>();
+    final List<ODataRequest> requests = new LinkedList<>();
+    final List<BatchRequestPart> resultList = new ArrayList<>();
 
     validateHeaders(bodyPart.getHeaders(), bodyPart.isChangeSet());
 

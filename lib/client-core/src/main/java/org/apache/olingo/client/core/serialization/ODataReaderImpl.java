@@ -93,7 +93,7 @@ public class ODataReaderImpl implements ODataReader {
 
     try {
       if (ClientEntitySetIterator.class.isAssignableFrom(reference)) {
-        res = new ResWrap<T>(
+        res = new ResWrap<>(
             (URI) null,
             null,
             reference.cast(new ClientEntitySetIterator<ClientEntitySet, ClientEntity>(
@@ -101,24 +101,24 @@ public class ODataReaderImpl implements ODataReader {
       } else if (ClientEntitySet.class.isAssignableFrom(reference)) {
         final ResWrap<EntityCollection> resource = client.getDeserializer(ContentType.parse(format))
             .toEntitySet(src);
-        res = new ResWrap<T>(
+        res = new ResWrap<>(
             resource.getContextURL(),
             resource.getMetadataETag(),
             reference.cast(client.getBinder().getODataEntitySet(resource)));
       } else if (ClientEntity.class.isAssignableFrom(reference)) {
         final ResWrap<Entity> container = client.getDeserializer(ContentType.parse(format)).toEntity(src);
-        res = new ResWrap<T>(
+        res = new ResWrap<>(
             container.getContextURL(),
             container.getMetadataETag(),
             reference.cast(client.getBinder().getODataEntity(container)));
       } else if (ClientProperty.class.isAssignableFrom(reference)) {
         final ResWrap<Property> container = client.getDeserializer(ContentType.parse(format)).toProperty(src);
-        res = new ResWrap<T>(
+        res = new ResWrap<>(
             container.getContextURL(),
             container.getMetadataETag(),
             reference.cast(client.getBinder().getODataProperty(container)));
       } else if (ClientValue.class.isAssignableFrom(reference)) {
-        res = new ResWrap<T>(
+        res = new ResWrap<>(
             (URI) null,
             null,
             reference.cast(client.getObjectFactory().newPrimitiveValueBuilder().
@@ -127,19 +127,19 @@ public class ODataReaderImpl implements ODataReader {
                 setValue(IOUtils.toString(src)) // TODO: set correct value
                 .build()));
       } else if (XMLMetadata.class.isAssignableFrom(reference)) {
-        res = new ResWrap<T>(
+        res = new ResWrap<>(
             (URI) null,
             null,
             reference.cast(readMetadata(src)));
       } else if (ClientServiceDocument.class.isAssignableFrom(reference)) {
         final ResWrap<ServiceDocument> resource =
             client.getDeserializer(ContentType.parse(format)).toServiceDocument(src);
-        res = new ResWrap<T>(
+        res = new ResWrap<>(
             resource.getContextURL(),
             resource.getMetadataETag(),
             reference.cast(client.getBinder().getODataServiceDocument(resource.getPayload())));
       } else if (ODataError.class.isAssignableFrom(reference)) {
-        res = new ResWrap<T>(
+        res = new ResWrap<>(
             (URI) null,
             null,
             reference.cast(readError(src, ContentType.parse(format))));

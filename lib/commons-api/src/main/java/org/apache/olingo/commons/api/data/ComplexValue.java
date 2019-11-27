@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ComplexValue extends Linked {
 
-  private final List<Property> value = new ArrayList<Property>();
+  private final List<Property> value = new ArrayList<>();
   
   private String typeName;
 
