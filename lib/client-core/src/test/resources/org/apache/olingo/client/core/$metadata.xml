@@ -138,7 +138,11 @@
 		<ReturnType Type="SEPMRA_SO_MAN2.I_DraftAdministrativeDataType"/>
 	  </Action>
 	  <Action Name="UARTString" IsBound="false">
-		<ReturnType Type="Edm.String"/>
+		<ReturnType Type="Edm.String">
+			<Annotation Term="Core.Description">
+				<String>The description for this return type</String>
+			</Annotation>
+		</ReturnType>
 	</Action>
 	  <Function Name="_FC_RTTimeOfDay_" IsBound="true" IsComposable="true">
 		<Parameter Name="ParameterTimeOfDay" Type="Edm.TimeOfDay" Nullable="false"/>
