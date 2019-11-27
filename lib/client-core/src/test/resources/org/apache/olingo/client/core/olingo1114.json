@@ -1,0 +1,17 @@
+{
+  "@odata.type":"#Microsoft.Dynamics.CRM.account",
+  "name@odata.type":"String",
+  "name":"testString",
+  "testDecimal@odata.type":"Decimal",
+  "testDecimal":null,
+  "testByte@odata.type":"Byte",
+  "testByte":null,
+  "testDouble@odata.type":"Double",
+  "testDouble":null,
+  "testInt64@odata.type":"Int64",
+  "testInt64":null,
+  "testInt32@odata.type":"Int32",
+  "testInt32":null,
+  "testInt16@odata.type":"Int16",
+  "testInt16":null
+}
