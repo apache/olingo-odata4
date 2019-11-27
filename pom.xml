@@ -48,6 +48,12 @@
 
   <url>http://olingo.apache.org</url>
 
+  <scm>
+    <connection>scm:git:git://gitbox.apache.org/repos/asf/olingo-odata4.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/olingo-odata4.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=olingo-odata4.git</url>
+  </scm>
+
   <mailingLists>
     <mailingList>
       <name>Apache Olingo Developers Mailinglist</name>
@@ -62,7 +68,7 @@
     <module>ext</module>
     <module>fit</module>
     <module>dist</module>
-  	<module>samples</module>
+    <module>samples</module>
   </modules>
 
   <properties>
