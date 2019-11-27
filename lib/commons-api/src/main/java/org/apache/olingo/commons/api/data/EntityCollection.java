@@ -136,4 +136,9 @@ public class EntityCollection extends AbstractEntityCollection {
     result = 31 * result + (deltaLink == null ? 0 : deltaLink.hashCode());
     return result;
   }
+
+  @Override
+  public String toString() {
+    return entities.toString();
+  }
 }
