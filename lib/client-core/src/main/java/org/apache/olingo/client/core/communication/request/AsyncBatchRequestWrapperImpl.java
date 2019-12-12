@@ -18,7 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
-import java.net.URI;
 import java.util.Collection;
 
 import org.apache.commons.io.IOUtils;
@@ -95,7 +94,7 @@ public class AsyncBatchRequestWrapperImpl extends AsyncRequestWrapperImpl<ODataB
       if (headers == null || headers.isEmpty()) {
         throw new AsyncRequestException("Invalid async request response. Monitor URL not found");
       } else {
-        this.location = URI.create(headers.iterator().next());
+        this.location = createLocation(headers.iterator().next());
       }
 
       headers = res.getHeader(HttpHeader.RETRY_AFTER);
