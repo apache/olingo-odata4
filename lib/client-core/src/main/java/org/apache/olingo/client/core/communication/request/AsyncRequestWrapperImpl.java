@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.communication.request;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,6 +87,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
 
     // target uri
     this.uri = odataRequest.getURI();
+    Objects.requireNonNull(this.uri, "Target URI can't be null");
 
     HttpClient _httpClient = odataClient.getConfiguration().getHttpClientFactory().create(method, this.uri);
     if (odataClient.getConfiguration().isGzipCompression()) {
@@ -137,6 +139,19 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
 
     return executeHttpRequest(httpClient, this.request);
+  }
+
+  private URI checkLocation(URI uri) {
+    if (!this.uri.getScheme().equals(uri.getScheme())) {
+      throw new AsyncRequestException("Unexpected scheme in the Location header");
+    }
+    if (!this.uri.getHost().equals(uri.getHost())) {
+      throw new AsyncRequestException("Unexpected host name in the Location header");
+    }
+    if (this.uri.getPort() != uri.getPort()) {
+      throw new AsyncRequestException("Unexpected port in the Location header");
+    }
+    return uri;
   }
 
   public class AsyncResponseWrapperImpl implements AsyncResponseWrapper<R> {
@@ -222,6 +237,10 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       return response;
     }
 
+    URI createLocation(String string) {
+      return checkLocation(URI.create(string));
+    }
+
     int parseReplyAfter(String value) {
       if (value == null || value.isEmpty()) {
         return DEFAULT_RETRY_AFTER;
@@ -274,7 +293,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     private void retrieveMonitorDetails(final HttpResponse res) {
       Header[] headers = res.getHeaders(HttpHeader.LOCATION);
       if (ArrayUtils.isNotEmpty(headers)) {
-        this.location = URI.create(headers[0].getValue());
+        this.location = createLocation(headers[0].getValue());
       } else {
         throw new AsyncRequestException(
             "Invalid async request response. Monitor URL '" + headers[0].getValue() + "'");

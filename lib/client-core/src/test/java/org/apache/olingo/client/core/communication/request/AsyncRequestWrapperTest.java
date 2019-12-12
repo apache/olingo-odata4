@@ -29,7 +29,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseFactory;
 import org.apache.http.HttpVersion;
@@ -91,7 +90,7 @@ public class AsyncRequestWrapperTest {
   }
 
   private AsyncRequestWrapperImpl createAsyncRequestWrapperImplWithRetryAfter(int retryAfter)
-      throws IOException {
+      throws IOException, URISyntaxException {
 
     HttpClient httpClient = mock(HttpClient.class);
     ODataClient oDataClient = mock(ODataClient.class);
@@ -116,13 +115,14 @@ public class AsyncRequestWrapperTest {
     AbstractODataRequest oDataRequest = mock(AbstractODataRequest.class);
     ODataResponse oDataResponse = mock(ODataResponse.class);
     when(oDataRequest.getResponseTemplate()).thenReturn(oDataResponse);
+    when(oDataRequest.getURI()).thenReturn(new URI("http://localhost/path"));
     when(oDataResponse.initFromHttpResponse(any(HttpResponse.class))).thenReturn(null);
 
     return new AsyncRequestWrapperImpl(oDataClient, oDataRequest);
   }
 
   @Test
-  public void testTooBigRetryAfter() throws IOException {
+  public void testTooBigRetryAfter() throws IOException, URISyntaxException {
 
     AsyncRequestWrapperImpl req = createAsyncRequestWrapperImplWithRetryAfter(Integer.MAX_VALUE);
     AsyncResponseWrapper wrappedResponse = req.execute();
@@ -132,7 +132,7 @@ public class AsyncRequestWrapperTest {
   }
 
   @Test
-  public void testZeroRetryAfter() throws IOException {
+  public void testZeroRetryAfter() throws IOException, URISyntaxException {
 
     AsyncRequestWrapperImpl req = createAsyncRequestWrapperImplWithRetryAfter(0);
     AsyncResponseWrapper wrappedResponse = req.execute();
@@ -142,7 +142,7 @@ public class AsyncRequestWrapperTest {
   }
 
   @Test
-  public void testNegativeRetryAfter() throws IOException {
+  public void testNegativeRetryAfter() throws IOException, URISyntaxException {
 
     AsyncRequestWrapperImpl req = createAsyncRequestWrapperImplWithRetryAfter(-1);
     AsyncResponseWrapper wrappedResponse = req.execute();
@@ -152,7 +152,7 @@ public class AsyncRequestWrapperTest {
   }
 
   @Test
-  public void testRetryAfter() throws IOException {
+  public void testRetryAfter() throws IOException, URISyntaxException {
 
     int retryAfter = 7;
     assertNotEquals(retryAfter, AsyncResponseWrapperImpl.DEFAULT_RETRY_AFTER);
@@ -176,6 +176,70 @@ public class AsyncRequestWrapperTest {
 
     AsyncRequestException ex = new AsyncRequestException("Exception");
     assertEquals("Exception", ex.getMessage());
+  }
+
+  private AsyncResponseWrapperImpl createAsyncRequestWrapperImplWithLocation(String target, String location)
+      throws IOException, URISyntaxException {
+
+    HttpClient httpClient = mock(HttpClient.class);
+    ODataClient oDataClient = mock(ODataClient.class);
+    Configuration configuration = mock(Configuration.class);
+    HttpClientFactory httpClientFactory = mock(HttpClientFactory.class);
+    HttpUriRequestFactory httpUriRequestFactory = mock(HttpUriRequestFactory.class);
+    HttpUriRequest httpUriRequest = mock(HttpUriRequest.class);
+
+    when(oDataClient.getConfiguration()).thenReturn(configuration);
+    when(configuration.getHttpClientFactory()).thenReturn(httpClientFactory);
+    when(configuration.getHttpUriRequestFactory()).thenReturn(httpUriRequestFactory);
+    when(httpClientFactory.create(any(), any())).thenReturn(httpClient);
+    when(httpUriRequestFactory.create(any(), any())).thenReturn(httpUriRequest);
+
+    HttpResponseFactory factory = new DefaultHttpResponseFactory();
+    HttpResponse firstResponse = factory.newHttpResponse(
+        new BasicStatusLine(HttpVersion.HTTP_1_1, 202, null), null);
+    firstResponse.addHeader(HttpHeader.LOCATION, location);
+    when(httpClient.execute(any(HttpUriRequest.class))).thenReturn(firstResponse);
+
+    ODataResponse oDataResponse = mock(ODataResponse.class);
+    when(oDataResponse.initFromHttpResponse(any(HttpResponse.class))).thenReturn(null);
+
+    AbstractODataRequest oDataRequest = mock(AbstractODataRequest.class);
+    when(oDataRequest.getURI()).thenReturn(new URI(target));
+    when(oDataRequest.getResponseTemplate()).thenReturn(oDataResponse);
+
+    AsyncRequestWrapperImpl req = new AsyncRequestWrapperImpl(oDataClient, oDataRequest);
+    AsyncResponseWrapper wrappedResponse = req.execute();
+    assertTrue(wrappedResponse instanceof AsyncResponseWrapperImpl);
+    return (AsyncResponseWrapperImpl) wrappedResponse;
+  }
+
+  @Test(expected = AsyncRequestException.class)
+  public void testLocationWithInvalidScheme() throws IOException, URISyntaxException {
+    String target = "https://server/path";
+    String location = "http://server/path";
+    createAsyncRequestWrapperImplWithLocation(target, location);
+  }
+
+  @Test(expected = AsyncRequestException.class)
+  public void testLocationWithInvalidHost() throws IOException, URISyntaxException {
+    String target = "http://server/path";
+    String location = "http://something.else/path";
+    createAsyncRequestWrapperImplWithLocation(target, location);
+  }
+
+  @Test(expected = AsyncRequestException.class)
+  public void testLocationWithInvalidPort() throws IOException, URISyntaxException {
+    String target = "http://server/path";
+    String location = "http://server:8080/path";
+    createAsyncRequestWrapperImplWithLocation(target, location);
+  }
+
+  @Test
+  public void testLocationWithDifferentPaths() throws IOException, URISyntaxException {
+    String target = "http://server/path";
+    String location = "http://server/monitor";
+    AsyncResponseWrapperImpl wrapper = createAsyncRequestWrapperImplWithLocation(target, location);
+    assertEquals(new URI(location), wrapper.location);
   }
 
 }
