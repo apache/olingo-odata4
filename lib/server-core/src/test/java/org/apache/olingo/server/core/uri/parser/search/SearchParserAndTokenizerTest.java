@@ -29,6 +29,7 @@ public class SearchParserAndTokenizerTest {
 
   @Test
   public void basicParsing() throws Exception {
+    assertQuery("99").resultsIn("'99'");
     assertQuery("\"99\"").resultsIn("'99'");
     assertQuery("a").resultsIn("'a'");
     assertQuery("a AND b").resultsIn("{'a' AND 'b'}");
@@ -83,7 +84,6 @@ public class SearchParserAndTokenizerTest {
 
   @Test
   public void invalidSearchQuery() throws Exception {
-    assertQuery("99").resultsIn(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
     assertQuery("NOT").resultsIn(SearchParserException.MessageKeys.INVALID_NOT_OPERAND);
     assertQuery("AND").resultsInExpectedTerm(SearchQueryToken.Token.AND.name());
     assertQuery("OR").resultsInExpectedTerm(SearchQueryToken.Token.OR.name());

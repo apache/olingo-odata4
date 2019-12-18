@@ -89,7 +89,7 @@ public class SearchParserTest {
         .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
     testUri.runEx("ESTwoKeyNav", "$search=%22a%5Cbc%22")
         .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
-    testUri.runEx("ESTwoKeyNav", "$search=not%27allowed")
+    testUri.runEx("ESTwoKeyNav", "$search=not%28allowed")
         .isExceptionMessage(SearchParserException.MessageKeys.TOKENIZER_EXCEPTION);
   }
 

@@ -21,6 +21,7 @@ package org.apache.olingo.server.core.uri.parser.search;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * <pre>
  * searchExpr    = ( OPEN BWS searchExpr BWS CLOSE / searchTerm )
@@ -121,7 +122,11 @@ public class SearchTokenizer {
     }
 
     static boolean isAllowedWord(final char character) {
-      return Character.isUnicodeIdentifierStart(character);
+      return Character.isUnicodeIdentifierStart(character)
+          || Character.DASH_PUNCTUATION == Character.getType(character)
+          || Character.DECIMAL_DIGIT_NUMBER == Character.getType(character) 
+          || (Character.OTHER_PUNCTUATION == Character.getType(character) && 
+          (character != ';' && character != '"'));
     }
     
     /**
@@ -614,6 +619,10 @@ public class SearchTokenizer {
    */
   public List<SearchQueryToken> tokenize(final String searchQuery) throws SearchTokenizerException {
 
+    if (searchQuery.contains("%28") || searchQuery.contains("%29") || searchQuery.contains("%22")) {
+      throw new SearchTokenizerException("Invalid Token in Query string '",
+          SearchTokenizerException.MessageKeys.NOT_EXPECTED_TOKEN, searchQuery);
+    }
     char[] chars = searchQuery.trim().toCharArray();
 
     State state = new SearchExpressionState();

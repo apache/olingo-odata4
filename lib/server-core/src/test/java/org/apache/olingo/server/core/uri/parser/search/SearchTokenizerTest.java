@@ -54,16 +54,20 @@ public class SearchTokenizerTest {
     assertQuery("AN").resultsIn(word("AN"));
     assertQuery("O").resultsIn(word("O"));
     assertQuery("notAw0rd").resultsIn(word("notAw0rd"));
+    assertQuery("1").resultsIn(word("1"));
+    assertQuery("-").resultsIn(word("-"));
+    assertQuery("1.23a").resultsIn(word("1.23a"));
+    assertQuery(",").resultsIn(word(","));
+    assertQuery("*").resultsIn(word("*"));
     assertQuery("not,").resultsIn(word("not,"));
     assertQuery("not.").resultsIn(word("not."));
     assertQuery("B-B").resultsIn(word("B-B"));
     assertQuery("ǅ").resultsIn(word("ǅ"));
     // invalid
-    assertQuery("%2F").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
-    assertQuery("%3A").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
-    assertQuery("not%5B").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
-    assertQuery("not%7B").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
-    assertQuery("not%6A").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery(";").resultsIn(SearchTokenizerException.MessageKeys.FORBIDDEN_CHARACTER);
+    assertQuery("%28").resultsIn(SearchTokenizerException.MessageKeys.NOT_EXPECTED_TOKEN);
+    assertQuery("%29").resultsIn(SearchTokenizerException.MessageKeys.NOT_EXPECTED_TOKEN);
+    assertQuery("not%22").resultsIn(SearchTokenizerException.MessageKeys.NOT_EXPECTED_TOKEN);
   }
 
   private Validator.Tuple word(final String literal) {
