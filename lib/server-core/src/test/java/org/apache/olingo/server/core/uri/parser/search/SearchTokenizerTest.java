@@ -45,6 +45,7 @@ public class SearchTokenizerTest {
 
   @Test
   public void parseWords() throws Exception {
+    assertQuery("C++%20=$@:,*!/?'%27").resultsIn(WORD);
     assertQuery("somesimpleword").resultsIn(WORD);
     assertQuery("anotherWord\u1234").resultsIn(WORD);
     // special

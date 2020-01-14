@@ -54,9 +54,6 @@ public class SearchTokenizer {
     protected static final char CHAR_R = 'R';
     protected static final char CHAR_CLOSE = ')';
     protected static final char CHAR_OPEN = '(';
-    protected static final char CHAR_COMMA = ',';
-    protected static final char CHAR_DOT = '.';
-    protected static final char CHAR_HYPEN = '-';
 
     public State() {}
 
@@ -123,10 +120,8 @@ public class SearchTokenizer {
 
     static boolean isAllowedWord(final char character) {
       return Character.isUnicodeIdentifierStart(character)
-          || Character.DASH_PUNCTUATION == Character.getType(character)
-          || Character.DECIMAL_DIGIT_NUMBER == Character.getType(character) 
-          || (Character.OTHER_PUNCTUATION == Character.getType(character) && 
-          (character != ';' && character != '"'));
+          || isUnreserved(character)
+          || isOtherDelimsForWord(character);
     }
     
     /**
@@ -206,6 +201,26 @@ public class SearchTokenizer {
           || character == ';';
     }
 
+    /**
+     * other-delims = "!" / "(" / ")" / "*" / "+" / "," / ";"
+     * @param character which is checked
+     * @return true if character is allowed
+     */
+    private static boolean isOtherDelimsForWord(final char character) {
+      return character == '!'
+          || character == '*'
+          || character == '+'
+          || character == ','
+          || character == ':'
+          || character == '@'
+          || character == '/'
+          || character == '?'
+          || character == '$'
+          || character == '='
+          || character == '%'
+          || character == '\'';
+    }
+    
     /**
      * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
      * @param character which is checked
@@ -352,11 +367,7 @@ public class SearchTokenizer {
 
     @Override
     public State nextChar(final char c) throws SearchTokenizerException {
-      if (isAllowedWord(c) ||
-          ('0' <= c && c <= '9') ||
-          (c == CHAR_COMMA) ||
-          (c == CHAR_DOT) ||
-          (c == CHAR_HYPEN)) {
+      if (isAllowedWord(c)) {
         return allowed(c);
       } else if (c == CHAR_CLOSE) {
         finish();
