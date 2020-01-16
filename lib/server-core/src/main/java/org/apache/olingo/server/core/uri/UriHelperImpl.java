@@ -125,7 +125,7 @@ public class UriHelperImpl implements UriHelper {
      }
     if (prop == null) {
       throw new SerializerException("Key Value Cannot be null for property: " + propertyPath, 
-          SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, propertyPath);
+          SerializerException.MessageKeys.NULL_PROPERTY, propertyPath);
     }
     return prop.getValue();
   }
