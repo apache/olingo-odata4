@@ -125,4 +125,27 @@ public enum EdmPrimitiveTypeKind {
     return valueOf(fqn.substring(4));
   }
 
+  public EdmPrimitiveTypeKind[] getSameClassKinds() {
+    EdmPrimitiveTypeKind[] edmPrimitiveTypeKinds;
+    switch (this) {
+    case Int16:
+    case Int32:
+    case Int64:
+    case SByte:
+      edmPrimitiveTypeKinds = createArray(Int16, Int32, Int64, SByte);
+      break;
+    case Decimal:
+    case Double:
+      edmPrimitiveTypeKinds = createArray(Decimal, Double);
+      break;
+    default:
+      edmPrimitiveTypeKinds = createArray(this);
+      break;
+    }
+    return edmPrimitiveTypeKinds;
+  }
+
+  private EdmPrimitiveTypeKind[] createArray(EdmPrimitiveTypeKind... array) {
+    return array;
+  }
 }

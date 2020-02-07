@@ -362,7 +362,7 @@ public class ExpressionParser {
       throws UriParserException, UriParserSemanticException {
     for (Expression expr : expressionList) {
       EdmType inExprType = getType(expr);
-      if (!isType(inExprType, kinds)) {
+      if (!isType(inExprType, kinds.getSameClassKinds())) {
         throw new UriParserSemanticException("Incompatible types.",
             UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
             inExprType == null ? "" : inExprType.getFullQualifiedName().getFullQualifiedNameAsString(),
