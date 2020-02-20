@@ -144,7 +144,7 @@
               org.apache.olingo.client.core.communication.request*
             </Export-Package>
             <Import-Package>
-              *
+              *;version=!
             </Import-Package>
           </instructions>
         </configuration>
