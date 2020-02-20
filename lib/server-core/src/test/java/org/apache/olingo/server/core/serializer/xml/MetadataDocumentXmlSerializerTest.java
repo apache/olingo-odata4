@@ -318,6 +318,12 @@ public class MetadataDocumentXmlSerializerTest {
         "Function=\"Alias.UFNRTInt16\" IncludeInServiceDocument=\"true\"></FunctionImport>"));
     assertTrue(metadata.contains("<FunctionImport Name=\"FINRTET\" Function=\"Alias.UFNRTETAllPrim\" "
         + "EntitySet=\"ESAllPrim\" IncludeInServiceDocument=\"true\"></FunctionImport>"));
+    assertTrue(metadata.contains("<ActionImport Name=\"AIRTOtherEntity\" Action=\"Alias.UARTOtherEntity\" "
+        + "EntitySet=\"namespace1.container1/ES\"></ActionImport>"));
+    assertTrue(metadata.contains("<ActionImport Name=\"AIRTEntity\" Action=\"Alias.UARTEntity\" "
+        + "EntitySet=\"ESAllPrim\"></ActionImport>"));
+    assertTrue(metadata.contains("<ActionImport Name=\"AIRTEntityNoES\" Action=\"Alias.UARTEntity\">"
+        + "</ActionImport>"));
   }
 
   @Test
@@ -475,13 +481,17 @@ public class MetadataDocumentXmlSerializerTest {
 
   static class LocalProvider implements CsdlEdmProvider {
     private final static String nameSpace = "namespace";
+    private final static String nameSpace1 = "namespace1";
 
     private final FullQualifiedName nameETAbstract = new FullQualifiedName(nameSpace, "ETAbstract");
+    private final FullQualifiedName nameET = new FullQualifiedName(nameSpace1, "ET");
     private final FullQualifiedName nameETAbstractBase = new FullQualifiedName(nameSpace, "ETAbstractBase");
 
     private final FullQualifiedName nameInt16 = EdmPrimitiveTypeKind.Int16.getFullQualifiedName();
     private final FullQualifiedName nameString = EdmPrimitiveTypeKind.String.getFullQualifiedName();
     private final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(nameSpace, "UARTPrimParam");
+    private final FullQualifiedName nameUARTOtherEntity = new FullQualifiedName(nameSpace, "UARTOtherEntity");
+    private final FullQualifiedName nameUARTEntity = new FullQualifiedName(nameSpace, "UARTEntity");
     private final CsdlProperty propertyInt16_NotNullable = new CsdlProperty()
     .setName("PropertyInt16")
     .setType(nameInt16)
@@ -495,6 +505,7 @@ public class MetadataDocumentXmlSerializerTest {
     private final FullQualifiedName nameUFNRTInt16 = new FullQualifiedName(nameSpace, "UFNRTInt16");
     private final FullQualifiedName nameUFNRTETAllPrim = new FullQualifiedName(nameSpace, "UFNRTETAllPrim");
     private final FullQualifiedName nameContainer = new FullQualifiedName(nameSpace, "container");
+    private final FullQualifiedName nameContainer1 = new FullQualifiedName(nameSpace1, "container1");
     private final FullQualifiedName nameENString = new FullQualifiedName(nameSpace, "ENString");
 
     @Override
@@ -528,6 +539,11 @@ public class MetadataDocumentXmlSerializerTest {
         .setBaseType(nameETAbstract)
         .setKey(Collections.singletonList(new CsdlPropertyRef().setName("PropertyInt16")))
         .setProperties(Collections.singletonList(propertyInt16_NotNullable));
+      } else if (entityTypeName.equals(nameET)) {
+        return new CsdlEntityType()
+        .setName("ET")
+        .setKey(Collections.singletonList(new CsdlPropertyRef().setName("PropertyInt16")))
+        .setProperties(Collections.singletonList(propertyInt16_NotNullable));
       }
       return null;
     }
@@ -558,6 +574,14 @@ public class MetadataDocumentXmlSerializerTest {
             .setParameters(Collections.singletonList(
                 new CsdlParameter().setName("ParameterInt16").setType(nameInt16)))
                 .setReturnType(new CsdlReturnType().setType(nameString)));
+      } else if (actionName.equals(nameUARTOtherEntity)) {
+        return Collections.singletonList(
+            new CsdlAction().setName("UARTOtherEntity")
+            .setReturnType(new CsdlReturnType().setType(nameET)));
+      } else if (actionName.equals(nameUARTEntity)) {
+        return Collections.singletonList(
+            new CsdlAction().setName("UARTEntity")
+            .setReturnType(new CsdlReturnType().setType(nameETAbstract)));
       }
       return null;
     }
@@ -587,6 +611,10 @@ public class MetadataDocumentXmlSerializerTest {
         return new CsdlEntitySet()
         .setName("ESAllPrim")
         .setType(nameETAbstractBase);
+      } else if (entitySetName.equals("ES")) {
+        return new CsdlEntitySet()
+        .setName("ES")
+        .setType(nameET);
       }
       return null;
     }
@@ -610,6 +638,20 @@ public class MetadataDocumentXmlSerializerTest {
           return new CsdlActionImport()
           .setName("AIRTPrimParam")
           .setAction(nameUARTPrimParam);
+        } else if (actionImportName.equals("AIRTOtherEntity")) {
+          return new CsdlActionImport()
+              .setName("AIRTOtherEntity")
+              .setAction(nameUARTOtherEntity)
+              .setEntitySet(nameContainer1.getFullQualifiedNameAsString() + "/ES");
+        } else if (actionImportName.equals("AIRTEntity")) {
+          return new CsdlActionImport()
+              .setName("AIRTEntity")
+              .setAction(nameUARTEntity)
+              .setEntitySet("ESAllPrim");
+        } else if (actionImportName.equals("AIRTEntityNoES")) {
+          return new CsdlActionImport()
+              .setName("AIRTEntityNoES")
+              .setAction(nameUARTEntity);
         }
       }
       return null;
@@ -643,6 +685,17 @@ public class MetadataDocumentXmlSerializerTest {
       schema.setNamespace(nameSpace);
       schema.setAlias("Alias");
       schemas.add(schema);
+      
+      CsdlSchema schema1 = new CsdlSchema();
+      schema1.setNamespace(nameSpace1);
+      schema1.setAlias("Alias1");
+      schemas.add(schema1);
+      
+      // Add entity type
+      schema1.setEntityTypes(Arrays.asList(getEntityType(nameET)));
+      
+      // Add entity container
+      schema1.setEntityContainer(getEntityContainer1());
 
       // EnumTypes
       schema.setEnumTypes(Collections.singletonList(getEnumType(nameENString)));
@@ -660,7 +713,11 @@ public class MetadataDocumentXmlSerializerTest {
       // TypeDefinitions
 
       // Actions
-      schema.setActions(getActions(nameUARTPrimParam));
+      List<CsdlAction> actions = new ArrayList<>();
+      actions.addAll(getActions(nameUARTPrimParam));
+      actions.addAll(getActions(nameUARTOtherEntity));
+      actions.addAll(getActions(nameUARTEntity));
+      schema.setActions(actions);
 
       // Functions
       schema.setFunctions(getFunctions(nameUFNRTInt16));
@@ -698,20 +755,33 @@ public class MetadataDocumentXmlSerializerTest {
     public CsdlEntityContainer getEntityContainer() throws ODataException {
       CsdlEntityContainer container = new CsdlEntityContainer();
       container.setName("container");
-
+      
       // EntitySets
-      container.setEntitySets(Collections.singletonList(getEntitySet(nameContainer, "ESAllPrim")));
+      List<CsdlEntitySet> entitySets = new ArrayList<>();
+      entitySets.add(getEntitySet(nameContainer, "ESAllPrim"));
+      container.setEntitySets(entitySets);
 
       // Singletons
       container.setSingletons(Collections.singletonList(getSingleton(nameContainer, "SI")));
 
       // ActionImports
-      container.setActionImports(Collections.singletonList(getActionImport(nameContainer, "AIRTPrimParam")));
+      container.setActionImports(Arrays.asList(getActionImport(nameContainer, "AIRTPrimParam"), 
+          getActionImport(nameContainer, "AIRTOtherEntity"), getActionImport(nameContainer, "AIRTEntity"),
+          getActionImport(nameContainer, "AIRTEntityNoES")));
 
       // FunctionImports
       container.setFunctionImports(Arrays.asList(getFunctionImport(nameContainer, "FINRTInt16"),
           getFunctionImport(nameContainer, "FINRTET")));
 
+      return container;
+    }
+
+    public CsdlEntityContainer getEntityContainer1() throws ODataException {
+      CsdlEntityContainer container = new CsdlEntityContainer();
+      container.setName("container1");
+      
+      // EntitySets
+      container.setEntitySets(Collections.singletonList(getEntitySet(nameContainer1, "ES")));
       return container;
     }
 

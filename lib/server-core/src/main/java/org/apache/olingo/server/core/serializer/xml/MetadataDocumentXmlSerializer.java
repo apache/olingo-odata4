@@ -607,6 +607,17 @@ public class MetadataDocumentXmlSerializer {
       writer.writeStartElement(XML_ACTION_IMPORT);
       writer.writeAttribute(XML_NAME, actionImport.getName());
       writer.writeAttribute(XML_ACTION, getAliasedFullQualifiedName(actionImport.getUnboundAction(), false));
+      EdmEntitySet returnedEntitySet = actionImport.getReturnedEntitySet();
+      if (returnedEntitySet != null) {
+        String fullQualifiedName = returnedEntitySet.getEntityContainer()
+            .getFullQualifiedName().getFullQualifiedNameAsString();
+        if (!actionImport.getEntityContainer().getFullQualifiedName().getFullQualifiedNameAsString()
+            .equalsIgnoreCase(fullQualifiedName)) {
+          writer.writeAttribute(XML_ENTITY_SET, fullQualifiedName +  "/" + returnedEntitySet.getName());
+        } else {
+          writer.writeAttribute(XML_ENTITY_SET, returnedEntitySet.getName());
+        }
+      }
       appendAnnotations(writer, actionImport);
       writer.writeEndElement();
     }
