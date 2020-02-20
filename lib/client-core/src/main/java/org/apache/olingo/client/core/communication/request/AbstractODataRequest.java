@@ -306,10 +306,10 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     try {
       response = httpClient.execute(request);
     } catch (IOException e) {
-      throw new HttpClientException(e);
+      throw new HttpClientException(request.getURI().toASCIIString(), e);
     } catch (RuntimeException e) {
       request.abort();
-      throw new HttpClientException(e);
+      throw new HttpClientException(request.getURI().toASCIIString(), e);
     }
 
     try {
