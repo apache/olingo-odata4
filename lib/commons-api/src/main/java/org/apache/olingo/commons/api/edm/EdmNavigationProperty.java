@@ -57,5 +57,7 @@ public interface EdmNavigationProperty extends EdmElement, EdmAnnotatable {
    * @return all referential constraints for this navigation property.
    */
   List<EdmReferentialConstraint> getReferentialConstraints();
+  
+  EdmOnDelete getOnDelete();
 
 }

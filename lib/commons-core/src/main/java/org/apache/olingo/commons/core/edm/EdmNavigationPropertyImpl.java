@@ -26,9 +26,11 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
+import org.apache.olingo.commons.api.edm.EdmOnDelete;
 import org.apache.olingo.commons.api.edm.EdmReferentialConstraint;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDelete;
 import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
 public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmNavigationProperty {
@@ -118,5 +120,11 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmNa
       referentialConstraints = Collections.unmodifiableList(referentialConstraintsLocal);
     }
     return referentialConstraints;
+  }
+
+  @Override
+  public EdmOnDelete getOnDelete() {
+    CsdlOnDelete csdlOnDelete = navigationProperty.getOnDelete();
+    return csdlOnDelete != null ? new EdmOnDeleteImpl(edm, csdlOnDelete) : null;
   }
 }

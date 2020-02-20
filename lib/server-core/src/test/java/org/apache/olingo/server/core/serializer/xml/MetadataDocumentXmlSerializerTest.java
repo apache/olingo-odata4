@@ -60,6 +60,9 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEnumMember;
 import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
+import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDelete;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDeleteAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
@@ -324,6 +327,9 @@ public class MetadataDocumentXmlSerializerTest {
         + "EntitySet=\"ESAllPrim\"></ActionImport>"));
     assertTrue(metadata.contains("<ActionImport Name=\"AIRTEntityNoES\" Action=\"Alias.UARTEntity\">"
         + "</ActionImport>"));
+    assertTrue(metadata.contains("<NavigationProperty Name=\"NavProperty\" "
+        + "Type=\"Alias.ETAbstract\" Nullable=\"false\"><OnDelete Action=\"Cascade\">"
+        + "<Annotation Term=\"core.Term\"></Annotation></OnDelete></NavigationProperty>"));
   }
 
   @Test
@@ -499,6 +505,13 @@ public class MetadataDocumentXmlSerializerTest {
     private final CsdlProperty propertyString = new CsdlProperty()
     .setName("PropertyString")
     .setType(nameString);
+    
+    private final CsdlNavigationProperty navProperty = new CsdlNavigationProperty()
+        .setName("NavProperty")
+        .setType(nameETAbstract)
+        .setNullable(false)
+        .setOnDelete(new CsdlOnDelete().setAction(CsdlOnDeleteAction.Cascade)
+            .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("core.Term"))));
 
     private final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(nameSpace, "CTTwoPrim");
     private final FullQualifiedName nameCTTwoPrimBase = new FullQualifiedName(nameSpace, "CTTwoPrimBase");
@@ -543,7 +556,8 @@ public class MetadataDocumentXmlSerializerTest {
         return new CsdlEntityType()
         .setName("ET")
         .setKey(Collections.singletonList(new CsdlPropertyRef().setName("PropertyInt16")))
-        .setProperties(Collections.singletonList(propertyInt16_NotNullable));
+        .setProperties(Collections.singletonList(propertyInt16_NotNullable))
+        .setNavigationProperties(Collections.singletonList(navProperty));
       }
       return null;
     }
@@ -808,6 +822,9 @@ public class MetadataDocumentXmlSerializerTest {
 
       } else if (new FullQualifiedName("ns", "Term4").equals(termName)) {
         return new CsdlTerm().setType("Edm.String").setName("Term4").setBaseTerm("namespace.Term1");
+
+      } else if (new FullQualifiedName("core", "Term").equals(termName)) {
+        return new CsdlTerm().setType("Edm.String").setName("Term").setBaseTerm("core.Term");
 
       }
       return null;

@@ -154,6 +154,8 @@ public class MetadataDocumentXmlSerializer {
   private static final String XML_PROPERTY_VALUE = "PropertyValue";
   private static final String XML_BASE_TERM = "BaseTerm";
   private static final String XML_APPLIES_TO = "AppliesTo";
+  private static final String XML_ON_DELETE = "OnDelete";
+  private static final String XML_ON_DELETE_PROPERTY = "Action";
 
   private final ServiceMetadata serviceMetadata;
   private final Map<String, String> namespaceToAlias = new HashMap<>();
@@ -875,6 +877,13 @@ public class MetadataDocumentXmlSerializer {
           appendAnnotations(writer, constraint);
           writer.writeEndElement();
         }
+      }
+      
+      if (navigationProperty.getOnDelete() != null) {
+        writer.writeStartElement(XML_ON_DELETE);
+        writer.writeAttribute(XML_ON_DELETE_PROPERTY, navigationProperty.getOnDelete().getAction());
+        appendAnnotations(writer, navigationProperty.getOnDelete());
+        writer.writeEndElement();
       }
 
       appendAnnotations(writer, navigationProperty);
