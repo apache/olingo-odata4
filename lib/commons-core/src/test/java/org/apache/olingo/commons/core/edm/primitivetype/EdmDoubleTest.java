@@ -91,6 +91,8 @@ public class EdmDoubleTest extends PrimitiveTypeBaseTest {
     assertEquals(Integer.valueOf(42), instance.valueOfString("4.2E1", null, null, null, null, null, Integer.class));
     assertEquals(Long.valueOf(1234567890), instance.valueOfString("1234567890E-00", null, null, null, null, null,
         Long.class));
+    assertEquals(Double.valueOf(-0.043099999999995475), instance.valueOfString("-0.043099999999995475", null, null, 
+        null, null, null, Double.class));
 
     assertEquals(Double.valueOf(Double.NaN), instance.valueOfString("NaN", null, null, null, null, null,
         Double.class));

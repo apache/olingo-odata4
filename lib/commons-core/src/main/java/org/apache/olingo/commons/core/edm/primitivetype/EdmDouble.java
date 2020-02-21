@@ -36,7 +36,7 @@ public final class EdmDouble extends SingletonPrimitiveType {
   protected static final String NaN = "NaN";
 
   private static final Pattern PATTERN = Pattern.compile(
-      "(?:\\+|-)?\\p{Digit}{1,17}(?:\\.\\p{Digit}{1,17})?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,3})?");
+      "(?:\\+|-)?\\p{Digit}+(?:\\.\\p{Digit}+)?(?:(?:E|e)(?:\\+|-)?\\p{Digit}{1,3})?");
 
   private static final EdmDouble INSTANCE = new EdmDouble();
 
