@@ -338,7 +338,7 @@ public class ExpressionParser {
       if (tokenizer.next(TokenKind.OPEN)) {
         ParserHelper.bws(tokenizer);
         List<Expression> expressionList = parseInExpr();
-        checkInExpressionTypes(expressionList, kinds);
+        checkInExpressionTypes(expressionList, leftExprType);
         return new BinaryImpl(left, BinaryOperatorKind.IN, expressionList,
             odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Boolean));
       } else {
@@ -354,19 +354,20 @@ public class ExpressionParser {
 
   /**
    * @param expressionList
-   * @param kinds
+   * @param leftExprType
    * @throws UriParserException
    * @throws UriParserSemanticException
    */
-  private void checkInExpressionTypes(List<Expression> expressionList, EdmPrimitiveTypeKind kinds)
+  private void checkInExpressionTypes(List<Expression> expressionList, EdmType leftExprType)
       throws UriParserException, UriParserSemanticException {
     for (Expression expr : expressionList) {
       EdmType inExprType = getType(expr);
-      if (!isType(inExprType, kinds)) {
+      
+      if (!(((EdmPrimitiveType) leftExprType).isCompatible((EdmPrimitiveType) inExprType))) {
         throw new UriParserSemanticException("Incompatible types.",
             UriParserSemanticException.MessageKeys.TYPES_NOT_COMPATIBLE,
             inExprType == null ? "" : inExprType.getFullQualifiedName().getFullQualifiedNameAsString(),
-            kinds.getFullQualifiedName().getFullQualifiedNameAsString());
+            leftExprType.getFullQualifiedName().getFullQualifiedNameAsString());
       }
     }
   }
