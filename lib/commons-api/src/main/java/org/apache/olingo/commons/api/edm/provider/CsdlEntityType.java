@@ -39,6 +39,16 @@ public class CsdlEntityType extends CsdlStructuralType {
   public boolean hasStream() {
     return hasStream;
   }
+  
+   /**
+   * Has stream.
+   * Duplicate getter according to java naming conventions.
+   *
+   * @return the boolean
+   */
+  public boolean isHasStream() {
+    return hasStream;
+  }
 
   /**
    * Sets has stream.
