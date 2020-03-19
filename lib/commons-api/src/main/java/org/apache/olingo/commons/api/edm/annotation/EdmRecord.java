@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.olingo.commons.api.edm.EdmAnnotatable;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 
 /**
  * The edm:Record expression enables a new entity type or complex type instance to be constructed.
@@ -40,4 +41,10 @@ public interface EdmRecord extends EdmDynamicExpression, EdmAnnotatable {
    * @return Entity type or complex type
    */
   EdmStructuredType getType();
+  
+  /**
+   * 
+   * @return Fully Qualified Name of the Record
+   */
+  FullQualifiedName getTypeFQN();
 }

@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
@@ -130,6 +131,8 @@ public class MetadataDocumentJsonSerializer {
   private static final String ANNOTATION = DOLLAR + "Annotations";
   private static final String ANNOTATION_PATH = DOLLAR + "Path";
   private static final String NAME = DOLLAR + "Name";
+  private static final String ON_DELETE = "OnDelete";
+  private static final String ON_DELETE_PROPERTY = "Action";
 
   public MetadataDocumentJsonSerializer(final ServiceMetadata serviceMetadata) throws SerializerException {
     if (serviceMetadata == null || serviceMetadata.getEdm() == null) {
@@ -663,6 +666,13 @@ public class MetadataDocumentJsonSerializer {
           json.writeEndObject();
         }
       }
+      
+      if (navigationProperty.getOnDelete() != null) {
+        json.writeObjectFieldStart(ON_DELETE);
+        json.writeStringField(ON_DELETE_PROPERTY, navigationProperty.getOnDelete().getAction());
+        appendAnnotations(json, navigationProperty.getOnDelete(), null);
+        json.writeEndObject();
+      }
 
       appendAnnotations(json, navigationProperty, null);
 
@@ -993,9 +1003,16 @@ public class MetadataDocumentJsonSerializer {
     case Record:
       EdmRecord asRecord = dynExp.asRecord();
       json.writeStartObject();
-      EdmStructuredType type = asRecord.getType();
-      if (type != null) {
-        json.writeStringField(TYPE, getAliasedFullQualifiedName(type));
+      try {
+        EdmStructuredType structuredType = asRecord.getType();
+        if (structuredType != null) {
+          json.writeStringField(TYPE, getAliasedFullQualifiedName(structuredType));
+        }
+      } catch (EdmException e) {
+        FullQualifiedName type = asRecord.getTypeFQN();
+        if (type != null) {
+          json.writeStringField(TYPE, getAliasedFullQualifiedName(type));
+        }
       }
       for (EdmPropertyValue propValue : asRecord.getPropertyValues()) {
         appendExpression(json, propValue.getValue(), propValue.getProperty());

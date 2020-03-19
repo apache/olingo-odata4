@@ -64,6 +64,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlFunctionImport;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDelete;
+import org.apache.olingo.commons.api.edm.provider.CsdlOnDeleteAction;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
@@ -379,7 +381,8 @@ public class MetadataDocumentJsonSerializerTest {
         + "},\"Info\":"
         + "{\"$Type\":\"Alias.CTEntityInfo\"},"
         + "\"NavPropertyETOne\":{\"$Kind\":\"NavigationProperty\","
-        + "\"$Type\":\"Alias.ETOne\"}}"));
+        + "\"$Type\":\"Alias.ETOne\"},\"NavProperty\":{\"$Kind\":\"NavigationProperty\","
+        + "\"$Type\":\"Alias.ETAbstract\",\"$Nullable\":false,\"OnDelete\":{\"Action\":\"Cascade\"}}}"));
     assertTrue(metadata.contains("\"BAETTwoKeyNavRTETTwoKeyNavParam\":"
         + "[{\"$Kind\":\"Action\",\"$EntitySetPath\":\"BindingParam/NavPropertyETTwoKeyNavOne\","
         + "\"$IsBound\":true,\"$Parameter\":[{\"$Name\":\"BindingParam\",\"$Type\":\"Alias.ETTwoKeyNav\"},"
@@ -526,6 +529,12 @@ public class MetadataDocumentJsonSerializerTest {
         .setScale(2)
         .setDefaultValue("10-2-2017:20:30:40")
         .setMaxLength(30);
+    private final CsdlNavigationProperty navProperty = new CsdlNavigationProperty()
+        .setName("NavProperty")
+        .setType(nameETAbstract)
+        .setNullable(false)
+        .setOnDelete(new CsdlOnDelete().setAction(CsdlOnDeleteAction.Cascade)
+            .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("core.Term"))));
     
     private final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(nameSpace, "CTTwoPrim");
     private final FullQualifiedName nameCTTwoPrimBase = new FullQualifiedName(nameSpace, "CTTwoPrimBase");
@@ -596,7 +605,7 @@ public class MetadataDocumentJsonSerializerTest {
             .setKey(Arrays.asList(new CsdlPropertyRef().setAlias("EntityInfoID").setName("Info/ID"), 
                 new CsdlPropertyRef().setName("name")))
             .setNavigationProperties(Arrays.asList(
-                new CsdlNavigationProperty().setName("NavPropertyETOne").setType(nameETOne)))
+                new CsdlNavigationProperty().setName("NavPropertyETOne").setType(nameETOne), navProperty))
             .setProperties(Arrays.asList(nameProperty, infoProperty));
       } else if (entityTypeName.equals(nameETTwoKeyNav)) {
         return new CsdlEntityType()

@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.edm.EdmEntityContainer;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmEnumType;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmFunction;
 import org.apache.olingo.commons.api.edm.EdmFunctionImport;
 import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
@@ -455,10 +456,18 @@ public class MetadataDocumentXmlSerializer {
       break;
     case Record:
       EdmRecord asRecord = dynExp.asRecord();
-      EdmStructuredType type = asRecord.getType();
-      if (type != null) {
-        writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(type, false));
+      try {
+        EdmStructuredType structuredType = asRecord.getType();
+        if (structuredType != null) {
+          writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(structuredType, false));
+        }
+      } catch (EdmException e) {
+        FullQualifiedName type = asRecord.getTypeFQN();
+        if (type != null) {
+          writer.writeAttribute(XML_TYPE, getAliasedFullQualifiedName(type, false));
+        }
       }
+      
       for (EdmPropertyValue propValue : asRecord.getPropertyValues()) {
         writer.writeStartElement(XML_PROPERTY_VALUE);
         writer.writeAttribute(XML_PROPERTY, propValue.getProperty());

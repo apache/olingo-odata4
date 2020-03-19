@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
+import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.annotation.EdmPropertyValue;
 import org.apache.olingo.commons.api.edm.annotation.EdmRecord;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
@@ -73,5 +74,10 @@ public class EdmRecordImpl extends AbstractEdmAnnotatableDynamicExpression imple
   @Override
   public EdmExpressionType getExpressionType() {
     return EdmExpressionType.Record;
+  }
+
+  @Override
+  public FullQualifiedName getTypeFQN() {
+    return record.getType() != null ? new FullQualifiedName(record.getType()) : null;
   }
 }
