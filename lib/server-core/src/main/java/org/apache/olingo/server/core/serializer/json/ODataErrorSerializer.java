@@ -19,6 +19,9 @@
 package org.apache.olingo.server.core.serializer.json;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.ex.ODataError;
@@ -40,12 +43,14 @@ public class ODataErrorSerializer {
 
     json.writeStartObject();
     writeODataError(json, error.getCode(), error.getMessage(), error.getTarget());
+    writeODataAdditionalProperties(json, error.getAdditionalProperties());
 
     if (error.getDetails() != null) {
       json.writeArrayFieldStart(Constants.ERROR_DETAILS);
       for (ODataErrorDetail detail : error.getDetails()) {
         json.writeStartObject();
         writeODataError(json, detail.getCode(), detail.getMessage(), detail.getTarget());
+        writeODataAdditionalProperties(json, detail.getAdditionalProperties());
         json.writeEndObject();
       }
       json.writeEndArray();
@@ -55,7 +60,31 @@ public class ODataErrorSerializer {
     json.writeEndObject();
   }
 
-  private void writeODataError(final JsonGenerator json, final String code, final String message, final String target)
+  @SuppressWarnings("unchecked")
+  private void writeODataAdditionalProperties(JsonGenerator json, 
+		  Map<String, Object> additionalProperties) throws IOException {
+	  if (additionalProperties != null) {
+		  for (Entry<String, Object> additionalProperty : additionalProperties.entrySet()) {
+			  Object value = additionalProperty.getValue();
+			  if (value instanceof List) {
+				  List<Map<String, Object>> list = (List<Map<String, Object>>) value;
+				  json.writeArrayFieldStart(additionalProperty.getKey());
+				  for (Map<String, Object> entry : list) {
+					  json.writeStartObject();
+					  writeODataAdditionalProperties(json, entry);
+					  json.writeEndObject();
+				  }
+				  json.writeEndArray();
+			  } else if (value instanceof Map) {
+				  writeODataAdditionalProperties(json, (Map<String, Object>) value);
+			  } else {
+				  json.writeObjectField(additionalProperty.getKey(), value);
+			  }
+		  }
+	  }
+}
+
+private void writeODataError(final JsonGenerator json, final String code, final String message, final String target)
       throws IOException {
     json.writeFieldName(Constants.ERROR_CODE);
     if (code == null) {

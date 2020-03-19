@@ -31,6 +31,7 @@ public class ODataError {
   private String target;
   private List<ODataErrorDetail> details;
   private Map<String, String> innerError;
+  private Map<String, Object> additionalProperties;
 
   /**
    * The value for the code name/value pair is a language-independent string. Its value is a service-defined error code.
@@ -128,5 +129,23 @@ public class ODataError {
   public ODataError setInnerError(final Map<String, String> innerError) {
     this.innerError = innerError;
     return this;
+  }
+  
+  /**
+   * Sets server defined additional properties
+   * @param additionalProperties
+   * @return this for method chaining.
+   */
+  public ODataError setAdditionalProperties(final Map<String, Object> additionalProperties) {
+	  this.additionalProperties = additionalProperties;
+	  return this;
+  }
+  
+  /**
+   * Gets server defined additional properties.
+   * @return a pair representing server defined object.
+   */
+  public Map<String, Object> getAdditionalProperties() {
+	  return this.additionalProperties;
   }
 }

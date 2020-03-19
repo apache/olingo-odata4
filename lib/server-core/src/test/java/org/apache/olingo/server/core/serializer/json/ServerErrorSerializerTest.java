@@ -24,7 +24,9 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
@@ -131,5 +133,48 @@ public class ServerErrorSerializerTest {
     assertEquals("detailCode", tree.get("code").textValue());
     assertEquals("detailMessage", tree.get("message").textValue());
     assertEquals("detailTarget", tree.get("target").textValue());
+  }
+  
+  @Test
+  public void testErrorObjectWithAdditionalProperties() throws Exception {
+	  Map<String, Object> innerError = new HashMap<>();
+	  List<Map<String, Object>> list = new ArrayList<>();
+	  Map<String, Object> map = new HashMap<>();
+	  map.put("targetDetail", "targetDetail");
+	  map.put("@Common.numericSeverity", 4);
+	  list.add(map);
+	  innerError.put("@Common.additionalTargets", list);
+	  innerError.put("@Common.longtextUrl", "url");
+    ODataServerError error =
+        new ODataServerError().setCode("Code").setMessage("Message").setTarget("Target")
+        .setAdditionalProperties(innerError)
+        .setDetails(Collections.singletonList(
+            new ODataErrorDetail().setCode("detailCode").setMessage("detailMessage")
+            .setTarget("detailTarget").setAdditionalProperties(innerError)));
+    InputStream stream = ser.error(error).getContent();
+    JsonNode tree = new ObjectMapper().readTree(stream);
+    assertNotNull(tree);
+    tree = tree.get("error");
+    assertNotNull(tree);
+    assertEquals("Code", tree.get("code").textValue());
+    assertEquals("Message", tree.get("message").textValue());
+    assertEquals("Target", tree.get("target").textValue());
+    assertEquals(1, tree.get("@Common.additionalTargets").size());
+    assertEquals("targetDetail", tree.get("@Common.additionalTargets").get(0).get("targetDetail").textValue());
+    assertEquals(4, tree.get("@Common.additionalTargets").get(0).get("@Common.numericSeverity").asInt());
+    assertEquals("url", tree.get("@Common.longtextUrl").textValue());
+
+    tree = tree.get("details");
+    assertNotNull(tree);
+    assertEquals(JsonNodeType.ARRAY, tree.getNodeType());
+
+    tree = tree.get(0);
+    assertNotNull(tree);
+    assertEquals("detailCode", tree.get("code").textValue());
+    assertEquals("detailMessage", tree.get("message").textValue());
+    assertEquals("detailTarget", tree.get("target").textValue());
+    assertEquals(1, tree.get("@Common.additionalTargets").size());
+    assertEquals("targetDetail", tree.get("@Common.additionalTargets").get(0).get("targetDetail").textValue());
+    assertEquals("url", tree.get("@Common.longtextUrl").textValue());
   }
 }

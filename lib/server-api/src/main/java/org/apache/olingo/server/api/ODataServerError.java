@@ -140,4 +140,13 @@ public class ODataServerError extends ODataError {
     return this;
   }
 
+  /**
+   * Sets server defined key-value pairs.
+   * @return this for method chaining.
+   */
+  @Override
+  public ODataServerError setAdditionalProperties(final Map<String, Object> additionalProperties) {
+    super.setAdditionalProperties(additionalProperties);
+    return this;
+  }
 }

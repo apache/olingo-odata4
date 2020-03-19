@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.api.ex;
 
+import java.util.Map;
+
 /**
  * OData details， for example <tt>{ "error": {..., "details":[
  * {"code": "301","target": "$search" ,"message": "$search query option not supported"}
@@ -28,6 +30,7 @@ public class ODataErrorDetail {
   private String code;
   private String message;
   private String target;
+  private Map<String, Object> additionalProperties;
 
   /**
    * Gets error code.
@@ -75,5 +78,23 @@ public class ODataErrorDetail {
   public ODataErrorDetail setTarget(final String target) {
     this.target = target;
     return this;
+  }
+  
+  /**
+   * Sets server defined additional properties
+   * @param additionalProperties additionalProperties
+   * @return this ODataErrorDetail instance (fluent builder)
+   */
+  public ODataErrorDetail setAdditionalProperties(final Map<String, Object> additionalProperties) {
+	  this.additionalProperties = additionalProperties;
+	  return this;
+  }
+  
+  /**
+   * Gets server defined additional properties.
+   * @return a pair representing server defined object.
+   */
+  public Map<String, Object> getAdditionalProperties() {
+	  return this.additionalProperties;
   }
 }
