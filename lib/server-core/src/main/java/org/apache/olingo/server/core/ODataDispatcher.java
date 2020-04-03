@@ -83,6 +83,7 @@ public class ODataDispatcher {
   private final ODataHandlerImpl handler;
   private static final String RETURN_MINIMAL = "return=minimal";
   private static final String RETURN_REPRESENTATION = "return=representation";
+  private static final String EDMSTREAM = "Edm.Stream";
 
   public ODataDispatcher(final UriInfo uriInfo, final ODataHandlerImpl handler) {
     this.uriInfo = uriInfo;
@@ -458,8 +459,17 @@ public class ODataDispatcher {
       }
     } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
       validatePreconditions(request, false);
-      final ContentType requestFormat = getSupportedContentType(request.getHeader(HttpHeader.CONTENT_TYPE),
-          representationType, true);
+      ContentType requestFormat = null;
+      List<UriResource> uriResources = uriInfo.getUriResourceParts();
+      UriResource uriResource = uriResources.get(uriResources.size() - 1);
+      if (uriResource instanceof UriResourcePrimitiveProperty &&
+    		  ((UriResourcePrimitiveProperty)uriResource).getType()
+    		  .getFullQualifiedName().getFullQualifiedNameAsString().equalsIgnoreCase(EDMSTREAM)) {
+    	 requestFormat = ContentType.parse(request.getHeader(HttpHeader.CONTENT_TYPE));
+      } else {
+    	  requestFormat = getSupportedContentType(request.getHeader(HttpHeader.CONTENT_TYPE),
+    	          representationType, true);
+      }
       final ContentType responseFormat = ContentNegotiator.doContentNegotiation(uriInfo.getFormatOption(),
           request, handler.getCustomContentTypeSupport(), representationType);
       if (isCollection) {

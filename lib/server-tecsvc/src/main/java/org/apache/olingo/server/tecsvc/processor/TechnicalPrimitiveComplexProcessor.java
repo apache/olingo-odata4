@@ -86,7 +86,7 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     PrimitiveCollectionProcessor, CountPrimitiveCollectionProcessor,
     ComplexProcessor, ComplexCollectionProcessor, CountComplexCollectionProcessor {
 
-  private static final Object EDMSTREAM = "Edm.Stream";
+  private static final String EDMSTREAM = "Edm.Stream";
 
   public TechnicalPrimitiveComplexProcessor(final DataProvider dataProvider,
       final ServiceMetadata serviceMetadata) {
@@ -334,9 +334,12 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
 
     Property property = getPropertyData(entity, path);
 
-    if (representationType == RepresentationType.VALUE) {
+    if (representationType == RepresentationType.VALUE || 
+    		edmProperty.getType().getFullQualifiedName()
+    		.getFullQualifiedNameAsString().equalsIgnoreCase(EDMSTREAM)) {
       final FixedFormatDeserializer deserializer = odata.createFixedFormatDeserializer();
-      final Object value = edmProperty.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?
+      final Object value = edmProperty.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) 
+    		  || edmProperty.getType() == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Stream) ?
           deserializer.binary(request.getBody()) :
           deserializer.primitiveValue(request.getBody(), edmProperty);
       dataProvider.updatePropertyValue(property, value);
@@ -354,7 +357,9 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
     final Return returnPreference = odata.createPreferences(request.getHeaders(HttpHeader.PREFER)).getReturn();
     if (returnPreference == null || returnPreference == Return.REPRESENTATION) {
       response.setStatusCode(HttpStatusCode.OK.getStatusCode());
-      if (representationType == RepresentationType.VALUE) {
+      if (representationType == RepresentationType.VALUE || 
+        		edmProperty.getType().getFullQualifiedName()
+          		.getFullQualifiedNameAsString().equalsIgnoreCase(EDMSTREAM)) {
         response.setContent(
             serializePrimitiveValue(property, edmProperty, (EdmPrimitiveType) edmProperty.getType(), null));
       } else {
@@ -362,7 +367,12 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
             edmProperty.getType(), null, representationType, responseFormat, null, null);
         response.setContent(result.getContent());
       }
-      response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+      if (edmProperty.getType().getFullQualifiedName()
+        		.getFullQualifiedNameAsString().equalsIgnoreCase(EDMSTREAM)) {
+      	  response.setHeader(HttpHeader.CONTENT_TYPE, requestFormat.toContentTypeString());
+        } else {
+      	  response.setHeader(HttpHeader.CONTENT_TYPE, responseFormat.toContentTypeString());
+        }
     } else {
       response.setStatusCode(HttpStatusCode.NO_CONTENT.getStatusCode());
     }
@@ -519,7 +529,8 @@ public class TechnicalPrimitiveComplexProcessor extends TechnicalProcessor
   private InputStream serializePrimitiveValue(final Property property, final EdmProperty edmProperty,
       final EdmPrimitiveType type, final EdmReturnType returnType) throws SerializerException {
     final FixedFormatSerializer serializer = odata.createFixedFormatSerializer();
-    return type == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ?
+    return type == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Binary) ||
+    		type == odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Stream) ?
       serializer.binary((byte[]) property.getValue()) :
       serializer.primitiveValue(type, property.getValue(),
           PrimitiveValueSerializerOptions.with()
