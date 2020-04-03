@@ -36,6 +36,7 @@ import org.apache.olingo.commons.api.data.DeltaLink;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.EntityIterator;
+import org.apache.olingo.commons.api.data.EntityMediaObject;
 import org.apache.olingo.commons.api.data.Operation;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -156,7 +157,15 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
       final ContentType responseFormat) throws ODataApplicationException, ODataLibraryException {
     getEdmEntitySet(uriInfo); // including checks
     final Entity entity = readEntity(uriInfo);
-
+    final EdmEntitySet edmEntitySet = getEdmEntitySet(uriInfo.asUriInfoResource());
+    if (isMediaStreaming(edmEntitySet)) {
+		EntityMediaObject mediaEntity = new EntityMediaObject();
+		mediaEntity.setBytes(dataProvider.readMedia(entity));
+	    response.setODataContent(odata.createFixedFormatSerializer()
+	    		.mediaEntityStreamed(mediaEntity).getODataContent());
+    } else {
+    	response.setContent(odata.createFixedFormatSerializer().binary(dataProvider.readMedia(entity)));
+    }
     response.setContent(odata.createFixedFormatSerializer().binary(dataProvider.readMedia(entity)));
     response.setStatusCode(HttpStatusCode.OK.getStatusCode());
     response.setHeader(HttpHeader.CONTENT_TYPE, entity.getMediaContentType());
@@ -759,6 +768,10 @@ public class TechnicalEntityProcessor extends TechnicalProcessor
   private boolean isStreaming(EdmEntitySet edmEntitySet, ContentType contentType) {
     return (ContainerProvider.ES_STREAM.equalsIgnoreCase(edmEntitySet.getName())||
         ContainerProvider.ES_STREAM_SERVER_PAGINATION.equalsIgnoreCase(edmEntitySet.getName()));
+  }
+  
+  private boolean isMediaStreaming(EdmEntitySet edmEntitySet) {
+	return (ContainerProvider.ES_MEDIA_STREAM.equalsIgnoreCase(edmEntitySet.getName()));
   }
 
   private SerializerResult serializeEntityCollection(final ODataRequest request, final EntityCollection

@@ -34,7 +34,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import org.apache.olingo.commons.api.Constants;
@@ -78,6 +77,7 @@ public class DataCreator {
     data.put("ESAllKey", createESAllKey(edm, odata));
     data.put("ESCompComp", createESCompComp(edm, odata));
     data.put("ESMedia", createESMedia(edm, odata));
+    data.put("ESMediaStream", createESMediaStream(edm, odata));
     data.put("ESKeyNav", createESKeyNav(edm, odata));
     data.put("ESTwoKeyNav", createESTwoKeyNav(edm, odata));
     data.put("ESCompCollComp", createESCompCollComp(edm, odata));
@@ -1786,6 +1786,47 @@ public class DataCreator {
     createOperations("ESMedia", entityCollection, EntityTypeProvider.nameETMedia);
     return entityCollection;
   }
+  
+  private EntityCollection createESMediaStream(final Edm edm, final OData odata) {
+	    EntityCollection entityCollection = new EntityCollection();
+
+	    Entity entity = new Entity()
+	        .addProperty(createPrimitive("PropertyInt16", (short) 1))
+	        .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("darkturquoise")));
+	    entity.setMediaContentType("image/svg+xml");
+	    entity.setMediaETag("W/\"1\"");
+	    entity.getMediaEditLinks().add(buildMediaLink("ESMediaStream", "ESMediaStream(1)/$value"));
+	    entityCollection.getEntities().add(entity);
+
+	    entity = new Entity()
+	        .addProperty(createPrimitive("PropertyInt16", (short) 2))
+	        .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("royalblue")));
+	    entity.setMediaContentType("image/svg+xml");
+	    entity.setMediaETag("W/\"2\"");
+	    entity.getMediaEditLinks().add(buildMediaLink("ESMediaStream", "ESMediaStream(2)/$value"));
+	    entityCollection.getEntities().add(entity);
+
+	    entity = new Entity()
+	        .addProperty(createPrimitive("PropertyInt16", (short) 3))
+	        .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("crimson")));
+	    entity.setMediaContentType("image/svg+xml");
+	    entity.setMediaETag("W/\"3\"");
+	    entity.getMediaEditLinks().add(buildMediaLink("ESMediaStream", "ESMediaStream(3)/$value"));
+	    entityCollection.getEntities().add(entity);
+
+	    entity = new Entity()
+	        .addProperty(createPrimitive("PropertyInt16", (short) 4))
+	        .addProperty(createPrimitive(DataProvider.MEDIA_PROPERTY_NAME, createImage("black")));
+	    entity.setMediaContentType("image/svg+xml");
+	    entity.setMediaETag("W/\"4\"");
+	    entity.getMediaEditLinks().add(buildMediaLink("ESMediaStream", "ESMediaStream(4)/$value"));
+	    entityCollection.getEntities().add(entity);
+
+	    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameETMedia));
+	    createEntityId(edm, odata, "ESMediaStream", entityCollection);
+	    createOperations("ESMediaStream", entityCollection, EntityTypeProvider.nameETMedia);
+	    return entityCollection;
+	  }
 
   private byte[] createImage(final String color) {
     return ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"

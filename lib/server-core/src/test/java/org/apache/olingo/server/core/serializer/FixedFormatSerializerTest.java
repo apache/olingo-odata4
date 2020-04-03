@@ -18,15 +18,19 @@
  */
 package org.apache.olingo.server.core.serializer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.olingo.commons.api.data.EntityMediaObject;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.junit.Test;
 
 public class FixedFormatSerializerTest {
@@ -52,5 +56,22 @@ public class FixedFormatSerializerTest {
     final EdmPrimitiveType type = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
     assertEquals("42", IOUtils.toString(serializer.primitiveValue(type, 42,
         PrimitiveValueSerializerOptions.with().nullable(true).build())));
+  }
+  
+  @Test
+  public void binaryIntoStreamed() throws Exception {
+	  EntityMediaObject mediaObject = new EntityMediaObject();
+	  mediaObject.setBytes(new byte[] { 0x41, 0x42, 0x43 });
+	  ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    new FixedFormatSerializerImpl().binaryIntoStreamed(mediaObject, outputStream);
+    assertEquals(mediaObject.getBytes().length, outputStream.toByteArray().length);
+  }
+  
+  @Test
+  public void mediaEntityStreamed() throws Exception {
+	  EntityMediaObject mediaObject = new EntityMediaObject();
+	  mediaObject.setBytes(new byte[] { 0x41, 0x42, 0x43 });
+	  SerializerStreamResult result = serializer.mediaEntityStreamed(mediaObject);
+	  assertNotNull(result.getODataContent());
   }
 }

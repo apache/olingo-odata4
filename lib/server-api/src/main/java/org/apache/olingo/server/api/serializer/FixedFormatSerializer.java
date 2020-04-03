@@ -21,6 +21,7 @@ package org.apache.olingo.server.api.serializer;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.olingo.commons.api.data.EntityMediaObject;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.deserializer.batch.ODataResponsePart;
@@ -33,7 +34,15 @@ public interface FixedFormatSerializer {
    * @param binary the binary data
    */
   InputStream binary(byte[] binary) throws SerializerException;
-
+  
+  /**
+   * Writes bytes to an Input stream
+   * @param mediaEntity bytes
+   * @return
+   * @throws SerializerException
+   */
+  SerializerStreamResult mediaEntityStreamed(EntityMediaObject mediaEntity) throws SerializerException;
+  
   /**
    * Writes a count into an InputStream as plain text.
    * @param count the count

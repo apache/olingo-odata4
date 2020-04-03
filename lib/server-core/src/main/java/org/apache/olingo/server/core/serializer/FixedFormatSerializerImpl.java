@@ -19,10 +19,13 @@
 package org.apache.olingo.server.core.serializer;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import org.apache.olingo.commons.api.data.EntityMediaObject;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.server.api.ODataResponse;
@@ -31,12 +34,33 @@ import org.apache.olingo.server.api.serializer.BatchSerializerException;
 import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
+import org.apache.olingo.server.api.serializer.SerializerStreamResult;
+import org.apache.olingo.server.core.ODataWritableContent;
 
 public class FixedFormatSerializerImpl implements FixedFormatSerializer {
 
   @Override
   public InputStream binary(final byte[] binary) throws SerializerException {
     return new ByteArrayInputStream(binary);
+  }
+  
+  protected void binary(final EntityMediaObject mediaEntity, 
+		  OutputStream outputStream) throws SerializerException {
+	  try {
+		outputStream.write(mediaEntity.getBytes());
+	} catch (IOException e) {
+		throw new SerializerException("IO Exception occured ", e, SerializerException.MessageKeys.IO_EXCEPTION);
+	}
+  }
+  
+  public void binaryIntoStreamed(final EntityMediaObject mediaEntity, 
+		  final OutputStream outputStream) throws SerializerException {
+	binary(mediaEntity, outputStream);
+  }
+  
+  @Override
+  public SerializerStreamResult mediaEntityStreamed(EntityMediaObject mediaEntity) throws SerializerException {
+	  return ODataWritableContent.with(mediaEntity, this).build();
   }
 
   @Override

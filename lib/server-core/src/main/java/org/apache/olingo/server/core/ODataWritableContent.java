@@ -24,6 +24,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 
 import org.apache.olingo.commons.api.data.EntityIterator;
+import org.apache.olingo.commons.api.data.EntityMediaObject;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.server.api.ODataContent;
@@ -36,6 +37,7 @@ import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerStreamResult;
 import org.apache.olingo.server.core.serializer.SerializerStreamResultImpl;
+import org.apache.olingo.server.core.serializer.FixedFormatSerializerImpl;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.serializer.xml.ODataXmlSerializer;
 
@@ -55,6 +57,7 @@ public class ODataWritableContent implements ODataContent {
     protected ServiceMetadata metadata;
     protected EdmEntityType entityType;
     protected EntityCollectionSerializerOptions options;
+    protected EntityMediaObject mediaEntity;
 
     public StreamContent(EntityIterator iterator, EdmEntityType entityType, ServiceMetadata metadata,
         EntityCollectionSerializerOptions options) {
@@ -64,11 +67,22 @@ public class ODataWritableContent implements ODataContent {
       this.options = options;
     }
 
+    public StreamContent(EntityMediaObject mediaEntity) {
+    	this.mediaEntity = mediaEntity;
+    }
+    
     protected abstract void writeEntity(EntityIterator entity, OutputStream outputStream) throws SerializerException;
 
+    protected abstract void writeBinary(EntityMediaObject mediaEntity, OutputStream outputStream)
+    		throws SerializerException;
+    
     public void write(OutputStream out) {
       try {
-        writeEntity(iterator, out);
+    	  if (mediaEntity == null) {
+    		  writeEntity(iterator, out);
+    	  } else {
+    		  writeBinary(mediaEntity, out);
+    	  }
       } catch (SerializerException e) {
         final ODataContentWriteErrorCallback errorCallback = options.getODataContentWriteErrorCallback();
         if (errorCallback != null) {
@@ -98,7 +112,34 @@ public class ODataWritableContent implements ODataContent {
         throw new ODataRuntimeException("Failed entity serialization", e);
       }
     }
+    @Override
+	protected void writeBinary(EntityMediaObject mediaEntity, 
+			OutputStream outputStream) throws SerializerException {
+		throw new ODataRuntimeException("Not Implemented in Entity Handling");
+	}
   }
+  
+  private static class StreamContentForMedia extends StreamContent {
+	    private FixedFormatSerializerImpl fixedFormatSerializer;
+
+	    public StreamContentForMedia(EntityMediaObject mediaEntity, 
+	    		FixedFormatSerializerImpl fixedFormatSerializer) {
+	      super(mediaEntity);
+
+	      this.fixedFormatSerializer = fixedFormatSerializer;
+	    }
+
+	    protected void writeEntity(EntityIterator entity, 
+	        OutputStream outputStream) throws SerializerException {
+	    	throw new ODataRuntimeException("Not Implemented in Entity Handling");
+	    }
+
+		@Override
+		protected void writeBinary(EntityMediaObject mediaEntity, 
+				OutputStream outputStream) throws SerializerException {
+			fixedFormatSerializer.binaryIntoStreamed(mediaEntity, outputStream);
+		}
+	  }
 
   private static class StreamContentForXml extends StreamContent {
     private ODataXmlSerializer xmlSerializer;
@@ -119,6 +160,11 @@ public class ODataWritableContent implements ODataContent {
         throw new ODataRuntimeException("Failed entity serialization", e);
       }
     }
+    
+	protected void writeBinary(EntityMediaObject mediaEntity, 
+			OutputStream outputStream) throws SerializerException {
+		throw new ODataRuntimeException("Not Implemented in XML Handling");
+	}
   }
 
   @Override
@@ -139,6 +185,11 @@ public class ODataWritableContent implements ODataContent {
       ODataSerializer serializer, ServiceMetadata metadata,
       EntityCollectionSerializerOptions options) {
     return new ODataWritableContentBuilder(iterator, entityType, serializer, metadata, options);
+  }
+  
+  public static ODataWritableContentBuilder with(EntityMediaObject mediaEntity, 
+		  FixedFormatSerializerImpl fixedFormatSerializer) {
+	  return new ODataWritableContentBuilder(mediaEntity, fixedFormatSerializer);
   }
 
   public static class WriteErrorContext implements ODataContentWriteErrorContext {
@@ -165,6 +216,8 @@ public class ODataWritableContent implements ODataContent {
     private ServiceMetadata metadata;
     private EdmEntityType entityType;
     private EntityCollectionSerializerOptions options;
+    private FixedFormatSerializerImpl fixedFormatSerializer;
+    private EntityMediaObject mediaEntity;
 
     public ODataWritableContentBuilder(EntityIterator entities, EdmEntityType entityType,
         ODataSerializer serializer,
@@ -176,6 +229,11 @@ public class ODataWritableContent implements ODataContent {
       this.options = options;
     }
 
+    public ODataWritableContentBuilder(EntityMediaObject mediaEntity, FixedFormatSerializerImpl fixedFormatSerializer) {
+    	this.mediaEntity = mediaEntity;
+    	this.fixedFormatSerializer = fixedFormatSerializer;
+    }
+    
     public ODataContent buildContent() {
       if (serializer instanceof ODataJsonSerializer) {
         StreamContent input = new StreamContentForJson(entities, entityType,
@@ -185,6 +243,9 @@ public class ODataWritableContent implements ODataContent {
         StreamContentForXml input = new StreamContentForXml(entities, entityType,
             (ODataXmlSerializer) serializer, metadata, options);
         return new ODataWritableContent(input);
+      } else if (fixedFormatSerializer instanceof FixedFormatSerializerImpl) {
+    	  StreamContent input = new StreamContentForMedia(mediaEntity, fixedFormatSerializer);
+    	  return new ODataWritableContent(input);
       }
       throw new ODataRuntimeException("No suitable serializer found");
     }

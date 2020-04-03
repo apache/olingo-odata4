@@ -64,6 +64,23 @@ public class MediaITCase extends AbstractParamTecSvcITCase {
     assertNotNull(media);
     assertThat(IOUtils.toString(media), startsWith("<?xml"));
   }
+  
+  @Test
+  public void readMediaStream() throws Exception {
+    final ODataMediaRequest request = getClient().getRetrieveRequestFactory().getMediaRequest(
+        getClient().newURIBuilder(TecSvcConst.BASE_URI)
+        .appendEntitySetSegment("ESMediaStream").appendKeySegment(1).appendValueSegment().build());
+    assertNotNull(request);
+
+    final ODataRetrieveResponse<InputStream> response = request.execute();
+    assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
+    assertEquals("image/svg+xml", response.getContentType());
+    assertEquals("W/\"1\"", response.getETag());
+
+    InputStream media = response.getBody();
+    assertNotNull(media);
+    assertThat(IOUtils.toString(media), startsWith("<?xml"));
+  }
 
   @Test
   public void delete() {
