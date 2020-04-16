@@ -206,8 +206,10 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
 
   @Test
   public void noContent() throws Exception {
-    expectException("", "UARTTwoParam", null, MessageKeys.JSON_SYNTAX_EXCEPTION);
-    expectException("", "BAETAllPrimRT", "ETAllPrim", MessageKeys.JSON_SYNTAX_EXCEPTION);
+	  Map<String, Parameter> parameters = deserialize("", "UARTTwoParam", null);
+	  assertNotNull(parameters);
+	  parameters = deserialize("", "BAETAllPrimRT", "ETAllPrim");
+	  assertNotNull(parameters);
   }
 
   @Test

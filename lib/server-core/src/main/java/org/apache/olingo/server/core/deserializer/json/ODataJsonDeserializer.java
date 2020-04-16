@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.server.core.deserializer.json;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -32,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.IConstants;
 import org.apache.olingo.commons.api.constants.Constantsv00;
@@ -304,14 +307,23 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   @Override
   public DeserializerResult actionParameters(final InputStream stream, final EdmAction edmAction)
       throws DeserializerException {
+	  Map<String, Parameter> parameters = new HashMap<>();
+	  ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+	  byte[] inputContent = null;
     try {
-      ObjectNode tree = parseJsonTree(stream);
-      Map<String, Parameter> parameters = consumeParameters(edmAction, tree);
-
-      if (tree.isObject()) {
-        removeAnnotations(tree);
-      }
-      assertJsonNodeIsEmpty(tree);
+    	IOUtils.copy(stream, byteArrayOutputStream);
+    	// copy the content of input stream to reuse it
+      	  inputContent = byteArrayOutputStream.toByteArray();
+      	  if (inputContent.length > 0) {
+      		InputStream inputStream1 = new ByteArrayInputStream(inputContent);
+    	      ObjectNode tree = parseJsonTree(inputStream1);
+    	      parameters = consumeParameters(edmAction, tree);
+    	
+    	      if (tree.isObject()) {
+    	        removeAnnotations(tree);
+    	      }
+    	      assertJsonNodeIsEmpty(tree);
+      	  }
       return DeserializerResultImpl.with().actionParameters(parameters).build();
 
     } catch (final IOException e) {
