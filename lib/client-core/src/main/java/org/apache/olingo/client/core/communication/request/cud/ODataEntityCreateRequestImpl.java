@@ -94,11 +94,11 @@ public class ODataEntityCreateRequestImpl<E extends ClientEntity>
   /**
    * Response class about an ODataEntityCreateRequest.
    */
-  public class ODataEntityCreateResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse<E> {
+  private class ODataEntityCreateResponseImpl extends AbstractODataResponse implements ODataEntityCreateResponse<E> {
 
     private E resEntity = null;
 
-    public ODataEntityCreateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
+    private ODataEntityCreateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

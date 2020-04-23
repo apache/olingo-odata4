@@ -92,11 +92,11 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
   /**
    * Response class about an ODataValueUpdateRequest.
    */
-  public class ODataValueUpdateResponseImpl extends AbstractODataResponse implements ODataValueUpdateResponse {
+  private class ODataValueUpdateResponseImpl extends AbstractODataResponse implements ODataValueUpdateResponse {
 
     private ClientPrimitiveValue resValue = null;
 
-    public ODataValueUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
+    private ODataValueUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

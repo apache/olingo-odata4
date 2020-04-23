@@ -95,11 +95,11 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
   /**
    * Response class about an ODataPropertyUpdateRequest.
    */
-  public class ODataPropertyUpdateResponseImpl extends AbstractODataResponse implements ODataPropertyUpdateResponse {
+  private class ODataPropertyUpdateResponseImpl extends AbstractODataResponse implements ODataPropertyUpdateResponse {
 
     private ClientProperty resProperty = null;
 
-    public ODataPropertyUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
+    private ODataPropertyUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);

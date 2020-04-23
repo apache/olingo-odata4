@@ -91,9 +91,9 @@ public class ODataReferenceAddingRequestImpl extends AbstractODataBasicRequest<O
   /**
    * Response class about an ODataReferenceAddingRequest.
    */
-  public class ODataReferenceAddingResponseImpl extends AbstractODataResponse implements ODataReferenceAddingResponse {
+  private class ODataReferenceAddingResponseImpl extends AbstractODataResponse implements ODataReferenceAddingResponse {
 
-    public ODataReferenceAddingResponseImpl(
+    private ODataReferenceAddingResponseImpl(
         final ODataClient odataClient, final HttpClient httpClient, final HttpResponse res) {
 
       super(odataClient, httpClient, res);
