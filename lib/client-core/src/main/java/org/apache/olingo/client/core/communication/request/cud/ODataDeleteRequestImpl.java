@@ -62,9 +62,9 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
   /**
    * Response class about an ODataDeleteRequest.
    */
-  public class ODataDeleteResponseImpl extends AbstractODataResponse implements ODataDeleteResponse {
+  private class ODataDeleteResponseImpl extends AbstractODataResponse implements ODataDeleteResponse {
 
-    public ODataDeleteResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
+    private ODataDeleteResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);
