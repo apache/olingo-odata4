@@ -104,14 +104,14 @@ public class ODataEntityUpdateRequestImpl<E extends ClientEntity>
   /**
    * Response class about an ODataEntityUpdateRequest.
    */
-  private class ODataEntityUpdateResponseImpl extends AbstractODataResponse implements ODataEntityUpdateResponse<E> {
+  public class ODataEntityUpdateResponseImpl extends AbstractODataResponse implements ODataEntityUpdateResponse<E> {
 
     /**
      * Changes.
      */
     private E entity = null;
 
-    private ODataEntityUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
+    public ODataEntityUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
             final HttpResponse res) {
 
       super(odataClient, httpClient, res);
