@@ -32,6 +32,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
@@ -103,7 +104,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
    * Batch info (if to be batched).
    */
   protected ODataBatchController batchInfo = null;
-  
+
   private byte[] inputContent = null;
 
   public AbstractODataResponse(
@@ -244,10 +245,21 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
   @Override
   public void close() {
+    closeHttpResponse();
     odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
 
     if (batchInfo != null) {
       batchInfo.setValidBatch(false);
+    }
+  }
+
+  protected void closeHttpResponse() {
+    if(res != null && res instanceof CloseableHttpResponse) {
+      try {
+        ((CloseableHttpResponse) res).close();
+      } catch (IOException e) {
+        LOG.debug("Unable to close response: {}", res, e);
+      }
     }
   }
 
