@@ -5,6 +5,7 @@
 .idea
 target
 bin
+*.iml
 *.bak
 classes
 .DS_Store
