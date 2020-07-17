@@ -240,11 +240,13 @@ public class EdmTypeInfo {
       return EdmPrimitiveTypeKind.Double;
     } else if (value instanceof Float) {
       return EdmPrimitiveTypeKind.Single;
-    } else if (value instanceof Calendar || value instanceof Date || value instanceof java.sql.Timestamp) {
+    } else if (value instanceof Calendar || value instanceof Date 
+    		|| value instanceof java.sql.Timestamp
+    		|| value instanceof java.time.ZonedDateTime) {
       return EdmPrimitiveTypeKind.DateTimeOffset;
-    } else if (value instanceof java.sql.Date) {
+    } else if (value instanceof java.sql.Date || value instanceof java.time.LocalDate) {
       return EdmPrimitiveTypeKind.Date;
-    } else if (value instanceof java.sql.Time) {
+    } else if (value instanceof java.sql.Time || value instanceof java.time.LocalTime) {
       return EdmPrimitiveTypeKind.TimeOfDay;
     } else if (value instanceof byte[] || value instanceof Byte[]) {
       return EdmPrimitiveTypeKind.Binary;
