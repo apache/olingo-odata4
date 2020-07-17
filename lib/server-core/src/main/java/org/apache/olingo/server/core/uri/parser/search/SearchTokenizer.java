@@ -123,8 +123,8 @@ public class SearchTokenizer {
           || isUnreserved(character)
           || isOtherDelimsForWord(character);
     }
-    
-    /**
+
+	/**
      * <code>
      * <b>searchPhrase</b> = quotation-mark 1*qchar-no-AMP-DQUOTE quotation-mark
      * <br/><br/>
@@ -218,7 +218,19 @@ public class SearchTokenizer {
           || character == '$'
           || character == '='
           || character == '%'
-          || character == '\'';
+          || character == '\''
+          || character == '&'
+          || character == '{'
+          || character == '}'
+          || character == '['
+          || character == ']'
+          || character == ','
+          || character == '#'
+          || character == '^'
+          || character == '|'
+          || character == '>'
+          || character == '<'
+          || character == '`';
     }
     
     /**
