@@ -885,13 +885,14 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   private Polygon readGeoPolygon(final String name, final Geospatial.Dimension dimension, JsonNode node, SRID srid)
       throws DeserializerException, EdmPrimitiveTypeException {
-    // GeoJSON would allow for more than one interior polygon (hole).
-    // But there is no place in the data object to store this information so for now we throw an error.
     // There could be a more strict verification that the lines describe boundaries and have the correct winding order.
-    if (node.isArray() && (node.size() == 1 || node.size() == 2)) {
-      return new Polygon(dimension, srid,
-          node.size() > 1 ? readGeoPointValues(name, dimension, 4, true, node.get(1)) : null,
-          readGeoPointValues(name, dimension, 4, true, node.get(0)));
+    if (node.isArray() && (node.size() >= 1)) {
+      List<LineString> interiors = new ArrayList<>();
+      for (int i = 1; i < node.size(); i++) {
+        interiors.add(new LineString(dimension, srid, readGeoPointValues(name, dimension, 4, true, node.get(i))));
+      }
+      return new Polygon(dimension, srid, interiors,
+          new LineString(dimension, srid, readGeoPointValues(name, dimension, 4, true, node.get(0))));
     }
     throw new DeserializerException("Invalid polygon values '" + node + "' in property: " + name,
         DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY, name);

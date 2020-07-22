@@ -1045,6 +1045,14 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         entityType);
     polygon = (Polygon) entity.getProperties().get(0).getValue();
     assertEquals(0, polygon.getNumberOfInteriorRings());
+    
+    entity = deserialize("{\"" + entityType.getPropertyNames().get(0) + "\":{"
+        + "\"type\":\"Polygon\",\"coordinates\":[[[0,0],[3,0],[3,3],[0,3],[0,0]],"
+        + "[[1,1],[1,2],[2,2],[2,1],[1,1]],"
+        + "[[1,1],[1,2],[2,2],[2,1],[1,1]]]}}",
+        entityType);
+    polygon = (Polygon) entity.getProperties().get(0).getValue();
+    assertEquals(2, polygon.getNumberOfInteriorRings());
 
     expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
         + "\"type\":\"Polygon\",\"coordinates\":{\"ext\":[[0,0],[3,0],[0,3],[0,0]]}}}", entityType,
@@ -1054,11 +1062,6 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
     expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
         + "\"type\":\"Polygon\",\"coordinates\":[[[0,0],[3,0],[3,3],[0,3],[42,87]]]}}", entityType,
-        ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
-    expectException("{\"" + entityType.getPropertyNames().get(0) + "\":{"
-        + "\"type\":\"Polygon\",\"coordinates\":[[[0,0],[3,0],[3,3],[0,3],[0,0]],"
-        + "[[1,1],[1,2],[2,2],[2,1],[1,1]],"
-        + "[[1,1],[1,2],[2,2],[2,1],[1,1]]]}}", entityType,
         ContentType.JSON, DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
   }
 
