@@ -62,6 +62,11 @@ public interface EdmProperty extends EdmElement, EdmMappable, EdmAnnotatable {
   Integer getScale();
 
   /**
+   * @return the scale as an String or null if not specified
+   */
+  String getScaleAsString();
+
+  /**
    * @return a non-negative integer or the special value <tt>variable</tt>
    */
   SRID getSrid();

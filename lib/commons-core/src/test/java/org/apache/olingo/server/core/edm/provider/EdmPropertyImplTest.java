@@ -57,6 +57,7 @@ public class EdmPropertyImplTest {
     assertNull(property.getMaxLength());
     assertNull(property.getPrecision());
     assertNull(property.getScale());
+    assertNull(property.getScaleAsString());
     assertNull(property.getSrid());
     assertNotNull(property.getAnnotations());
     assertTrue(property.getAnnotations().isEmpty());
@@ -172,6 +173,7 @@ public class EdmPropertyImplTest {
     propertyProvider.setType(EdmPrimitiveTypeKind.String.getFullQualifiedName());
     propertyProvider.setPrecision(42);
     propertyProvider.setScale(12);
+    propertyProvider.setScaleAsString("12");
     propertyProvider.setMaxLength(128);
     propertyProvider.setUnicode(true);
     propertyProvider.setNullable(false);
@@ -182,6 +184,7 @@ public class EdmPropertyImplTest {
     assertNull(property.getMimeType());
     assertEquals(Integer.valueOf(42), property.getPrecision());
     assertEquals(Integer.valueOf(12), property.getScale());
+    assertEquals("12", property.getScaleAsString());
     assertEquals(Integer.valueOf(128), property.getMaxLength());
     assertTrue(property.isUnicode());
     assertFalse(property.isNullable());

@@ -120,6 +120,11 @@ public class EdmPropertyImpl extends AbstractEdmNamed implements EdmProperty {
   }
 
   @Override
+  public String getScaleAsString() {
+    return property.getScaleAsString();
+  }
+
+  @Override
   public SRID getSrid() {
     return property.getSrid();
   }
