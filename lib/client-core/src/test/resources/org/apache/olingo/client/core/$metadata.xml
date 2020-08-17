@@ -71,6 +71,8 @@
         <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"/>
         <Property Name="DraftIsLastChangedByMe" Type="Edm.Boolean"/>
         <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"/>
+        <Property Name="VariableDecimalType" Type="Edm.Decimal" Scale="variable"/>
+        <Property Name="FloatingDecimalType" Type="Edm.Decimal" Precision="7" Scale="floating"/>
         <Property Name="CreatedByUserDescription" Type="Edm.String" MaxLength="80"/>
         <Property Name="LastChangedByUserDescription" Type="Edm.String" MaxLength="80"/>
         <Property Name="InProcessByUserDescription" Type="Edm.String" MaxLength="80"/>
