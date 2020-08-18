@@ -585,7 +585,24 @@ public class MetadataTest extends AbstractTest {
    assertEquals("UI.HeaderInfo", property.getAnnotations().get(0).getTerm().
        getFullQualifiedName().getFullQualifiedNameAsString());
  }
- 
+
+ @Test
+ public void readVariableFloatingDecimalProperty() {
+   final Edm edm = fetchEdm();
+   assertNotNull(edm);
+   EdmEntityType entity = edm.getEntityTypeWithAnnotations(
+       new FullQualifiedName("SEPMRA_SO_MAN2", "I_DraftAdministrativeDataType"));
+   EdmProperty VariableDecimalType = (EdmProperty) entity.getProperty("VariableDecimalType");
+   assertEquals("variable", VariableDecimalType.getScaleAsString());
+   assertEquals(Integer.valueOf(0), VariableDecimalType.getScale());
+   assertNull(VariableDecimalType.getPrecision());
+
+   EdmProperty FloatingDecimalType = (EdmProperty) entity.getProperty("FloatingDecimalType");
+   assertEquals("floating", FloatingDecimalType.getScaleAsString());
+   assertEquals(Integer.valueOf(0), FloatingDecimalType.getScale());
+   assertEquals(Integer.valueOf(7), FloatingDecimalType.getPrecision());
+ }
+
  @Test
  public void readAnnotationOnActionImport() {
    final Edm edm = fetchEdm();

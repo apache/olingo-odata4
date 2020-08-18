@@ -50,6 +50,8 @@ public class CsdlProperty extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
 
   private Integer scale;
 
+  private String scaleAsString;
+
   private boolean unicode = true;
 
   private SRID srid;
@@ -229,6 +231,26 @@ public class CsdlProperty extends CsdlAbstractEdmItem implements CsdlNamed, Csdl
    */
   public CsdlProperty setScale(final Integer scale) {
     this.scale = scale;
+    return this;
+  }
+
+  /**
+   * Gets scaleAsString.
+   *
+   * @return the scaleAsString
+   */
+  public String getScaleAsString() {
+    return scaleAsString;
+  }
+
+  /**
+   * Sets scaleAsString.
+   *
+   * @param scaleAsString the scaleAsString
+   * @return the scaleAsString
+   */
+  public CsdlProperty setScaleAsString(final String scaleAsString) {
+    this.scaleAsString = scaleAsString;
     return this;
   }
 
