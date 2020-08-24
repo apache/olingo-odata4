@@ -25,7 +25,7 @@
 
   <groupId>org.apache.olingo</groupId>
   <artifactId>odata-parent</artifactId>
-  <version>4.8.0.1</version>
+  <version>4.8.0.1.intellective</version>
   <packaging>pom</packaging>
 
   <name>Olingo-OData</name>
@@ -624,11 +624,11 @@
   <distributionManagement>
     <repository>
       <id>maven.intellective.com</id>
-      <url>https://maven.intellective.com/repository/maven-releases/</url>
+      <url>https://maven.intellective.com/repository/third-party/</url>
     </repository>
     <snapshotRepository>
       <id>maven.intellective.com</id>
-      <url>https://maven.intellective.com/repository/maven-snapshots/</url>
+      <url>https://maven.intellective.com/repository/third-party/</url>
     </snapshotRepository>
   </distributionManagement>
 
