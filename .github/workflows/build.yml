@@ -33,4 +33,4 @@ jobs:
         run: printf "$M2_SETTINGS" > ~/.m2/settings.xml
 
       - name: Build and test
-        run: mvn -B verify --file pom.xml
+        run: mvn -B install verify --file pom.xml  -Drat.skip=true
