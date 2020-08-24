@@ -31,4 +31,4 @@ jobs:
         run: printf "$M2_SETTINGS" > ~/.m2/settings.xml
 
       - name: Publish package
-        run: mvn -B deploy -Dolingo.deploy.skip=false
+        run: mvn -B deploy -Dolingo.deploy.skip=false -Drat.skip=true
