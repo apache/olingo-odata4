@@ -6,6 +6,9 @@
 target
 bin
 *.bak
+*.iml
+.idea\
+*.versionsBackup
 classes
 .DS_Store
 *.local

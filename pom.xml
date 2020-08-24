@@ -25,7 +25,7 @@
 
   <groupId>org.apache.olingo</groupId>
   <artifactId>odata-parent</artifactId>
-  <version>4.8.0-SNAPSHOT</version>
+  <version>4.8.0.1</version>
   <packaging>pom</packaging>
 
   <name>Olingo-OData</name>
@@ -48,11 +48,11 @@
 
   <url>http://olingo.apache.org</url>
 
-  <scm>
-    <connection>scm:git:git://gitbox.apache.org/repos/asf/olingo-odata4.git</connection>
-    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/olingo-odata4.git</developerConnection>
-    <url>https://gitbox.apache.org/repos/asf?p=olingo-odata4.git</url>
-  </scm>
+<!--  <scm>-->
+<!--    <connection>scm:git:git://gitbox.apache.org/repos/asf/olingo-odata4.git</connection>-->
+<!--    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/olingo-odata4.git</developerConnection>-->
+<!--    <url>https://gitbox.apache.org/repos/asf?p=olingo-odata4.git</url>-->
+<!--  </scm>-->
 
   <mailingLists>
     <mailingList>
@@ -603,6 +603,34 @@
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>maven.intellective.com</id>
+      <url>https://maven.intellective.com/repository/maven-public/</url>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>fail</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+      </snapshots>
+    </repository>
+
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>maven.intellective.com</id>
+      <url>https://maven.intellective.com/repository/maven-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>maven.intellective.com</id>
+      <url>https://maven.intellective.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <profiles>
     <profile>
