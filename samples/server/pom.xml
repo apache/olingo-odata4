@@ -30,7 +30,7 @@
 	<parent>
 		<groupId>org.apache.olingo</groupId>
 		<artifactId>odata-samples</artifactId>
-		<version>4.8.0.2.intellective</version>
+		<version>4.8.0.2</version>
 		<relativePath>..</relativePath>
 	</parent>
 
