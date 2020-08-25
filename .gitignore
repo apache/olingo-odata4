@@ -5,6 +5,7 @@
 .idea
 target
 bin
+*.iml
 *.bak
 *.iml
 .idea\

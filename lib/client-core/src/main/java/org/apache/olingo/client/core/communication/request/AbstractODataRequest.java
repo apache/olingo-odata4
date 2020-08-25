@@ -18,6 +18,26 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DecompressingHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.apache.olingo.client.api.ODataClient;
+import org.apache.olingo.client.api.communication.header.ODataHeaders;
+import org.apache.olingo.client.api.communication.request.ODataRequest;
+import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.commons.api.http.HttpMethod;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,26 +45,6 @@ import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Collection;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DecompressingHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.apache.olingo.client.api.ODataClient;
-import org.apache.olingo.client.api.communication.header.ODataHeaders;
-import org.apache.olingo.client.api.communication.request.ODataRequest;
-import org.apache.olingo.client.api.communication.request.ODataStreamer;
-import org.apache.olingo.client.api.communication.response.ODataResponse;
-import org.apache.olingo.client.api.http.HttpClientException;
-import org.apache.olingo.commons.api.ex.ODataRuntimeException;
-import org.apache.olingo.commons.api.http.HttpHeader;
-import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
  * Abstract representation of an OData request. Get instance by using factories.
@@ -112,7 +112,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   public URI getURI() {
     return uri;
   }
-  
+
   @Override
   public HttpUriRequest getHttpRequest() {
     return request;
@@ -315,6 +315,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     try {
       checkResponse(odataClient, response, getAccept());
     } catch (ODataRuntimeException e) {
+      closeHttpResponse(response);
       odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
       throw e;
     }
@@ -322,7 +323,17 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     return response;
   }
 
-  /**
+  private void closeHttpResponse(HttpResponse response) {
+    if (response instanceof CloseableHttpResponse) {
+      try {
+        ((CloseableHttpResponse) response).close();
+      } catch (IOException e) {
+        LOG.warn("Unable to close response: {}", response, e);
+      }
+    }
+  }
+
+    /**
    * Gets an empty response that can be initialized by a stream.
    * <br/>
    * This method has to be used to build response items about a batch request.
