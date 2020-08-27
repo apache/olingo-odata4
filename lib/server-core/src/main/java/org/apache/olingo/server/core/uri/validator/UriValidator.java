@@ -391,7 +391,7 @@ public class UriValidator {
         }
       }
 
-    } else if (!options.isEmpty()) {
+    } else if (!options.isEmpty() && !checkIfSelectOrExpand(options, httpMethod)) {
       StringBuilder optionsString = new StringBuilder();
       for (final SystemQueryOption option : options) {
         optionsString.append(option.getName()).append(' ');
@@ -403,7 +403,17 @@ public class UriValidator {
     }
   }
 
-  private boolean isAction(final UriInfo uriInfo) {
+  private boolean checkIfSelectOrExpand(List<SystemQueryOption> options, HttpMethod httpMethod) {
+	boolean isSelectOrExpand = false;
+	for (SystemQueryOption queryOption : options) {
+		isSelectOrExpand = ((queryOption.getKind() == SystemQueryOptionKind.EXPAND) || 
+				(queryOption.getKind() == SystemQueryOptionKind.SELECT)) &&
+				(httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.PATCH);
+	}
+	return isSelectOrExpand;
+}
+
+private boolean isAction(final UriInfo uriInfo) {
     List<UriResource> uriResourceParts = uriInfo.getUriResourceParts();
     return !uriResourceParts.isEmpty()
         && UriResourceKind.action == uriResourceParts.get(uriResourceParts.size() - 1).getKind();
