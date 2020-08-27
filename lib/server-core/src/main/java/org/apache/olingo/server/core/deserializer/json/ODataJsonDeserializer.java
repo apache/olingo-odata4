@@ -334,6 +334,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private ObjectNode parseJsonTree(final InputStream stream) throws IOException, DeserializerException {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, true);
+    objectMapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
     JsonParser parser = new JsonFactory(objectMapper).createParser(stream);
     final JsonNode tree = parser.getCodec().readTree(parser);
     if (tree == null || !tree.isObject()) {

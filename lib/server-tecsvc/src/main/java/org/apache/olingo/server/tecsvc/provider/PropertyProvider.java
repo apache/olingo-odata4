@@ -454,6 +454,8 @@ public class PropertyProvider {
   public static final CsdlProperty propertyDecimal_ExplicitNullable = new CsdlProperty()
       .setName("PropertyDecimal")
       .setType(nameDecimal)
+      .setPrecision(31)
+      .setScale(14)
       .setNullable(true);
 
   public static final CsdlProperty propertyDouble = new CsdlProperty()

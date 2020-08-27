@@ -1885,4 +1885,14 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     version.add("4.01");
     return odata.createDeserializer(contentType, metadata, version).entity(stream, entityType);
   }
+  
+  @Test
+  public void testEntityLargeNumbers() throws Exception {
+	  String entityString =
+		        "{\"PropertyKey\":327," +
+		            "\"PropertyDecimal\":12345678912345678.1234567891234}";
+    final Entity entity = deserialize(entityString, "ETAllNullable");
+    assertNotNull(entity);
+    assertEquals(new BigDecimal("12345678912345678.1234567891234"), entity.getProperties().get(1).getValue());
+  }
 }
