@@ -851,7 +851,9 @@ public class MetadataDocumentJsonSerializer {
   
   private void appendDynamicExpression(JsonGenerator json, 
       EdmDynamicExpression dynExp, String termName) throws SerializerException, IOException {
-    json.writeFieldName(termName);
+    if (termName != null) {
+	  json.writeFieldName(termName);
+    }
     switch (dynExp.getExpressionType()) {
     // Logical
     case And:
