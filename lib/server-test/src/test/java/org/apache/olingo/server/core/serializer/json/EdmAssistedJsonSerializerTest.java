@@ -20,6 +20,8 @@ package org.apache.olingo.server.core.serializer.json;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -665,4 +667,15 @@ public class EdmAssistedJsonSerializerTest {
         serialize(serializerMin, metadata, null, entityCollection, null));
   }
   
+  @Test
+  public void entityCollectionWithBigDecimalProperty() throws Exception {
+    EntityCollection entityCollection = new EntityCollection();
+    BigDecimal b = new BigDecimal(1.666666666666666666666666666666667);
+    b.abs(new MathContext(0, RoundingMode.UNNECESSARY));
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(new Property(null, "Property1", ValueType.PRIMITIVE, b)));
+    Assert.assertTrue(
+        serialize(serializerMin, metadata, null, entityCollection, null)
+        .contains("1.6666666666666667406815349750104360282421112060546875"));
+  }
 }

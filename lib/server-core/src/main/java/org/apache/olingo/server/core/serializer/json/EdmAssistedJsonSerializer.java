@@ -20,6 +20,7 @@ package org.apache.olingo.server.core.serializer.json;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -296,11 +297,17 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
     } else {
       String serialized = null;
       try {
+    	  Integer scale = null;
+    	  if (value instanceof BigDecimal) {
+    		  scale = ((BigDecimal) value).scale();
+    	  } else {
+    		  scale = Constants.DEFAULT_SCALE;
+    	  }
         serialized = type.valueToString(value,
             edmProperty == null ? null : edmProperty.isNullable(),
             edmProperty == null ? null : edmProperty.getMaxLength(),
-            edmProperty == null ? Constants.DEFAULT_PRECISION : edmProperty.getPrecision(),
-            edmProperty == null ? Constants.DEFAULT_SCALE : edmProperty.getScale(),
+            edmProperty == null ? null : edmProperty.getPrecision(),
+            edmProperty == null ? scale : edmProperty.getScale(),
             edmProperty == null ? null : edmProperty.isUnicode());
       } catch (final EdmPrimitiveTypeException e) {
         final String name = edmProperty == null ? "" : edmProperty.getName();
