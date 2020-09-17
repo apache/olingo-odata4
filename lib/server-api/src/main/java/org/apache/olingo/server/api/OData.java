@@ -219,6 +219,16 @@ public abstract class OData {
   
   /**
    * Creates a new serializer object capable of working without EDM information
+   * for rendering content in the specified format.
+   * @param contentType a content type supported by Olingo
+   * @param versions Odata Version v4 or v4.01
+   */
+  public abstract EdmAssistedSerializer createEdmAssistedSerializer(final ContentType contentType, 
+		  final List<String> versions) throws SerializerException;
+  
+  
+  /**
+   * Creates a new serializer object capable of working without EDM information
    * for rendering delta content in the specified format.
    * @param contentType a content type supported by Olingo
    * @param version versions supported by Olingo

@@ -154,6 +154,12 @@ public class ODataNettyImpl extends ODataNetty {
   public EdmAssistedSerializer createEdmAssistedSerializer(ContentType contentType) throws SerializerException {
     return odata.createEdmAssistedSerializer(contentType);
   }
+  
+  @Override
+  public EdmAssistedSerializer createEdmAssistedSerializer(ContentType contentType, 
+		  List<String> versions) throws SerializerException {
+    return odata.createEdmAssistedSerializer(contentType, versions);
+  }
 
   @Override
   public EdmDeltaSerializer createEdmDeltaSerializer(ContentType contentType, List<String> versions)

@@ -108,4 +108,14 @@ public class ODataImplTest {
   public void serializer() throws SerializerException {
     odata.createSerializer(null);
   }
+  
+  @Test
+  public void edmAssistedSerializerWithVersion() throws SerializerException {
+	  List<String> versions = new ArrayList<String>();
+	  versions.add("4.01");
+	  assertNotNull(odata.createEdmAssistedSerializer(ContentType.APPLICATION_JSON, versions));
+	  
+	  versions.add("5");
+	  assertNotNull(odata.createEdmAssistedSerializer(ContentType.APPLICATION_JSON, versions));
+  }
 }

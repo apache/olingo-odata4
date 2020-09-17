@@ -138,6 +138,22 @@ public class ODataImpl extends OData {
         ((contentType != null) ? contentType.toContentTypeString() : null));
   }
   
+  @Override
+  public EdmAssistedSerializer createEdmAssistedSerializer(final ContentType contentType, 
+		  List<String> versions) throws SerializerException {
+	  IConstants constants = new Constantsv00();
+	    if(versions!=null && !versions.isEmpty() && getMaxVersion(versions) > 4){
+	      constants = new Constantsv01() ;
+	    }
+    if (contentType != null && contentType.isCompatible(ContentType.APPLICATION_JSON)) {
+      return new EdmAssistedJsonSerializer(contentType, constants);
+    }
+    throw new SerializerException("Unsupported format: " + 
+    ((contentType != null) ? contentType.toContentTypeString() : null),
+        SerializerException.MessageKeys.UNSUPPORTED_FORMAT, 
+        ((contentType != null) ? contentType.toContentTypeString() : null));
+  }
+  
   
   @Override
   public EdmDeltaSerializer createEdmDeltaSerializer(final ContentType contentType, final List<String> versions)
