@@ -353,13 +353,21 @@ public class UriValidatorTest {
   }
 
   @Test
-  public void systemQueryOptionsNotAllowedForHttpPostDelete() throws Exception {
+  public void systemQueryOptionsNotAllowedForHttpDelete() throws Exception {
     final String[] queryOptions =
         { QO_FILTER, QO_FORMAT, QO_EXPAND, QO_COUNT, QO_ORDERBY, QO_SEARCH, QO_SELECT, QO_SKIP, QO_TOP, QO_SKIPTOKEN };
     for (int i = 0; i < queryOptions.length; i++) {
-      validateWrong(URI_ENTITY, queryOptions[i], HttpMethod.POST,
-          UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD);
       validateWrong(URI_ENTITY, queryOptions[i], HttpMethod.DELETE,
+          UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD);
+    }
+  }
+  
+  @Test
+  public void systemQueryOptionsNotAllowedForHttpPost() throws Exception {
+    final String[] queryOptions =
+        { QO_FILTER, QO_FORMAT, QO_COUNT, QO_ORDERBY, QO_SEARCH, QO_SKIP, QO_TOP, QO_SKIPTOKEN };
+    for (int i = 0; i < queryOptions.length; i++) {
+      validateWrong(URI_ENTITY, queryOptions[i], HttpMethod.POST,
           UriValidationException.MessageKeys.SYSTEM_QUERY_OPTION_NOT_ALLOWED_FOR_HTTP_METHOD);
     }
   }
@@ -371,6 +379,7 @@ public class UriValidatorTest {
     for (int i = 0; i < queryOptions.length; i++) {
       validate(URI_ENTITY, queryOptions[i], HttpMethod.PUT);
       validate(URI_ENTITY, queryOptions[i], HttpMethod.PATCH);
+      validate(URI_ENTITY, queryOptions[i], HttpMethod.POST);
     }
   }
   

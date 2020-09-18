@@ -408,7 +408,8 @@ public class UriValidator {
 	for (SystemQueryOption queryOption : options) {
 		isSelectOrExpand = ((queryOption.getKind() == SystemQueryOptionKind.EXPAND) || 
 				(queryOption.getKind() == SystemQueryOptionKind.SELECT)) &&
-				(httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.PATCH);
+				(httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.PATCH ||
+				httpMethod == HttpMethod.POST);
 	}
 	return isSelectOrExpand;
 }

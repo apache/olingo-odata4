@@ -130,6 +130,7 @@ public class TechnicalActionProcessor extends TechnicalProcessor
       final EdmEntityType type = (EdmEntityType) action.getReturnType().getType();
       final EntityCollectionSerializerOptions options = EntityCollectionSerializerOptions.with()
           .contextURL(isODataMetadataNone(responseFormat) ? null : getContextUrl(edmEntitySet, type, false))
+          .expand(uriInfo.getExpandOption())
           .build();
       response.setContent(odata.createSerializer(responseFormat)
           .entityCollection(serviceMetadata, type, collection, options).getContent());
