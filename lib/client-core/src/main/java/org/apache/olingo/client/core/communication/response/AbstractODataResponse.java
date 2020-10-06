@@ -37,6 +37,7 @@ import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
+import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.client.api.http.NoContentException;
 import org.apache.olingo.client.core.ConfigurationImpl;
 import org.apache.olingo.client.core.communication.util.PipedInputStream;
@@ -245,21 +246,12 @@ public abstract class AbstractODataResponse implements ODataResponse {
 
   @Override
   public void close() {
-    closeHttpResponse();
-    odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
+    HttpClientFactory httpClientFactory = odataClient.getConfiguration().getHttpClientFactory();
+    httpClientFactory.close(res);
+    httpClientFactory.close(httpClient);
 
     if (batchInfo != null) {
       batchInfo.setValidBatch(false);
-    }
-  }
-
-  protected void closeHttpResponse() {
-    if(res != null && res instanceof CloseableHttpResponse) {
-      try {
-        ((CloseableHttpResponse) res).close();
-      } catch (IOException e) {
-        LOG.debug("Unable to close response: {}", res, e);
-      }
     }
   }
 

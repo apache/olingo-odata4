@@ -18,10 +18,6 @@
  */
 package org.apache.olingo.client.core.communication.header;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.StatusLine;
 import org.apache.olingo.client.api.ODataClient;
@@ -31,10 +27,12 @@ import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.client.api.serialization.ODataDeserializerException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 public final class ODataErrorResponseChecker {
 
@@ -91,9 +89,10 @@ public final class ODataErrorResponseChecker {
         }
       }
 
-      if (statusLine.getStatusCode() >= 500 && error!= null && 
-          (error.getDetails() == null || error.getDetails().isEmpty()) && 
-          (error.getInnerError() == null || error.getInnerError().size() == 0)) {
+      if (statusLine.getStatusCode() >= 500 && error != null
+              && (error.getCode() == null || error.getCode().isEmpty())
+              && (error.getDetails() == null || error.getDetails().isEmpty())
+              && (error.getInnerError() == null || error.getInnerError().size() == 0)) {
         result = new ODataServerErrorException(statusLine);
       } else {
         result = new ODataClientErrorException(statusLine, error);

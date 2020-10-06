@@ -111,9 +111,9 @@ public class ErrorTest extends AbstractTest {
     when(statusLine.getStatusCode()).thenReturn(500);
     when(statusLine.toString()).thenReturn("Internal Server Error");
         
-    ODataServerErrorException exp = (ODataServerErrorException) ODataErrorResponseChecker.
+    ODataRuntimeException exp = ODataErrorResponseChecker.
         checkResponse(odataClient, statusLine, entity, "Json");
-    assertTrue(exp.getMessage().startsWith("Internal Server Error"));
+    assertTrue(exp.getMessage().contains("Internal Server Error"));
   }
   
   @Test

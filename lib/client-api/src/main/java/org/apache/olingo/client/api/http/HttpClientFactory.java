@@ -18,17 +18,31 @@
  */
 package org.apache.olingo.client.api.http;
 
-import java.net.URI;
-
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.http.HttpMethod;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * Interface used by ODataRequest implementations to instantiate HttpClient.
  */
 public interface HttpClientFactory {
 
-  HttpClient create(HttpMethod method, URI uri);
+    HttpClient create(HttpMethod method, URI uri);
 
-  void close(HttpClient httpClient);
+    default void close(HttpResponse httpResponse) {
+        if (httpResponse instanceof CloseableHttpResponse) {
+            try {
+                ((CloseableHttpResponse) httpResponse).close();
+            } catch (IOException e) {
+                throw new ODataRuntimeException("Unable to close response: " + httpResponse, e);
+            }
+        }
+    }
+
+    void close(HttpClient httpClient);
 }

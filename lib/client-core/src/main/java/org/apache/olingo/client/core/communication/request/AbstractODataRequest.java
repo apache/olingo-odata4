@@ -33,6 +33,7 @@ import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
+import org.apache.olingo.client.api.http.HttpClientFactory;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -315,22 +316,13 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     try {
       checkResponse(odataClient, response, getAccept());
     } catch (ODataRuntimeException e) {
-      closeHttpResponse(response);
-      odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
+      HttpClientFactory httpClientFactory = odataClient.getConfiguration().getHttpClientFactory();
+      httpClientFactory.close(response);
+      httpClientFactory.close(httpClient);
       throw e;
     }
 
     return response;
-  }
-
-  private void closeHttpResponse(HttpResponse response) {
-    if (response instanceof CloseableHttpResponse) {
-      try {
-        ((CloseableHttpResponse) response).close();
-      } catch (IOException e) {
-        LOG.warn("Unable to close response: {}", response, e);
-      }
-    }
   }
 
     /**
