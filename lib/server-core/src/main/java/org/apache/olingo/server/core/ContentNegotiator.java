@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.olingo.commons.api.format.AcceptCharset;
 import org.apache.olingo.commons.api.format.AcceptType;
@@ -92,8 +93,12 @@ public final class ContentNegotiator {
           throws ContentNegotiatorException {
     final List<ContentType> supportedContentTypes =
         getSupportedContentTypes(customContentTypeSupport, representationType);
-    final String acceptHeaderValue = request.getHeader(HttpHeader.ACCEPT);
-    String acceptCharset = request.getHeader(HttpHeader.ACCEPT_CHARSET);
+    final List<String> acceptHeaderValueList = request.getHeaders(HttpHeader.ACCEPT);
+    final String acceptHeaderValue = acceptHeaderValueList != null ? 
+    		acceptHeaderValueList.stream().collect(Collectors.joining(", ")) : null;
+    List<String> acceptCharsetValueList = request.getHeaders(HttpHeader.ACCEPT_CHARSET);
+    String acceptCharset = acceptCharsetValueList != null ? 
+    		acceptCharsetValueList.stream().collect(Collectors.joining(", ")) : null;
     List<AcceptCharset> charsets = null;
       
     ContentType result = null;
