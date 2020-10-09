@@ -46,7 +46,9 @@ import org.apache.olingo.server.api.uri.queryoption.ApplyItem;
 import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.FilterOption;
+import org.apache.olingo.server.api.uri.queryoption.OrderByOption;
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
+import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.apply.Aggregate;
 import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression;
 import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression.StandardMethod;
@@ -67,6 +69,8 @@ import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.queryoption.ApplyOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandItemImpl;
 import org.apache.olingo.server.core.uri.queryoption.ExpandOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
+import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.apply.AggregateExpressionImpl;
 import org.apache.olingo.server.core.uri.queryoption.apply.AggregateImpl;
 import org.apache.olingo.server.core.uri.queryoption.apply.BottomTopImpl;
@@ -81,7 +85,10 @@ import org.apache.olingo.server.core.uri.queryoption.apply.FilterImpl;
 import org.apache.olingo.server.core.uri.queryoption.apply.GroupByImpl;
 import org.apache.olingo.server.core.uri.queryoption.apply.GroupByItemImpl;
 import org.apache.olingo.server.core.uri.queryoption.apply.IdentityImpl;
+import org.apache.olingo.server.core.uri.queryoption.apply.OrderByImpl;
 import org.apache.olingo.server.core.uri.queryoption.apply.SearchImpl;
+import org.apache.olingo.server.core.uri.queryoption.apply.SkipImpl;
+import org.apache.olingo.server.core.uri.queryoption.apply.TopImpl;
 import org.apache.olingo.server.core.uri.queryoption.expression.MemberImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
@@ -172,6 +179,29 @@ public class ApplyParser {
       ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
       return new SearchImpl().setSearchOption(searchOption);
 
+    } else if (tokenizer.next(TokenKind.OrderByTrafo)) {
+    	final OrderByOption orderByOption = new OrderByParser(edm, odata)
+    			.parse(tokenizer, referencedType, crossjoinEntitySetNames, aliases);
+    	ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
+    	return new OrderByImpl().setOrderByOption(orderByOption);
+    } else if (tokenizer.next(TokenKind.TopTrafo)) {
+    	ParserHelper.requireNext(tokenizer, TokenKind.IntegerValue);
+    	final int value = ParserHelper.parseNonNegativeInteger(SystemQueryOptionKind.TOP.toString(),
+                tokenizer.getText(), true);
+        TopOptionImpl topOption = new TopOptionImpl();
+        topOption.setText(tokenizer.getText());
+        topOption.setValue(value);
+        ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
+        return new TopImpl().setTopOption(topOption);
+    } else if (tokenizer.next(TokenKind.SkipTrafo)) {
+    	ParserHelper.requireNext(tokenizer, TokenKind.IntegerValue);
+    	final int value = ParserHelper.parseNonNegativeInteger(SystemQueryOptionKind.SKIP.toString(),
+                tokenizer.getText(), true);
+        SkipOptionImpl skipOption = new SkipOptionImpl();
+        skipOption.setText(tokenizer.getText());
+        skipOption.setValue(value);
+        ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
+        return new SkipImpl().setSkipOption(skipOption);
     } else if (tokenizer.next(TokenKind.QualifiedName)) {
       return parseCustomFunction(new FullQualifiedName(tokenizer.getText()), referencedType);
 

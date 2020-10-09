@@ -187,6 +187,9 @@ public class UriTokenizer {
     TopCountTrafo, // for the aggregation extension
     TopPercentTrafo, // for the aggregation extension
     TopSumTrafo, // for the aggregation extension
+    TopTrafo, // for the aggregation extension
+    SkipTrafo, // for the aggregation extension
+    OrderByTrafo, // for the aggregation extension
 
     RollUpSpec, // for the aggregation extension
 
@@ -689,6 +692,15 @@ public class UriTokenizer {
     case TopSumTrafo:
       found = nextMethod("topsum");
       break;
+    case OrderByTrafo:
+    	found = nextMethod("orderby");
+    	break;
+    case TopTrafo:
+    	found = nextMethod("top");
+    	break;
+    case SkipTrafo:
+    	found = nextMethod("skip");
+    	break;
 
     // Roll-up specification for the aggregation extension
     case RollUpSpec:

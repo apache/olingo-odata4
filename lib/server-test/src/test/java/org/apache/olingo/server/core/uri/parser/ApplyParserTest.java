@@ -23,7 +23,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
@@ -36,6 +38,7 @@ import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceKind;
 import org.apache.olingo.server.api.uri.queryoption.ApplyItem;
 import org.apache.olingo.server.api.uri.queryoption.ApplyOption;
+import org.apache.olingo.server.api.uri.queryoption.OrderByItem;
 import org.apache.olingo.server.api.uri.queryoption.apply.Aggregate;
 import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression;
 import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression.StandardMethod;
@@ -50,12 +53,16 @@ import org.apache.olingo.server.api.uri.queryoption.apply.Filter;
 import org.apache.olingo.server.api.uri.queryoption.apply.GroupBy;
 import org.apache.olingo.server.api.uri.queryoption.apply.GroupByItem;
 import org.apache.olingo.server.api.uri.queryoption.apply.Identity;
+import org.apache.olingo.server.api.uri.queryoption.apply.OrderBy;
 import org.apache.olingo.server.api.uri.queryoption.apply.Search;
+import org.apache.olingo.server.api.uri.queryoption.apply.Skip;
+import org.apache.olingo.server.api.uri.queryoption.apply.Top;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
 import org.apache.olingo.server.api.uri.queryoption.expression.MethodKind;
 import org.apache.olingo.server.core.uri.UriInfoImpl;
 import org.apache.olingo.server.core.uri.parser.search.SearchParserException;
 import org.apache.olingo.server.core.uri.testutil.ExpandValidator;
+import org.apache.olingo.server.core.uri.testutil.FilterTreeToText;
 import org.apache.olingo.server.core.uri.testutil.FilterValidator;
 import org.apache.olingo.server.core.uri.testutil.ResourceValidator;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
@@ -207,6 +214,30 @@ public class ApplyParserTest {
         .goConcat(1).goBottomTop().isMethod(Method.BOTTOM_COUNT).goNumber().isLiteral("2");
 
     parseEx("ESTwoKeyNav", "concat(identity)").isExSyntax(UriParserSyntaxException.MessageKeys.SYNTAX);
+    
+    parse("ESTwoKeyNav", "concat("
+    		+ "groupby((PropertyString),aggregate(PropertyInt16 with sum as s)),"
+    		+ "groupby((PropertyString,PropertyInt16),aggregate(PropertyInt16 with sum as s1))"
+    		+ "/orderby(PropertyString,PropertyInt16)"
+    		+ "/skip(3)"
+    		+ "/top(10))")
+    .is(Concat.class)
+    .goConcat(0).goGroupBy(0).goUp().goUp()
+    .goConcat(1).goGroupBy(0).goUp().goUp()
+    .goConcat(1).at(1).goOrderBy().goValue("<false<PropertyString>,false<PropertyInt16>>").goUp().goUp()
+    .goConcat(1).at(2).goSkip().goValue(3).goUp().goUp()
+    .goConcat(1).at(3).goTop().goValue(10).goUp().goUp();
+    
+    parse("ESTwoKeyNav", "groupby((PropertyString,PropertyInt16),aggregate(PropertyInt16 with sum as s1))"
+    		+ "/orderby(PropertyString asc,PropertyInt16,NavPropertyETTwoKeyNavOne/PropertyString desc)"
+    		+ "/skip(3)"
+    		+ "/top(10)/concat(identity,aggregate(PropertyInt16 with max as s2))")
+    .at(0).goGroupBy(0).goUp()
+    .at(1).goOrderBy().goValue("<false<PropertyString>,false<PropertyInt16>"
+    		+ ",true<NavPropertyETTwoKeyNavOne/PropertyString>>").goUp()
+    .at(2).goSkip().goValue(3).goUp()
+    .at(3).goTop().goValue(10).goUp()
+    .at(4).is(Concat.class);
   }
 
   @Test
@@ -554,6 +585,21 @@ public class ApplyParserTest {
       is(BottomTop.class);
       return new BottomTopValidator((BottomTop) applyItem, this);
     }
+    
+    public OrderByValidator goOrderBy() {
+        is(OrderBy.class);
+        return new OrderByValidator((OrderBy) applyItem, this);
+      }
+    
+    public TopValidator goTop() {
+        is(Top.class);
+        return new TopValidator((Top) applyItem, this);
+      }
+    
+    public SkipValidator goSkip() {
+        is(Skip.class);
+        return new SkipValidator((Skip) applyItem, this);
+      }
 
     public ApplyValidator isCustomFunction(final FullQualifiedName function) {
       is(CustomFunction.class);
@@ -688,6 +734,74 @@ public class ApplyParserTest {
       return previous;
     }
   }
+  
+  private final class TopValidator implements TestValidator {
+
+	    private final Top item;
+	    private final ApplyValidator previous;
+
+	    private TopValidator(final Top item, final ApplyValidator previous) {
+	      this.item = item;
+	      this.previous = previous;
+	    }
+
+	    public TopValidator goValue(int value) {
+	      assertNotNull(item.getTopOption().getValue());
+	      assertEquals(value, item.getTopOption().getValue());
+	      return this;
+	    }
+
+	    public ApplyValidator goUp() {
+	      return previous;
+	    }
+	  }
+  
+  private final class SkipValidator implements TestValidator {
+
+	    private final Skip item;
+	    private final ApplyValidator previous;
+
+	    private SkipValidator(final Skip item, final ApplyValidator previous) {
+	      this.item = item;
+	      this.previous = previous;
+	    }
+
+	    public SkipValidator goValue(int value) {
+	      assertNotNull(item.getSkipOption().getValue());
+	      assertEquals(value, item.getSkipOption().getValue());
+	      return this;
+	    }
+
+	    public ApplyValidator goUp() {
+	      return previous;
+	    }
+	  }
+  
+  private final class OrderByValidator implements TestValidator {
+
+	    private final OrderBy item;
+	    private final ApplyValidator previous;
+
+	    private OrderByValidator(final OrderBy item, final ApplyValidator previous) {
+	      this.item = item;
+	      this.previous = previous;
+	    }
+
+	    public OrderByValidator goValue(String expectedOrderBy) throws Exception {
+	      List<OrderByItem> orderByItems = item.getOrderByOption().getOrders();
+	      List<String> orderBy = new ArrayList<>();
+	      for (OrderByItem orderByItem : orderByItems) {
+	    	  orderBy.add(String.valueOf(orderByItem.isDescending()) + 
+	      FilterTreeToText.Serialize(orderByItem.getExpression()));
+	      }
+	      assertEquals(expectedOrderBy, "<" + String.join(",", orderBy) + ">");
+	      return this;
+	    }
+
+	    public ApplyValidator goUp() {
+	      return previous;
+	    }
+	  }
 
   private final class ComputeValidator implements TestValidator {
 

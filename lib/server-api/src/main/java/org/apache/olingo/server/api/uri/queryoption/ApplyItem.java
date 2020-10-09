@@ -34,7 +34,10 @@ public interface ApplyItem {
     FILTER,
     GROUP_BY,
     IDENTITY,
-    SEARCH
+    SEARCH,
+    ORDERBY,
+    TOP,
+    SKIP
   }
 
   /**
