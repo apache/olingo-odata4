@@ -38,6 +38,7 @@ public class EdmStringTest extends PrimitiveTypeBaseTest {
   @Test
   public void fromUriLiteral() throws Exception {
     assertEquals("String''Value", instance.fromUriLiteral("'String''''Value'"));
+    assertEquals("null", instance.fromUriLiteral("null"));
 
     expectErrorInFromUriLiteral(instance, "");
     expectErrorInFromUriLiteral(instance, "'");

@@ -99,7 +99,10 @@ public final class EdmString extends SingletonPrimitiveType {
   }
 
   @Override
-  public String fromUriLiteral(final String literal) throws EdmPrimitiveTypeException {
+  public String fromUriLiteral(String literal) throws EdmPrimitiveTypeException {
+	  if (literal != null && literal.equalsIgnoreCase("null")) {
+		  literal = "'" + literal + "'";
+	  }
     return literal == null ? null : super.fromUriLiteral(literal).replace("''", "'");
   }
 }
