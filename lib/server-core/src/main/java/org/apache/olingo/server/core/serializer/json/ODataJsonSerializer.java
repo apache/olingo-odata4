@@ -115,12 +115,14 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   private final boolean isODataMetadataNone;
   private final boolean isODataMetadataFull;
   private IConstants constants;
+  private ODataJsonInstanceAnnotationSerializer instanceAnnotSerializer;
 
   public ODataJsonSerializer(final ContentType contentType, final IConstants constants) {
     isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
     isODataMetadataNone = ContentTypeHelper.isODataMetadataNone(contentType);
     isODataMetadataFull = ContentTypeHelper.isODataMetadataFull(contentType);
     this.constants = constants;
+    instanceAnnotSerializer = new ODataJsonInstanceAnnotationSerializer(contentType, constants);
   }
 
   public ODataJsonSerializer(final ContentType contentType) {
@@ -128,6 +130,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
     isODataMetadataNone = ContentTypeHelper.isODataMetadataNone(contentType);
     isODataMetadataFull = ContentTypeHelper.isODataMetadataFull(contentType);
     this.constants = new Constantsv00();
+    instanceAnnotSerializer = new ODataJsonInstanceAnnotationSerializer(contentType, constants);
   }
 
   @Override
@@ -431,7 +434,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
             json.writeStringField(constants.getEditLink(), entity.getEditLink().getHref());
           }
         }
-        
+        instanceAnnotSerializer.writeInstanceAnnotationsOnEntity(entity.getAnnotations(), json);        
         writeProperties(metadata, resolvedType, entity.getProperties(), select, json, entity, expand);
         writeNavigationProperties(metadata, resolvedType, entity, expand, toDepth, ancestors, name, json);
         writeOperations(entity.getOperations(), json);      
@@ -507,7 +510,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   protected void writeProperties(final ServiceMetadata metadata, final EdmStructuredType type,
       final List<Property> properties,
       final SelectOption select, final JsonGenerator json, Linked linked, ExpandOption expand)
-      throws IOException, SerializerException {
+      throws IOException, SerializerException, DecoderException {
     final boolean all = ExpandSelectHelper.isAll(select);
     final Set<String> selected = all ? new HashSet<>() :
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
@@ -679,7 +682,9 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final EdmProperty edmProperty, final Property property,
       final Set<List<String>> selectedPaths, final JsonGenerator json, 
       Set<List<String>> expandedPaths, Linked linked, ExpandOption expand)
-      throws IOException, SerializerException {
+      throws IOException, SerializerException, DecoderException  {
+	
+	instanceAnnotSerializer.writeInstanceAnnotationsOnProperties(edmProperty, property, json);
     boolean isStreamProperty = isStreamProperty(edmProperty);
     writePropertyType(edmProperty, json);
     if (!isStreamProperty) {
@@ -745,7 +750,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   private void writePropertyValue(final ServiceMetadata metadata, final EdmProperty edmProperty,
       final Property property, final Set<List<String>> selectedPaths, final JsonGenerator json, 
       Set<List<String>> expandedPaths, Linked linked, ExpandOption expand)
-      throws IOException, SerializerException {
+      throws IOException, SerializerException, DecoderException {
     final EdmType type = edmProperty.getType();
     try {
       if (edmProperty.isPrimitive()
@@ -790,7 +795,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
   private void writeComplex(final ServiceMetadata metadata, final EdmComplexType type,
       final Property property, final Set<List<String>> selectedPaths, final JsonGenerator json, 
       Set<List<String>> expandedPaths, Linked linked, ExpandOption expand) 
-          throws IOException, SerializerException{
+          throws IOException, SerializerException, DecoderException{
         json.writeStartObject();        
         String derivedName = property.getType();
         EdmComplexType resolvedType = null;
@@ -864,7 +869,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final Property property,
       final Set<List<String>> selectedPaths, final JsonGenerator json, 
       Set<List<String>> expandedPaths, Linked linked, ExpandOption expand)
-      throws IOException, SerializerException {
+      throws IOException, SerializerException, DecoderException {
     json.writeStartArray();
     EdmComplexType derivedType = type;
     Set<List<String>> expandedPaths1 = expandedPaths != null && !expandedPaths.isEmpty() ? 
@@ -1063,7 +1068,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final EdmComplexType type, final List<Property> properties,
       final Set<List<String>> selectedPaths, final JsonGenerator json, 
       Set<List<String>> expandedPaths, Linked linked, ExpandOption expand, String complexPropName)
-      throws IOException, SerializerException {
+      throws IOException, SerializerException, DecoderException {
 
     if (null != expandedPaths) {
       for(List<String> paths : expandedPaths) {
@@ -1237,7 +1242,8 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
   @Override
   public SerializerResult complexCollection(final ServiceMetadata metadata, final EdmComplexType type,
-      final Property property, final ComplexSerializerOptions options) throws SerializerException {
+      final Property property, final ComplexSerializerOptions options) 
+    		  throws SerializerException {
     OutputStream outputStream = null;
     SerializerException cachedException = null;
     
@@ -1270,7 +1276,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
 
       json.close();
       return SerializerResultImpl.with().content(buffer.getInputStream()).build();
-    } catch (final IOException e) {
+    } catch (final IOException | DecoderException e) {
       cachedException =
           new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
       throw cachedException;

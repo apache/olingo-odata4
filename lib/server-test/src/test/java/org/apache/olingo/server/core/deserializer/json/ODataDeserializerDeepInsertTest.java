@@ -21,13 +21,15 @@ package org.apache.olingo.server.core.deserializer.json;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.ValueType;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
@@ -126,22 +128,24 @@ public class ODataDeserializerDeepInsertTest extends AbstractODataDeserializerTe
 
   @Test
   public void esAllPrimExpandedToOneWithCustomAnnotations() throws Exception {
-    try {
-      deserialize("EntityESAllPrimExpandedNavPropertyETTwoPrimOneWithCustomAnnotations.json");
-      fail("Expected exception not thrown.");
-    } catch (final DeserializerException e) {
-      assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
-    }
+      Entity entity = deserialize("EntityESAllPrimExpandedNavPropertyETTwoPrimOneWithCustomAnnotations.json");
+      assertNotNull(entity);
+	  List<Annotation> annotations = entity.getNavigationLink("NavPropertyETTwoPrimOne").getAnnotations();
+	  assertEquals(1, annotations.size());
+	  assertEquals("custom.annotation", annotations.get(0).getTerm());
+	  assertEquals("customValue", annotations.get(0).getValue());
+	  assertEquals(ValueType.PRIMITIVE, annotations.get(0).getValueType());
   }
 
   @Test
   public void esAllPrimExpandedToManyWithCustomAnnotations() throws Exception {
-    try {
-      deserialize("EntityESAllPrimExpandedNavPropertyETTwoPrimManyWithCustomAnnotations.json");
-      fail("Expected exception not thrown.");
-    } catch (final DeserializerException e) {
-      assertEquals(DeserializerException.MessageKeys.NOT_IMPLEMENTED, e.getMessageKey());
-    }
+	  Entity entity = deserialize("EntityESAllPrimExpandedNavPropertyETTwoPrimManyWithCustomAnnotations.json");
+	  assertNotNull(entity);
+	  List<Annotation> annotations = entity.getNavigationLink("NavPropertyETTwoPrimMany").getAnnotations();
+	  assertEquals(1, annotations.size());
+	  assertEquals("custom.annotation", annotations.get(0).getTerm());
+	  assertEquals("customValue", annotations.get(0).getValue());
+	  assertEquals(ValueType.PRIMITIVE, annotations.get(0).getValueType());
   }
 
   @Test

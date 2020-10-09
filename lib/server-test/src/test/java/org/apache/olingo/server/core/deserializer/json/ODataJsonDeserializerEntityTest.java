@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.olingo.commons.api.Constants;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
@@ -1269,8 +1270,13 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
         + "{\"PropertyInt16\":123,\"PropertyString\":\"TEST 1\"},"
         + "{\"PropertyInt16\":456,\"PropertyString\":\"TEST 2\"},"
         + "{\"PropertyInt16\":789,\"PropertyString\":\"TEST 3\"}]}";
-    expectException(entityString, "ETMixPrimCollComp",
-        DeserializerException.MessageKeys.NOT_IMPLEMENTED);
+    Entity entity = deserialize(entityString, "ETMixPrimCollComp", ContentType.APPLICATION_JSON);
+    assertNotNull(entity);
+    List<Annotation> annotations = entity.getProperty("CollPropertyString").getAnnotations();
+    assertEquals(1, annotations.size());
+    assertEquals("custom.annotation", annotations.get(0).getTerm());
+    assertEquals(12, annotations.get(0).getValue());
+    assertEquals(ValueType.PRIMITIVE, annotations.get(0).getValueType());
   }
 
   @Test

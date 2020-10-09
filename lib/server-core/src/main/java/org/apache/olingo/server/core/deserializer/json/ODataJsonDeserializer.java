@@ -39,6 +39,7 @@ import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.IConstants;
 import org.apache.olingo.commons.api.constants.Constantsv00;
 import org.apache.olingo.commons.api.constants.Constantsv01;
+import org.apache.olingo.commons.api.data.Annotation;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.DeletedEntity;
 import org.apache.olingo.commons.api.data.DeletedEntity.Reason;
@@ -118,6 +119,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private final boolean isIEEE754Compatible;
   private ServiceMetadata serviceMetadata;
   private IConstants constants;
+  private ODataJsonInstanceAnnotationDeserializer instanceAnnotDeserializer;
 
   public ODataJsonDeserializer(final ContentType contentType) {
     this(contentType, null, new Constantsv00());
@@ -127,17 +129,20 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
     this.serviceMetadata = serviceMetadata;
     this.constants = new Constantsv00();
+    instanceAnnotDeserializer = new ODataJsonInstanceAnnotationDeserializer();
   }
 
   public ODataJsonDeserializer(ContentType contentType, ServiceMetadata serviceMetadata, IConstants constants) {
     isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
     this.serviceMetadata = serviceMetadata;
     this.constants = constants;
+    instanceAnnotDeserializer = new ODataJsonInstanceAnnotationDeserializer();
   }
 
   public ODataJsonDeserializer(ContentType contentType, IConstants constants) {
     isIEEE754Compatible = ContentTypeHelper.isODataIEEE754Compatible(contentType);
     this.constants = constants;
+    instanceAnnotDeserializer = new ODataJsonInstanceAnnotationDeserializer();
   }
 
   @Override
@@ -451,6 +456,29 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         Link bindingLink = consumeBindingLink(field.getKey(), field.getValue(), edmEntityType);
         entity.getNavigationBindings().add(bindingLink);
         toRemove.add(field.getKey());
+      } else if (!field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX) && 
+    		  field.getKey().contains(ODATA_ANNOTATION_MARKER) &&
+    		  field.getKey().substring(field.getKey().indexOf(ODATA_ANNOTATION_MARKER))
+    		  .contains(".")) {
+    	// Instance annotations start with @ sign followed by 
+          // alias or namespace 
+          // followed by a dot and then term name
+    	  String[] keySplit = field.getKey().split(ODATA_ANNOTATION_MARKER);
+    	  String termName = keySplit[1];
+    	  Annotation annotation = instanceAnnotDeserializer.consumeInstanceAnnotation(termName, field.getValue());
+    	  // If keySplit has a value at zeroth index then instance annotation is specified like 
+    	  // propertyName@Term
+    	  if (!keySplit[0].isEmpty()) {
+    		  if (edmEntityType.getPropertyNames().contains(keySplit[0])) {
+    			  entity.getProperty(keySplit[0]).getAnnotations().add(annotation);
+    		  } else if (edmEntityType.getNavigationPropertyNames().contains(keySplit[0])) {
+    			  Link link = entity.getNavigationLink(keySplit[0]);
+    			  link.getAnnotations().add(annotation);
+    		  }
+    	  } else {
+    		  entity.getAnnotations().add(annotation);
+    	  }
+    	  toRemove.add(field.getKey());
       }
     }
     // remove here to avoid iterator issues.
