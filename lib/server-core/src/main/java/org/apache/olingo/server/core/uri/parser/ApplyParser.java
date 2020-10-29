@@ -237,18 +237,7 @@ public class ApplyParser {
     UriInfoImpl uriInfo = new UriInfoImpl();
     final String identifierLeft = parsePathPrefix(uriInfo, referencedType);
     if (identifierLeft != null) {
-      final String customAggregate = tokenizer.getText();
-      // A custom aggregate (an OData identifier) is defined in the CustomAggregate
-      // EDM annotation (in namespace Org.OData.Aggregation.V1) of the structured type or of the entity container.
-      // Currently we don't look into annotations, so all custom aggregates are allowed and have no type.
-      uriInfo.addResourcePart(new UriResourcePrimitivePropertyImpl(createDynamicProperty(customAggregate, null)));
-      aggregateExpression.setPath(uriInfo);
-      final String alias = parseAsAlias(referencedType, false);
-      aggregateExpression.setAlias(alias);
-      if (alias != null) {
-        ((DynamicStructuredType) referencedType).addProperty(createDynamicProperty(alias, null));
-      }
-      parseAggregateFrom(aggregateExpression, referencedType);
+    	customAggregate(referencedType, aggregateExpression, uriInfo);
     } else if (tokenizer.next(TokenKind.OPEN)) {
       final UriResource lastResourcePart = uriInfo.getLastResourcePart();
       if (lastResourcePart == null) {
@@ -279,8 +268,13 @@ public class ApplyParser {
       aggregateExpression.setExpression(expression);
       parseAggregateWith(aggregateExpression);
       if (aggregateExpression.getStandardMethod() == null && aggregateExpression.getCustomMethod() == null) {
-        throw new UriParserSyntaxException("Invalid 'aggregateExpr' syntax.",
-            UriParserSyntaxException.MessageKeys.SYNTAX);
+    	  if (tokenizer.next(TokenKind.AsOperator)) {
+				throw new UriParserSyntaxException("Invalid 'aggregateExpr' syntax.",
+						UriParserSyntaxException.MessageKeys.SYNTAX);
+			} 
+			customAggregateNamedAsProperty(referencedType, aggregateExpression, uriInfo);
+			
+			return aggregateExpression;
       }
       final String alias = parseAsAlias(referencedType, true);
       aggregateExpression.setAlias(alias);
@@ -302,6 +296,43 @@ public class ApplyParser {
     return aggregateExpression;
   }
 
+  private void customAggregate(EdmStructuredType referencedType, AggregateExpressionImpl aggregateExpression,
+      UriInfoImpl uriInfo) throws UriParserException {
+    final String customAggregate = tokenizer.getText();
+    // A custom aggregate (an OData identifier) is defined in the CustomAggregate
+    // EDM annotation (in namespace Org.OData.Aggregation.V1) of the structured type
+    // or of the entity container.
+    // Currently we don't look into annotations, so all custom aggregates are
+    // allowed and have no type.
+    uriInfo.addResourcePart(new UriResourcePrimitivePropertyImpl(createDynamicProperty(customAggregate, null)));
+    aggregateExpression.setPath(uriInfo);
+    final String alias = parseAsAlias(referencedType, false);
+    if (alias != null) {
+      aggregateExpression.setAlias(alias);
+      ((DynamicStructuredType) referencedType).addProperty(createDynamicProperty(alias, null));
+    }
+    parseAggregateFrom(aggregateExpression, referencedType);
+  }
+
+  private void customAggregateNamedAsProperty(EdmStructuredType referencedType, 
+		  AggregateExpressionImpl aggregateExpression, UriInfoImpl uriInfo) 
+				  throws UriParserException {
+    /*
+     * The name of the custom aggregate is identical to the name of a declared
+     * property of the structured type. This is typically done when the custom
+     * aggregate is used as a default aggregate for that property. In this case, the
+     * name refers to the custom aggregate within an aggregate expression without a
+     * with clause, and to the property in all other cases.
+     */
+    UriResource lastResourcePart = uriInfo.getLastResourcePart();
+    String alias = lastResourcePart.getSegmentValue();
+    EdmType edmType = ParserHelper.getTypeInformation((UriResourcePartTyped) lastResourcePart);
+    aggregateExpression.setPath(uriInfo);
+    aggregateExpression.setAlias(alias);
+    aggregateExpression.setExpression(null);
+    ((DynamicStructuredType) referencedType).addProperty(createDynamicProperty(alias, edmType));
+  }
+	  
   private void parseAggregateWith(AggregateExpressionImpl aggregateExpression) throws UriParserException {
     if (tokenizer.next(TokenKind.WithOperator)) {
       final TokenKind kind = ParserHelper.next(tokenizer,
