@@ -748,7 +748,7 @@ public class ODataHandlerImplTest {
     
     dispatchMethodNotAllowed(HttpMethod.PATCH, sigletonManyNavUri, processor);
     
-    dispatchMethodNotAllowed(HttpMethod.PUT, sigletonManyNavUri, processor);
+    dispatch(HttpMethod.PUT, sigletonManyNavUri, processor);
     
     dispatch(HttpMethod.POST, sigletonManyNavUri, processor);
     verify(processor).createEntity(
