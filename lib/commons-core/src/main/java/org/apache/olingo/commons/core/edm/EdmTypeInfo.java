@@ -128,7 +128,7 @@ public class EdmTypeInfo {
         }
       }
     }
-    if (primitiveType==null && enumType==null && complexType==null && entityType==null) {
+    if (primitiveType==null && typeDefinition==null && enumType==null && complexType==null && entityType==null) {
     	primitiveType = EdmPrimitiveTypeKind.String;
     }
   }
