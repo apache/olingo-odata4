@@ -20,6 +20,7 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -296,8 +297,15 @@ public class JsonSerializer implements ODataSerializer {
       }
     } else {
       // TODO: add facets
+      Integer precesion = Constants.DEFAULT_PRECISION;
+      Integer scale = Constants.DEFAULT_SCALE;
+      if(kind == EdmPrimitiveTypeKind.Decimal && value instanceof BigDecimal){
+          BigDecimal bigDecimal = (BigDecimal)value;
+          precesion = bigDecimal.precision();
+          scale = bigDecimal.scale();
+      }
       final String serialized = EdmPrimitiveTypeFactory.getInstance(kind)
-          .valueToString(value, null, null, Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, null);
+          .valueToString(value, null, null, precesion, scale, null);
 
       if (isIEEE754Compatible && (kind == EdmPrimitiveTypeKind.Int64 || kind == EdmPrimitiveTypeKind.Decimal)
           || !NUMBER_TYPES.contains(kind)) {

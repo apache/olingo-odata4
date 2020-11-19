@@ -289,10 +289,15 @@ public class JsonDeserializer implements ODataDeserializer {
         : typeInfo == null ? node.asText()
             : typeInfo.getPrimitiveTypeKind().isGeospatial()
             ? getGeoDeserializer().deserialize(node, typeInfo)
-                : ((EdmPrimitiveType) typeInfo.getType())
-                .valueOfString(node.asText(), true, null,
-                    Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
-                    ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
+                : node.isBigDecimal()
+                ?((EdmPrimitiveType) typeInfo.getType())
+                    .valueOfString(node.asText(), true, null,
+                           node.decimalValue().precision(), node.decimalValue().scale(), true,
+                           ((EdmPrimitiveType) typeInfo.getType()).getDefaultType())
+                 :((EdmPrimitiveType) typeInfo.getType())
+                    .valueOfString(node.asText(), true, null,
+                           Constants.DEFAULT_PRECISION, Constants.DEFAULT_SCALE, true,
+                           ((EdmPrimitiveType) typeInfo.getType()).getDefaultType());
   }
 
   private Object fromComplex(final ObjectNode node, final ObjectCodec codec)

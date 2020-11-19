@@ -85,9 +85,10 @@ public final class EdmDecimal extends SingletonPrimitiveType {
     final int decimals = matcher.group(2) == null ? 0 : matcher.group(2).length();
     return (precision == null || (significantIntegerDigits >= 0 && 
         significantIntegerDigits <= precision - ((scale == null) ? 0 : scale))) &&
-        (decimals >= 0 && decimals <= ((scale == null) ? 0 : scale));
+        (( decimals == 0 && ((scale == null) ? 0 : scale) < 0) ||
+           (decimals >= 0 && decimals <= ((scale == null) ? 0 : scale)));
   }
-  
+
   @Override
   public boolean validateDecimals(final String value,
       final Boolean isNullable, final Integer maxLength, final Integer precision,
