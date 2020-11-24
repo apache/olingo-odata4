@@ -18,10 +18,13 @@
  */
 package org.apache.olingo.server.tecsvc.provider;
 
+import java.util.Arrays;
+
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlNavigationProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
+import org.apache.olingo.commons.api.edm.provider.CsdlReferentialConstraint;
 
 public class PropertyProvider {
 
@@ -775,6 +778,7 @@ public class PropertyProvider {
   public static final CsdlNavigationProperty collectionNavPropertyETMediaMany_ETMedia = new CsdlNavigationProperty()
       .setName("NavPropertyETMediaMany")
       .setType(EntityTypeProvider.nameETMedia)
+      .setPartner("NavPropertyETKeyNavOne")
       .setCollection(true);
 
   public static final CsdlNavigationProperty collectionNavPropertyETTwoKeyNavMany_ETTwoKeyNav_WithPartnerERKeyNavOne =
@@ -852,6 +856,15 @@ public class PropertyProvider {
       .setName("NavPropertyETTwoPrimOne")
       .setType(EntityTypeProvider.nameETTwoPrim)
       .setNullable(false);
+  
+  public static final CsdlNavigationProperty navPropertyETMediaOne_ETKeyNavMany = new CsdlNavigationProperty()
+		  .setName("NavPropertyETKeyNavOne")
+		  .setType(EntityTypeProvider.nameETKeyNav)
+		  .setPartner("NavPropertyETMediaMany")
+		  .setReferentialConstraints(Arrays.asList(
+                  new CsdlReferentialConstraint()
+                      .setProperty("PropertyInt16")
+                      .setReferencedProperty("PropertyInt16")));
 
   public static final CsdlNavigationProperty navPropertyETAllPrimOne_ETAllPrim = new CsdlNavigationProperty()
       .setName("NavPropertyETAllPrimOne")

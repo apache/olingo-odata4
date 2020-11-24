@@ -1327,6 +1327,9 @@ public class ODataXmlSerializerTest {
         "  <a:link rel=\"edit\" href=\"ESMedia(1)\"/>\n" +
         "  <a:content type=\"image/svg+xml\" src=\"ESMedia(1)/$value\" />\n" +
         "  <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(1)/$value\"/>\n" +
+        "  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETKeyNavOne\" "
+        + "type=\"application/atom+xml;type=feed\" title=\"NavPropertyETKeyNavOne\" "
+        + "href=\"ESMedia(1)/NavPropertyETKeyNavOne\"/>" +
         "  <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
         "    term=\"#olingo.odata.test1.ETMedia\" />\n" +
         "  <m:properties>\n" +
@@ -1366,6 +1369,9 @@ public class ODataXmlSerializerTest {
         "    <a:link rel=\"edit\" href=\"ESMedia(1)\"/>\n" +
         "    <a:content type=\"image/svg+xml\" src=\"ESMedia(1)/$value\" />\n" +
         "    <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(1)/$value\"/>\n" +
+        "  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETKeyNavOne\" "
+        + "type=\"application/atom+xml;type=feed\" "
+        + "title=\"NavPropertyETKeyNavOne\" href=\"ESMedia(1)/NavPropertyETKeyNavOne\"/>" +
         "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
         "      term=\"#olingo.odata.test1.ETMedia\" />\n" +
         "    <m:properties>\n" +
@@ -1383,6 +1389,9 @@ public class ODataXmlSerializerTest {
         "    <a:link rel=\"edit\" href=\"ESMedia(2)\"/>\n" +
         "    <a:content type=\"image/svg+xml\" src=\"ESMedia(2)/$value\" />\n" +
         "    <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(2)/$value\"/>\n" +
+        "  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETKeyNavOne\" "
+        + "type=\"application/atom+xml;type=feed\" "
+        + "title=\"NavPropertyETKeyNavOne\" href=\"ESMedia(2)/NavPropertyETKeyNavOne\"/>" +
         "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
         "      term=\"#olingo.odata.test1.ETMedia\" />\n" +
         "    <m:properties>\n" +
@@ -1400,6 +1409,9 @@ public class ODataXmlSerializerTest {
         "    <a:link rel=\"edit\" href=\"ESMedia(3)\"/>\n" +
         "    <a:content type=\"image/svg+xml\" src=\"ESMedia(3)/$value\" />\n" +
         "    <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(3)/$value\"/>\n" +
+        "  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETKeyNavOne\" "
+        + "type=\"application/atom+xml;type=feed\" "
+        + "title=\"NavPropertyETKeyNavOne\" href=\"ESMedia(3)/NavPropertyETKeyNavOne\"/>" +
         "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
         "      term=\"#olingo.odata.test1.ETMedia\" />\n" +
         "    <m:properties>\n" +
@@ -1417,6 +1429,9 @@ public class ODataXmlSerializerTest {
         "    <a:link rel=\"edit\" href=\"ESMedia(4)\"/>\n" +
         "    <a:content type=\"image/svg+xml\" src=\"ESMedia(4)/$value\" />\n" +
         "    <a:link rel=\"edit-media\" title=\"ESMedia\" href=\"ESMedia(4)/$value\"/>\n" +
+        "  <a:link rel=\"http://docs.oasis-open.org/odata/ns/related/NavPropertyETKeyNavOne\" "
+        + "type=\"application/atom+xml;type=feed\" "
+        + "title=\"NavPropertyETKeyNavOne\" href=\"ESMedia(4)/NavPropertyETKeyNavOne\"/>" +
         "    <a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\"\n" +
         "      term=\"#olingo.odata.test1.ETMedia\" />\n" +
         "    <m:properties>\n" +

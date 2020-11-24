@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.List;
+
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -236,12 +238,27 @@ public class ResourceValidator implements TestValidator {
     assertEquals(text, keyPredicate.getText());
     return this;
   }
+  
+  public ResourceValidator isKeyPredicateForNavSeg(final int index, final String name, final String text) {
+	    final UriParameter keyPredicate = getKeyPredicateForNavSegment(index);
+	    assertEquals(name, keyPredicate.getName());
+	    assertEquals(text, keyPredicate.getText());
+	    return this;
+	  }
 
   private UriParameter getKeyPredicate(final int index) {
     assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
         uriPathInfo instanceof UriResourceWithKeysImpl);
     return ((UriResourceWithKeysImpl) uriPathInfo).getKeyPredicates().get(index);
   }
+  
+  private UriParameter getKeyPredicateForNavSegment(final int index) {
+	  List<UriResource> uriResources = uriInfo.getUriResourceParts();
+	  UriResource lastSegment = uriResources.get(uriResources.size() - 1);
+	    assertTrue("invalid resource kind: " + lastSegment.getKind(),
+	    		lastSegment instanceof UriResourceNavigation);
+	    return ((UriResourceNavigation)lastSegment).getKeyPredicates().get(index);
+	  }
 
   public ResourceValidator isParameter(final int index, final String name, final String text) {
     isUriPathInfoKind(UriResourceKind.function);
@@ -319,6 +336,14 @@ public class ResourceValidator implements TestValidator {
     assertEquals(name, ((UriResourceEntitySet) uriPathInfo).getEntitySet().getName());
     return this;
   }
+  
+  public ResourceValidator isEntityType(final String name) {
+	    isUriPathInfoKind(UriResourceKind.entitySet);
+	    List<UriResource> uriResources = uriInfo.getUriResourceParts();
+	    UriResource lastSegment = uriResources.get(uriResources.size() - 1);
+	    assertEquals(name, ((UriResourceNavigation)lastSegment).getType().getName());
+	    return this;
+	  }
 
   public ResourceValidator isSingleton(final String name) {
     isUriPathInfoKind(UriResourceKind.singleton);

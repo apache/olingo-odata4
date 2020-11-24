@@ -310,11 +310,17 @@ public class ParserHelper {
           referencedNames.put(name, referencedName);
         }
       }
+      for (final EdmKeyPropertyRef candidate : keyPropertyRefs) {
+    	  final UriParameter simpleKey = simpleKey(tokenizer, candidate, edm, referringType, aliases);
+          if (simpleKey != null) {
+            keys.add(simpleKey);
+          }
+      }
     }
 
     if (keyPropertyRefs.size() - referencedNames.size() == 1) {
       for (final EdmKeyPropertyRef candidate : keyPropertyRefs) {
-        if (referencedNames.get(candidate.getName()) == null) {
+       if (referencedNames.get(candidate.getName()) == null) {
           final UriParameter simpleKey = simpleKey(tokenizer, candidate, edm, referringType, aliases);
           if (simpleKey != null) {
             keys.add(simpleKey);

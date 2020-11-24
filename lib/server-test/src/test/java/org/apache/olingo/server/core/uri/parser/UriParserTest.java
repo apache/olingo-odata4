@@ -117,6 +117,15 @@ public class UriParserTest {
         .isType(EntityTypeProvider.nameETTwoKeyNav)
         .isTypeFilterOnEntry(EntityTypeProvider.nameETBaseTwoKeyNav)
         .n().isRef();
+    
+    testRes.run("ESKeyNav(1)/NavPropertyETTwoKeyNavMany(PropertyInt16=1,PropertyString='1')")
+    .isEntityType("ETTwoKeyNav")
+    .isKeyPredicateForNavSeg(0, "PropertyInt16", "1")
+    .isKeyPredicateForNavSeg(1, "PropertyString", "'1'");
+    
+    testRes.run("ESKeyNav(1)/NavPropertyETMediaMany(1)")
+    .isEntityType("ETMedia")
+    .isKeyPredicateForNavSeg(0, "PropertyInt16", "1");
   }
 
   @Test

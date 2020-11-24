@@ -292,6 +292,7 @@ public class EntityTypeProvider {
           .setName("ETMedia")
           .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16")))
           .setProperties(Arrays.asList(PropertyProvider.propertyInt16_NotNullable))
+          .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyETMediaOne_ETKeyNavMany))
           .setHasStream(true);
 
     } else if (entityTypeName.equals(nameETServerSidePaging)) {
@@ -430,6 +431,7 @@ public class EntityTypeProvider {
               new CsdlNavigationProperty()
                   .setName("NavPropertyETKeyNavOne")
                   .setType(nameETKeyNav)
+                  .setPartner("NavPropertyETTwoKeyNavMany")
                   .setReferentialConstraints(Arrays.asList(
                       new CsdlReferentialConstraint()
                           .setProperty("PropertyInt16")
