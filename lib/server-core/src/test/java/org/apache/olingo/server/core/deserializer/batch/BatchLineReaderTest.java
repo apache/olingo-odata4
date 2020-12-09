@@ -256,6 +256,21 @@ public class BatchLineReaderTest {
   }
 
   @Test
+  public void specialCharactersInJsonWithNewline() throws Exception {
+    final String text = "\n"
+        + "Content-Type: application/json\n"
+        + "\n"
+        + "{\"text\": \"ä€ß\"}\n";
+    BatchLineReader reader = create(text);
+    reader.readLine();
+    reader.readLine();
+    reader.readLine();
+    assertEquals("{\"text\": \"ä€ß\"}\n", reader.readLine());
+    assertNull(reader.readLine());
+    reader.close();
+  }
+
+  @Test
   public void rawBytes() throws Exception {
     byte[] content = new byte[Byte.MAX_VALUE - Byte.MIN_VALUE + 1];
     // binary content, not a valid UTF-8 representation of a string

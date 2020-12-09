@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -37,6 +37,7 @@ public class BatchLineReader {
   public static final String BOUNDARY = "boundary";
   public static final String DOUBLE_DASH = "--";
   public static final String CRLF = "\r\n";
+  public static final String LFS = "\n";
   private Charset currentCharset = DEFAULT_CHARSET;
   private String currentBoundary = null;
   private ReadState readState = new ReadState();
@@ -95,8 +96,9 @@ public class BatchLineReader {
   private void updateCurrentCharset(final String currentLine) {
     if (currentLine != null) {
       if (currentLine.startsWith(HttpHeader.CONTENT_TYPE)) {
+        int cutOff = currentLine.endsWith(CRLF) ? 2 : currentLine.endsWith(LFS) ? 1 : 0;
         final ContentType contentType = ContentType.parse(
-            currentLine.substring(HttpHeader.CONTENT_TYPE.length() + 1, currentLine.length() - 2).trim());
+            currentLine.substring(HttpHeader.CONTENT_TYPE.length() + 1, currentLine.length() - cutOff).trim());
         if (contentType != null) {
           final String charsetString = contentType.getParameter(ContentType.PARAMETER_CHARSET);
           currentCharset = charsetString == null ?
@@ -110,7 +112,7 @@ public class BatchLineReader {
             currentBoundary = DOUBLE_DASH + boundary;
           }
         }
-      } else if (CRLF.equals(currentLine)) {
+      } else if (CRLF.equals(currentLine) || LFS.equals(currentLine)) {
         readState.foundLinebreak();
       } else if (isBoundary(currentLine)) {
         readState.foundBoundary();
@@ -120,7 +122,9 @@ public class BatchLineReader {
 
   private boolean isBoundary(final String currentLine) {
     return (currentBoundary + CRLF).equals(currentLine)
-        || (currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine);
+        || (currentBoundary + LFS).equals(currentLine)
+        || (currentBoundary + DOUBLE_DASH + CRLF).equals(currentLine)
+        || (currentBoundary + DOUBLE_DASH + LFS).equals(currentLine);
   }
 
   String readLine() throws IOException {
