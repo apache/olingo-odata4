@@ -62,6 +62,7 @@ import org.apache.olingo.commons.api.edm.geo.Geospatial;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
+import org.codehaus.stax2.ri.evt.Stax2EventAllocatorImpl;
 
 import com.fasterxml.aalto.stax.InputFactoryImpl;
 import org.apache.olingo.commons.api.ex.ODataErrorDetail;
@@ -98,6 +99,14 @@ public class AtomDeserializer implements ODataDeserializer {
     FACTORY.setProperty(IS_SUPPORTING_EXTERNAL_ENTITIES, false);
     FACTORY.setProperty(SUPPORT_DTD, false);
     FACTORY.setProperty(IS_REPLACING_ENTITY_REFERENCES, false);
+    /*
+     * Setting the event allocator to Stax2 as EventAllocatorImpl from aalto
+     * has error as seen below
+     * Caused by: java.lang.NoClassDefFoundError:
+     * javax/xml/stream/events/XMLEvent at
+     * com.fasterxml.aalto.stax.InputFactoryImpl.createEventAllocator(InputFactoryImpl.java:594)
+     */
+    FACTORY.setEventAllocator(new Stax2EventAllocatorImpl());
   }
 
   private final AtomGeoValueDeserializer geoDeserializer;
