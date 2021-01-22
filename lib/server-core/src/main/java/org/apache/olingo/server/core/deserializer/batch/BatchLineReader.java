@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
@@ -95,7 +96,7 @@ public class BatchLineReader {
 
   private void updateCurrentCharset(final String currentLine) {
     if (currentLine != null) {
-      if (currentLine.startsWith(HttpHeader.CONTENT_TYPE)) {
+      if (currentLine.toLowerCase(Locale.ENGLISH).startsWith(HttpHeader.CONTENT_TYPE.toLowerCase(Locale.ENGLISH))) {
         int cutOff = currentLine.endsWith(CRLF) ? 2 : currentLine.endsWith(LFS) ? 1 : 0;
         final ContentType contentType = ContentType.parse(
             currentLine.substring(HttpHeader.CONTENT_TYPE.length() + 1, currentLine.length() - cutOff).trim());
