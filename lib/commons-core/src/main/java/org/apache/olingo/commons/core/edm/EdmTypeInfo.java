@@ -242,6 +242,7 @@ public class EdmTypeInfo {
       return EdmPrimitiveTypeKind.Single;
     } else if (value instanceof Calendar || value instanceof Date 
     		|| value instanceof java.sql.Timestamp
+    		|| value instanceof java.time.Instant
     		|| value instanceof java.time.ZonedDateTime) {
       return EdmPrimitiveTypeKind.DateTimeOffset;
     } else if (value instanceof java.sql.Date || value instanceof java.time.LocalDate) {
