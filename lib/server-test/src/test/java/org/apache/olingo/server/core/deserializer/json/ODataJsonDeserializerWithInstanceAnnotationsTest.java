@@ -231,7 +231,43 @@ public class ODataJsonDeserializerWithInstanceAnnotationsTest extends AbstractOD
     assertEquals(ValueType.COLLECTION_COMPLEX, complxProperties.get(1).getValueType());
     assertEquals(2, complxProperties.get(1).asCollection().size());
   }
-  
+
+	@Test
+	public void instanceAnnotationForStreamProperty() throws DeserializerException {
+		final String entityString = "{"
+			+	"\"@odata.context\":\"$metadata#ETWithStream/$entity\","
+			+	"\"PropertyInt16@odata.type\":\"#Int16\","
+			+	"\"PropertyInt16\":32767,"
+			+	"\"PropertyStream@odata.mediaReadLink\":\"http://mockReadLink1\","
+			+ "\"PropertyStream@odata.mediaEditLink\":\"http://mockEditLink1\","
+			+ "\"PropertyStream@odata.mediaMimeType\":\"image/png\","
+			+	"\"PropertyStream@mediaReadLink\":\"http://mockReadLink2\","
+			+ "\"PropertyStream@mediaEditLink\":\"http://mockEditLink2\","
+			+ "\"PropertyStream@mediaMimeType\":\"image/jpeg\""
+			+"}";
+		final Entity entity = deserialize(entityString, "ETWithStream");
+		assertNotNull(entity);
+		Property propertyStream = entity.getProperty("PropertyStream");
+		assertNotNull(propertyStream);
+		List<Annotation> annotations = propertyStream.getAnnotations();
+		assertEquals(6, annotations.size());
+		for(Annotation annotation : annotations) {
+			if("odata.mediaReadLink".equals(annotation.getTerm())) {
+				assertEquals("http://mockReadLink1", annotation.getValue().toString());
+			} else if("odata.mediaEditLink".equals(annotation.getTerm())) {
+				assertEquals("http://mockEditLink1", annotation.getValue().toString());
+			} else if("odata.mediaMimeType".equals(annotation.getTerm())) {
+				assertEquals("image/png", annotation.getValue().toString());
+			} else if("mediaReadLink".equals(annotation.getTerm())) {
+				assertEquals("http://mockReadLink2", annotation.getValue().toString());
+			} else if("mediaEditLink".equals(annotation.getTerm())) {
+				assertEquals("http://mockEditLink2", annotation.getValue().toString());
+			} else if("mediaMimeType".equals(annotation.getTerm())) {
+				assertEquals("image/jpeg", annotation.getValue().toString());
+			}
+		}
+	}
+
   protected static DeserializerResult deserializeWithResultWithConstantV401(final InputStream stream, 
 		  final String entityTypeName, final ContentType contentType) 
 				  throws DeserializerException {

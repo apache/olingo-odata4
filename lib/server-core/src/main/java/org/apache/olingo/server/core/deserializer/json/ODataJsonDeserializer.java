@@ -115,6 +115,9 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   private static final String ODATA_ANNOTATION_MARKER = "@";
   private static final String ODATA_CONTROL_INFORMATION_PREFIX = "@odata.";
   private static final String REASON = "reason";
+  private static final String ODATA_STREAM_PROPERTY_MEDIA_READ_LINK = "mediaReadLink";
+  private static final String ODATA_STREAM_PROPERTY_MEDIA_EDIT_LINK = "mediaEditLink";
+  private static final String ODATA_STREAM_PROPERTY_MEDIA_MIME_TYPE = "mediaMimeType";
 
   private final boolean isIEEE754Compatible;
   private ServiceMetadata serviceMetadata;
@@ -479,12 +482,62 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     		  entity.getAnnotations().add(annotation);
     	  }
     	  toRemove.add(field.getKey());
+      } else if (isStreamPropertyNode(field.getKey())) {
+        consumeStreamPropertyNode(entity, edmEntityType, field);
+        toRemove.add(field.getKey());
       }
     }
     // remove here to avoid iterator issues.
     node.remove(toRemove);
 
     removeAnnotations(node);
+  }
+
+  /**
+   * Process stream property instance annotation,
+   * include
+   * <ul>
+   * <li>odata.mediaReadLink for 4.0 or mediaReadLink for 4.01</li>
+   * <li>odata.mediaEditLink for 4.0 or mediaEditLink for 4.01</li>
+   * <li>odata.mediaMimeType for 4.0 or mediaMimeType for 4.01</li>
+   * </ul>
+   *
+   * @return true if jsonNodeKey present stream property annotation, false for otherwise
+   */
+  private boolean isStreamPropertyNode(String jsonNodeKey) {
+    return jsonNodeKey.endsWith(ODATA_STREAM_PROPERTY_MEDIA_READ_LINK)
+      || jsonNodeKey.endsWith(ODATA_STREAM_PROPERTY_MEDIA_EDIT_LINK)
+      || jsonNodeKey.endsWith(ODATA_STREAM_PROPERTY_MEDIA_MIME_TYPE);
+  }
+
+  /**
+   * Construct a empty {@code Property} and fill stream property annotation data into it
+   *
+   * @param entity entity instance which is filled
+   * @param edmEntityType edm entity type which for which the json node is consumed
+   * @param field Json field entry which current consuming
+   *
+   * @throws DeserializerException thrown by {@code instanceAnnotDeserializer} if consume
+   * instance annotation failed
+   */
+  private void consumeStreamPropertyNode(final Entity entity,
+                                         final EdmEntityType edmEntityType,
+                                         final Entry<String, JsonNode> field) throws DeserializerException {
+    String[] keySplit = field.getKey().split(ODATA_ANNOTATION_MARKER);
+    String termName = keySplit[1];
+    Annotation annotation = instanceAnnotDeserializer.consumeInstanceAnnotation(termName, field.getValue());
+    String propertyName = keySplit[0];
+    if(edmEntityType.getProperty(propertyName) == null) {
+      return;
+    }
+
+    Property property = entity.getProperty(propertyName);
+    if(property == null) {
+      property = new Property();
+      property.setName(propertyName);
+      entity.addProperty(property);
+    }
+    property.getAnnotations().add(annotation);
   }
 
   private void consumeEntityProperties(final EdmEntityType edmEntityType, final ObjectNode node,
@@ -929,7 +982,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   /**
    * Returns the primitive type's default class or the manually mapped class if present.
    * @param mapping
-   * @param edmPrimitiveType
+   * @param type
    * @return the java class to be used during deserialization
    */
   private Class<?> getJavaClassForPrimitiveType(final EdmMapping mapping, final EdmPrimitiveType type) {

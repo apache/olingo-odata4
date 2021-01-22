@@ -108,7 +108,7 @@ public class ODataJsonInstanceAnnotationDeserializer {
 
 		case PRIMITIVE:
 			if (valuable.getType() == null && typeInfo != null) {
-				valuable.setType(typeInfo.getFullQualifiedName().toString());
+				valuable.setType(typeInfo.getPrimitiveTypeKind().name());
 			}
 			final Object primitiveValue = fromPrimitive(node, typeInfo);
 			valuable.setValue(primitiveValue instanceof Geospatial ? 
