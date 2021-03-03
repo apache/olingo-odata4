@@ -81,6 +81,7 @@ public class SearchParserTest {
     testUri.run("ESTwoKeyNav", "$search=\"abc\"");
     testUri.run("ESTwoKeyNav", "$search=\"a\\\"bc\"");
     testUri.run("ESTwoKeyNav", "$search=%22abc%22");
+	testUri.run("ESTwoKeyNav", "$search=%22a%C3%AB%22");
     testUri.run("ESTwoKeyNav", "$search=%22a%5C%22bc%22");
     testUri.run("ESTwoKeyNav", "$search=%22a%5C%5Cbc%22");
 

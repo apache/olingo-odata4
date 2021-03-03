@@ -167,7 +167,9 @@ public class SearchTokenizer {
      */
     static boolean isAllowedPhrase(final char character) {
       // the '%' is allowed because it is assumed that it was percent encoded and is now decoded
-      return isQCharUnescaped(character) || character == '%';
+      return isQCharUnescaped(character) 
+    		  || character == '%' 
+    		  || Character.isUnicodeIdentifierStart(character);
     }
 
     /**
