@@ -939,8 +939,10 @@ public class MetadataDocumentXmlSerializer {
         writer.writeAttribute(XML_PRECISION, "" + property.getPrecision());
       }
 
-      if (property.getScale() != null) {
-        writer.writeAttribute(XML_SCALE, "" + property.getScale());
+      if (property.getScaleAsString() != null) {
+          writer.writeAttribute(XML_SCALE, property.getScaleAsString());
+      } else if (property.getScale() != null) {
+         writer.writeAttribute(XML_SCALE, "" + property.getScale());
       }
       
       if (property.getSrid() != null) {

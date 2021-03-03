@@ -343,6 +343,13 @@ public class MetadataDocumentXmlSerializerTest {
     		+ "AppliesTo=\"Property EntitySet Schema\"></Term>"));
     assertTrue(metadata.contains("<Term Name=\"Term4\" Type=\"Edm.String\" BaseTerm=\"Alias.Term1\"></Term>"));
   }
+  
+  @Test
+  public void entityTypeProperties() throws Exception {
+    String metadata = localMetadata();
+    assertTrue(metadata.contains("<Property Name=\"PropertyDecimal\" " +
+      "Type=\"Edm.Decimal\" Scale=\"variable\"></Property>"));
+  }
 
   @Test
   public void annotationsTest() throws Exception {
@@ -495,6 +502,7 @@ public class MetadataDocumentXmlSerializerTest {
 
     private final FullQualifiedName nameInt16 = EdmPrimitiveTypeKind.Int16.getFullQualifiedName();
     private final FullQualifiedName nameString = EdmPrimitiveTypeKind.String.getFullQualifiedName();
+    private final FullQualifiedName nameDecimal = EdmPrimitiveTypeKind.Decimal.getFullQualifiedName();
     private final FullQualifiedName nameUARTPrimParam = new FullQualifiedName(nameSpace, "UARTPrimParam");
     private final FullQualifiedName nameUARTOtherEntity = new FullQualifiedName(nameSpace, "UARTOtherEntity");
     private final FullQualifiedName nameUARTEntity = new FullQualifiedName(nameSpace, "UARTEntity");
@@ -505,6 +513,11 @@ public class MetadataDocumentXmlSerializerTest {
     private final CsdlProperty propertyString = new CsdlProperty()
     .setName("PropertyString")
     .setType(nameString);
+    private final CsdlProperty propertyDecimal_VariableScale = new CsdlProperty()
+    	    .setName("PropertyDecimal")
+    	    .setType(nameDecimal)
+    	    .setScale(0)
+    	    .setScaleAsString("variable");
     
     private final CsdlNavigationProperty navProperty = new CsdlNavigationProperty()
         .setName("NavProperty")
@@ -556,7 +569,7 @@ public class MetadataDocumentXmlSerializerTest {
         return new CsdlEntityType()
         .setName("ET")
         .setKey(Collections.singletonList(new CsdlPropertyRef().setName("PropertyInt16")))
-        .setProperties(Collections.singletonList(propertyInt16_NotNullable))
+        .setProperties(Arrays.asList(propertyInt16_NotNullable, propertyDecimal_VariableScale))
         .setNavigationProperties(Collections.singletonList(navProperty));
       }
       return null;
