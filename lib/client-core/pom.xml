@@ -32,7 +32,7 @@
     <artifactId>odata-lib</artifactId>
     <version>4.8.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
-  </parent>
+  </parent> 
 
   <dependencies>
     <dependency>
