@@ -143,7 +143,7 @@ public abstract class AbstractODataStreamManager<T extends ODataResponse> extend
    */
   @Override
   public final T getResponse() {
-    return getResponse(30, TimeUnit.SECONDS);
+    return getResponse(300, TimeUnit.SECONDS);
   }
 
   /**
