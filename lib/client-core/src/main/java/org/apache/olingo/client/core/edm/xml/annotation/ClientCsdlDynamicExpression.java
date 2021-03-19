@@ -131,6 +131,9 @@ public abstract class ClientCsdlDynamicExpression extends CsdlDynamicExpression 
       } else if (COLLECTION.equals(jp.getCurrentName())) {
         jp.nextToken();
         expression = jp.readValueAs(ClientCsdlCollection.class);
+        if(expression == null) {
+          expression = new ClientCsdlCollection();
+        }
       } else if (IF.equals(jp.getCurrentName())) {
         jp.nextToken();
         jp.nextToken();

@@ -77,6 +77,7 @@ import org.apache.olingo.commons.api.edm.provider.annotation.CsdlExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression.LogicalOrComparisonExpressionType;
 //CHECKSTYLE:ON
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPath;
+import org.apache.olingo.commons.api.edm.provider.annotation.CsdlPropertyValue;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlRecord;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlUrlRef;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -1212,5 +1213,28 @@ public class MetadataTest extends AbstractTest {
    term = edm.getTerm(termName);
    annotation = annotations.getAnnotation(term, null);
    assertNotNull(annotation);
+ }
+ 
+ @Test
+ public void metadataWithEmptyCollection() throws Exception {
+   InputStream input = getClass().getResourceAsStream("empty-collection-metadata.xml");
+   final XMLMetadata metadata = client.getDeserializer(ContentType.APPLICATION_XML).toMetadata(input);
+
+   CsdlSchema schema = metadata.getSchema("Foo");
+   assertNotNull(schema);
+
+   CsdlAnnotations annotations = schema.getAnnotationGroup("Foo.EntityContainer/Bar", null);
+   assertNotNull(annotations);
+
+   CsdlAnnotation annotation = annotations.getAnnotation("Capabilities.FilterRestrictions");
+   assertNotNull(annotation);
+
+   CsdlPropertyValue value = annotation.getExpression()
+       .asDynamic().asRecord().getPropertyValues().get(0);
+   assertNotNull(value);
+
+   CsdlExpression collection = value.getValue();
+   assertNotNull(value);
+   assertEquals(new CsdlCollection(), collection);
  }
 }
