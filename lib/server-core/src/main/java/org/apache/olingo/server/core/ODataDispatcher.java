@@ -413,7 +413,8 @@ public class ODataDispatcher {
         handler.selectProcessor(ComplexProcessor.class)
             .readComplex(request, response, uriInfo, requestedContentType);
       }
-    } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+    } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH ||
+          ((method == HttpMethod.POST) && isCollection)) {
       validatePreconditions(request, false);
       final ContentType requestFormat = getSupportedContentType(request.getHeader(HttpHeader.CONTENT_TYPE),
           complexRepresentationType, true);
@@ -457,7 +458,8 @@ public class ODataDispatcher {
         handler.selectProcessor(PrimitiveProcessor.class)
             .readPrimitive(request, response, uriInfo, requestedContentType);
       }
-    } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+    } else if (method == HttpMethod.PUT || method == HttpMethod.PATCH ||
+          ((method == HttpMethod.POST) && isCollection)) {
       validatePreconditions(request, false);
       ContentType requestFormat = null;
       List<UriResource> uriResources = uriInfo.getUriResourceParts();

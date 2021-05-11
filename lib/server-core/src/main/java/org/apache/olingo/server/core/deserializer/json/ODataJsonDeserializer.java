@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -739,12 +740,14 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       final boolean isNullable, final Integer maxLength, final Integer precision, final Integer scale,
       final boolean isUnicode, final EdmMapping mapping, final JsonNode jsonNode, final Property property)
       throws DeserializerException {
-    if (!jsonNode.isArray()) {
-      throw new DeserializerException("Value for property: " + name + " must be an array but is not.",
-          DeserializerException.MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY, name);
-    }
+
+    Iterator<JsonNode> iterator;
     List<Object> valueArray = new ArrayList<>();
-    Iterator<JsonNode> iterator = jsonNode.iterator();
+    if (!jsonNode.isArray()) {
+      iterator = Arrays.asList(jsonNode).iterator();
+    } else {
+      iterator = jsonNode.iterator();
+    }
     switch (type.getKind()) {
     case PRIMITIVE:
     case DEFINITION:

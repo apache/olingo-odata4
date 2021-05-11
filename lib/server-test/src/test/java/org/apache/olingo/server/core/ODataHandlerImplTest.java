@@ -89,6 +89,7 @@ import org.apache.olingo.server.tecsvc.processor.TechnicalActionProcessor;
 import org.apache.olingo.server.tecsvc.provider.ContainerProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.junit.Test;
+import org.mockito.internal.verification.VerificationModeFactory;
 
 public class ODataHandlerImplTest {
 
@@ -902,14 +903,18 @@ public class ODataHandlerImplTest {
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     dispatch(HttpMethod.PUT, uri, processor);
-    verify(processor).updatePrimitiveCollection(
+    verify(processor, VerificationModeFactory.times(1)).updatePrimitiveCollection(
+        any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
+        any(ContentType.class));
+
+    dispatch(HttpMethod.POST, uri, processor);
+    verify(processor, VerificationModeFactory.times(2)).updatePrimitiveCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
 
     dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deletePrimitiveCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
-    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
@@ -964,14 +969,17 @@ public class ODataHandlerImplTest {
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class));
 
     dispatch(HttpMethod.PUT, uri, processor);
-    verify(processor).updateComplexCollection(
+    verify(processor, VerificationModeFactory.times(1)).updateComplexCollection(
         any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class), any(ContentType.class),
         any(ContentType.class));
+
+    dispatch(HttpMethod.POST, uri, processor);
+    verify(processor, VerificationModeFactory.times(2)).updateComplexCollection(any(ODataRequest.class),
+        any(ODataResponse.class), any(UriInfo.class), any(ContentType.class), any(ContentType.class));
 
     dispatch(HttpMethod.DELETE, uri, processor);
     verify(processor).deleteComplexCollection(any(ODataRequest.class), any(ODataResponse.class), any(UriInfo.class));
 
-    dispatchMethodNotAllowed(HttpMethod.POST, uri, processor);
     dispatchMethodNotAllowed(HttpMethod.HEAD, uri, processor);
   }
 
