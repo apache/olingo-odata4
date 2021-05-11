@@ -127,22 +127,53 @@ public class ApplyParserTest {
 
   @Test
   public void customAggregate() throws Exception {
-	    parse("ESTwoKeyNav", "aggregate(customAggregate)")
-        .is(Aggregate.class)
-        .goAggregate(0)
-   	    .noExpression()
-   	    .noInlineAggregateExpression()
-        .goPath().first().isUriPathInfoKind(UriResourceKind.primitiveProperty);
+    parse("ESTwoKeyNav", "aggregate(customAggregate)").is(Aggregate.class).goAggregate(0).noExpression()
+        .noInlineAggregateExpression().goPath().first().isUriPathInfoKind(UriResourceKind.primitiveProperty);
   }
 
   @Test
   public void customAggregateNamedAsProperty() throws Exception {
-	  parse("ESTwoKeyNav", "aggregate(PropertyInt16)")
-	  .is(Aggregate.class)
-	  .goAggregate(0)
-	  .noExpression()
-	  .noInlineAggregateExpression()
-	  .goPath().first().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    parse("ESTwoKeyNav", "aggregate(PropertyInt16)").is(Aggregate.class).goAggregate(0).noExpression()
+        .noInlineAggregateExpression().goPath().first()
+        .isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+  }
+
+  @Test
+  public void filterByCustomAggregate() throws Exception {
+    ApplyValidator validator = parse("ESTwoKeyNav", "filter(aggregate(customAggregate) gt 5)");
+    FilterValidator filter = validator.is(Filter.class).goFilter().isBinary(BinaryOperatorKind.GT);
+    AggregateValidator aggregate = aggregate(filter.root().left());
+    aggregate.goPath().first().isUriPathInfoKind(UriResourceKind.primitiveProperty);
+    filter.root().right().isLiteral("5");
+  }
+
+  @Test
+  public void filterByCountAggregate() throws Exception {
+    ApplyValidator validator = parse("ESTwoKeyNav", "filter(aggregate($count) ge 9)");
+    FilterValidator filter = validator.is(Filter.class).goFilter().isBinary(BinaryOperatorKind.GE);
+    AggregateValidator aggregate = aggregate(filter.root().left());
+    aggregate.goPath().first().isCount();
+    filter.root().right().isLiteral("9");
+  }
+
+  @Test
+  public void filterByTransformationAggregate() throws Exception {
+    ApplyValidator validator = parse("ESTwoKeyNav", "filter(aggregate(PropertyInt16 with min) ne 3)");
+    FilterValidator filter = validator.is(Filter.class).goFilter().isBinary(BinaryOperatorKind.NE);
+    AggregateValidator aggregate = aggregate(filter.root().left());
+    aggregate.isStandardMethod(StandardMethod.MIN)
+    .goExpression().goPath().first().isPrimitiveProperty("PropertyInt16", PropertyProvider.nameInt16, false);
+    filter.root().right().isLiteral("3");
+  }
+  
+  @Test
+  public void filterByCustomAggregateNamedAsProperty() throws Exception {
+    ApplyValidator validator = parse("ESTwoKeyNav", "filter(aggregate(PropertyString) eq 'Evgeny')");
+    FilterValidator filter = validator.is(Filter.class).goFilter().isBinary(BinaryOperatorKind.EQ);
+    AggregateValidator aggregate = aggregate(filter.root().left());
+    aggregate.goPath().first()
+        .isPrimitiveProperty("PropertyString", PropertyProvider.nameString, false); 
+    filter.root().right().isLiteral("'Evgeny'");
   }
 
   @Test
@@ -660,6 +691,14 @@ public class ApplyParserTest {
       return previous;
     }
   }
+  
+  private  AggregateValidator aggregate(FilterValidator filter) {
+    filter.isMethod(MethodKind.COMPUTE_AGGREGATE, 1);
+    filter.goParameter(0);
+    
+    return new AggregateValidator((AggregateExpression) filter.getExpression(), filter);
+  }
+  
 
   private final class AggregateValidator implements TestValidator {
 
@@ -670,7 +709,7 @@ public class ApplyParserTest {
       this.aggregateExpression = aggregateExpression;
       this.previous = previous;
     }
-
+    
     public AggregateValidator isStandardMethod(final AggregateExpression.StandardMethod method) {
       assertNotNull(aggregateExpression);
       assertEquals(method, aggregateExpression.getStandardMethod());

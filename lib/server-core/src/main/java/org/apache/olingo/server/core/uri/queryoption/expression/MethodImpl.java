@@ -112,8 +112,11 @@ public class MethodImpl implements Method {
     case ISOF:
       kind = EdmPrimitiveTypeKind.Boolean;
       break;
+    case COMPUTE_AGGREGATE:
+      kind = null;
     }
-    return new ODataImpl().createPrimitiveTypeInstance(kind);
+
+    return kind == null ? null : new ODataImpl().createPrimitiveTypeInstance(kind);
   }
 
   @Override

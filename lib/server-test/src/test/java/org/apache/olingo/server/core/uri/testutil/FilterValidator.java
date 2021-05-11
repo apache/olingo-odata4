@@ -91,6 +91,10 @@ public class FilterValidator implements TestValidator {
     rootExpression = curExpression = expression;
     return this;
   }
+  
+  public Expression getExpression() {
+	  return curExpression;
+   }
 
   // --- Execution ---
 
@@ -375,7 +379,7 @@ public class FilterValidator implements TestValidator {
     assertTrue("Current expression not a member", curExpression instanceof Member);
     return this;
   }
-
+  
   public FilterValidator isMemberStartType(final FullQualifiedName fullName) {
     isMember();
     Member member = (Member) curExpression;

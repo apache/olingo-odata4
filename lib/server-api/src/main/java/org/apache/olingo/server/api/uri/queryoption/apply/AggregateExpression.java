@@ -28,7 +28,7 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
  * Represents an aggregate expression.
  * @see Aggregate
  */
-public interface AggregateExpression {
+public interface AggregateExpression extends Expression {
 
   /** Standard aggregation method. */
   public enum StandardMethod { SUM, MIN, MAX, AVERAGE, COUNT_DISTINCT }

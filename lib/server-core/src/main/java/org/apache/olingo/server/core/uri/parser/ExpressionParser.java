@@ -54,6 +54,7 @@ import org.apache.olingo.server.api.uri.UriResourceLambdaVariable;
 import org.apache.olingo.server.api.uri.UriResourceNavigation;
 import org.apache.olingo.server.api.uri.UriResourcePartTyped;
 import org.apache.olingo.server.api.uri.queryoption.AliasQueryOption;
+import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression;
 import org.apache.olingo.server.api.uri.queryoption.expression.Alias;
 import org.apache.olingo.server.api.uri.queryoption.expression.Binary;
 import org.apache.olingo.server.api.uri.queryoption.expression.BinaryOperatorKind;
@@ -123,6 +124,7 @@ public class ExpressionParser {
   private static final Map<TokenKind, MethodKind> tokenToMethod;
   static {
     Map<TokenKind, MethodKind> temp = new EnumMap<>(TokenKind.class);
+    temp.put(TokenKind.AggregateTrafo, MethodKind.COMPUTE_AGGREGATE);
     temp.put(TokenKind.CeilingMethod, MethodKind.CEILING);
     temp.put(TokenKind.ConcatMethod, MethodKind.CONCAT);
     temp.put(TokenKind.ContainsMethod, MethodKind.CONTAINS);
@@ -660,8 +662,16 @@ public class ExpressionParser {
     case CAST:
     case ISOF:
       break;
+      
+    case COMPUTE_AGGREGATE:
+      ApplyParser ap = new ApplyParser(edm, odata);
+      AggregateExpression aggrExpr = ap.parseAggregateMethodCallExpr(tokenizer,
+          (EdmStructuredType) referringType);
+      parameters.add(aggrExpr);
+      
     }
     ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
+    
     return parameters;
   }
 

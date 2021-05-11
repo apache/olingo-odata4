@@ -23,6 +23,7 @@ package org.apache.olingo.server.api.uri.queryoption.expression;
  * For the semantic of these methods please see the ODATA specification for URL conventions
  */
 public enum MethodKind {
+  COMPUTE_AGGREGATE("aggregate"),
   CONTAINS("contains"),
   STARTSWITH("startswith"),
   ENDSWITH("endswith"),
