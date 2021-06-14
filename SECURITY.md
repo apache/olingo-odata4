@@ -11,5 +11,5 @@ Only the latest release will be fully supported regarding security updates.
 
 ## Reporting a Vulnerability
 
-Apache Groovy follows the Apache
+Apache Olingo follows the Apache
 [general guidelines for handling security vulnerabilities](http://www.apache.org/security/committers.html).
