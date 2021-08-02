@@ -9,14 +9,14 @@ on:
       - 'LICENSE'
       - 'NOTICE'
       - 'README'
-      - SECURITY.md'
+      - 'SECURITY.md'
   pull_request:
     branches: [master]
     paths-ignore:
       - 'LICENSE'
       - 'NOTICE'
       - 'README'
-      - SECURITY.md'
+      - 'SECURITY.md'
 
 jobs:
   analyze:
