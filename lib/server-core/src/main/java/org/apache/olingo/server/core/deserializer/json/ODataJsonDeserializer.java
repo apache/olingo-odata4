@@ -287,7 +287,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
               deltaValue.getDeletedEntities().add(deletedEntity);
             } else {
               //For @id and properties create normal entity
-              Entity inlineEntity = consumeEntityNode(edmEntityType, (ObjectNode) arrayElement, expandBuilder);
+            	Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(), 
+              		  (ObjectNode) arrayElement, expandBuilder);
               deltaValue.getEntities().add(inlineEntity);
             }
           }

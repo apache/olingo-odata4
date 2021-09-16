@@ -596,6 +596,7 @@
                 <exclude>**/server-ref/**</exclude>
                 <exclude>**/dependency-reduced-pom.xml</exclude>
                 <exclude>**/.settings/**</exclude>
+				<exclude>**/SECURITY.md</exclude>
               </excludes>
             </configuration>
           </execution>
