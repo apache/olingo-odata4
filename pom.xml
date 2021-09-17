@@ -82,17 +82,17 @@
     <servlet.version>3.1.0</servlet.version>
     <cxf.version>3.0.0</cxf.version>
     <spring.version>4.0.6.RELEASE</spring.version>
-    <netty.version>4.1.58.Final</netty.version>
+    <netty.version>4.1.66.Final</netty.version>
 
     <velocity.version>1.7</velocity.version>
     <maven.plugin.api.version>3.2.2</maven.plugin.api.version>
     <maven.plugin.tools.version>3.3</maven.plugin.tools.version>
     <maven.bundle.plugin.version>2.5.3</maven.bundle.plugin.version>
     <maven-plugin-plugin.version>3.6.0</maven-plugin-plugin.version>
-    <hc.client.version>4.5.8</hc.client.version>
+    <hc.client.version>4.5.13</hc.client.version>
     <hc.core.version>4.4.11</hc.core.version>
-    <jackson.version>2.11.3</jackson.version>
-    <jackson-databind.version>2.11.4</jackson-databind.version>
+    <jackson.version>2.12.4</jackson.version>
+    <jackson-databind.version>2.12.4</jackson-databind.version>
     <aalto-xml.version>0.9.11</aalto-xml.version>
 
     <android.platform.version>4.1.1.4</android.platform.version>

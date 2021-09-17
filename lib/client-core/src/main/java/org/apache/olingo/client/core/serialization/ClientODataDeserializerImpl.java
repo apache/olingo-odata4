@@ -66,6 +66,7 @@ import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 
 public class ClientODataDeserializerImpl implements ClientODataDeserializer {
 
@@ -110,7 +111,8 @@ public class ClientODataDeserializerImpl implements ClientODataDeserializer {
         new XmlFactory(new InputFactoryImpl(), new OutputFactoryImpl()), new JacksonXmlModule());
 
     xmlMapper.setInjectableValues(new InjectableValues.Std().addValue(Boolean.class, Boolean.FALSE));
-
+    xmlMapper.enable(FromXmlParser.Feature.EMPTY_ELEMENT_AS_NULL);
+    
     xmlMapper.addHandler(new DeserializationProblemHandler() {
       @Override
       public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser jp,
