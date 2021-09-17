@@ -81,6 +81,10 @@ public class EdmSingleTest extends PrimitiveTypeBaseTest {
 
   @Test
   public void valueOfString() throws Exception {
+	assertEquals(Double.valueOf(1E-50), instance.valueOfString("1E-50", null, null, null, 
+			null, null, Double.class));
+	assertEquals(Double.valueOf(12345.6789), instance.valueOfString("12345.6789", null, 
+			null, null, null, null, Double.class));
     assertEquals(Float.valueOf(1.42F), instance.valueOfString("1.42", null, null, null, null, null, Float.class));
     assertEquals(Double.valueOf(-42.42), instance.valueOfString("-42.42", null, null, null, null, null, Double.class));
     assertEquals(Float.valueOf(42.0F), instance.valueOfString("42", null, null, null, null, null, Float.class));
@@ -106,8 +110,6 @@ public class EdmSingleTest extends PrimitiveTypeBaseTest {
 
     expectContentErrorInValueOfString(instance, "0.");
     expectContentErrorInValueOfString(instance, ".0");
-    expectContentErrorInValueOfString(instance, "1E-50");
-    expectContentErrorInValueOfString(instance, "12345.6789");
     expectContentErrorInValueOfString(instance, "42E42");
     expectContentErrorInValueOfString(instance, "42.42.42");
     expectContentErrorInValueOfString(instance, "42.42.42");

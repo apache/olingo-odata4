@@ -100,10 +100,11 @@ public class EdmDoubleTest extends PrimitiveTypeBaseTest {
         null, Double.class));
     assertEquals(Float.valueOf(Float.POSITIVE_INFINITY), instance.valueOfString("INF", null, null, null, null, null,
         Float.class));
+    assertEquals(Double.valueOf(1234567890.12345678), instance.valueOfString("1234567890.12345678", 
+    		null, null, null, null, null, Double.class));
 
     expectContentErrorInValueOfString(instance, "0.");
     expectContentErrorInValueOfString(instance, ".0");
-    expectContentErrorInValueOfString(instance, "1234567890.12345678");
     expectContentErrorInValueOfString(instance, "42E400");
     expectContentErrorInValueOfString(instance, "42.42.42");
     expectContentErrorInValueOfString(instance, "42F");

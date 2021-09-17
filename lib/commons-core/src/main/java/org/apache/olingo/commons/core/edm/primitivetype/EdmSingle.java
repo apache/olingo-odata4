@@ -78,7 +78,7 @@ public final class EdmSingle extends SingletonPrimitiveType {
       result = bigDecimalValue.floatValue();
       // "Real" infinite values have been treated already above, so we can throw an exception
       // if the conversion to a float results in an infinite value.
-      if (result.isInfinite() || bigDecimalValue.compareTo(new BigDecimal(result.toString())) != 0) {
+      if (result.isInfinite()) {
         throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
       }
     }

@@ -85,7 +85,7 @@ public final class EdmDouble extends SingletonPrimitiveType {
       result = bigDecimalValue.doubleValue();
       // "Real" infinite values have been treated already above, so we can throw an exception
       // if the conversion to a double results in an infinite value.
-      if (result.isInfinite() || BigDecimal.valueOf(result).compareTo(bigDecimalValue) != 0) {
+      if (result.isInfinite()) {
         throw new EdmPrimitiveTypeException("The literal '" + value + "' has illegal content.");
       }
     }
