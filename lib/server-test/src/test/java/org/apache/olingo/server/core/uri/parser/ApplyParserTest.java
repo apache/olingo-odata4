@@ -364,6 +364,19 @@ public class ApplyParserTest {
     parseEx("ESTwoKeyNav", "Namespace1_Alias.BFCESTwoKeyNavRTTwoKeyNav()")
         .isExSemantic(UriParserSemanticException.MessageKeys.FUNCTION_MUST_USE_COLLECTIONS);
   }
+  
+  @Test
+  public void concat2aggregatesSameAlias() throws Exception {
+    parse("ESTwoKeyNav",
+        "concat(aggregate(PropertyInt16 with sum as s),aggregate(PropertyInt16 with max as s))")
+        .is(Concat.class).goConcat(0).goAggregate(0).goUp().goUp().goConcat(1).goAggregate(0);
+  }
+
+  @Test
+  public void aggregate2expressionsSameAlias() throws Exception {
+    parseEx("ESTwoKeyNav", "aggregate(PropertyInt16 with sum as s,PropertyInt16 with max as s)")
+    .isExSemantic(UriParserSemanticException.MessageKeys.IS_PROPERTY);
+  }
 
   @Test
   public void groupBy() throws Exception {

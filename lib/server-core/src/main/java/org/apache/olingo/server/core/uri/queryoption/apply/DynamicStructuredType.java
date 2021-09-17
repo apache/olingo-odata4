@@ -59,6 +59,10 @@ public class DynamicStructuredType implements EdmStructuredType, Cloneable {
         properties == null ? null : properties.get(name) :
         property;
   }
+  
+  public boolean hasStaticProperty(final String name) {
+	  return startType.getProperty(name) != null;
+  }
 
   @Override
   public List<String> getPropertyNames() {

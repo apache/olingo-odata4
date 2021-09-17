@@ -20,7 +20,9 @@ package org.apache.olingo.server.core.uri.queryoption.apply;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.ODataApplicationException;
@@ -43,6 +45,7 @@ public class AggregateExpressionImpl implements AggregateExpression {
   private String alias;
   private AggregateExpression inlineAggregateExpression;
   private List<AggregateExpression> from = new ArrayList<>();
+  private Set<String> dynamicProperties = new HashSet<>();
 
   @Override
   public List<UriResource> getPath() {
@@ -118,5 +121,15 @@ public class AggregateExpressionImpl implements AggregateExpression {
   public <T> T accept(ExpressionVisitor<T> visitor) throws ExpressionVisitException, ODataApplicationException {
     // TODO Auto-generated method stub
     return null;
+  }
+  
+  @Override
+  public Set<String> getDynamicProperties() {
+    return Collections.unmodifiableSet(dynamicProperties);
+  }
+
+  @Override
+  public void addDynamicProperty(String name) {
+    dynamicProperties.add(name);
   }
 }

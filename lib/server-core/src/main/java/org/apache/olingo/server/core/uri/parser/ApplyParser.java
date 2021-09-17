@@ -21,8 +21,10 @@ package org.apache.olingo.server.core.uri.parser;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmElement;
@@ -221,21 +223,33 @@ public class ApplyParser {
   private Aggregate parseAggregateTrafo(EdmStructuredType referencedType)
       throws UriParserException, UriValidationException {
     AggregateImpl aggregate = new AggregateImpl();
+    Set<String> dynamicProps = new HashSet<>();
     do {
-    	aggregate.addExpression(parseAggregateExpr(referencedType, Requirement.REQUIRED));
+    	AggregateExpression aggregateExpr = parseAggregateExpr(referencedType, dynamicProps, Requirement.REQUIRED);
+        aggregate.addExpression(aggregateExpr);
+        dynamicProps.addAll(aggregateExpr.getDynamicProperties());
     } while (tokenizer.next(TokenKind.COMMA));
+    dynamicProps.forEach(dp -> addPropertyToRefType(referencedType, dp));
     ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
     return aggregate;
+  }
+  
+  private void addPropertyToRefType(EdmStructuredType referencedType, String alias) {
+      ((DynamicStructuredType) referencedType).addProperty(
+              createDynamicProperty(alias,
+                  // The OData standard mandates Edm.Decimal (with no decimals), although counts are always integer.
+                  odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal)));
   }
   
   public AggregateExpression parseAggregateMethodCallExpr(UriTokenizer tokenizer, EdmStructuredType referringType)
 	      throws UriParserException, UriValidationException {
 	    this.tokenizer = tokenizer;
 
-	    return parseAggregateExpr(referringType, Requirement.FORBIDDEN);
+	    return parseAggregateExpr(referringType, Collections.emptySet(), Requirement.FORBIDDEN);
 	  }
 
-  private AggregateExpression parseAggregateExpr(EdmStructuredType referencedType, Requirement aliasRequired)
+  private AggregateExpression parseAggregateExpr(EdmStructuredType referencedType, Set<String> dynamicProps,
+		  Requirement aliasRequired)
       throws UriParserException, UriValidationException {
 	    AggregateExpressionImpl aggregateExpression = new AggregateExpressionImpl();
 	    tokenizer.saveState();
@@ -254,19 +268,16 @@ public class ApplyParser {
 	      aggregateExpression.setPath(uriInfo);
 	      DynamicStructuredType inlineType = new DynamicStructuredType((EdmStructuredType)
 	          ParserHelper.getTypeInformation((UriResourcePartTyped) lastResourcePart));
-	      aggregateExpression.setInlineAggregateExpression(parseAggregateExpr(inlineType, aliasRequired));
+	      aggregateExpression.setInlineAggregateExpression(parseAggregateExpr(inlineType, 
+	    		  dynamicProps, aliasRequired));
 	      ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
 	    } else if (tokenizer.next(TokenKind.COUNT)) {
 	      uriInfo.addResourcePart(new UriResourceCountImpl());
 	      aggregateExpression.setPath(uriInfo);
-	      final String alias = parseAsAlias(referencedType, aliasRequired);
+	      final String alias = parseAsAlias(referencedType, dynamicProps, aliasRequired);
 	      if (alias != null) {
 	        aggregateExpression.setAlias(alias);
-	        ((DynamicStructuredType) referencedType).addProperty(
-	            createDynamicProperty(alias,
-	                // The OData standard mandates Edm.Decimal (with no decimals), 
-	            	// although counts are always integer.
-	                odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal)));
+	        aggregateExpression.addDynamicProperty(alias);
 	      }
 	    } else {
 	      // No legitimate continuation of a path prefix has been found.
@@ -286,14 +297,10 @@ public class ApplyParser {
 				
 				return aggregateExpression;
 		      }
-	      final String alias = parseAsAlias(referencedType, aliasRequired);
+	      final String alias = parseAsAlias(referencedType, dynamicProps, aliasRequired);
 	      if(alias != null) {
 	        aggregateExpression.setAlias(alias);
-	        ((DynamicStructuredType) referencedType).addProperty(
-	            createDynamicProperty(alias,
-	                // Determine the type for standard methods; there is no way to do this for custom methods.
-	                getTypeForAggregateMethod(aggregateExpression.getStandardMethod(),
-	                    ExpressionParser.getType(expression))));
+	        aggregateExpression.addDynamicProperty(alias);
 	      }
 	      parseAggregateFrom(aggregateExpression, referencedType);
 	    }
@@ -311,10 +318,10 @@ public class ApplyParser {
     // allowed and have no type.
     uriInfo.addResourcePart(new UriResourcePrimitivePropertyImpl(createDynamicProperty(customAggregate, null)));
     aggregateExpression.setPath(uriInfo);
-    final String alias = parseAsAlias(referencedType, Requirement.OPTIONAL);
+    final String alias = parseAsAlias(referencedType, aggregateExpression.getDynamicProperties(), Requirement.OPTIONAL);
     if (alias != null) {
       aggregateExpression.setAlias(alias);
-      ((DynamicStructuredType) referencedType).addProperty(createDynamicProperty(alias, null));
+      aggregateExpression.addDynamicProperty(alias);
     }
     parseAggregateFrom(aggregateExpression, referencedType);
   }
@@ -371,8 +378,8 @@ public class ApplyParser {
 	    REQUIRED, OPTIONAL, FORBIDDEN
 	  }
 
-  private String parseAsAlias(final EdmStructuredType referencedType, final Requirement requirement)
-      throws UriParserException {
+  private String parseAsAlias(final EdmStructuredType referencedType, Set<String> dynamicProps,
+	      final Requirement requirement) throws UriParserException {
 	    if (tokenizer.next(TokenKind.AsOperator)) {
 	        if(requirement == Requirement.FORBIDDEN) {
 	          throw new UriParserSyntaxException("Unexpected as alias found.", 
@@ -380,7 +387,7 @@ public class ApplyParser {
 	        }
 	        ParserHelper.requireNext(tokenizer, TokenKind.ODataIdentifier);
 	        final String name = tokenizer.getText();
-	        if (referencedType.getProperty(name) != null) {
+	        if (((DynamicStructuredType)referencedType).hasStaticProperty(name) || dynamicProps.contains(name)) {
 	          throw new UriParserSemanticException("Alias '" + name + "' is already a property.",
 	              UriParserSemanticException.MessageKeys.IS_PROPERTY, name);
 	        }
@@ -417,7 +424,7 @@ public class ApplyParser {
         throw new UriParserSemanticException("Compute expressions must return primitive values.",
             UriParserSemanticException.MessageKeys.ONLY_FOR_PRIMITIVE_TYPES, "compute");
       }
-      final String alias = parseAsAlias(referencedType, Requirement.REQUIRED);
+      final String alias = parseAsAlias(referencedType, Collections.emptySet(), Requirement.REQUIRED);
       ((DynamicStructuredType) referencedType).addProperty(createDynamicProperty(alias, expressionType));
       compute.addExpression(new ComputeExpressionImpl()
           .setExpression(expression)
