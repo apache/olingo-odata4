@@ -145,12 +145,7 @@ public class BatchLineReader {
 
       if (!foundLineEnd) {
         byte currentChar = buffer[offset++];
-        if (!innerBuffer.hasRemaining()) {
-          innerBuffer.flip();
-          ByteBuffer tmp = ByteBuffer.allocate(innerBuffer.limit() * 2);
-          tmp.put(innerBuffer);
-          innerBuffer = tmp;
-        }
+        innerBuffer = grantBuffer(innerBuffer);
         innerBuffer.put(currentChar);
 
         if (currentChar == LF) {
@@ -166,6 +161,7 @@ public class BatchLineReader {
 
           // Check if there is at least one character
           if (limit != EOF && buffer[offset] == LF) {
+            innerBuffer = grantBuffer(innerBuffer);
             innerBuffer.put(LF);
             offset++;
           }
@@ -181,6 +177,16 @@ public class BatchLineReader {
       updateCurrentCharset(currentLine);
       return currentLine;
     }
+  }
+
+  private ByteBuffer grantBuffer(ByteBuffer buffer) {
+    if(!buffer.hasRemaining()) {
+      buffer.flip();
+      ByteBuffer tmp = ByteBuffer.allocate(buffer.limit() *2);
+      tmp.put(buffer);
+      buffer = tmp;
+    }
+    return buffer;
   }
 
   private int fillBuffer() throws IOException {
