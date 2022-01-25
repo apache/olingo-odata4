@@ -310,7 +310,7 @@ public class EdmAssistedJsonSerializer implements EdmAssistedSerializer {
       try {
     	  Integer scale = null;
     	  if (value instanceof BigDecimal) {
-    		  scale = ((BigDecimal) value).scale();
+    		  scale = Math.max(0, ((BigDecimal) value).scale());
     	  } else {
     		  scale = Constants.DEFAULT_SCALE;
     	  }

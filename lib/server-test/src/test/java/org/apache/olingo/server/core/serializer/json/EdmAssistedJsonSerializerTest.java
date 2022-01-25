@@ -678,4 +678,26 @@ public class EdmAssistedJsonSerializerTest {
         serialize(serializerMin, metadata, null, entityCollection, null)
         .contains("1.6666666666666667406815349750104360282421112060546875"));
   }
+  
+  @Test
+  public void entityCollectionWithBigDecimalPropertyIntegerInScientificNotation() throws Exception {
+    EntityCollection entityCollection = new EntityCollection();
+    BigDecimal b = new BigDecimal("1.52E+4");
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(new Property(null, "Property1", ValueType.PRIMITIVE, b)));
+    Assert.assertTrue(
+        serialize(serializerMin, metadata, null, entityCollection, null)
+        .contains("15200"));
+  }
+
+  @Test
+  public void entityCollectionWithBigDecimalPropertyInScientificNotation() throws Exception {
+    EntityCollection entityCollection = new EntityCollection();
+    BigDecimal b = new BigDecimal("1.52123123E+4");
+    entityCollection.getEntities().add(new Entity()
+        .addProperty(new Property(null, "Property1", ValueType.PRIMITIVE, b)));
+    Assert.assertTrue(
+        serialize(serializerMin, metadata, null, entityCollection, null)
+        .contains("15212.3123"));
+  }
 }
