@@ -25,6 +25,8 @@ import org.apache.olingo.commons.api.edm.annotation.EdmExpression;
  */
 public interface EdmAnnotation extends EdmAnnotatable {
 
+  String getTermAsString();
+
   /**
    * @return the term of this annotation
    */
