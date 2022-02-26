@@ -88,20 +88,14 @@ public class ODataBatchResponseManager implements Iterator<ODataBatchResponseIte
           final boolean continueOnError) {
 
     this.continueOnError = continueOnError;
+    this.expectedItemsIterator = expectedItems.iterator();
+    this.batchLineIterator = new ODataBatchLineIteratorImpl(
+            IOUtils.lineIterator(res.getRawResponse(), Constants.UTF8));
 
-    try {
-      this.expectedItemsIterator = expectedItems.iterator();
-      this.batchLineIterator = new ODataBatchLineIteratorImpl(
-              IOUtils.lineIterator(res.getRawResponse(), Constants.UTF8));
-
-      // search for boundary
-      batchBoundary = ODataBatchUtilities.getBoundaryFromHeader(
-          res.getHeader(HttpHeader.CONTENT_TYPE));
-      LOG.debug("Retrieved batch response bondary '{}'", batchBoundary);
-    } catch (IOException e) {
-      LOG.error("Error parsing batch response", e);
-      throw new IllegalStateException(e);
-    }
+    // search for boundary
+    batchBoundary = ODataBatchUtilities.getBoundaryFromHeader(
+        res.getHeader(HttpHeader.CONTENT_TYPE));
+    LOG.debug("Retrieved batch response bondary '{}'", batchBoundary);
   }
 
   @Override

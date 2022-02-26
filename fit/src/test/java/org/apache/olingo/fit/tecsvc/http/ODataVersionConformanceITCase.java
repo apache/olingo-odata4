@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
@@ -50,7 +51,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("OData version '3.0' is not supported."));
   }
   
@@ -66,7 +67,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("OData version '5.0' is not supported."));
   }
   
@@ -82,7 +83,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("OData version '3.0' is not supported."));
   }
   
@@ -97,7 +98,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
 
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
 
@@ -113,7 +114,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
 
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertNotNull(content);;
   }
   
@@ -132,7 +133,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
     assertEquals("application/json; odata.metadata=minimal", 
         connection.getHeaderField(HttpHeader.CONTENT_TYPE));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -151,7 +152,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
     assertEquals("application/json; odata.metadata=minimal", 
         connection.getHeaderField(HttpHeader.CONTENT_TYPE));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -168,7 +169,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("OData version '5.0' is not supported."));
   }
   

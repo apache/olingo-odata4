@@ -18,13 +18,6 @@
  */
 package org.apache.olingo.fit.tecsvc.http;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
@@ -33,7 +26,17 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
+import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCase {
 
@@ -50,7 +53,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -65,7 +68,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The content-type range ' abc' is not supported as "
         + "value of the Accept header."));
   }
@@ -81,7 +84,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The content-type range 'application/xyz' is "
         + "not supported as value of the Accept header."));
   }
@@ -106,7 +109,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     assertEquals("minimal", contentType.getParameter("odata.metadata"));
     assertEquals("utf-8", contentType.getParameter("charset"));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -121,7 +124,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
     
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The charset specified in Accept charset header "
         + "'US-ASCII' is not supported."));
   }
@@ -137,7 +140,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
     
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The charset specified in Accept charset header 'abc' is not supported."));
   }
   
@@ -161,7 +164,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     assertEquals("minimal", contentType.getParameter("odata.metadata"));
     assertEquals("utf8", contentType.getParameter("charset"));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -177,7 +180,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The charset specified in Accept charset header "
         + "'iso-8859-1' is not supported."));
   }
@@ -201,7 +204,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     assertEquals("minimal", contentType.getParameter("odata.metadata"));
     assertEquals("utf-8", contentType.getParameter("charset"));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -216,7 +219,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The charset specified in Accept charset header "
         + "'iso-8859-1' is not supported."));
   }
@@ -232,7 +235,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The charset specified in Accept charset "
         + "header 'abc' is not supported."));
   }
@@ -257,7 +260,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     assertEquals("utf-8", contentType.getParameter("charset"));
     assertEquals("0.1", contentType.getParameter("q"));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -280,7 +283,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     assertEquals("utf8", contentType.getParameter("charset"));
     assertEquals("minimal", contentType.getParameter("odata.metadata"));
     
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -302,7 +305,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     assertEquals(1, contentType.getParameters().size());
     assertEquals("minimal", contentType.getParameter("odata.metadata"));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   
@@ -318,7 +321,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The content-type range ' abc' is not supported as value of the Accept header."));
   }
   
@@ -334,7 +337,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The content-type range 'application/json;q=<1' is not "
         + "supported as value of the Accept header."));
   }
@@ -351,7 +354,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The charset specified in Accept header "
         + "'application/json;charset=utf<8' is not supported."));
   }
@@ -367,7 +370,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The content-type range 'application/json;abc=xyz' is not "
         + "supported as value of the Accept header."));
   }
@@ -382,7 +385,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The $format option 'application/json;charset=abc' is not supported."));
   }
   
@@ -396,7 +399,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.NOT_ACCEPTABLE.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The $format option 'application/json;abc=xyz' is not supported."));
   }
   
@@ -411,7 +414,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Accept charset header 'utf-8;abc=xyz' is not supported."));
   }
   
@@ -426,7 +429,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Accept charset header 'utf<8' is not supported."));
   }
   
@@ -441,7 +444,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Accept charset header 'utf<8' is not supported."));
   }
   
@@ -456,7 +459,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Accept charset header 'utf-8;q=<' is not supported."));
   }
   
@@ -471,7 +474,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Accept charset header 'utf-8;q=<' is not supported."));
   }
   
@@ -486,7 +489,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Accept charset header 'utf-8;abc=xyz' is not supported."));
   }
   
@@ -499,10 +502,13 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     connection.setRequestProperty(HttpHeader.ACCEPT, "application/json;charset=utf-8");
     connection.connect();
 
-    assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-
-    final String content = IOUtils.toString(connection.getErrorStream());
-    assertTrue(content.contains("The $format option 'application/json;charset=utf<8' is not supported."));
+    try {
+      assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
+      final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
+      Assert.fail("Expect IOException.");
+    } catch (IOException e) {
+      assertTrue(e.getMessage().contains("application/json;charset=utf<8"));
+    }
   }
   
   @Test
@@ -524,7 +530,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     assertEquals("minimal", contentType.getParameter("odata.metadata"));
     assertEquals("utf-8", contentType.getParameter("charset"));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
   

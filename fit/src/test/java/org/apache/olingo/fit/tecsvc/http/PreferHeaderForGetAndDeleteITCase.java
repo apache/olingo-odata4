@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=minimal' is not supported for this HTTP Method."));
     
   }
@@ -69,7 +70,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=representation' is not supported for this HTTP Method."));
     
   }
@@ -84,7 +85,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=minimal' is not supported for this HTTP Method."));
     
   }
@@ -99,7 +100,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=representation' is not supported for this HTTP Method."));
     
   }
@@ -114,7 +115,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=representation' is not supported for this HTTP Method."));
     
   }
@@ -129,7 +130,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=minimal' is not supported for this HTTP Method."));
     
   }
@@ -144,7 +145,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=representation' is not supported for this HTTP Method."));
     
   }
@@ -159,7 +160,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=minimal' is not supported for this HTTP Method."));
     
   }
@@ -174,7 +175,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=minimal' is not supported for this HTTP Method."));
     
   }
@@ -189,7 +190,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=representation' is not supported for this HTTP Method."));
     
   }
@@ -204,7 +205,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=representation' is not supported for this HTTP Method."));
     
   }
@@ -219,7 +220,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=minimal' is not supported for this HTTP Method."));
     
   }
@@ -236,7 +237,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=minimal' is not supported for this HTTP Method."));
     
   }
@@ -251,7 +252,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=representation' is not supported for this HTTP Method."));
     
   }
@@ -266,7 +267,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=representation' is not supported for this HTTP Method."));
     
   }
@@ -281,7 +282,7 @@ public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
     connection.connect();
 
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
-    final String content = IOUtils.toString(connection.getErrorStream());
+    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
     assertTrue(content.contains("The Prefer header 'return=minimal' is not supported for this HTTP Method."));
     
   }

@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class BasicBoundActionsITCase {
 
     assertEquals(HttpStatusCode.CREATED.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     final String expected = "\"PropertyInt16\":1,\"PropertyString\":\"1\","
         + "\"PropertyComp\":{\"PropertyInt16\":11,"
         + "\"PropertyComp\":{\"PropertyString\":\"StringValue\","
@@ -110,7 +111,7 @@ public class BasicBoundActionsITCase {
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     final String expected = "\"PropertyInt16\":1,\"PropertyString\":\"1\","
         + "\"PropertyComp\":{\"PropertyInt16\":30,\"PropertyComp\":"
         + "{\"PropertyString\":\"StringValue\",\"PropertyBinary\":\"ASNFZ4mrze8=\","

@@ -28,6 +28,7 @@ import java.io.InputStream;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
@@ -54,7 +55,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains("Streamed-Employee1@company.example\"," +
             "\"Streamed-Employee2@company.example\"," +
@@ -86,7 +87,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("<m:element>Streamed-Employee1@company.example</m:element>" +
             "<m:element>Streamed-Employee2@company.example</m:element>" +
             "<m:element>Streamed-Employee3@company.example</m:element>"));
@@ -105,7 +106,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("<a:link rel=\"next\" href="));
     assertTrue(content.contains("ESStreamServerSidePaging?$format=xml&amp;%24skiptoken=1%2A10\"/>"));
     assertTrue(content.contains("<a:id>ESStreamServerSidePaging(1)</a:id>"));
@@ -124,7 +125,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("<a:link rel=\"next\" href="));
     assertTrue(content.contains("ESStreamServerSidePaging?$format=xml&amp;%24skiptoken=2%2A10\"/>"));
     assertTrue(content.contains("<a:id>ESStreamServerSidePaging(11)</a:id>"));
@@ -143,7 +144,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains("{\"PropertyInt16\":2,"+
     "\"PropertyStream@odata.mediaEtag\":\"eTag\",\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}"));
@@ -163,7 +164,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains("{\"PropertyInt16\":12,"+
     "\"PropertyStream@odata.mediaEtag\":\"eTag\",\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}"));
@@ -183,7 +184,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("<a:link rel=\"next\" href="));
     assertTrue(content.contains("ESStreamServerSidePaging?$count=true&amp;$format=xml&amp;%24skiptoken=1%2A10\"/>"));
     assertTrue(content.contains("<a:id>ESStreamServerSidePaging(1)</a:id>"));
@@ -204,7 +205,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains("{\"PropertyInt16\":2,"+
     "\"PropertyStream@odata.mediaEtag\":\"eTag\",\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}"));
@@ -224,7 +225,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("<a:link rel=\"next\" href="));
     assertTrue(content.contains("ESStreamServerSidePaging?$count=false&amp;$format=xml&amp;%24skiptoken=1%2A10\"/>"));
     assertTrue(content.contains("<a:id>ESStreamServerSidePaging(1)</a:id>"));
@@ -245,7 +246,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains("{\"PropertyInt16\":2,"+
     "\"PropertyStream@odata.mediaEtag\":\"eTag\",\"PropertyStream@odata.mediaContentType\":\"image/jpeg\"}"));
@@ -268,7 +269,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains("\"NavPropertyETStreamOnComplexPropOne\":{"
         + "\"PropertyInt16\":7,"
@@ -301,7 +302,7 @@ public class BasicStreamITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains("\"PropertyInt16\":7,"
         + "\"PropertyInt32\":10,\"PropertyEntityStream@mediaEtag\":\"eTag\","

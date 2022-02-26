@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
@@ -51,7 +52,7 @@ public class EntityReferenceITCase extends AbstractBaseTestITCase {
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains(CONTEXT_ENTITY_REFERENCE));
   }
 
@@ -66,7 +67,7 @@ public class EntityReferenceITCase extends AbstractBaseTestITCase {
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains(CONTEXT_COLLECTION_REFERENCE));
   }
 

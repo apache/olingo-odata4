@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.ODataClient;
@@ -49,7 +50,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains(
         "[{\"PropertyInt16\":32767,\"PropertyCompAno\":null,\"CollPropertyCompAno\":[{\"PropertyString\":" +
@@ -71,7 +72,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.APPLICATION_XML, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("<d:PropertyCompAno m:type=\"#olingo.odata.test1.CTBaseAno\">" +
         "<d:PropertyString>Num111</d:PropertyString>" +
         "<d:AdditionalPropString>Test123</d:AdditionalPropString>" +
@@ -92,7 +93,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("\"@odata.type\":\"#olingo.odata.test1.ETBase\"," +
         "\"PropertyInt16\":32766," +
         "\"PropertyString\":\"Test String1\"," +
@@ -109,7 +110,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("term=\"#olingo.odata.test1.ETBase\"/>"));
     assertTrue(content.contains(
         "<d:PropertyInt16 m:type=\"Int16\">32766</d:PropertyInt16>" +
@@ -129,7 +130,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals(ContentType.JSON_NO_METADATA, ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains(
         "[{\"PropertyInt16\":32767,\"PropertyCompAno\":null,\"CollPropertyCompAno\":[{\"PropertyString\":" +
@@ -152,7 +153,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(ContentType.JSON_FULL_METADATA, 
         ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
 
     assertTrue(content.contains("\"PropertyInt16\":32767,\"PropertyCompAno\":null," +
         "\"CollPropertyCompAno@odata.type\":\"#Collection(olingo.odata.test1.CTTwoPrimAno)\"," +
@@ -187,7 +188,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(ContentType.JSON_FULL_METADATA, 
         ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     final String actualContent = "\"value\":[{\"@odata.type\":\"#olingo.odata.test1.ETMixPrimCollComp\","
         + "\"@odata.id\":\"ESMixPrimCollComp(32767)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\",\"PropertyInt16\":32767,"
@@ -267,7 +268,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(ContentType.JSON, 
         ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("\"value\":[{\"PropertyInt16\":32767,"
         + "\"CollPropertyString\":[\"Employee1@company.example\","
         + "\"Employee2@company.example\","
@@ -315,7 +316,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(ContentType.JSON_FULL_METADATA, 
         ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("\"@odata.type\":\"#olingo.odata.test1.ETBase\","
         + "\"@odata.id\":\"ESBase(111)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\","
@@ -338,7 +339,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(ContentType.JSON_FULL_METADATA, 
         ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("\"value\":[{\"@odata.type\":\"#olingo.odata.test1.ETBase\","
         + "\"@odata.id\":\"ESBase(111)\","
         + "\"PropertyInt16@odata.type\":\"#Int16\","
@@ -363,7 +364,7 @@ public class DerivedAndMixedTypeTestITCase extends AbstractBaseTestITCase {
     assertEquals(ContentType.JSON, 
         ContentType.create(connection.getHeaderField(HttpHeader.CONTENT_TYPE)));
 
-    final String content = IOUtils.toString(connection.getInputStream());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertTrue(content.contains("\"PropertyInt16\":0,"
         + "\"PropertyString\":\"\","
         + "\"PropertyBoolean\":false,"
