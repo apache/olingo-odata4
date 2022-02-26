@@ -56,6 +56,10 @@ import org.apache.olingo.server.core.uri.queryoption.FormatOptionImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.core.uri.validator.UriValidator;
 
+/**
+ * This class is not thread-safe.
+ * Whenever used create a new instance per thread and not reuse the created instance.
+ */
 public class ODataHandlerImpl implements ODataHandler {
 
   private final OData odata;
