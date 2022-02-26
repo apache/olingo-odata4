@@ -30,16 +30,21 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 public class ODataSingleRequestImpl extends AbstractODataBatchRequestItem implements ODataSingleRequest {
 
   private final ODataSingleResponseItem expectedResItem;
+  private final ODataBatchRequestContext batchRequestContext;
 
   /**
    * Constructor.
    *
    * @param req batch request.
-   * @param expectedResItem expected batch response item.
+   * @param expectedResItem expected OData response items.
+   * @param batchRequestContext batch request context
    */
-  ODataSingleRequestImpl(final ODataBatchRequest req, final ODataSingleResponseItem expectedResItem) {
+  ODataSingleRequestImpl(ODataBatchRequest req, ODataSingleResponseItem expectedResItem,
+		ODataBatchRequestContext batchRequestContext) {
     super(req);
     this.expectedResItem = expectedResItem;
+//	  this(req,expectedResItem);
+	  this.batchRequestContext = batchRequestContext;
   }
 
   /**
@@ -61,12 +66,13 @@ public class ODataSingleRequestImpl extends AbstractODataBatchRequestItem implem
 
     hasStreamedSomething = true;
 
+    int contentId = batchRequestContext.getAndIncrementContentId();
     // stream the request
     if (request.getMethod() == HttpMethod.GET) {
       streamRequestHeader(request);
     } else {
-      streamRequestHeader(ODataSingleResponseItem.SINGLE_CONTENT_ID);
-      request.batch(req, ODataSingleResponseItem.SINGLE_CONTENT_ID);
+      streamRequestHeader(String.valueOf(contentId));
+      request.batch(req, String.valueOf(contentId));
     }
 
     // close before in order to avoid any further setRequest calls.
@@ -74,7 +80,7 @@ public class ODataSingleRequestImpl extends AbstractODataBatchRequestItem implem
 
     // add request to the list
     expectedResItem.addResponse(
-            ODataSingleResponseItem.SINGLE_CONTENT_ID, ((AbstractODataRequest) request).getResponseTemplate());
+    		String.valueOf(contentId), ((AbstractODataRequest) request).getResponseTemplate());
 
     return this;
   }

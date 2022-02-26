@@ -39,6 +39,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
 
   protected final boolean continueOnError;
   private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  private final ODataBatchRequestContext batchRequestController = new ODataBatchRequestContext();
 
   /**
    * Batch request current item.
@@ -72,7 +73,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     final ODataChangesetResponseItem expectedResItem = new ODataChangesetResponseItem(continueOnError);
     ((AbstractODataBatchRequest<?, ?>) req).addExpectedResItem(expectedResItem);
 
-    currentItem = new ODataChangesetImpl(req, expectedResItem);
+    currentItem = new ODataChangesetImpl(req, expectedResItem, batchRequestController);
 
     return (ODataChangeset) currentItem;
   }
@@ -91,7 +92,7 @@ public abstract class AbstractBatchManager extends AbstractODataStreamManager<OD
     streamDashBoundary();
 
     final ODataSingleResponseItem expectedResItem = new ODataSingleResponseItem();
-    currentItem = new ODataSingleRequestImpl(req, expectedResItem);
+    currentItem = new ODataSingleRequestImpl(req, expectedResItem, batchRequestController);
 
     ((AbstractODataBatchRequest<?, ?>) req).addExpectedResItem(expectedResItem);
 

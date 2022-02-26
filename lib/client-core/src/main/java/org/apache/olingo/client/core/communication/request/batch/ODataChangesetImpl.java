@@ -40,6 +40,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
    */
   private int contentId = 0;
   private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  private final ODataBatchRequestContext batchRequestContext;
 
   /**
    * Changeset boundary.
@@ -56,16 +57,20 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
    *
    * @param req batch request.
    * @param expectedResItem expected OData response items.
+   * @param batchRequestContext batch request context
    */
-  ODataChangesetImpl(final ODataBatchRequest req, final ODataChangesetResponseItem expectedResItem) {
+  ODataChangesetImpl(ODataBatchRequest req, ODataChangesetResponseItem expectedResItem,
+		ODataBatchRequestContext batchRequestContext) {
+
     super(req);
     this.expectedResItem = expectedResItem;
+	  this.batchRequestContext = batchRequestContext;
 
     // create a random UUID value for boundary
-    boundary = "changeset_" + UUID.randomUUID().toString();
+    boundary = "changeset_" + UUID.randomUUID();
   }
 
-  /**
+/**
    * {@inheritDoc}
    */
   @Override
@@ -110,7 +115,7 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
       hasStreamedSomething = true;
     }
 
-    contentId++;
+    contentId = getContentId();
 
     // preamble
     newLine();
@@ -127,5 +132,9 @@ public class ODataChangesetImpl extends AbstractODataBatchRequestItem
     // add request to the list
     expectedResItem.addResponse(String.valueOf(contentId), ((AbstractODataRequest) request).getResponseTemplate());
     return this;
+  }
+  
+  private int getContentId() {
+    return batchRequestContext.getAndIncrementContentId();
   }
 }
