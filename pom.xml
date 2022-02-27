@@ -112,7 +112,7 @@
 
     <!-- Project build settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.build.source>1.8</project.build.source>
+    <project.build.source>8</project.build.source>
     <project.build.outputTimestamp>${maven.build.timestamp}</project.build.outputTimestamp>
     <olingo.deploy.skip>true</olingo.deploy.skip>
 
@@ -565,6 +565,13 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <source>8</source>
+              <!--<failOnError>false</failOnError>-->
+              <additionalOptions>
+                <additionalOption>-Xdoclint:none</additionalOption>
+              </additionalOptions>
+            </configuration>
             <executions>
               <execution>
                 <id>javadoc-jar</id>
