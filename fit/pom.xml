@@ -30,15 +30,12 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-parent</artifactId>
-    <version>4.9.0-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <version>4.9.0</version>
   </parent>
 
   <properties>
     <cobertura.skip>true</cobertura.skip>
     <sonar.skip>true</sonar.skip>
-    <!-- exclude proxy tests by default -->
-    <exclude.regex>.*proxy.*</exclude.regex>
     <project-web-app-dir>${project.build.directory}/${project.build.finalName}</project-web-app-dir>
     <tomcat-base-dir>${project.build.directory}/emb-tom-fit</tomcat-base-dir>
     <project-resource-dir>${project.build.outputDirectory}</project-resource-dir>
@@ -223,7 +220,8 @@
             <include>**/*Test.java</include>
           </includes>
           <excludes>
-            <exclude>%regex[${exclude.regex}]</exclude>
+            <!-- exclude proxy tests by default -->
+            <exclude>%regex[.*proxy.*]</exclude>
           </excludes>
          </configuration>
       </plugin>
