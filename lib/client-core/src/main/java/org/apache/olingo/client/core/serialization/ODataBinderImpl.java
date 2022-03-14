@@ -852,7 +852,7 @@ public class ODataBinderImpl implements ODataBinder {
       }
     } else if (valuable.isEnum()) {
       value = client.getObjectFactory().newEnumValue(type == null ? null : type.toString(),
-          valuable.asEnum().toString());
+          valuable.isNull() ? null : valuable.asEnum().toString());
     } else if (valuable.isComplex()) {
       final ClientComplexValue lcValue =
           client.getObjectFactory().newComplexValue(type == null ? null : type.toString());
