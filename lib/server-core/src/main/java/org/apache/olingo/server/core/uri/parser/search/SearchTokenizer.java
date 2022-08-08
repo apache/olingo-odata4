@@ -124,83 +124,17 @@ public class SearchTokenizer {
           || isOtherDelimsForWord(character);
     }
 
-	/**
-     * <code>
-     * <b>searchPhrase</b> = quotation-mark 1*qchar-no-AMP-DQUOTE quotation-mark
-     * <br/><br/>
-     * <b>qchar-no-AMP-DQUOTE</b> = qchar-unescaped / escape ( escape / quotation-mark )
-     * <br/><br/>
-     * <b>qchar-unescaped</b> = unreserved / pct-encoded-unescaped / other-delims /
-     * ":" / "@" / "/" / "?" / "$" / "'" / "="
-     * <br/><br/>
-     * <b>unreserved</b> = ALPHA / DIGIT / "-" / "." / "_" / "~"
-     * <br/><br/>
-     * <b>escape</b> = "\" / "%5C" ; reverse solidus U+005C
-     * <br/><br/>
-     * <b>pct-encoded-unescaped</b> = "%" ( "0" / "1" / "3" / "4" / "6" / "7" / "8" / "9" / A-to-F ) HEXDIG
-     * / "%" "2" ( "0" / "1" / "3" / "4" / "5" / "6" / "7" / "8" / "9" / A-to-F )
-     * / "%" "5" ( DIGIT / "A" / "B" / "D" / "E" / "F" )
-     * <br/><br/>
-     * <b>other-delims</b> = "!" / "(" / ")" / "*" / "+" / "," / ";"
-     * <br/><br/>
-     * <b>quotation-mark</b> = DQUOTE / "%22"
-     * <br/><br/>
-     * <b>ALPHA</b> = %x41-5A / %x61-7A
-     * <br/>
-     * <b>DIGIT</b> = %x30-39
-     * <br/>
-     * <b>DQUOTE</b> = %x22
-     * </code>
-     *
-     * Checks if given <code>character</code> is allowed for a search phrase.
-     * <b>ATTENTION:</b> Escaping and percent encoding is not be validated here (and can not be validated on
-     * a single character).<br/>
-     * Hence for the {@link #PHRASE_ESCAPE_CHAR} and the {@link #QUOTATION_MARK} characters this method will
-     * return <code>FALSE</code>.<br/>
-     * <b>Furthermore</b> percent encoded characters are also not validated (and can not be validated on
-     * a single character).<br/>
-     * Hence for the <code>%</code> character this method assumeS that it was percent encoded and is now decoded
-     * and will return <code>TRUE</code>.<br/>
+	  /**
+     * The check for allowed characters in a <code>SearchPhrase</code> assumes that
+     * the whole phrase is already percent decoded.
+     * Hence, all characters are allowed besides the double quote (<code>"</code>).
      *
      * @param character which is checked
      * @return true if character is allowed for a phrase
      */
     static boolean isAllowedPhrase(final char character) {
-      // the '%' is allowed because it is assumed that it was percent encoded and is now decoded
-      return isQCharUnescaped(character) 
-    		  || character == '%' 
-    		  || Character.isUnicodeIdentifierStart(character);
-    }
-
-    /**
-     * qchar-unescaped = unreserved / pct-encoded-unescaped / other-delims / ":" / "@" / "/" / "?" / "$" / "'" / "="
-     * @param character which is checked
-     * @return true if character is allowed
-     */
-    private static boolean isQCharUnescaped(final char character) {
-      return isUnreserved(character)
-          || isOtherDelims(character)
-          || character == ':'
-          || character == '@'
-          || character == '/'
-          || character == '$'
-          || character == '\''
-          || character == '=';
-    }
-
-    /**
-     * other-delims = "!" / "(" / ")" / "*" / "+" / "," / ";"
-     * @param character which is checked
-     * @return true if character is allowed
-     */
-    private static boolean isOtherDelims(final char character) {
-      return character == '!'
-          || character == '('
-          || character == ')'
-          || character == '*'
-          || character == '+'
-          || character == ','
-          || character == ';';
+      return Character.isUnicodeIdentifierStart(character)
+              || character != '"';
     }
 
     /**
@@ -212,7 +146,6 @@ public class SearchTokenizer {
       return character == '!'
           || character == '*'
           || character == '+'
-          || character == ','
           || character == ':'
           || character == '@'
           || character == '/'
@@ -234,7 +167,7 @@ public class SearchTokenizer {
           || character == '<'
           || character == '`';
     }
-    
+
     /**
      * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
      * @param character which is checked
@@ -355,11 +288,11 @@ public class SearchTokenizer {
   }
 
   /**
-   * 
-   * As per the updated abnf 
+   *
+   * As per the updated abnf
    * https://github.com/oasis-tcs/odata-abnf/blob/master/abnf/odata-abnf-construction-rules.txt#L332-L356.
    * searchWord   = 1*( ALPHA / DIGIT / COMMA / "." / "-" / pct-encoded )
-   * This includes Unicode characters of categories 
+   * This includes Unicode characters of categories
    * L or N using UTF-8 and percent-encoding.
    */
   private class SearchWordState extends LiteralState {
