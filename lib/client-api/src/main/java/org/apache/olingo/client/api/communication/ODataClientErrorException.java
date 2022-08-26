@@ -23,6 +23,8 @@ import org.apache.http.StatusLine;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
+import java.io.InputStream;
+
 /**
  * Represents a client error in OData.
  *
@@ -35,7 +37,9 @@ public class ODataClientErrorException extends ODataRuntimeException {
   private final StatusLine statusLine;
 
   private final ODataError error;
-  
+
+  private final InputStream rawResponse;
+
   private Header[] headerInfo;
 
   /**
@@ -44,10 +48,27 @@ public class ODataClientErrorException extends ODataRuntimeException {
    * @param statusLine request status info.
    */
   public ODataClientErrorException(final StatusLine statusLine) {
-    super(statusLine.toString());
+    this(statusLine, null, null);
+  }
 
-    this.statusLine = statusLine;
-    this.error = null;
+  /**
+   * Constructor
+   *
+   * @param statusLine request status info.
+   * @param rawResponse raw response of the request.
+   */
+  public ODataClientErrorException(final StatusLine statusLine, final InputStream rawResponse) {
+    this(statusLine, null, rawResponse);
+  }
+
+  /**
+   * Constructor
+   *
+   * @param statusLine request status info.
+   * @param error OData error to be wrapped.
+   */
+  public ODataClientErrorException(final StatusLine statusLine, final ODataError error) {
+    this(statusLine, error, null);
   }
 
   /**
@@ -55,8 +76,9 @@ public class ODataClientErrorException extends ODataRuntimeException {
    *
    * @param statusLine request status info.
    * @param error OData error to be wrapped.
+   * @param rawResponse raw response of the request.
    */
-  public ODataClientErrorException(final StatusLine statusLine, final ODataError error) {
+  public ODataClientErrorException(final StatusLine statusLine, final ODataError error, final InputStream rawResponse) {
     super(error == null ?
         statusLine.toString() :
         (error.getCode() == null || error.getCode().isEmpty() ? "" : "(" + error.getCode() + ") ")
@@ -64,6 +86,7 @@ public class ODataClientErrorException extends ODataRuntimeException {
 
     this.statusLine = statusLine;
     this.error = error;
+    this.rawResponse = rawResponse;
   }
 
   /**
@@ -98,5 +121,14 @@ public class ODataClientErrorException extends ODataRuntimeException {
    */
   public Header[] getHeaderInfo() {
     return headerInfo;
+  }
+
+  /**
+   * Return raw response from the request (can be null).
+   *
+   * @return raw response from the request (can be null).
+   */
+  public InputStream getRawResponse() {
+    return rawResponse;
   }
 }
