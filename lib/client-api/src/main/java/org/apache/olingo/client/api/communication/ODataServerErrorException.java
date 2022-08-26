@@ -21,6 +21,8 @@ package org.apache.olingo.client.api.communication;
 import org.apache.http.StatusLine;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
+import java.io.InputStream;
+
 /**
  * Represents a server error in OData.
  */
@@ -28,12 +30,34 @@ public class ODataServerErrorException extends ODataRuntimeException {
 
   private static final long serialVersionUID = -6423014532618680135L;
 
+  private InputStream rawResponse;
+
   /**
    * Constructor.
    *
    * @param statusLine request status info.
    */
   public ODataServerErrorException(final StatusLine statusLine) {
+    this(statusLine, null);
+  }
+
+  /**
+   * Constructor.
+   *
+   * @param statusLine request status info.
+   * @param rawResponse raw response of the request.
+   */
+  public ODataServerErrorException(final StatusLine statusLine, final InputStream rawResponse) {
     super(statusLine.toString());
+    this.rawResponse = rawResponse;
+  }
+
+  /**
+   * Return raw response from the request (can be null).
+   *
+   * @return raw response from the request (can be null).
+   */
+  public InputStream getRawResponse() {
+    return rawResponse;
   }
 }

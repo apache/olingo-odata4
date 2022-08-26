@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.communication.header;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -31,7 +32,6 @@ import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,8 @@ public final class ODataErrorResponseChecker {
       final ODataClient odataClient, final StatusLine statusLine, final InputStream entity,
       final String accept) {
 
-    ODataRuntimeException result = null;
+    ODataRuntimeException result;
+    InputStream entityForException = null;
 
     if (entity == null) {
       result = new ODataClientErrorException(statusLine);
@@ -61,7 +62,9 @@ public final class ODataErrorResponseChecker {
       ODataError error = new ODataError();
       if (!accept.contains("text/plain")) {
         try {
-          error = odataClient.getReader().readError(entity, contentType);
+          byte[] bytes = IOUtils.toByteArray(entity);
+          entityForException = new ByteArrayInputStream(bytes);
+          error = odataClient.getReader().readError(new ByteArrayInputStream(bytes), contentType);
           if (error != null) {
             Map<String, String> innerError = error.getInnerError();
             if (innerError != null) {
@@ -72,7 +75,7 @@ public final class ODataErrorResponseChecker {
               }
             }
           }
-        } catch (final RuntimeException | ODataDeserializerException e) {
+        } catch (final RuntimeException | ODataDeserializerException | IOException e) {
           LOG.warn("Error deserializing error response", e);
           error = getGenericError(
               statusLine.getStatusCode(),
@@ -94,9 +97,9 @@ public final class ODataErrorResponseChecker {
       if (statusLine.getStatusCode() >= 500 && error!= null && 
           (error.getDetails() == null || error.getDetails().isEmpty()) && 
           (error.getInnerError() == null || error.getInnerError().size() == 0)) {
-        result = new ODataServerErrorException(statusLine);
+        result = new ODataServerErrorException(statusLine, entityForException);
       } else {
-        result = new ODataClientErrorException(statusLine, error);
+        result = new ODataClientErrorException(statusLine, error, entityForException);
       }
     }
 
