@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,11 +17,6 @@
  * under the License.
  */
 package org.apache.olingo.client.core.communication.header;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.StatusLine;
@@ -32,9 +27,13 @@ import org.apache.olingo.client.api.serialization.ODataDeserializerException;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 import org.apache.olingo.commons.api.format.ContentType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 public final class ODataErrorResponseChecker {
 
@@ -49,7 +48,7 @@ public final class ODataErrorResponseChecker {
 
   public static ODataRuntimeException checkResponse(
       final ODataClient odataClient, final StatusLine statusLine, final InputStream entity,
-      final String accept) {
+      final ContentType contentType) {
 
     ODataRuntimeException result;
     InputStream entityForException = null;
@@ -57,10 +56,9 @@ public final class ODataErrorResponseChecker {
     if (entity == null) {
       result = new ODataClientErrorException(statusLine);
     } else {
-      final ContentType contentType = accept.contains("xml") ? ContentType.APPLICATION_ATOM_XML : ContentType.JSON;
 
       ODataError error = new ODataError();
-      if (!accept.contains("text/plain")) {
+      if (!contentType.isCompatible(ContentType.TEXT_PLAIN)) {
         try {
           byte[] bytes = IOUtils.toByteArray(entity);
           entityForException = new ByteArrayInputStream(bytes);
@@ -94,8 +92,8 @@ public final class ODataErrorResponseChecker {
         }
       }
 
-      if (statusLine.getStatusCode() >= 500 && error!= null && 
-          (error.getDetails() == null || error.getDetails().isEmpty()) && 
+      if (statusLine.getStatusCode() >= 500 && error!= null &&
+          (error.getDetails() == null || error.getDetails().isEmpty()) &&
           (error.getInnerError() == null || error.getInnerError().size() == 0)) {
         result = new ODataServerErrorException(statusLine, entityForException);
       } else {

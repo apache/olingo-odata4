@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -202,6 +202,39 @@ public final class ContentType {
     }
 
     TypeUtil.parseParameters(params, parameters);
+  }
+
+  /**
+   * Uses the first MIME type from the accept header to determine the content type.
+   *
+   * @param accept The accept header content, e.g. text/html,application/xhtml+xml,application/xml, may be null
+   * @return The content type according to the accept header's first MIME type. Defaults to application/json if the
+   * accept header does not contain valid information. Never null.
+   */
+  public static ContentType fromAcceptHeader(String accept) {
+    if (accept == null || accept.trim().isEmpty()) {
+      return JSON;
+    }
+    String acceptType = accept.split(",")[0];
+    if (acceptType == null || acceptType.trim().isEmpty()) {
+      return JSON;
+    }
+    int semicolonIndex = acceptType.indexOf(';');
+    String cleanedAcceptType;
+    if (semicolonIndex == -1) {
+      cleanedAcceptType = acceptType.trim();
+    } else {
+      cleanedAcceptType = acceptType.trim().substring(0, semicolonIndex).trim();
+      if (cleanedAcceptType.trim().isEmpty()) {
+        return JSON;
+      }
+    }
+
+    try {
+      return create(cleanedAcceptType);
+    } catch (Exception exception) {
+      return accept.contains("xml") ? APPLICATION_ATOM_XML : JSON;
+    }
   }
 
   /** Gets the type of this content type. */

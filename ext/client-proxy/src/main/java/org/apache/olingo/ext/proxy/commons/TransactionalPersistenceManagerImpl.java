@@ -18,11 +18,6 @@
  */
 package org.apache.olingo.ext.proxy.commons;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.olingo.client.api.communication.ODataServerErrorException;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
@@ -37,9 +32,15 @@ import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResp
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.ODataFlushException;
 import org.apache.olingo.ext.proxy.api.ODataResponseError;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@link org.apache.olingo.ext.proxy.api.PersistenceManager} implementation using OData batch requests to implement
@@ -49,6 +50,8 @@ import org.apache.olingo.ext.proxy.api.ODataResponseError;
 public class TransactionalPersistenceManagerImpl extends AbstractPersistenceManager {
 
   private static final long serialVersionUID = -3320312269235907501L;
+
+  private static final ContentType DEFAULT_CONTENT_TYPE = ContentType.JSON;
 
   public TransactionalPersistenceManagerImpl(final AbstractService<?> factory) {
     super(factory);
@@ -103,11 +106,12 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
 
         final ODataResponse res = chgres.next();
         if (res.getStatusCode() >= 400) {
+          ContentType contentType = ContentType.fromAcceptHeader(request.getAccept());
           errors.add(new ODataResponseError(ODataErrorResponseChecker.checkResponse(
                   service.getClient(),
                   new ResponseStatusLine(res),
                   res.getRawResponse(),
-                  ((ODataRequest) request).getAccept()), index, requests.get(index)));
+                  contentType), index, requests.get(index)));
           if (!service.getClient().getConfiguration().isContinueOnError()) {
             throw new ODataFlushException(response.getStatusCode(), errors);
           }
