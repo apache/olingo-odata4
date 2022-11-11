@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.commons.api.format;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -25,8 +27,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import org.junit.Test;
 
 public class ContentTypeTest {
 
@@ -120,4 +120,77 @@ public class ContentTypeTest {
       assertNotNull(e);
     }
   }
+
+  @Test
+  public void firstFromValidMultiAcceptHeader() {
+
+    ContentType contentType = ContentType.fromAcceptHeader("application/xml ; q=0.9, application/xhtml+xml,*/*;q=0.8 ");
+
+    assertEquals(ContentType.APPLICATION_XML, contentType);
+
+  }
+
+  @Test
+  public void missingMimeTypefromAcceptHeaderDefaultsToJson() {
+
+    ContentType contentType = ContentType.fromAcceptHeader(";q=0.9");
+
+    assertEquals(ContentType.JSON, contentType);
+
+  }
+
+  @Test
+  public void fromValidSingleAcceptHeader() {
+
+    ContentType contentType = ContentType.fromAcceptHeader("application/xml");
+
+    assertEquals(ContentType.APPLICATION_XML, contentType);
+
+  }
+
+  @Test
+  public void fromAcceptHeaderDefaultsToJsonIfNull() {
+
+    ContentType contentType = ContentType.fromAcceptHeader(null);
+
+    assertEquals(ContentType.JSON, contentType);
+
+  }
+
+  @Test
+  public void fromAcceptHeaderDefaultsToJsonIfEmpty() {
+
+    ContentType contentType = ContentType.fromAcceptHeader("");
+
+    assertEquals(ContentType.JSON, contentType);
+
+  }
+
+  @Test
+  public void fromAcceptHeaderDefaultsToJsonIfBlank() {
+
+    ContentType contentType = ContentType.fromAcceptHeader(" ");
+
+    assertEquals(ContentType.JSON, contentType);
+
+  }
+
+  @Test
+  public void fromAcceptHeaderDefaultsToJsonIfInvalid() {
+
+    ContentType contentType = ContentType.fromAcceptHeader("invalid");
+
+    assertEquals(ContentType.JSON, contentType);
+
+  }
+
+  @Test
+  public void fromAcceptHeaderDefaultsToJsonIfFirstValueBlank() {
+
+    ContentType contentType = ContentType.fromAcceptHeader("  ,text/plain ");
+
+    assertEquals(ContentType.JSON, contentType);
+
+  }
+
 }

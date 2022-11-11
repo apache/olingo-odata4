@@ -15,9 +15,7 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
-import java.io.IOException;
-
-import org.apache.http.Header;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
@@ -25,8 +23,11 @@ import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.core.communication.header.ODataErrorResponseChecker;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public abstract class AbstractRequest {
 
@@ -34,7 +35,6 @@ public abstract class AbstractRequest {
    * Logger.
    */
   protected static final Logger LOG = LoggerFactory.getLogger(AbstractRequest.class);
-  private static final String TEXT_CONTENT_TYPE = "text/plain";
 
   protected void checkRequest(final ODataClient odataClient, final HttpUriRequest request) {
     // If using and Edm enabled client, checks that the cached service root matches the request URI
@@ -53,14 +53,13 @@ public abstract class AbstractRequest {
           final ODataClient odataClient, final HttpResponse response, final String accept) {
 
     if (response.getStatusLine().getStatusCode() >= 400) {
-      Header contentTypeHeader = response.getEntity() != null ? response.getEntity().getContentType() : null;
+      final ContentType contentType = determineContentType(response, accept);
       try {
         final ODataRuntimeException exception = ODataErrorResponseChecker.checkResponse(
                 odataClient,
                 response.getStatusLine(),
                 response.getEntity() == null ? null : response.getEntity().getContent(),
-                    (contentTypeHeader != null && 
-                    contentTypeHeader.getValue().contains(TEXT_CONTENT_TYPE)) ? TEXT_CONTENT_TYPE : accept);
+                contentType);
         if (exception != null) {
           if (exception instanceof ODataClientErrorException) {
             ((ODataClientErrorException)exception).setHeaderInfo(response.getAllHeaders());
@@ -73,4 +72,18 @@ public abstract class AbstractRequest {
       }
     }
   }
+
+  private static ContentType determineContentType(HttpResponse response, String accept) {
+    if (response.getEntity() == null
+            || response.getEntity().getContentType() == null
+            || StringUtils.isBlank(response.getEntity().getContentType().getValue())) {
+      return ContentType.fromAcceptHeader(accept);
+    }
+    try {
+      return ContentType.create(response.getEntity().getContentType().getValue());
+    } catch (Exception exception) {
+      return ContentType.JSON;
+    }
+  }
+
 }
