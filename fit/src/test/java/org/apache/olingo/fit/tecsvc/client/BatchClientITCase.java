@@ -24,7 +24,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 import org.apache.olingo.client.api.ODataClient;
@@ -493,6 +497,45 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
         .getProperty("PropertyInt16")
         .getPrimitiveValue()
         .toValue());
+  }
+
+  /**
+   * Test for fix of OLINGO-1591
+   */
+  @Test
+  public void changesetBatchRequestDeadlock() throws IOException {
+    BatchManager payload = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI).payloadManager();
+    final ODataChangeset changeset = payload.addChangeset();
+    URI targetURI = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim").build();
+
+    ClientObjectFactory factory = getFactory();
+    ClientEntity postEntity = factory.newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETAllPrim"));
+    postEntity.addLink(factory.newEntityNavigationLink("NavPropertyETTwoPrimOne", getClient().newURIBuilder
+            (SERVICE_URI)
+        .appendEntitySetSegment("ESTwoPrim")
+        .appendKeySegment(32766)
+        .build()));
+
+    byte[] contentBytes;
+    try (InputStream content =
+             Thread.currentThread().getContextClassLoader().getResourceAsStream("payload.txt")) {
+
+      if (content == null) {
+        throw new IOException("Failed to load test data.");
+      }
+      contentBytes = new byte[content.available()];
+      content.read(contentBytes);
+      String testPayload = new String(contentBytes);
+      postEntity.getProperties().add(factory.newPrimitiveProperty("PropertyDouble",
+          factory.newPrimitiveValueBuilder().buildString(testPayload)));
+
+      final ODataEntityCreateRequest<ClientEntity> createRequest =
+          getClient().getCUDRequestFactory().getEntityCreateRequest(targetURI, postEntity);
+      createRequest.setFormat(getContentType());
+
+      changeset.addRequest(createRequest);
+      payload.getResponse();
+    }
   }
 
   @Test

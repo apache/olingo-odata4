@@ -135,6 +135,11 @@ public class PipedOutputStream extends java.io.PipedOutputStream {
         // The circular buffer is full, so wait for some reader to
         // consume something.
         try {
+          // when the reader has read all data till the write position and goes to wait,
+          // and the writer consumes data greater than the buffer size, writer goes into wait
+          // leading to deadlock. notifying the reader to resume reading so the reader reads
+          // from readIndex -> end of buffer & start of buffer -> writeIndex and notifies writer
+          sink.sync.notifyAll();
           sink.sync.wait();
         } catch (InterruptedException e) {
           throw new IOException(e.getMessage());
