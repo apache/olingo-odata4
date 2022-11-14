@@ -106,7 +106,7 @@
     <tomcat.version>7.0.109</tomcat.version>
 
     <!-- for osgi integration testing -->
-    <osgi.version>4.2.0</osgi.version>
+    <osgi.version>5.0.0</osgi.version>
     <karaf.version>3.0.3</karaf.version>
     <pax.exam.version>4.13.1</pax.exam.version>
 
