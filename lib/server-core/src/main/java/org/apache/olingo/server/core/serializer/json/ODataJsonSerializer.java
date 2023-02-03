@@ -33,15 +33,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.IConstants;
 import org.apache.olingo.commons.api.constants.Constantsv00;
-import org.apache.olingo.commons.api.data.AbstractEntityCollection;
-import org.apache.olingo.commons.api.data.ComplexValue;
-import org.apache.olingo.commons.api.data.ContextURL;
-import org.apache.olingo.commons.api.data.Entity;
-import org.apache.olingo.commons.api.data.EntityIterator;
-import org.apache.olingo.commons.api.data.Link;
-import org.apache.olingo.commons.api.data.Linked;
-import org.apache.olingo.commons.api.data.Operation;
-import org.apache.olingo.commons.api.data.Property;
+import org.apache.olingo.commons.api.data.*;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntitySet;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -654,12 +646,18 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           json.writeStartArray();
           json.writeEndArray();
         } else {
+          final EntityCollection inlineEntitySet = navigationLink.getInlineEntitySet();
           if (innerCount != null && innerCount.getValue()) {
-            writeInlineCount(property.getName(), navigationLink.getInlineEntitySet().getCount(), json);
+            writeInlineCount(property.getName(), inlineEntitySet.getCount(), json);
           }
           json.writeFieldName(property.getName());
-          writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand, toDepth,
+          writeEntitySet(metadata, property.getType(), inlineEntitySet, innerExpand, toDepth,
               innerSelect, writeOnlyRef, ancestors, name, json);
+
+          final URI nextLink = inlineEntitySet.getNext();
+          if (nextLink != null) {
+            json.writeStringField(navigationLink.getTitle() + constants.getNextLink(), nextLink.toASCIIString());
+          }
         }
       }
     } else {
