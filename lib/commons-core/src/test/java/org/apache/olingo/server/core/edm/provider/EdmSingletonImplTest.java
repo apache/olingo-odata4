@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +40,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
 import org.apache.olingo.commons.core.edm.EdmEntityContainerImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.EdmSingletonImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EdmSingletonImplTest {
 
@@ -85,7 +86,7 @@ public class EdmSingletonImplTest {
     assertEquals(singletonName, target.getName());
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void wrongTarget() throws Exception {
     CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
@@ -102,10 +103,12 @@ public class EdmSingletonImplTest {
     when(provider.getSingleton(containerName, singletonName)).thenReturn(singletonProvider);
 
     final EdmSingleton singleton = new EdmSingletonImpl(edm, null, singletonProvider);
-    singleton.getRelatedBindingTarget("path");
+    Assertions.assertThrows(EdmException.class, () -> {
+      singleton.getRelatedBindingTarget("path");
+    });
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void wrongTargetContainer() throws Exception {
     CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
@@ -118,16 +121,20 @@ public class EdmSingletonImplTest {
     when(provider.getSingleton(containerName, singletonName)).thenReturn(singletonProvider);
 
     final EdmSingleton singleton = new EdmSingletonImpl(edm, null, singletonProvider);
-    singleton.getRelatedBindingTarget("path");
+    Assertions.assertThrows(EdmException.class, () -> {
+      singleton.getRelatedBindingTarget("path");
+    });
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void nonExsistingEntityType() throws Exception {
     CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
 
     CsdlSingleton singleton = new CsdlSingleton().setName("name");
     final EdmSingleton edmSingleton = new EdmSingletonImpl(edm, null, singleton);
-    edmSingleton.getEntityType();
+    Assertions.assertThrows(EdmException.class, () -> {
+      edmSingleton.getEntityType();
+    });
   }
 }

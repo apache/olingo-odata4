@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,7 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Employee;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.EmployeeCollection;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PersonCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 // CHECKSTYLE:ON (Maven checkstyle)
 

@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.request.invoke;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,7 +29,7 @@ import org.apache.olingo.client.api.domain.ClientInvokeResult;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ODataInvokeRequestTest {
 

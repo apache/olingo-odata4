@@ -30,8 +30,8 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientEntitySetIterator;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ClientEntitySetIteratorTest {
   
@@ -61,17 +61,17 @@ public class ClientEntitySetIteratorTest {
             entities.add(next);
         }
 
-        Assert.assertEquals(3, entities.size());
+        Assertions.assertEquals(3, entities.size());
 
-        Assert.assertEquals("1", entities.get(0).getProperty("ID").getPrimitiveValue().toString());
-        Assert.assertEquals("ABC",
+        Assertions.assertEquals("1", entities.get(0).getProperty("ID").getPrimitiveValue().toString());
+        Assertions.assertEquals("ABC",
                 entities.get(0).getProperty("TEXT").getPrimitiveValue().toString());
-        Assert.assertEquals("2", entities.get(1).getProperty("ID").getPrimitiveValue().toString());
-        Assert.assertEquals(
+        Assertions.assertEquals("2", entities.get(1).getProperty("ID").getPrimitiveValue().toString());
+        Assertions.assertEquals(
             "QN6 1311 &amp;&amp;&amp;AmpersandCheck&amp;&amp;&amp; ~!@#$%^&amp;*()_+=-[];',./?><\":}{| @AlmikaPhone",
                 entities.get(1).getProperty("TEXT").getPrimitiveValue().toString());
-        Assert.assertEquals("3", entities.get(2).getProperty("ID").getPrimitiveValue().toString());
-        Assert.assertEquals("}XYZ",
+        Assertions.assertEquals("3", entities.get(2).getProperty("ID").getPrimitiveValue().toString());
+        Assertions.assertEquals("}XYZ",
                 entities.get(2).getProperty("TEXT").getPrimitiveValue().toString());
     }
 
@@ -94,9 +94,9 @@ public class ClientEntitySetIteratorTest {
             entities.add(next);
         }
 
-        Assert.assertEquals(1, entities.size());
-        Assert.assertNotNull(entities.get(0).getProperty("NavProp"));
-        Assert.assertEquals("}Capabilities", entities.get(0).getProperty("Name").getPrimitiveValue().toString());
+        Assertions.assertEquals(1, entities.size());
+        Assertions.assertNotNull(entities.get(0).getProperty("NavProp"));
+        Assertions.assertEquals("}Capabilities", entities.get(0).getProperty("Name").getPrimitiveValue().toString());
     }
     
     @Test
@@ -120,10 +120,10 @@ public class ClientEntitySetIteratorTest {
             entities.add(next);
         }
 
-        Assert.assertEquals(2, entities.size());
-        Assert.assertNotNull(entities.get(0).getProperty("NavProp"));
-        Assert.assertTrue(entities.get(0).getProperty("NavProp").hasCollectionValue());
-        Assert.assertEquals("}Capabilities", entities.get(0).getProperty("Name").getPrimitiveValue().toString());
+        Assertions.assertEquals(2, entities.size());
+        Assertions.assertNotNull(entities.get(0).getProperty("NavProp"));
+        Assertions.assertTrue(entities.get(0).getProperty("NavProp").hasCollectionValue());
+        Assertions.assertEquals("}Capabilities", entities.get(0).getProperty("Name").getPrimitiveValue().toString());
     }
     @Test
     public void testGetEntitySetIterator3() throws IOException, URISyntaxException {
@@ -143,12 +143,12 @@ public class ClientEntitySetIteratorTest {
             entities.add(next);
         }
 
-        Assert.assertEquals(1, entities.size());
+        Assertions.assertEquals(1, entities.size());
 
-        Assert.assertEquals("", entities.get(0).getProperty("PropertyString").getPrimitiveValue().toString());
+        Assertions.assertEquals("", entities.get(0).getProperty("PropertyString").getPrimitiveValue().toString());
     }
     
-    @Test(expected=UnsupportedOperationException.class)
+    @Test
     public void testEntitySetIteratorRemoveMethod() throws IOException, URISyntaxException {
         String str = "{\"@odata.context\":\"$metadata#Cubes(Name)\","
             + "\"@odata.metadataEtag\": \"W/\\\"582997db-15b9-4a23-a8b0-c91bf45b4194\\\"\","
@@ -159,11 +159,12 @@ public class ClientEntitySetIteratorTest {
         ClientEntitySetIterator<ClientEntitySet, ClientEntity> entitySetIterator = 
             new ClientEntitySetIterator<ClientEntitySet, ClientEntity>(
             oDataClient, stream, ContentType.parse(ContentType.JSON.toString()));
-
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
         entitySetIterator.remove();
+        });
     }
     
-    @Test(expected=IllegalStateException.class)
+    @Test
     public void testEntitySetIteratorGetNextMethod() throws IOException, URISyntaxException {
         String str = "{\"@odata.context\":\"$metadata#Cubes(Name)\","
             + "\"@odata.metadataEtag\": \"W/\\\"582997db-15b9-4a23-a8b0-c91bf45b4194\\\"\","
@@ -174,8 +175,9 @@ public class ClientEntitySetIteratorTest {
         ClientEntitySetIterator<ClientEntitySet, ClientEntity> entitySetIterator = 
             new ClientEntitySetIterator<ClientEntitySet, ClientEntity>(
             oDataClient, stream, ContentType.parse(ContentType.JSON.toString()));
-
-        entitySetIterator.getNext();
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            entitySetIterator.getNext();
+        });
     }
     
     @Test
@@ -198,9 +200,9 @@ public class ClientEntitySetIteratorTest {
             entities.add(next);
         }
 
-        Assert.assertEquals(1, entities.size());
-        Assert.assertNotNull(entitySetIterator.getNext());
-        Assert.assertEquals("http://localhost:8082/odata-server-tecsvc/"
+        Assertions.assertEquals(1, entities.size());
+        Assertions.assertNotNull(entitySetIterator.getNext());
+        Assertions.assertEquals("http://localhost:8082/odata-server-tecsvc/"
             + "odata.svc/ESServerSidePaging?%24skiptoken=1%2A10", entitySetIterator.getNext().toString());
     }
 }

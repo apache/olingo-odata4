@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.fit.tecsvc.http;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +39,7 @@ import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.apache.olingo.fit.util.StringHelper;
 import org.apache.olingo.server.tecsvc.async.TechnicalAsyncService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PreferHeaderForGetAndDeleteITCase extends AbstractBaseTestITCase {
 

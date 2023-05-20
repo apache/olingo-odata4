@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 
@@ -31,7 +31,7 @@ import org.apache.olingo.server.api.serializer.FixedFormatSerializer;
 import org.apache.olingo.server.api.serializer.PrimitiveValueSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerStreamResult;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FixedFormatSerializerTest {
 

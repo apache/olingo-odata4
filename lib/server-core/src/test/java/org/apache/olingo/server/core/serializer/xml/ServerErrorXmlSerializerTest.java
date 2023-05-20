@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer.xml;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 import java.util.Collections;
@@ -30,7 +30,8 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.ODataServerError;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ServerErrorXmlSerializerTest {
 
@@ -54,9 +55,11 @@ public class ServerErrorXmlSerializerTest {
         jsonString);
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void nullErrorResultsInException() throws Exception {
-    ser.error(null);
+    Assertions.assertThrows(SerializerException.class, () -> {
+      ser.error(null);
+    });
   }
 
   @Test

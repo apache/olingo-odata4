@@ -20,10 +20,10 @@ package org.apache.olingo.fit.base;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -47,7 +47,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
@@ -73,7 +73,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected static String testOAuth2ServiceRootURL;
 
-  @BeforeClass
+  @BeforeAll
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc";
     testDemoServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Demo.svc";

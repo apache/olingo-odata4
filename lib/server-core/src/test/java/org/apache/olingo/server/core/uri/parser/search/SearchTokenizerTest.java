@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.server.core.uri.parser.search;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -86,23 +86,23 @@ public class SearchTokenizerTest {
 
     //
     result = tokenizer.tokenize("\"abc\"");
-    Assert.assertNotNull(result);
+    Assertions.assertNotNull(result);
 
-    Assert.assertEquals(PHRASE, result.get(0).getToken());
+    Assertions.assertEquals(PHRASE, result.get(0).getToken());
 
     //
     result = tokenizer.tokenize("\"9988  abs\"");
-    Assert.assertNotNull(result);
+    Assertions.assertNotNull(result);
 
-    Assert.assertEquals(PHRASE, result.get(0).getToken());
-    Assert.assertEquals("\"9988  abs\"", result.get(0).getLiteral());
+    Assertions.assertEquals(PHRASE, result.get(0).getToken());
+    Assertions.assertEquals("\"9988  abs\"", result.get(0).getLiteral());
 
     //
     result = tokenizer.tokenize("\"99_88.\"");
-    Assert.assertNotNull(result);
+    Assertions.assertNotNull(result);
 
-    Assert.assertEquals(PHRASE, result.get(0).getToken());
-    Assert.assertEquals("\"99_88.\"", result.get(0).getLiteral());
+    Assertions.assertEquals(PHRASE, result.get(0).getToken());
+    Assertions.assertEquals("\"99_88.\"", result.get(0).getLiteral());
 
     assertQuery("abc or \"xyz\"").resultsIn(WORD, WORD, PHRASE);
   }
@@ -384,25 +384,25 @@ public class SearchTokenizerTest {
       try {
         validate();
       } catch (SearchTokenizerException e) {
-        Assert.assertEquals("SearchTokenizerException with unexpected message was thrown.", key, e.getMessageKey());
+        Assertions.assertEquals(key, e.getMessageKey(), "SearchTokenizerException with unexpected message was thrown.");
         return;
       }
-      Assert.fail("No SearchTokenizerException was not thrown.");
+      Assertions.fail("No SearchTokenizerException was not thrown.");
     }
 
     private void validate() throws SearchTokenizerException {
       SearchTokenizer tokenizer = new SearchTokenizer();
       List<SearchQueryToken> result = tokenizer.tokenize(searchQuery);
-      Assert.assertNotNull(result);
+      Assertions.assertNotNull(result);
       if (validations.size() != 0) {
-        Assert.assertEquals(validations.size(), result.size());
+        Assertions.assertEquals(validations.size(), result.size());
 
         Iterator<Tuple> validationIt = validations.iterator();
         for (SearchQueryToken iToken : result) {
           Tuple validation = validationIt.next();
-          Assert.assertEquals(validation.token, iToken.getToken());
+          Assertions.assertEquals(validation.token, iToken.getToken());
           if (validation.literal != null) {
-            Assert.assertEquals(validation.literal, iToken.getLiteral());
+            Assertions.assertEquals(validation.literal, iToken.getLiteral());
           }
         }
       }

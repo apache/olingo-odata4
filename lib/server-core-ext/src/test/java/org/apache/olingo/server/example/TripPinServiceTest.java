@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.example;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +43,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,7 +65,7 @@ public class TripPinServiceTest {
   private static final int TOMCAT_PORT = 9900;
   private static final String CRLF = "\r\n";
 
-  @BeforeClass
+  @BeforeAll
   public static void beforeTest() throws Exception {
     tomcat.setPort(TOMCAT_PORT);
     File baseDir = new File(System.getProperty("java.io.tmpdir"));
@@ -78,7 +78,7 @@ public class TripPinServiceTest {
     tomcat.start();
   }
 
-  @AfterClass
+  @AfterAll
   public static void afterTest() throws Exception {
     tomcat.stop();
   }
@@ -253,7 +253,7 @@ public class TripPinServiceTest {
     assertEquals("Safari", IOUtils.toString(response.getEntity().getContent()));
   }
   
-  @Test @Ignore
+  @Test @Disabled
   // TODO: Support geometry types to make this run
   public void testReadComplexProperty() throws Exception {
     //HttpResponse response = httpGET(baseURL + "/Airports('KSFO')/Location");
@@ -378,7 +378,7 @@ public class TripPinServiceTest {
     EntityUtils.consumeQuietly(response.getEntity());
   }  
 
-  @Test @Ignore
+  @Test @Disabled
   public void testFunctionImport() throws Exception {
     //TODO: fails because of lack of geometery support
     HttpResponse response = httpGET(baseURL + "/GetNearestAirport(lat=23.0,lon=34.0)", 200);
@@ -553,7 +553,7 @@ public class TripPinServiceTest {
     assertEquals("scottketchum", ((ArrayNode)node.get("value")).get(1).get("UserName").asText());
   }
   
-  @Ignore("4.01 style binding not supported")
+  @Disabled("4.01 style binding not supported")
   @Test
   public void testCreateEntityWithLinkToRelatedEntitiesIds() throws Exception {
     String payload = "{\n" +
@@ -817,7 +817,7 @@ public class TripPinServiceTest {
     // get
     response = httpGET(editUrl, 200);
     node = getJSONNode(response);
-    assertNull("/People('russellwhyte')", ((ArrayNode) node.get("value")).get(2));
+    assertNull(((ArrayNode) node.get("value")).get(2), "/People('russellwhyte')");
   }
   
   @Test

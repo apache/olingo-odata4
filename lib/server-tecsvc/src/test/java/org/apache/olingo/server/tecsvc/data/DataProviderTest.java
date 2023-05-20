@@ -33,8 +33,8 @@ import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class DataProviderTest {
@@ -56,9 +56,9 @@ public class DataProviderTest {
   public void esAllPrimEntity() throws Exception {
     final DataProvider dataProvider = new DataProvider(oData, edm);
     final Entity entity = dataProvider.readAll(esAllPrim).getEntities().get(2);
-    Assert.assertEquals(16, entity.getProperties().size());
+    Assertions.assertEquals(16, entity.getProperties().size());
 
-    Assert.assertEquals(entity,
+    Assertions.assertEquals(entity,
         dataProvider.read(esAllPrim, Arrays.asList(mockParameter("PropertyInt16", "-0"))));
   }
 
@@ -66,9 +66,9 @@ public class DataProviderTest {
   public void esAllKeyEntity() throws Exception {
     final DataProvider dataProvider = new DataProvider(oData, edm);
     final Entity entity = dataProvider.readAll(esAllKey).getEntities().get(0);
-    Assert.assertEquals(13, entity.getProperties().size());
+    Assertions.assertEquals(13, entity.getProperties().size());
 
-    Assert.assertEquals(entity, dataProvider.read(esAllKey, Arrays.asList(
+    Assertions.assertEquals(entity, dataProvider.read(esAllKey, Arrays.asList(
         mockParameter("PropertyBoolean", "true"),
         mockParameter("PropertyByte", "255"),
         mockParameter("PropertyDate", "2012-12-03"),
@@ -90,19 +90,19 @@ public class DataProviderTest {
     final DataProvider data = new DataProvider(oData, edm);
     EntityCollection outSet = data.readAll(esAllPrim);
 
-    Assert.assertEquals(4, outSet.getEntities().size());
+    Assertions.assertEquals(4, outSet.getEntities().size());
 
     Entity first = outSet.getEntities().get(0);
-    Assert.assertEquals(16, first.getProperties().size());
-    Assert.assertEquals(2, first.getNavigationLinks().size());
+    Assertions.assertEquals(16, first.getProperties().size());
+    Assertions.assertEquals(2, first.getNavigationLinks().size());
     final EntityCollection target = first.getNavigationLink("NavPropertyETTwoPrimMany").getInlineEntitySet();
-    Assert.assertNotNull(target);
-    Assert.assertEquals(1, target.getEntities().size());
-    Assert.assertEquals(data.readAll(entityContainer.getEntitySet("ESTwoPrim")).getEntities().get(1),
+    Assertions.assertNotNull(target);
+    Assertions.assertEquals(1, target.getEntities().size());
+    Assertions.assertEquals(data.readAll(entityContainer.getEntitySet("ESTwoPrim")).getEntities().get(1),
         target.getEntities().get(0));
 
-    Assert.assertEquals(16, outSet.getEntities().get(1).getProperties().size());
-    Assert.assertEquals(16, outSet.getEntities().get(2).getProperties().size());
+    Assertions.assertEquals(16, outSet.getEntities().get(1).getProperties().size());
+    Assertions.assertEquals(16, outSet.getEntities().get(2).getProperties().size());
   }
 
   @Test
@@ -110,13 +110,13 @@ public class DataProviderTest {
     final DataProvider dataProvider = new DataProvider(oData, edm);
     EntityCollection outSet = dataProvider.readAll(esCollAllPrim);
 
-    Assert.assertEquals(3, outSet.getEntities().size());
-    Assert.assertEquals(17, outSet.getEntities().get(0).getProperties().size());
+    Assertions.assertEquals(3, outSet.getEntities().size());
+    Assertions.assertEquals(17, outSet.getEntities().get(0).getProperties().size());
     Property list = outSet.getEntities().get(0).getProperties().get(1);
-    Assert.assertTrue(list.isCollection());
-    Assert.assertEquals(3, list.asCollection().size());
-    Assert.assertEquals(17, outSet.getEntities().get(1).getProperties().size());
-    Assert.assertEquals(17, outSet.getEntities().get(2).getProperties().size());
+    Assertions.assertTrue(list.isCollection());
+    Assertions.assertEquals(3, list.asCollection().size());
+    Assertions.assertEquals(17, outSet.getEntities().get(1).getProperties().size());
+    Assertions.assertEquals(17, outSet.getEntities().get(2).getProperties().size());
   }
 
   @Test
@@ -125,13 +125,13 @@ public class DataProviderTest {
     
     EntityCollection outSet = dataProvider.readAll(esCompAllPrim);
 
-    Assert.assertEquals(4, outSet.getEntities().size());
-    Assert.assertEquals(2, outSet.getEntities().get(0).getProperties().size());
+    Assertions.assertEquals(4, outSet.getEntities().size());
+    Assertions.assertEquals(2, outSet.getEntities().get(0).getProperties().size());
     Property complex = outSet.getEntities().get(0).getProperties().get(1);
-    Assert.assertTrue(complex.isComplex());
-    Assert.assertEquals(16, complex.asComplex().getValue().size());
-    Assert.assertEquals(2, outSet.getEntities().get(1).getProperties().size());
-    Assert.assertEquals(2, outSet.getEntities().get(2).getProperties().size());
+    Assertions.assertTrue(complex.isComplex());
+    Assertions.assertEquals(16, complex.asComplex().getValue().size());
+    Assertions.assertEquals(2, outSet.getEntities().get(1).getProperties().size());
+    Assertions.assertEquals(2, outSet.getEntities().get(2).getProperties().size());
   }
 
   @Test
@@ -140,23 +140,23 @@ public class DataProviderTest {
     
     EntityCollection outSet = dataProvider.readAll(esMixPrimCollComp);
 
-    Assert.assertEquals(3, outSet.getEntities().size());
-    Assert.assertEquals(4, outSet.getEntities().get(0).getProperties().size());
+    Assertions.assertEquals(3, outSet.getEntities().size());
+    Assertions.assertEquals(4, outSet.getEntities().get(0).getProperties().size());
     Property complex = outSet.getEntities().get(0).getProperties().get(2);
-    Assert.assertTrue(complex.isComplex());
-    Assert.assertEquals(2, complex.asComplex().getValue().size());
+    Assertions.assertTrue(complex.isComplex());
+    Assertions.assertEquals(2, complex.asComplex().getValue().size());
     Property complexCollection = outSet.getEntities().get(0).getProperties().get(3);
-    Assert.assertTrue(complexCollection.isCollection());
+    Assertions.assertTrue(complexCollection.isCollection());
     List<?> linkedComplexValues = complexCollection.asCollection();
-    Assert.assertEquals(3, linkedComplexValues.size());
+    Assertions.assertEquals(3, linkedComplexValues.size());
     ComplexValue linkedComplexValue = (ComplexValue) linkedComplexValues.get(0);
-    Assert.assertEquals(2, linkedComplexValue.getValue().size());
+    Assertions.assertEquals(2, linkedComplexValue.getValue().size());
     Property lcProp = linkedComplexValue.getValue().get(0);
-    Assert.assertFalse(lcProp.isCollection());
-    Assert.assertEquals((short) 123, lcProp.getValue());
+    Assertions.assertFalse(lcProp.isCollection());
+    Assertions.assertEquals((short) 123, lcProp.getValue());
     //
-    Assert.assertEquals(4, outSet.getEntities().get(1).getProperties().size());
-    Assert.assertEquals(4, outSet.getEntities().get(2).getProperties().size());
+    Assertions.assertEquals(4, outSet.getEntities().get(1).getProperties().size());
+    Assertions.assertEquals(4, outSet.getEntities().get(2).getProperties().size());
   }
 
   @Test
@@ -164,14 +164,14 @@ public class DataProviderTest {
     DataProvider dataProvider = new DataProvider(oData, edm);
 
     Entity entity = dataProvider.read(esMedia, Arrays.asList(mockParameter("PropertyInt16", "3")));
-    Assert.assertNotNull(dataProvider.readMedia(entity));
+    Assertions.assertNotNull(dataProvider.readMedia(entity));
     dataProvider.delete(esMedia, entity);
-    Assert.assertEquals(3, dataProvider.readAll(esMedia).getEntities().size());
+    Assertions.assertEquals(3, dataProvider.readAll(esMedia).getEntities().size());
     entity = dataProvider.create(esMedia);
-    Assert.assertEquals((short) 3, entity.getProperty("PropertyInt16").getValue());
+    Assertions.assertEquals((short) 3, entity.getProperty("PropertyInt16").getValue());
     dataProvider.setMedia(entity, new byte[] { 1, 2, 3, 4 }, "x/y");
-    Assert.assertArrayEquals(new byte[] { 1, 2, 3, 4 }, dataProvider.readMedia(entity));
-    Assert.assertEquals("x/y", entity.getMediaContentType());
+    Assertions.assertArrayEquals(new byte[] { 1, 2, 3, 4 }, dataProvider.readMedia(entity));
+    Assertions.assertEquals("x/y", entity.getMediaContentType());
   }
 
   private static UriParameter mockParameter(final String name, final String text) {

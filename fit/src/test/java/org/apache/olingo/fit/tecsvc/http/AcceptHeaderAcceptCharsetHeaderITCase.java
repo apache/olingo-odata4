@@ -26,17 +26,17 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.AbstractBaseTestITCase;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCase {
 
@@ -505,7 +505,7 @@ public class AcceptHeaderAcceptCharsetHeaderITCase extends AbstractBaseTestITCas
     try {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), connection.getResponseCode());
       final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
-      Assert.fail("Expect IOException.");
+      Assertions.fail("Expect IOException.");
     } catch (IOException e) {
       assertTrue(e.getMessage().contains("application/json;charset=utf<8"));
     }

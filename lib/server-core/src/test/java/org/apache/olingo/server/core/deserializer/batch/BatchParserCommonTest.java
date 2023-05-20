@@ -18,18 +18,18 @@
  */
 package org.apache.olingo.server.core.deserializer.batch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.server.api.deserializer.batch.BatchDeserializerException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class BatchParserCommonTest {
 
@@ -167,21 +167,21 @@ public class BatchParserCommonTest {
   public void boundaryParameter() throws Exception {
     final String boundary = "boundary";
     final String contentType = MULTIPART_MIXED + "; boundary=" + boundary + "  ";
-    Assert.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
+    Assertions.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
   }
 
   @Test
   public void boundaryParameterWithQuotes() throws Exception {
     final String boundary = "batch_1.2+34:2j)0?";
     final String contentType = MULTIPART_MIXED + "; boundary=\"" + boundary + "\"";
-    Assert.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
+    Assertions.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
   }
 
   @Test
   public void boundaryParameterWithSpaces() throws Exception {
     final String boundary = "        boundary";
     final String contentType = MULTIPART_MIXED + "; boundary=\"" + boundary + "\"  ";
-    Assert.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
+    Assertions.assertEquals(boundary, BatchParserCommon.getBoundary(contentType, 0));
   }
 
   @Test
@@ -193,7 +193,7 @@ public class BatchParserCommonTest {
   public void contentTypeCharset() throws Exception {
     final String contentType = MULTIPART_MIXED + "; charset=UTF-8;boundary=" + BatchParserCommon.BOUNDARY;
     final String boundary = BatchParserCommon.getBoundary(contentType, 0);
-    Assert.assertEquals(BatchParserCommon.BOUNDARY, boundary);
+    Assertions.assertEquals(BatchParserCommon.BOUNDARY, boundary);
   }
 
   @Test
@@ -280,9 +280,9 @@ public class BatchParserCommonTest {
   private void invalidBoundary(final String contentType, final BatchDeserializerException.MessageKeys messageKey) {
     try {
       BatchParserCommon.getBoundary(contentType, 0);
-      Assert.fail("Expected exception not thrown.");
+      Assertions.fail("Expected exception not thrown.");
     } catch (final BatchDeserializerException e) {
-      Assert.assertEquals(messageKey, e.getMessageKey());
+      Assertions.assertEquals(messageKey, e.getMessageKey());
     }
   }
 }

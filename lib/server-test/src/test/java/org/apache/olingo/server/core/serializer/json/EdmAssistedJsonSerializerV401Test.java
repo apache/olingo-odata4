@@ -51,8 +51,8 @@ import org.apache.olingo.server.api.serializer.EdmAssistedSerializerOptions;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EdmAssistedJsonSerializerV401Test {
   private static final OData oData = OData.newInstance();
@@ -79,7 +79,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.addProperty(new Property(null, "Property1", ValueType.PRIMITIVE, 1.25F));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1)\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1)\","
         + "\"value\":[{\"@id\":null,\"Property1@type\":\"#Single\",\"Property1\":1.25}]}",
         serialize(serializer, metadata, null, entityCollection, null));
   }
@@ -94,7 +94,7 @@ public class EdmAssistedJsonSerializerV401Test {
         .addProperty(new Property(null, "AdditionalProperty", ValueType.PRIMITIVE, (byte) 42));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#ESTwoPrim\",\"value\":[{\"@id\":null,"
+    Assertions.assertEquals("{\"@context\":\"$metadata#ESTwoPrim\",\"value\":[{\"@id\":null,"
         + "\"PropertyInt16\":1,\"PropertyString\":\"test\","
         + "\"AdditionalProperty@type\":\"#SByte\",\"AdditionalProperty\":42}]}",
         serialize(serializer, metadata, entitySet, entityCollection, null));
@@ -117,7 +117,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(entity);
     entityCollection.setCount(2);
     entityCollection.setNext(URI.create("nextLink"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         "{\"@context\":\"$metadata#EntitySet(Property0,Property1,Property2,Property3,Property4)\","
             + "\"@count\":2,"
             + "\"value\":[{\"@id\":null,"
@@ -138,7 +138,7 @@ public class EdmAssistedJsonSerializerV401Test {
         .addProperty(new Property(null, "Property2", ValueType.PRIMITIVE, BigDecimal.valueOf(Long.MAX_VALUE, 10)))
         .addProperty(new Property("Edm.Byte", "Property3", ValueType.PRIMITIVE, 20)));
     entityCollection.setCount(3);
-    Assert.assertEquals(
+    Assertions.assertEquals(
         "{\"@odata.context\":\"$metadata#EntitySet(Property1,Property2,Property3)\","
             + "\"@odata.count\":\"3\","
             + "\"value\":[{\"@odata.id\":null,"
@@ -152,7 +152,7 @@ public class EdmAssistedJsonSerializerV401Test {
     
     List<String> versions = new ArrayList<>();
     versions.add("4.01");
-    Assert.assertEquals(
+    Assertions.assertEquals(
             "{\"@context\":\"$metadata#EntitySet(Property1,Property2,Property3)\","
                 + "\"@count\":\"3\","
                 + "\"value\":[{\"@id\":null,"
@@ -183,7 +183,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.addProperty(new Property("Namespace.ComplexType", "Property2", ValueType.COMPLEX, complexValue));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1,Property2)\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1,Property2)\","
         + "\"value\":[{\"@id\":null,"
         + "\"Property1@type\":\"#Int64\",\"Property1\":1,"
         + "\"Property2\":{\"@type\":\"#Namespace.ComplexType\","
@@ -208,7 +208,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(new Entity()
         .addProperty(new Property(null, "CollPropertyComp", ValueType.COLLECTION_COMPLEX,
             Arrays.asList(complexValue1, complexValue2, complexValue3))));
-    Assert.assertEquals("{\"@context\":\"$metadata#ESMixPrimCollComp(CollPropertyComp)\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#ESMixPrimCollComp(CollPropertyComp)\","
         + "\"value\":[{\"@id\":null,"
         + "\"CollPropertyComp\":["
         + "{\"PropertyInt16\":1,\"PropertyString\":\"one\"},"
@@ -224,7 +224,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(new Entity()
         .addProperty(new Property(null, "CollPropertyString", ValueType.COLLECTION_PRIMITIVE,
             Collections.emptyList())));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         "{\"@context\":\"$metadata#ESMixPrimCollComp(CollPropertyString)\","
             + "\"value\":[{\"@id\":null,\"CollPropertyString\":[]}]}",
         serialize(serializer, metadata, entitySet, entityCollection, "CollPropertyString"));
@@ -246,7 +246,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.getNavigationLinks().add(link);
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1,NavigationProperty(Related1))\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1,NavigationProperty(Related1))\","
         + "\"value\":[{\"@id\":null,"
         + "\"Property1@type\":\"#Int16\",\"Property1\":1,"
         + "\"NavigationProperty\":["
@@ -270,7 +270,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.getNavigationLinks().add(link);
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#ESTwoPrim\",\"value\":[{\"@id\":null,"
+    Assertions.assertEquals("{\"@context\":\"$metadata#ESTwoPrim\",\"value\":[{\"@id\":null,"
         + "\"PropertyInt16\":42,\"PropertyString\":\"test\","
         + "\"NavPropertyETAllPrimOne\":{\"@id\":null,\"PropertyInt16\":2,\"PropertyByte\":3}}]}",
         serialize(serializer, metadata, entitySet, entityCollection, null));
@@ -292,7 +292,7 @@ public class EdmAssistedJsonSerializerV401Test {
         UUID.fromString("12345678-ABCD-1234-CDEF-123456789012")));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1)\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1)\","
         + "\"@metadataEtag\":\"W/\\\"42\\\"\",\"value\":[{"
         + "\"@etag\":\"W/\\\"1000\\\"\","
         + "\"@type\":\"#Namespace.EntityType\","
@@ -302,62 +302,74 @@ public class EdmAssistedJsonSerializerV401Test {
         + "\"@mediaReadLink\":\"editLink/$value\"}]}",
         serialize(serializer, metadata, null, entityCollection, null));
 
-    Assert.assertEquals("{\"value\":[{\"Property1\":\"12345678-abcd-1234-cdef-123456789012\"}]}",
+    Assertions.assertEquals("{\"value\":[{\"Property1\":\"12345678-abcd-1234-cdef-123456789012\"}]}",
         serialize(oData.createEdmAssistedSerializer(ContentType.JSON_NO_METADATA), metadata,
             null, entityCollection, null));
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void enumType() throws Exception {
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         new Entity().addProperty(new Property(null, "Property1", ValueType.ENUM, 42)));
-    serializer.entityCollection(metadata, null, entityCollection, null);
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.entityCollection(metadata, null, entityCollection, null);
+    });
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void collectionEnumType() throws Exception {
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         new Entity().addProperty(new Property(null, "Property1", ValueType.COLLECTION_ENUM, Arrays.asList(42))));
-    serializer.entityCollection(metadata, null, entityCollection, null);
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.entityCollection(metadata, null, entityCollection, null);
+    });
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void geoType() throws Exception {
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         new Entity().addProperty(new Property(null, "Property1", ValueType.GEOSPATIAL, 1)));
-    serializer.entityCollection(metadata, null, entityCollection, null);
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.entityCollection(metadata, null, entityCollection, null);
+    });
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void unsupportedType() throws Exception {
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         new Entity().addProperty(new Property(null, "Property1", ValueType.PRIMITIVE, TimeZone.getDefault())));
-    serializer.entityCollection(metadata, null, entityCollection, null);
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.entityCollection(metadata, null, entityCollection, null);
+    });
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void wrongValueForType() throws Exception {
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         new Entity().addProperty(new Property("Edm.SByte", "Property1", ValueType.PRIMITIVE, "-1")));
-    serializer.entityCollection(metadata, null, entityCollection, null);
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.entityCollection(metadata, null, entityCollection, null);
+    });
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void wrongValueForPropertyFacet() throws Exception {
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(
         new Entity().addProperty(
             new Property(null, "PropertyDecimal", ValueType.PRIMITIVE, BigDecimal.ONE.scaleByPowerOfTen(-11))));
-    serializer.entityCollection(metadata, entityContainer.getEntitySet("ESAllPrim").getEntityType(), entityCollection,
-        null);
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.entityCollection(metadata, entityContainer.getEntitySet("ESAllPrim").getEntityType(), entityCollection,
+              null);
+    });
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void wrongValueForPropertyFacetInComplexProperty() throws Exception {
     ComplexValue innerComplexValue = new ComplexValue();
     innerComplexValue.getValue().add(new Property(null, "PropertyDecimal", ValueType.PRIMITIVE,
@@ -370,8 +382,10 @@ public class EdmAssistedJsonSerializerV401Test {
         new Entity().addProperty(
             new Property(null, "CollPropertyComp", ValueType.COLLECTION_COMPLEX,
                 Collections.singletonList(complexValue))));
-    serializer.entityCollection(metadata, entityContainer.getEntitySet("ESKeyNav").getEntityType(), entityCollection,
-        null);
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.entityCollection(metadata, entityContainer.getEntitySet("ESKeyNav").getEntityType(), entityCollection,
+              null);
+    });
   }
 
   private String serialize(final EdmAssistedSerializer serializer, final ServiceMetadata metadata,
@@ -408,7 +422,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.addProperty(new Property(null, "Property1", ValueType.PRIMITIVE, 1.25F));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1)\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1)\","
          + "\"value\":[{\"Property1\":1.25}]}",
         serialize(serializerMin, metadata, null, entityCollection, null));
   }
@@ -420,7 +434,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.addProperty(new Property(null, "Property1", ValueType.PRIMITIVE, 1.25F));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"value\":[{\"Property1\":1.25}]}",
+    Assertions.assertEquals("{\"value\":[{\"Property1\":1.25}]}",
         serialize(serializerNone, metadata, null, entityCollection, null));
   }
   
@@ -441,7 +455,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(entity);
     entityCollection.setCount(2);
     entityCollection.setNext(URI.create("nextLink"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         "{\"@context\":\"$metadata#EntitySet(Property0,Property1,Property2,Property3,Property4)\","
              + "\"@count\":2,"
              + "\"value\":[{"
@@ -471,7 +485,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(entity);
     entityCollection.setCount(2);
     entityCollection.setNext(URI.create("nextLink"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         "{"
              + "\"@count\":2,"
              + "\"value\":[{"
@@ -501,7 +515,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.addProperty(new Property("Namespace.ComplexType", "Property2", ValueType.COMPLEX, complexValue));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1,Property2)\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1,Property2)\","
          + "\"value\":[{"
          + "\"Property1\":1,"
          + "\"Property2\":{"
@@ -527,7 +541,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.addProperty(new Property("Namespace.ComplexType", "Property2", ValueType.COMPLEX, complexValue));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{"
+    Assertions.assertEquals("{"
          + "\"value\":[{"
          + "\"Property1\":1,"
          + "\"Property2\":{"
@@ -552,7 +566,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(new Entity()
         .addProperty(new Property(null, "CollPropertyComp", ValueType.COLLECTION_COMPLEX,
             Arrays.asList(complexValue1, complexValue2, complexValue3))));
-    Assert.assertEquals("{\"@context\":\"$metadata#ESMixPrimCollComp(CollPropertyComp)\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#ESMixPrimCollComp(CollPropertyComp)\","
          + "\"value\":[{"
          + "\"CollPropertyComp\":["
          + "{\"PropertyInt16\":1,\"PropertyString\":\"one\"},"
@@ -577,7 +591,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(new Entity()
         .addProperty(new Property(null, "CollPropertyComp", ValueType.COLLECTION_COMPLEX,
             Arrays.asList(complexValue1, complexValue2, complexValue3))));
-    Assert.assertEquals("{"
+    Assertions.assertEquals("{"
          + "\"value\":[{"
          + "\"CollPropertyComp\":["
          + "{\"PropertyInt16\":1,\"PropertyString\":\"one\"},"
@@ -593,7 +607,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(new Entity()
         .addProperty(new Property(null, "CollPropertyString", ValueType.COLLECTION_PRIMITIVE,
             Collections.emptyList())));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         "{\"@context\":\"$metadata#ESMixPrimCollComp(CollPropertyString)\","
              + "\"value\":[{\"CollPropertyString\":[]}]}",
         serialize(serializerMin, metadata, entitySet, entityCollection, "CollPropertyString"));
@@ -606,7 +620,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entityCollection.getEntities().add(new Entity()
         .addProperty(new Property(null, "CollPropertyString", ValueType.COLLECTION_PRIMITIVE,
             Collections.emptyList())));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         "{"
              + "\"value\":[{\"CollPropertyString\":[]}]}",
         serialize(serializerNone, metadata, entitySet, entityCollection, "CollPropertyString"));
@@ -628,7 +642,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.getNavigationLinks().add(link);
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1,NavigationProperty(Related1))\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1,NavigationProperty(Related1))\","
          + "\"value\":[{"
          + "\"Property1\":1,"
          + "\"NavigationProperty\":["
@@ -653,7 +667,7 @@ public class EdmAssistedJsonSerializerV401Test {
     entity.getNavigationLinks().add(link);
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{"
+    Assertions.assertEquals("{"
         + "\"value\":[{"
         + "\"Property1\":1,"
         + "\"NavigationProperty\":["
@@ -678,7 +692,7 @@ public class EdmAssistedJsonSerializerV401Test {
         UUID.fromString("12345678-ABCD-1234-CDEF-123456789012")));
     EntityCollection entityCollection = new EntityCollection();
     entityCollection.getEntities().add(entity);
-    Assert.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1)\","
+    Assertions.assertEquals("{\"@context\":\"$metadata#EntitySet(Property1)\","
         + "\"@metadataEtag\":\"W/\\\"42\\\"\",\"value\":[{"
         + "\"@etag\":\"W/\\\"1000\\\"\","
         + "\"Property1\":\"12345678-abcd-1234-cdef-123456789012\","
@@ -694,7 +708,7 @@ public class EdmAssistedJsonSerializerV401Test {
     b.abs(new MathContext(0, RoundingMode.UNNECESSARY));
     entityCollection.getEntities().add(new Entity()
         .addProperty(new Property(null, "Property1", ValueType.PRIMITIVE, b)));
-    Assert.assertTrue(
+    Assertions.assertTrue(
         serialize(serializerMin, metadata, null, entityCollection, null)
         .contains("1.6666666666666667406815349750104360282421112060546875"));
   }

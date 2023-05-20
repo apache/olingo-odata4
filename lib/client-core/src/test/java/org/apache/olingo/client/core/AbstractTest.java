@@ -21,13 +21,13 @@ package org.apache.olingo.client.core;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class AbstractTest {
 
   protected static final ODataClient client = ODataClientFactory.getClient();
 
-  @BeforeClass
+  @BeforeAll
   public static void setUp() {
     XMLUnit.setIgnoreComments(true);
     XMLUnit.setIgnoreAttributeOrder(true);

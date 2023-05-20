@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +37,7 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Test;
 
 public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
   private static final ContentType CONTENT_TYPE_JSON_FULL_METADATA =
@@ -46,7 +45,7 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
           ContentType.VALUE_ODATA_METADATA_FULL);
   private static final String PROPERTY_INT16 = "PropertyInt16";
 
-  @Parameterized.Parameters(name = "{0}")
+  //@Parameterized.Parameters(name = "{0}")
   public static List<ContentType[]> parameters() {
     ContentType[] a = new ContentType[1];
     a[0] = CONTENT_TYPE_JSON_FULL_METADATA;

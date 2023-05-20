@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.server.core.debug;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
 import org.apache.olingo.server.api.debug.RuntimeMeasurement;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DebugTabRuntimeTest extends AbstractDebugTabTest {
 

@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.client.core.communication.response.batch;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,7 +42,7 @@ import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineIteratorImpl;
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ODataBatchResponseTest {
 

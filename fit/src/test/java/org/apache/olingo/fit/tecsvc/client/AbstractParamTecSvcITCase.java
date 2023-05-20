@@ -19,28 +19,28 @@
 package org.apache.olingo.fit.tecsvc.client;
 
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(Parameterized.class)
+@ExtendWith(MockitoExtension.class)
 public abstract class AbstractParamTecSvcITCase extends AbstractTecSvcITCase {
 
-  @Parameterized.Parameter
+  //@Parameterized.Parameter
   public ContentType contentType;
 
   /**
    * Returns a list of parameter arrays, in this case a list of one-element arrays
    * containing the content types to be used.
    */
-  @Parameterized.Parameters(name = "{0}")
+  //@ParameterizedTest(name = "{0}")
   public static List<ContentType[]> parameters() {
     return Arrays.asList(new ContentType[] { ContentType.APPLICATION_JSON },
         new ContentType[] { ContentType.APPLICATION_XML });

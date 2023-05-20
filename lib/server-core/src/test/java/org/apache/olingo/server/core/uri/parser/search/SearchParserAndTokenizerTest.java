@@ -20,8 +20,8 @@ package org.apache.olingo.server.core.uri.parser.search;
 
 import org.apache.olingo.server.api.uri.queryoption.SearchOption;
 import org.apache.olingo.server.api.uri.queryoption.search.SearchExpression;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SearchParserAndTokenizerTest {
 
@@ -208,32 +208,32 @@ public class SearchParserAndTokenizerTest {
       try {
         resultsIn(searchQuery);
       } catch (final SearchParserException e) {
-        Assert.assertEquals("SearchParserException with unexpected message '" + e.getMessage() + "' was thrown.",
-            key, e.getMessageKey());
+        Assertions.assertEquals(key, e.getMessageKey(),
+                "SearchParserException with unexpected message '" + e.getMessage() + "' was thrown.");
         return;
       }
-      Assert.fail("SearchParserException with message key " + key.getKey() + " was not thrown.");
+      Assertions.fail("SearchParserException with message key " + key.getKey() + " was not thrown.");
     }
 
     public void resultsInExpectedTerm(final String actualToken) throws SearchTokenizerException {
       try {
         resultsIn(searchQuery);
       } catch (final SearchParserException e) {
-        Assert.assertEquals(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, e.getMessageKey());
-        Assert.assertEquals("Expected PHRASE||WORD found: " + actualToken, e.getMessage());
+        Assertions.assertEquals(SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN, e.getMessageKey());
+        Assertions.assertEquals("Expected PHRASE||WORD found: " + actualToken, e.getMessage());
         return;
       }
-      Assert.fail("SearchParserException with message key "
+      Assertions.fail("SearchParserException with message key "
           + SearchParserException.MessageKeys.EXPECTED_DIFFERENT_TOKEN + " was not thrown.");
     }
 
     private void resultsIn(final String expectedSearchExpression)
         throws SearchTokenizerException, SearchParserException {
       final SearchOption result = new SearchParser().parse(searchQuery);
-      Assert.assertNotNull(result);
+      Assertions.assertNotNull(result);
       final SearchExpression searchExpression = result.getSearchExpression();
-      Assert.assertNotNull(searchExpression);
-      Assert.assertEquals(expectedSearchExpression, searchExpression.toString());
+      Assertions.assertNotNull(searchExpression);
+      Assertions.assertEquals(expectedSearchExpression, searchExpression.toString());
     }
   }
 }

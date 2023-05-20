@@ -26,7 +26,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.core.uri.parser.search.SearchParserException;
 import org.apache.olingo.server.core.uri.testutil.TestUriValidator;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests of the parts of the URI parser that parse the sytem query option $search. */
 public class SearchParserTest {

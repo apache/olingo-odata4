@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -48,8 +48,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDateTimeOffset;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmDuration;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class EntityTest extends AbstractTest {
   
@@ -372,13 +372,13 @@ public class EntityTest extends AbstractTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   public void atomAnnotated() throws Exception {
     annotated(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  @Ignore
+  @Disabled
   public void jsonAnnotated() throws Exception {
     annotated(ContentType.JSON);
   }

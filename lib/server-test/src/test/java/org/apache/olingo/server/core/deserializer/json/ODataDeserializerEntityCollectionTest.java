@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core.deserializer.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -36,7 +36,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserializerTest {
 
@@ -52,15 +52,15 @@ public class ODataDeserializerEntityCollectionTest extends AbstractODataDeserial
     assertNotNull(properties);
     assertEquals(16, properties.size());
 
-    assertEquals(new Short((short) 32767), entity.getProperty("PropertyInt16").getValue());
+    assertEquals(Short.valueOf((short) 32767), entity.getProperty("PropertyInt16").getValue());
     assertEquals("First Resource - positive values", entity.getProperty("PropertyString").getValue());
-    assertEquals(new Boolean(true), entity.getProperty("PropertyBoolean").getValue());
-    assertEquals(new Short((short) 255), entity.getProperty("PropertyByte").getValue());
-    assertEquals(new Byte((byte) 127), entity.getProperty("PropertySByte").getValue());
-    assertEquals(new Integer(2147483647), entity.getProperty("PropertyInt32").getValue());
-    assertEquals(new Long(9223372036854775807l), entity.getProperty("PropertyInt64").getValue());
-    assertEquals(new Float(1.79E20), entity.getProperty("PropertySingle").getValue());
-    assertEquals(new Double(-1.79E19), entity.getProperty("PropertyDouble").getValue());
+    assertEquals(true, entity.getProperty("PropertyBoolean").getValue());
+    assertEquals(Short.valueOf((short) 255), entity.getProperty("PropertyByte").getValue());
+    assertEquals(Byte.valueOf((byte) 127), entity.getProperty("PropertySByte").getValue());
+    assertEquals(Integer.valueOf(2147483647), entity.getProperty("PropertyInt32").getValue());
+    assertEquals(Long.valueOf(9223372036854775807l), entity.getProperty("PropertyInt64").getValue());
+    assertEquals(1.79E20, entity.getProperty("PropertySingle").getValue());
+    assertEquals(Double.valueOf(-1.79E19), entity.getProperty("PropertyDouble").getValue());
     assertEquals(new BigDecimal(34), entity.getProperty("PropertyDecimal").getValue());
     assertNotNull(entity.getProperty("PropertyBinary").getValue());
     assertNotNull(entity.getProperty("PropertyDate").getValue());

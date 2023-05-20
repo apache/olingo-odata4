@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,8 +45,9 @@ import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.commons.core.edm.EdmEntityTypeImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class EdmEntityTypeImplTest {
 
@@ -56,7 +57,7 @@ public class EdmEntityTypeImplTest {
 
   private EdmEntityType typeWithComplexKey;
 
-  @Before
+  @BeforeEach
   public void setupTypes() throws Exception {
     CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
@@ -389,12 +390,14 @@ public class EdmEntityTypeImplTest {
     new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void invalidBaseType() {
     EdmProviderImpl edm = mock(EdmProviderImpl.class);
     CsdlEntityType entityType = new CsdlEntityType().setName("n").setBaseType(new FullQualifiedName("wrong", "wrong"));
     EdmEntityTypeImpl instance = new EdmEntityTypeImpl(edm, new FullQualifiedName("n", "n"), entityType);
-    instance.getBaseType();
+    Assertions.assertThrows(EdmException.class, () -> {
+      instance.getBaseType();
+    });
   }
 
   @Test

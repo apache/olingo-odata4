@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -111,7 +111,7 @@ public class ExpandValidator implements TestValidator {
 
   public ExpandValidator next() {
     expandItemIndex++;
-    assertTrue("not enough segments", expandItemIndex < expandOption.getExpandItems().size());
+    assertTrue(expandItemIndex < expandOption.getExpandItems().size(), "not enough segments");
     expandItem = expandOption.getExpandItems().get(expandItemIndex);
     return this;
   }

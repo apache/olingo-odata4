@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.commons.core.edm.primitivetype;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EdmBinaryTest extends PrimitiveTypeBaseTest {
 
@@ -71,7 +71,7 @@ public class EdmBinaryTest extends PrimitiveTypeBaseTest {
     assertEquals("qrvM3e7/", instance.valueToString(binary, null, 6, null, null, null));
     assertEquals("qrvM3e7/", instance.valueToString(binary, null, Integer.MAX_VALUE, null, null, null));
 
-    assertEquals("qg==", instance.valueToString(new Byte[] { new Byte((byte) 170) }, null, null, null, null, null));
+    assertEquals("qg==", instance.valueToString(new Byte[] { (byte) 170 }, null, null, null, null, null));
 
     expectFacetsErrorInValueToString(instance, binary, null, 3, null, null, null);
 

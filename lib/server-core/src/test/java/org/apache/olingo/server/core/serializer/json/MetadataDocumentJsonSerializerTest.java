@@ -18,9 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -106,18 +104,19 @@ import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.serializer.ODataSerializer;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.ServiceMetadataImpl;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class MetadataDocumentJsonSerializerTest {
 
   private static ODataSerializer serializer;
-  
-  @BeforeClass
+
+  @BeforeAll
   public static void init() throws SerializerException {
     serializer = OData.newInstance().createSerializer(ContentType.APPLICATION_JSON);
   }
-  
+
   @Test
   public void writeMetadataWithEmptyMockedEdm() throws Exception {
     final Edm edm = mock(Edm.class);
@@ -127,7 +126,7 @@ public class MetadataDocumentJsonSerializerTest {
     assertEquals("{\"$Version\":\"4.01\"}",
         IOUtils.toString(serializer.metadataDocument(metadata).getContent()));
   }
-  
+
   @Test
   public void writeEdmxWithLocalTestEdm() throws Exception {
     List<EdmxReference> edmxReferences = new ArrayList<EdmxReference>();
@@ -223,7 +222,7 @@ public class MetadataDocumentJsonSerializerTest {
         + "\"$TargetNamespace\":\"TargetNS\"},"
         + "{\"$TermNamespace\":\"ReferenceWithAllTermAndNullNs.7\"}]}"));
   }
-  
+
   /** Test if annotations on EnumType Members are added as children of the Member element
    *  in compliance with OData v4.01, section 10
    */
@@ -234,11 +233,11 @@ public class MetadataDocumentJsonSerializerTest {
     when(schema.getNamespace()).thenReturn("MyNamespace");
     Edm edm = mock(Edm.class);
     when(edm.getSchemas()).thenReturn(Arrays.asList(schema));
-    
+
     // create mock metadata
     ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
     when(serviceMetadata.getEdm()).thenReturn(edm);
-    
+
     // add mock enums to schema
     EdmEnumType enumType = mock(EdmEnumType.class);
     when(schema.getEnumTypes()).thenReturn(Arrays.asList(enumType));
@@ -246,14 +245,14 @@ public class MetadataDocumentJsonSerializerTest {
     when(enumType.getKind()).thenReturn(EdmTypeKind.ENUM);
     EdmPrimitiveType int32Type = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
     when(enumType.getUnderlyingType()).thenReturn(int32Type);
-    
+
     // mock enum member values
     when(enumType.getMemberNames()).thenReturn(Collections.singletonList("MyMember"));
     EdmMember member = mock(EdmMember.class);
     when(enumType.getMember("MyMember")).thenReturn(member);
     when(member.getName()).thenReturn("MyMember");
     when(member.getValue()).thenReturn("0");
-    
+
     EdmAnnotation annotation = mock(EdmAnnotation.class);
     when(member.getAnnotations()).thenReturn(Collections.singletonList(annotation));
     when(annotation.getQualifier()).thenReturn("Core.Description");
@@ -264,12 +263,12 @@ public class MetadataDocumentJsonSerializerTest {
     when(expression.getExpressionName()).thenReturn("String");
     when(expression.getValueAsString()).thenReturn("MyDescription");
     when(annotation.getExpression()).thenReturn(expression);
-    
+
     InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
     assertNotNull(metadata);
     String metadataString = IOUtils.toString(metadata);
-    
-    
+
+
     assertTrue(metadataString.contains(
         "{\"$Version\":\"4.01\","
         + "\"MyNamespace\":{\"MyEnum\":"
@@ -278,7 +277,7 @@ public class MetadataDocumentJsonSerializerTest {
         + "\"MyMember#Core.Description\":\"MyDescription\"}}}"));
 
   }
-  
+
   /** Writes simplest (empty) Schema. */
   @Test
   public void writeMetadataWithEmptySchema() throws Exception {
@@ -294,19 +293,23 @@ public class MetadataDocumentJsonSerializerTest {
     assertEquals("{\"$Version\":\"4.01\",\"MyNamespace\":{}}",
         IOUtils.toString(metadata));
   }
-  
-  @Test(expected=SerializerException.class)
-  public void testNullMetadata() throws Exception {
-    serializer.metadataDocument(null).getContent();
+
+  @Test
+  public void testNullMetadata() {
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.metadataDocument(null).getContent();
+    });
   }
-  
-  @Test(expected=SerializerException.class)
-  public void testNullEdm() throws Exception {
+
+  @Test
+  public void testNullEdm() {
     ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
     when(serviceMetadata.getEdm()).thenReturn(null);
-    serializer.metadataDocument(serviceMetadata).getContent();
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.metadataDocument(serviceMetadata).getContent();
+    });
   }
-  
+
   @Test
   public void writeMetadataWithTypeDefinitions() throws Exception {
     EdmSchema schema = mock(EdmSchema.class);
@@ -323,7 +326,7 @@ public class MetadataDocumentJsonSerializerTest {
     when(typeDefinition.getKind()).thenReturn(EdmTypeKind.DEFINITION);
     EdmPrimitiveType int32Type = OData.newInstance().createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Int32);
     when(typeDefinition.getUnderlyingType()).thenReturn(int32Type);
-    
+
     EdmAnnotation annotation = mock(EdmAnnotation.class);
     when(typeDefinition.getAnnotations()).thenReturn(Collections.singletonList(annotation));
     EdmTerm term = mock(EdmTerm.class);
@@ -337,10 +340,10 @@ public class MetadataDocumentJsonSerializerTest {
     when(expression.getExpressionName()).thenReturn("String");
     when(expression.getValueAsString()).thenReturn("Centimeters");
     when(annotation.getExpression()).thenReturn(expression);
-    
+
     ServiceMetadata serviceMetadata = mock(ServiceMetadata.class);
     when(serviceMetadata.getEdm()).thenReturn(edm);
-    
+
     InputStream metadata = serializer.metadataDocument(serviceMetadata).getContent();
     assertNotNull(metadata);
     String metadataStr = IOUtils.toString(metadata);
@@ -354,7 +357,7 @@ public class MetadataDocumentJsonSerializerTest {
         + "\"@Measures.Unit\":\"Centimeters\"}}}",
         metadataStr);
   }
-  
+
   @Test
   public void aliasTest() throws Exception {
     String metadata = localMetadata();
@@ -477,7 +480,7 @@ public class MetadataDocumentJsonSerializerTest {
         + "\"PropName\":\"value\",\"PropName@ns.term\":true,\"@ns.term\":true},"
         + "\"@ns.term#T34\":{\"$UrlRef\":\"URLRefValue\",\"@ns.term\":true}"));
   }
-  
+
   private String localMetadata() throws SerializerException, IOException {
     CsdlEdmProvider provider = new LocalProvider();
     ServiceMetadata serviceMetadata = new ServiceMetadataImpl(provider, Collections.<EdmxReference> emptyList(), null);
@@ -486,7 +489,7 @@ public class MetadataDocumentJsonSerializerTest {
     assertNotNull(metadata);
     return metadata;
   }
-  
+
   static class LocalProvider implements CsdlEdmProvider {
     private final static String nameSpace = "namespace";
     private final static String nameSpace1 = "namespace1";
@@ -535,7 +538,7 @@ public class MetadataDocumentJsonSerializerTest {
         .setNullable(false)
         .setOnDelete(new CsdlOnDelete().setAction(CsdlOnDeleteAction.Cascade)
             .setAnnotations(Arrays.asList(new CsdlAnnotation().setTerm("core.Term"))));
-    
+
     private final FullQualifiedName nameCTTwoPrim = new FullQualifiedName(nameSpace, "CTTwoPrim");
     private final FullQualifiedName nameCTTwoPrimBase = new FullQualifiedName(nameSpace, "CTTwoPrimBase");
     private final FullQualifiedName nameCTPrimComp = new FullQualifiedName(nameSpace, "CTPrimComp");
@@ -545,11 +548,11 @@ public class MetadataDocumentJsonSerializerTest {
     private final FullQualifiedName nameContainer1 = new FullQualifiedName(nameSpace1, "container1");
     private final FullQualifiedName nameContainer2 = new FullQualifiedName(nameSpace2, "container2");
     private final FullQualifiedName nameENString = new FullQualifiedName(nameSpace, "ENString");
-    private final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNavParam = 
+    private final FullQualifiedName nameBAETTwoKeyNavRTETTwoKeyNavParam =
         new FullQualifiedName(nameSpace, "BAETTwoKeyNavRTETTwoKeyNavParam");
-    private final FullQualifiedName nameBFETTwoKeyNavRTETTwoKeyNavParam = 
+    private final FullQualifiedName nameBFETTwoKeyNavRTETTwoKeyNavParam =
         new FullQualifiedName(nameSpace, "BFETTwoKeyNavRTETTwoKeyNavParam");
-    private final FullQualifiedName nameBAProp = 
+    private final FullQualifiedName nameBAProp =
         new FullQualifiedName(nameSpace, "BAProp");
 
     @Override
@@ -559,14 +562,14 @@ public class MetadataDocumentJsonSerializerTest {
 
     @Override
     public CsdlEnumType getEnumType(final FullQualifiedName enumTypeName) throws ODataException {
-      
+
       if (nameENString.equals(enumTypeName)) {
-        
+
         CsdlAnnotation memberAnnotation = new CsdlAnnotation()
             .setTerm("Core.Description")
             .setQualifier("Target")
             .setExpression(new CsdlConstantExpression(ConstantExpressionType.String, "Description of Enum Member"));
-        
+
         return new CsdlEnumType()
         .setName(nameENString.getName())
         .setFlags(true)
@@ -592,7 +595,7 @@ public class MetadataDocumentJsonSerializerTest {
             .setQualifier("Target")
             .setExpression(new CsdlConstantExpression(ConstantExpressionType.String, "Description of Type"));
         propertyInt16_NotNullable.setAnnotations(Arrays.asList(annotation));
-        
+
         return new CsdlEntityType()
         .setName("ETAbstractBase")
         .setBaseType(nameETAbstract)
@@ -602,7 +605,7 @@ public class MetadataDocumentJsonSerializerTest {
       } else if (entityTypeName.equals(nameET)) {
         return new CsdlEntityType()
             .setName("ET")
-            .setKey(Arrays.asList(new CsdlPropertyRef().setAlias("EntityInfoID").setName("Info/ID"), 
+            .setKey(Arrays.asList(new CsdlPropertyRef().setAlias("EntityInfoID").setName("Info/ID"),
                 new CsdlPropertyRef().setName("name")))
             .setNavigationProperties(Arrays.asList(
                 new CsdlNavigationProperty().setName("NavPropertyETOne").setType(nameETOne), navProperty))
@@ -610,7 +613,7 @@ public class MetadataDocumentJsonSerializerTest {
       } else if (entityTypeName.equals(nameETTwoKeyNav)) {
         return new CsdlEntityType()
             .setName("ETTwoKeyNav")
-            .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16"), 
+            .setKey(Arrays.asList(new CsdlPropertyRef().setName("PropertyInt16"),
                 new CsdlPropertyRef().setName("PropertyString")))
             .setNavigationProperties(Arrays.asList(
                 new CsdlNavigationProperty().setName("NavPropertyETTwoKeyNavOne").setType(nameETTwoKeyNavOne),
@@ -658,7 +661,7 @@ public class MetadataDocumentJsonSerializerTest {
             .setTerm("Core.Description")
             .setQualifier("Target")
             .setExpression(new CsdlConstantExpression(ConstantExpressionType.String, "Description of Complex Type"));
-        
+
         return new CsdlComplexType()
         .setName("CTTwoPrimBase")
         .setBaseType(nameCTTwoPrim)
@@ -858,14 +861,14 @@ public class MetadataDocumentJsonSerializerTest {
       schemas.add(schema1);
    // EntityContainer
       schema1.setEntityContainer(getEntityContainer1());
-      
+
       CsdlSchema schema2 = new CsdlSchema();
       schema2.setNamespace(nameSpace2);
       schemas.add(schema2);
    // EntityContainer
       schema2.setEntityContainer(getEntityContainer2());
-   
-      
+
+
       CsdlSchema schema = new CsdlSchema();
       schema.setNamespace(nameSpace);
       schema.setAlias("Alias");
@@ -900,7 +903,7 @@ public class MetadataDocumentJsonSerializerTest {
       actions.addAll(actions1);
       actions.addAll(actions2);
       actions.addAll(actions3);
-      
+
       schema.setActions(actions);
 
       // Functions
@@ -909,7 +912,7 @@ public class MetadataDocumentJsonSerializerTest {
       List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
       functions.addAll(function1);
       functions.addAll(function2);
-      
+
       schema.setFunctions(functions);
 
       // EntityContainer
@@ -927,7 +930,7 @@ public class MetadataDocumentJsonSerializerTest {
       schema.setAnnotationsGroup(Arrays.asList(
           getAnnotationsGroup(new FullQualifiedName("Alias", "ETAbstract"), "Tablett"),
           getAnnotationsGroup(new FullQualifiedName("Alias", "ET"), "T")));
-      
+
       return schemas;
     }
 
@@ -941,14 +944,14 @@ public class MetadataDocumentJsonSerializerTest {
 
       return container;
     }
-    
+
     public CsdlEntityContainer getEntityContainer2() throws ODataException {
       CsdlEntityContainer container = new CsdlEntityContainer();
       container.setName("container2");
 
       return container;
     }
-    
+
     @Override
     public CsdlEntityContainerInfo getEntityContainerInfo(final FullQualifiedName entityContainerName)
         throws ODataException {
@@ -980,7 +983,7 @@ public class MetadataDocumentJsonSerializerTest {
       // FunctionImports
       container.setFunctionImports(Arrays.asList(getFunctionImport(nameContainer, "FINRTInt16"),
           getFunctionImport(null, "FINRTInt161")));
-      
+
       container.setExtendsContainer(new FullQualifiedName(nameSpace1, "container1").getFullQualifiedNameAsString());
 
       return container;
@@ -1067,7 +1070,7 @@ public class MetadataDocumentJsonSerializerTest {
             .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
             .setRight(new CsdlConstantExpression(ConstantExpressionType.Bool, "false"))
             .setAnnotations(innerAnnotations)));
-        
+
         // comparison
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term").setQualifier("T15")
             .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Eq)
@@ -1139,7 +1142,7 @@ public class MetadataDocumentJsonSerializerTest {
 
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term").setQualifier("T29")
             .setExpression(new CsdlPropertyPath().setValue("PropertyPathValue")));
-        
+
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term").setQualifier("T30")
         .setExpression(new CsdlLogicalOrComparisonExpression(LogicalOrComparisonExpressionType.Not)
         .setLeft(new CsdlConstantExpression(ConstantExpressionType.Bool, "true"))
@@ -1152,8 +1155,8 @@ public class MetadataDocumentJsonSerializerTest {
         .setPrecision(2)
         .setScale(3)
         .setType("Edm.String")
-        .setAnnotations(innerAnnotations))); 
-        
+        .setAnnotations(innerAnnotations)));
+
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term").setQualifier("T31")
         .setExpression(new CsdlIsOf()
         .setMaxLength(1)
@@ -1161,14 +1164,14 @@ public class MetadataDocumentJsonSerializerTest {
         .setScale(3)
         .setType("Edm.String")
         .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
-        .setAnnotations(innerAnnotations))); 
+        .setAnnotations(innerAnnotations)));
 
     annotationsList.add(new CsdlAnnotation().setTerm("ns.term").setQualifier("T32")
         .setExpression(new CsdlLabeledElement()
         .setName("NameAtt")
         .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
         .setAnnotations(innerAnnotations)));
-        
+
         CsdlPropertyValue prop = new CsdlPropertyValue()
         .setProperty("PropName")
         .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "value"))
@@ -1176,13 +1179,13 @@ public class MetadataDocumentJsonSerializerTest {
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term").setQualifier("T33")
             .setExpression(new CsdlRecord().setType("Alias.ETAbstract")
                 .setPropertyValues(Arrays.asList(prop))
-                .setAnnotations(innerAnnotations))); 
+                .setAnnotations(innerAnnotations)));
 
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term").setQualifier("T34")
             .setExpression(new CsdlUrlRef()
             .setValue(new CsdlConstantExpression(ConstantExpressionType.String, "URLRefValue"))
             .setAnnotations(innerAnnotations)));
-        
+
         annotationsList.add(new CsdlAnnotation().setTerm("ns.term").setQualifier("T35")
             .setExpression(new CsdlNull()));
 

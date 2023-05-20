@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
@@ -47,7 +47,8 @@ import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.queryoption.AliasQueryOptionImpl;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class ExpressionParserTest {
@@ -447,7 +448,7 @@ public class ExpressionParserTest {
     return keyProperty;
   }
   
-  @Test(expected = UriParserSemanticException.class)
+  @Test
   public void testPropertyPathExpWithoutType() throws Exception {
     final String entitySetName = "ESName";
     final String keyPropertyName = "a";
@@ -463,10 +464,12 @@ public class ExpressionParserTest {
     Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
     
     UriTokenizer tokenizer = new UriTokenizer("a eq \'abc\'");
-    new ExpressionParser(mockedEdm, odata).parse(tokenizer, null, null, null);
+    Assertions.assertThrows(UriParserSemanticException.class, () -> {
+      new ExpressionParser(mockedEdm, odata).parse(tokenizer, null, null, null);
+    });
   }
   
-  @Test(expected = UriParserSemanticException.class)
+  @Test
   public void testPropertyPathExpWithoutProperty() throws Exception {
     final String entitySetName = "ESName";
     final String keyPropertyName = "a";
@@ -481,7 +484,9 @@ public class ExpressionParserTest {
     Mockito.when(mockedEdm.getEntityContainer()).thenReturn(container);
     
     UriTokenizer tokenizer = new UriTokenizer("a eq \'abc\'");
-    new ExpressionParser(mockedEdm, odata).parse(tokenizer, entityType, null, null);
+    Assertions.assertThrows(UriParserSemanticException.class, () -> {
+      new ExpressionParser(mockedEdm, odata).parse(tokenizer, entityType, null, null);
+    });
   }
 
   /**

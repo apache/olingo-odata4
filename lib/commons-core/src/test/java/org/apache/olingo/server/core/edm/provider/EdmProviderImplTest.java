@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,8 +50,9 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.api.edm.provider.CsdlPropertyRef;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class EdmProviderImplTest {
 
@@ -59,7 +60,7 @@ public class EdmProviderImplTest {
   private final FullQualifiedName FQN = new FullQualifiedName("testNamespace", "testName");
   private final FullQualifiedName WRONG_FQN = new FullQualifiedName("wrong", "wrong");
 
-  @Before
+  @BeforeEach
   public void setup() throws Exception {
     CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     CsdlEntityContainerInfo containerInfo = new CsdlEntityContainerInfo().setContainerName(FQN);
@@ -177,13 +178,15 @@ public class EdmProviderImplTest {
     fail("EdmException expected for method: " + methodName);
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void convertExceptionsAliasTest() throws Exception {
     CsdlEdmProvider localProvider = mock(CsdlEdmProvider.class);
     when(localProvider.getAliasInfos()).thenThrow(new ODataException("msg"));
 
     Edm localEdm = new EdmProviderImpl(localProvider);
-    localEdm.getEntityContainer();
+    Assertions.assertThrows(EdmException.class, () -> {
+      localEdm.getEntityContainer();
+    });
   }
 
   @Test

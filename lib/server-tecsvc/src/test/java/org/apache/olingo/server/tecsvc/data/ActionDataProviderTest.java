@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.tecsvc.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -41,7 +41,8 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.tecsvc.data.DataProvider.DataProviderException;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ActionDataProviderTest {
 
@@ -62,9 +63,11 @@ public class ActionDataProviderTest {
     assertEquals("UARTString string value", result.asPrimitive());
   }
 
-  @Test(expected = DataProviderException.class)
+  @Test
   public void actionUARTStringNegative() throws Exception {
-    ActionData.primitiveAction("Wrong", null);
+    Assertions.assertThrows(DataProviderException.class, () -> {
+      ActionData.primitiveAction("Wrong", null);
+    });
   }
 
   @Test
@@ -72,7 +75,7 @@ public class ActionDataProviderTest {
     Map<String, Parameter> parameters = new HashMap<String, Parameter>();
     Parameter paramInt16 = new Parameter();
     paramInt16.setName("ParameterInt16");
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 3));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 3);
     parameters.put("ParameterInt16", paramInt16);
 
     Parameter paramDuration = new Parameter();
@@ -89,7 +92,7 @@ public class ActionDataProviderTest {
   public void actionUARTCTTwoPrimParam() throws Exception {
     Parameter paramInt16 = new Parameter();
     paramInt16.setName("ParameterInt16");
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 3));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 3);
     final Map<String, Parameter> parameters = Collections.singletonMap("ParameterInt16", paramInt16);
 
     Property result = ActionData.complexAction("UARTCTTwoPrimParam", parameters);
@@ -109,19 +112,19 @@ public class ActionDataProviderTest {
     paramInt16.setName("ParameterInt16");
     final Map<String, Parameter> parameters = Collections.singletonMap("ParameterInt16", paramInt16);
 
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 0));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 0);
     Property result = ActionData.complexCollectionAction("UARTCollCTTwoPrimParam", parameters);
     assertNotNull(result);
     assertEquals((short) 0, result.asCollection().size());
 
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 1));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 1);
     result = ActionData.complexCollectionAction("UARTCollCTTwoPrimParam", parameters);
     assertNotNull(result);
     assertEquals((short) 1, result.asCollection().size());
     ComplexValue value = (ComplexValue) result.asCollection().get(0);
     assertEquals("Test123", value.getValue().get(1).asPrimitive());
 
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 2));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 2);
     result = ActionData.complexCollectionAction("UARTCollCTTwoPrimParam", parameters);
     assertNotNull(result);
     assertEquals((short) 2, result.asCollection().size());
@@ -130,7 +133,7 @@ public class ActionDataProviderTest {
     value = (ComplexValue) result.asCollection().get(1);
     assertEquals("Test456", value.getValue().get(1).asPrimitive());
 
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 3));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 3);
     result = ActionData.complexCollectionAction("UARTCollCTTwoPrimParam", parameters);
     assertNotNull(result);
     assertEquals((short) 3, result.asCollection().size());
@@ -141,7 +144,7 @@ public class ActionDataProviderTest {
     value = (ComplexValue) result.asCollection().get(2);
     assertEquals("Test678", value.getValue().get(1).asPrimitive());
 
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 4));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 4);
     result = ActionData.complexCollectionAction("UARTCollCTTwoPrimParam", parameters);
     assertNotNull(result);
     assertEquals((short) 3, result.asCollection().size());
@@ -157,7 +160,7 @@ public class ActionDataProviderTest {
   public void actionUARTETTwoKeyTwoPrimParam() throws Exception {
     Parameter paramInt16 = new Parameter();
     paramInt16.setName("ParameterInt16");
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 32767));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 32767);
     final Map<String, Parameter> parameters = Collections.singletonMap("ParameterInt16", paramInt16);
 
     EntityActionResult result = ActionData.entityAction("UARTETTwoKeyTwoPrimParam", parameters, data, oData, edm);
@@ -170,7 +173,7 @@ public class ActionDataProviderTest {
   public void actionUARTETTwoKeyTwoPrimParamNegative() throws Exception {
     Parameter paramInt16 = new Parameter();
     paramInt16.setName("ParameterInt16");
-    paramInt16.setValue(ValueType.PRIMITIVE, new Short((short) 12345));
+    paramInt16.setValue(ValueType.PRIMITIVE, (short) 12345);
     final Map<String, Parameter> parameters = Collections.singletonMap("ParameterInt16", paramInt16);
 
     try {

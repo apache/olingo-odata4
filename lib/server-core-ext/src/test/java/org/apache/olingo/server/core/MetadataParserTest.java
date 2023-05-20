@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -46,9 +46,9 @@ import org.apache.olingo.commons.api.edm.provider.CsdlNavigationPropertyBinding;
 import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlProperty;
 import org.apache.olingo.commons.api.edm.provider.CsdlSingleton;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MetadataParserTest {
   final String NS = "Microsoft.OData.SampleService.Models.TripPin";
@@ -72,7 +72,7 @@ public class MetadataParserTest {
     }
   };
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     MetadataParser parser = new MetadataParser();
     provider = (CsdlEdmProvider) parser.buildEdmProvider(new FileReader("src/test/resources/trippin.xml"));
@@ -224,13 +224,13 @@ public class MetadataParserTest {
     parser.referenceResolver(testReferenceResolver);
     SchemaBasedEdmProvider providerTest = parser.buildEdmProvider(new FileReader("src/test/resources/test.xml"));
 
-    Assert.assertNotNull(providerTest.getSchema("Microsoft.OData.SampleService.Models.TripPin", false));
+    Assertions.assertNotNull(providerTest.getSchema("Microsoft.OData.SampleService.Models.TripPin", false));
 
-    Assert.assertNull(providerTest.getSchema("org.apache.olingo.a", false));
-    Assert.assertNull(providerTest.getSchema("org.apache.olingo.b", false));
+    Assertions.assertNull(providerTest.getSchema("org.apache.olingo.a", false));
+    Assertions.assertNull(providerTest.getSchema("org.apache.olingo.b", false));
 
-    Assert.assertNotNull(providerTest.getSchema("org.apache.olingo.a", true));
-    Assert.assertNotNull(providerTest.getSchema("org.apache.olingo.b", true));
+    Assertions.assertNotNull(providerTest.getSchema("org.apache.olingo.a", true));
+    Assertions.assertNotNull(providerTest.getSchema("org.apache.olingo.b", true));
   }
 
   @Test
@@ -240,7 +240,7 @@ public class MetadataParserTest {
     parser.referenceResolver(testReferenceResolver);
     SchemaBasedEdmProvider providerTest = parser.buildEdmProvider(new FileReader("src/test/resources/test.xml"));
 
-    Assert.assertNull(providerTest.getSchema("Not Found", true));
+    Assertions.assertNull(providerTest.getSchema("Not Found", true));
 
 
   }
@@ -252,8 +252,8 @@ public class MetadataParserTest {
     parser.referenceResolver(testReferenceResolver);
     SchemaBasedEdmProvider provider = parser.buildEdmProvider(new FileReader("src/test/resources/test.xml"));
 
-    Assert.assertNotNull(provider.getVocabularySchema("Org.OData.Core.V1"));
-    Assert.assertNotNull(provider.getSchema("Org.OData.Core.V1"));
+    Assertions.assertNotNull(provider.getVocabularySchema("Org.OData.Core.V1"));
+    Assertions.assertNotNull(provider.getSchema("Org.OData.Core.V1"));
 
   }
 }

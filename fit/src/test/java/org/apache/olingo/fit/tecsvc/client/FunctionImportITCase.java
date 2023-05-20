@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,7 +42,7 @@ import org.apache.olingo.client.core.uri.ParameterAlias;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.apache.olingo.fit.util.StringHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FunctionImportITCase extends AbstractParamTecSvcITCase {
 

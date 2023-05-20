@@ -240,7 +240,8 @@ public class TomcatTestServer {
       String contextPath = "/stub";
 
       Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
-      context.setLoader(new WebappLoader(Thread.currentThread().getContextClassLoader()));
+      //TODO: TOMCAT -> Thread.currentThread().getContextClassLoader()
+      context.setLoader(new WebappLoader());
       LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
 
       return this;

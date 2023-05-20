@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,7 +74,7 @@ import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.FunctionProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests of the $apply parser inspired by the ABNF test cases. */
 public class ApplyParserTest {

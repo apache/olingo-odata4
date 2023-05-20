@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.commons.core.edm.annotations;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,9 +82,9 @@ public class AbstractAnnotationTest {
     
     
     //Remove all false values so that only one "true" value remains
-    allIsMethodValues.removeAll(Collections.singletonList(new Boolean(false)));
+    allIsMethodValues.removeAll(Collections.singletonList(false));
     assertFalse(allIsMethodValues.contains(null));
-    assertTrue(allIsMethodValues.contains(new Boolean(true)));
+    assertTrue(allIsMethodValues.contains(true));
     assertEquals(1, allIsMethodValues.size());
     
     

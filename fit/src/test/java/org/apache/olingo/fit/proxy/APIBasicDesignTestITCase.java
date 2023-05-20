@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.lang.reflect.Proxy;
@@ -36,6 +36,7 @@ import java.util.TimeZone;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.ext.proxy.AbstractService;
 import org.apache.olingo.ext.proxy.api.EdmStreamValue;
@@ -68,7 +69,8 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.ProductDe
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.ProductDetailCollectionComposableInvoker;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Account.MyPaymentInstruments;
 // CHECKSTYLE:ON (Maven checkstyle)
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class APIBasicDesignTestITCase extends AbstractTestITCase {
 
@@ -117,10 +119,12 @@ public class APIBasicDesignTestITCase extends AbstractTestITCase {
     assertNotNull(paymentInstrument.getFriendlyName());
   }
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void expandToContainedEntitySetWithUnsupportedOperation() {
     Account account = container.getAccounts().getByKey(103).expand("MyPaymentInstruments").load();
-    account.getMyPaymentInstruments().delete(101901);
+    Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+      account.getMyPaymentInstruments().delete(101901);
+    });
   }
 
   @Test

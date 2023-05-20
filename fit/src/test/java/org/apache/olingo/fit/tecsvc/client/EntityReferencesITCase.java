@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URI;
 import java.util.EnumMap;
@@ -42,8 +42,8 @@ import org.apache.olingo.client.api.domain.ClientInlineEntity;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   
@@ -828,7 +828,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
     } else {
       // in xml the links will be always present; but the content will not be if no $expand unlike 
       // json;metadata=minimal; json=full is same as application/xml
-      Assert.assertFalse(responseGet.getBody()
+      Assertions.assertFalse(responseGet.getBody()
           .getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE) instanceof ClientInlineEntity);
     }
     
@@ -907,7 +907,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
     } else {
       // in xml the links will be always present; but the content will not be if no $expand unlike 
       // json;metadata=minimal; json=full is same as application/xml
-      Assert.assertFalse(responseGetRequestESTwoKeyNav.getBody()
+      Assertions.assertFalse(responseGetRequestESTwoKeyNav.getBody()
           .getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE) instanceof ClientInlineEntity);
     }    
     
@@ -988,7 +988,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
     } else {
       // in xml the links will be always present; but the content will not be if no $expand unlike 
       // json;metadata=minimal; json=full is same as application/xml
-      Assert.assertFalse(responseGetESTwoKeyNav.getBody()
+      Assertions.assertFalse(responseGetESTwoKeyNav.getBody()
           .getNavigationLink(NAV_PROPERTY_ET_KEY_NAV_ONE) instanceof ClientInlineEntity);
     }    
   }

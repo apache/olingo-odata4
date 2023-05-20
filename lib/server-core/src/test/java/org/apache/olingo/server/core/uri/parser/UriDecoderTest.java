@@ -18,14 +18,15 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.olingo.server.api.uri.queryoption.QueryOption;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class UriDecoderTest {
 
@@ -76,9 +77,11 @@ public class UriDecoderTest {
     checkOption("a='%26%3D'", "a", "'&='");
   }
 
-  @Test(expected = UriParserSyntaxException.class)
+  @Test
   public void wrongPercentEncoding() throws Exception {
-    UriDecoder.splitAndDecodePath("%wrong");
+    Assertions.assertThrows(UriParserSyntaxException.class, () -> {
+      UriDecoder.splitAndDecodePath("%wrong");
+    });
   }
 
   private void checkOption(final String query, final String name, final String value)

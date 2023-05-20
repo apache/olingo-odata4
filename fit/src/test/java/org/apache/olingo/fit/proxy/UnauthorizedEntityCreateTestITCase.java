@@ -21,10 +21,12 @@ package org.apache.olingo.fit.proxy;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.http.HttpClientException;
 import org.apache.olingo.client.core.http.BasicAuthHttpClientFactory;
+import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.proxy.staticservice.Service;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.InMemoryEntities;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class UnauthorizedEntityCreateTestITCase extends AbstractTestITCase {
 
@@ -42,9 +44,11 @@ public class UnauthorizedEntityCreateTestITCase extends AbstractTestITCase {
     return ecf;
   }
 
-  @Test(expected = HttpClientException.class)
+  @Test
   public void unauthorizedCreate() {
-    createPatchAndDeleteOrder(getContainer(), getService());
+    Assertions.assertThrows(HttpClientException.class, () -> {
+      createPatchAndDeleteOrder(getContainer(), getService());
+    });
   }
 
   protected InMemoryEntities getContainer() {

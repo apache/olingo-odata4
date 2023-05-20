@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.olingo.ext.proxy.api.PrimitiveCollection;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.AccessLevel;
@@ -29,8 +29,8 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.HomeAddre
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PersonComposableInvoker;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.ProductCollectionComposableInvoker;
 // CHECKSTYLE:ON (Maven checkstyle)
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class OperationImportInvokeTestITCase extends AbstractTestITCase {
 
@@ -60,7 +60,7 @@ public class OperationImportInvokeTestITCase extends AbstractTestITCase {
   @Test
   public void getAllProducts() {
     final ProductCollectionComposableInvoker products = container.operations().getAllProducts();
-    Assert.assertEquals(5, products.execute().size());
+    assertEquals(5, products.execute().size());
   }
 
   @Test

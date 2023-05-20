@@ -31,8 +31,10 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class AuthBatchTestITCase extends AbstractParamTecSvcITCase{
@@ -44,10 +46,12 @@ public class AuthBatchTestITCase extends AbstractParamTecSvcITCase{
     batchRequest(authclient, AUTH_URI);
   }
 
-  @Test(expected = HttpClientException.class)
+  @Test
   public void unauthorized() throws EdmPrimitiveTypeException {
     final ODataClient unauthclient = getBasicAuthClient("not_auth", "not_auth");
-    batchRequest(unauthclient, AUTH_URI);
+    Assertions.assertThrows(HttpClientException.class, () -> {
+      batchRequest(unauthclient, AUTH_URI);
+    });
   }
   
   private void batchRequest(final ODataClient client, final String baseURL) throws EdmPrimitiveTypeException {

@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +42,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlParameter;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.core.edm.EdmParameterImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EdmParameterImplTest {
 
@@ -150,22 +151,26 @@ public class EdmParameterImplTest {
     assertNull(parameter.getSrid());
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void getTypeWithInvalidSimpleType() {
     EdmProviderImpl edm = new EdmProviderImpl(mock(CsdlEdmProvider.class));
     CsdlParameter parameterProvider = new CsdlParameter();
     parameterProvider.setType(new FullQualifiedName("Edm", "wrong"));
     final EdmParameter parameter = new EdmParameterImpl(edm, parameterProvider);
-    parameter.getType();
+    Assertions.assertThrows(EdmException.class, () -> {
+      parameter.getType();
+    });
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void getTypeWithNonexistingType() {
     EdmProviderImpl edm = new EdmProviderImpl(mock(CsdlEdmProvider.class));
     CsdlParameter parameterProvider = new CsdlParameter();
     parameterProvider.setType(new FullQualifiedName("wrong", "wrong"));
     final EdmParameter parameter = new EdmParameterImpl(edm, parameterProvider);
-    parameter.getType();
+    Assertions.assertThrows(EdmException.class, () -> {
+      parameter.getType();
+    });
   }
 
 }

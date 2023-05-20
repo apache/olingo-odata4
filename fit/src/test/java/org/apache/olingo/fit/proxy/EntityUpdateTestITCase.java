@@ -19,9 +19,9 @@
 package org.apache.olingo.fit.proxy;
 
 // CHECKSTYLE:OFF (Maven checkstyle)
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 import java.lang.reflect.Proxy;
@@ -45,7 +45,7 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.OrderDeta
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.OrderDetailKey;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PaymentInstrument;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 // CHECKSTYLE:ON (Maven checkstyle)
 /**

@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -39,7 +39,7 @@ import org.apache.olingo.fit.proxy.staticservice.Service;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Order;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
@@ -61,7 +61,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
 
   protected static InMemoryEntities container;
 
-  @BeforeClass
+  @BeforeAll
   public static void setUpODataServiceRoot() throws IOException {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc";
     testDemoServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Demo.svc";

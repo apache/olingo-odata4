@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.netty.server.core;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.netty.server.api.ODataNetty;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.serializer.SerializerException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ODataNettyImplTest {
 

@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core.uri;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -48,7 +48,8 @@ import org.apache.olingo.server.core.uri.queryoption.SelectOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class UriInfoImplTest {
@@ -100,11 +101,13 @@ public class UriInfoImplTest {
     assertEquals(entitySet1, uriInfo.getLastResourcePart());
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test
   public void doubleSystemQueryOptions() {
-    new UriInfoImpl()
-        .setSystemQueryOption(new FormatOptionImpl())
-        .setSystemQueryOption(new FormatOptionImpl());
+    Assertions.assertThrows(ODataRuntimeException.class, () -> {
+      new UriInfoImpl()
+              .setSystemQueryOption(new FormatOptionImpl())
+              .setSystemQueryOption(new FormatOptionImpl());
+    });
   }
 
   @Test
@@ -204,11 +207,13 @@ public class UriInfoImplTest {
     assertTrue(uriInfo.getCustomQueryOptions().isEmpty());
   }
 
-  @Test(expected = ODataRuntimeException.class)
+  @Test
   public void doubleAlias() {
     final AliasQueryOption alias = (AliasQueryOption) new AliasQueryOptionImpl().setName("A");
-    new UriInfoImpl()
-        .addAlias(alias)
-        .addAlias(alias);
+    Assertions.assertThrows(ODataRuntimeException.class, () -> {
+      new UriInfoImpl()
+              .addAlias(alias)
+              .addAlias(alias);
+    });
   }
 }

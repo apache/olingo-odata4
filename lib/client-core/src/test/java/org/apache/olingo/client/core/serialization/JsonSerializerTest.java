@@ -16,7 +16,7 @@
 package org.apache.olingo.client.core.serialization;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.StringWriter;
 
@@ -27,7 +27,7 @@ import org.apache.olingo.client.api.serialization.ODataSerializerException;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JsonSerializerTest {
 

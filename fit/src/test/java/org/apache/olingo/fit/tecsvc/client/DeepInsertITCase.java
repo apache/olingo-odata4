@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -53,8 +53,8 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class DeepInsertITCase extends AbstractParamTecSvcITCase {
 
@@ -86,9 +86,8 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void deepInsertExpandedResponse() {
-    assumeTrue("The server XML deserializer does not (yet?!) fill the expand information;"
-        + " the response is therefore not expanded in XML.",
-        isJson());  // TODO: XML case
+    assumeTrue(isJson(), "The server XML deserializer does not (yet?!) fill the expand information;"
+        + " the response is therefore not expanded in XML.");  // TODO: XML case
     final ODataClient client = getEdmEnabledClient();
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
     final ClientObjectFactory factory = getFactory();
@@ -710,7 +709,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  @Ignore
+  @Disabled
   public void deepInsertOnNavigationPropertyInComplexProperty() {
     final EdmEnabledODataClient client = getEdmEnabledClient();
     final ClientObjectFactory factory = getFactory();

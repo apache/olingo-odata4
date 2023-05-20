@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.client.core;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Calendar;
 
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PrimitiveValueTest extends AbstractTest {
 

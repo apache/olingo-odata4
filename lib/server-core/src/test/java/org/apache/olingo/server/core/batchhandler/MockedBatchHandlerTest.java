@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.core.batchhandler;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,8 +55,9 @@ import org.apache.olingo.server.api.serializer.BatchSerializerException;
 import org.apache.olingo.server.core.ODataHandlerImpl;
 import org.apache.olingo.server.core.deserializer.batch.BatchLineReader;
 import org.apache.olingo.server.core.deserializer.batch.BatchParserCommon;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -71,7 +72,7 @@ public class MockedBatchHandlerTest {
   private BatchHandler batchHandler;
   private int entityCounter = 1;
 
-  @Before
+  @BeforeEach
   public void setup() {
     final BatchProcessor batchProcessor = new BatchTestProcessorImpl();
     batchProcessor.init(OData.newInstance(), null);
@@ -465,7 +466,7 @@ public class MockedBatchHandlerTest {
     assertEquals(44, line);
   }
 
-  @Test(expected = BatchDeserializerException.class)
+  @Test
   public void testInvalidMethod() throws Exception {
     final String content = ""
         + "--batch_12345" + CRLF
@@ -488,11 +489,12 @@ public class MockedBatchHandlerTest {
     final ODataResponse response = new ODataResponse();
     final ODataRequest request = buildODataRequest(content, header);
     request.setMethod(HttpMethod.GET);
-
-    batchHandler.process(request, response, true);
+    Assertions.assertThrows(BatchDeserializerException.class, () -> {
+      batchHandler.process(request, response, true);
+    });
   }
 
-  @Test(expected = BatchDeserializerException.class)
+  @Test
   public void testInvalidContentType() throws Exception {
     final String content = ""
         + "--batch_12345" + CRLF
@@ -515,8 +517,9 @@ public class MockedBatchHandlerTest {
     header.put(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] { "application/http" }));
     final ODataResponse response = new ODataResponse();
     final ODataRequest request = buildODataRequest(content, header);
-
-    batchHandler.process(request, response, true);
+    Assertions.assertThrows(BatchDeserializerException.class, () -> {
+      batchHandler.process(request, response, true);
+    });
   }
 
   /*

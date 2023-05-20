@@ -36,8 +36,8 @@ import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** Tests of the parts of the URI parser that parse the sytem query option $expand. */
 public class ExpandParserTest {
@@ -253,9 +253,9 @@ public class ExpandParserTest {
   public void expandNavigationApplyOption() throws Exception {
     UriInfo uriInfo = new Parser(edm, oData).parseUri("ESTwoKeyNav",
         "$expand=NavPropertyETKeyNavMany($apply=identity),NavPropertyETKeyNavOne", null, null);
-    Assert.assertEquals(ApplyItem.Kind.IDENTITY,
+    Assertions.assertEquals(ApplyItem.Kind.IDENTITY,
         uriInfo.getExpandOption().getExpandItems().get(0).getApplyOption().getApplyItems().get(0).getKind());
-    Assert.assertEquals("NavPropertyETKeyNavOne",
+    Assertions.assertEquals("NavPropertyETKeyNavOne",
         uriInfo.getExpandOption().getExpandItems().get(1)
             .getResourcePath().getUriResourceParts().get(0).getSegmentValue());
 
@@ -263,8 +263,8 @@ public class ExpandParserTest {
         "$expand=NavPropertyETKeyNavMany($apply=aggregate(PropertyInt16 with sum as s))", null, null);
     final ApplyItem applyItem =
         uriInfo.getExpandOption().getExpandItems().get(0).getApplyOption().getApplyItems().get(0);
-    Assert.assertEquals(ApplyItem.Kind.AGGREGATE, applyItem.getKind());
-    Assert.assertEquals(AggregateExpression.StandardMethod.SUM,
+    Assertions.assertEquals(ApplyItem.Kind.AGGREGATE, applyItem.getKind());
+    Assertions.assertEquals(AggregateExpression.StandardMethod.SUM,
         ((Aggregate) applyItem).getExpressions().get(0).getStandardMethod());
   }
 

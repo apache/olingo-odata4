@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Proxy;
 import java.sql.Timestamp;
@@ -48,7 +48,7 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PersonCollection;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Product;
 // CHECKSTYLE:ON (Maven checkstyle)
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This is the unit test class to check entity retrieve operations.

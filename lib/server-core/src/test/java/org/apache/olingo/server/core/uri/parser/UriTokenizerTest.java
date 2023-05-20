@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.server.core.uri.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Locale;
 
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class UriTokenizerTest {
 
@@ -521,11 +521,10 @@ public class UriTokenizerTest {
 
     for (final TokenKind tokenKind : TokenKind.values()) {
       if (tokenKind.name().endsWith("Method")) {
-        assertTrue(tokenKind.name(),
-            new UriTokenizer(
+        assertTrue(new UriTokenizer(
                 tokenKind.name().substring(0, tokenKind.name().indexOf("Method"))
                     .toLowerCase(Locale.ROOT).replace("geo", "geo.") + '(')
-                .next(tokenKind));
+                .next(tokenKind), tokenKind.name());
       }
     }
   }
@@ -728,8 +727,9 @@ public class UriTokenizerTest {
     // Place the disturbing character at every position in the value string
     // and check that this leads to a failed token recognition.
     for (int index = 0; index < value.length(); index++) {
-      assertFalse("Error at index " + index,
-          new UriTokenizer(value.substring(0, index) + disturbCharacter + value.substring(index + 1)).next(kind));
+      assertFalse(new UriTokenizer(value.substring(0, index) +
+                      disturbCharacter + value.substring(index + 1)).next(kind),
+              "Error at index " + index);
     }
   }
 }

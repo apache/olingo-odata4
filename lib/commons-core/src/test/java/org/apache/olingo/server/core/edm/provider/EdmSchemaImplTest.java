@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,8 +63,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.api.edm.provider.CsdlTypeDefinition;
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class EdmSchemaImplTest {
 
@@ -73,7 +73,7 @@ public class EdmSchemaImplTest {
   public static final String NAMESPACE = "org.namespace";
   public static final String ALIAS = "alias";
 
-  @Before
+  @BeforeEach
   public void before() {
     CsdlEdmProvider provider = new LocalProvider();
     edm = new EdmProviderImpl(provider);

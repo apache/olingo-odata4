@@ -20,11 +20,11 @@ package org.apache.olingo.fit.tecsvc.client;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URI;
 
@@ -54,7 +54,7 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConditionalITCase extends AbstractParamTecSvcITCase {
 
@@ -163,14 +163,14 @@ public class ConditionalITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void deleteWithWrongIfMatch() throws Exception {
+  public void deleteWithWrongIfMatch() {
     ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uriEntity);
     request.setIfMatch("W/\"1\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);
   }
 
   @Test
-  public void deleteMediaWithWrongIfMatch() throws Exception {
+  public void deleteMediaWithWrongIfMatch() {
     ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uriMedia);
     request.setIfMatch("W/\"42\"");
     executeAndExpectError(request, HttpStatusCode.PRECONDITION_FAILED);

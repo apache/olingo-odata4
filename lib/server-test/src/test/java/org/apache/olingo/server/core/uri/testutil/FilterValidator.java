@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class FilterValidator implements TestValidator {
 
   public FilterValidator setFilter(final FilterOption filter) {
     this.filter = filter;
-    assertNotNull("FilterValidator: no filter found", filter.getExpression());
+    assertNotNull(filter.getExpression(), "FilterValidator: no filter found");
     setExpression(filter.getExpression());
     return this;
   }
@@ -198,7 +198,7 @@ public class FilterValidator implements TestValidator {
   public FilterValidator runUri(final String path, final String query)
       throws UriParserException, UriValidationException {
     final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, query, null, null);
-    assertTrue("Filtervalidator can only be used on resourcePaths", uriInfo.getKind() == UriInfoKind.resource);
+    assertTrue(uriInfo.getKind() == UriInfoKind.resource, "Filtervalidator can only be used on resourcePaths");
     setFilter(uriInfo.getFilterOption());
     curExpression = filter.getExpression();
     return this;
@@ -211,7 +211,7 @@ public class FilterValidator implements TestValidator {
   public FilterValidator runUriOrderBy(final String path, final String query)
       throws UriParserException, UriValidationException {
     final UriInfo uriInfo = new Parser(edm, odata).parseUri(path, query, null, null);
-    assertTrue("Filtervalidator can only be used on resourcePaths", uriInfo.getKind() == UriInfoKind.resource);
+    assertTrue(uriInfo.getKind() == UriInfoKind.resource, "Filtervalidator can only be used on resourcePaths");
     orderBy = uriInfo.getOrderByOption();
     return this;
   }
@@ -237,7 +237,7 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator goParameter(final int parameterIndex) {
-    assertTrue("Current expression not a methodCall", curExpression instanceof Method);
+    assertTrue(curExpression instanceof Method, "Current expression not a methodCall");
     Method methodCall = (Method) curExpression;
     curExpression = methodCall.getParameters().get(parameterIndex);
     return this;
@@ -292,7 +292,7 @@ public class FilterValidator implements TestValidator {
       actualType = ((MethodImpl) curExpression).getType();
     }
 
-    assertNotNull("Current expression not typed", actualType);
+    assertNotNull(actualType, "Current expression not typed");
     assertEquals(fullName, actualType.getFullQualifiedName());
     return this;
   }
@@ -303,33 +303,33 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator left() {
-    assertTrue("Current expression not a binary operator", curExpression instanceof Binary);
+    assertTrue(curExpression instanceof Binary, "Current expression not a binary operator");
     curExpression = ((Binary) curExpression).getLeftOperand();
     return this;
   }
 
   public FilterValidator right() {
-    assertTrue("Current expression not a binary operator", curExpression instanceof Binary);
+    assertTrue(curExpression instanceof Binary, "Current expression not a binary operator");
     curExpression = ((Binary) curExpression).getRightOperand();
     return this;
   }
 
   public FilterValidator isLiteral(final String literalText) {
-    assertTrue("Current expression is not a literal", curExpression instanceof Literal);
+    assertTrue(curExpression instanceof Literal, "Current expression is not a literal");
     String actualLiteralText = ((Literal) curExpression).getText();
     assertEquals(literalText, actualLiteralText);
     return this;
   }
 
   public FilterValidator isLiteralType(final EdmType edmType) {
-    assertTrue("Current expression is not a literal", curExpression instanceof Literal);
+    assertTrue(curExpression instanceof Literal, "Current expression is not a literal");
     final EdmType type = ((Literal) curExpression).getType();
     assertEquals(edmType, type);
     return this;
   }
 
   public FilterValidator isMethod(final MethodKind methodKind, final int parameterCount) {
-    assertTrue("Current expression is not a methodCall", curExpression instanceof Method);
+    assertTrue(curExpression instanceof Method, "Current expression is not a methodCall");
     Method methodCall = (Method) curExpression;
     assertEquals(methodKind, methodCall.getMethod());
     assertEquals(parameterCount, methodCall.getParameters().size());
@@ -363,20 +363,20 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator isBinary(final BinaryOperatorKind binaryOperator) {
-    assertTrue("Current expression not a binary operator", curExpression instanceof Binary);
+    assertTrue(curExpression instanceof Binary, "Current expression not a binary operator");
     Binary binary = (Binary) curExpression;
     assertEquals(binaryOperator, binary.getOperator());
     return this;
   }
 
   public FilterValidator isTypedLiteral(final FullQualifiedName fullName) {
-    assertTrue("Current expression not a typeLiteral", curExpression instanceof TypeLiteral);
+    assertTrue(curExpression instanceof TypeLiteral, "Current expression not a typeLiteral");
     isType(fullName);
     return this;
   }
 
   public FilterValidator isMember() {
-    assertTrue("Current expression not a member", curExpression instanceof Member);
+    assertTrue(curExpression instanceof Member, "Current expression not a member");
     return this;
   }
   
@@ -389,7 +389,7 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator isEnum(final FullQualifiedName name, final List<String> enumValues) {
-    assertTrue("Current expression not an enumeration", curExpression instanceof Enumeration);
+    assertTrue(curExpression instanceof Enumeration, "Current expression not an enumeration");
     Enumeration enumeration = (Enumeration) curExpression;
 
     // check name
@@ -402,7 +402,7 @@ public class FilterValidator implements TestValidator {
   }
 
   public FilterValidator isAlias(final String name) {
-    assertTrue("Current expression not an alias", curExpression instanceof Alias);
+    assertTrue(curExpression instanceof Alias, "Current expression not an alias");
     final Alias alias = (Alias) curExpression;
     assertEquals(name, alias.getParameterName());
     return this;

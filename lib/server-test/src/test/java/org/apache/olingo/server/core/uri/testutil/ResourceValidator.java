@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -98,8 +98,7 @@ public class ResourceValidator implements TestValidator {
           + " Message: " + e.getMessage());
     }
 
-    assertEquals("Invalid UriInfoKind: " + uriInfoTmp.getKind().toString(),
-        UriInfoKind.resource, uriInfoTmp.getKind());
+    assertEquals(UriInfoKind.resource, uriInfoTmp.getKind(), "Invalid UriInfoKind: " + uriInfoTmp.getKind().toString());
 
     setUriInfoPath(uriInfoTmp.asUriInfoResource());
     return this;
@@ -128,9 +127,9 @@ public class ResourceValidator implements TestValidator {
   }
 
   public FilterValidator goLambdaExpression() {
-    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
-        uriPathInfo.getKind() == UriResourceKind.lambdaAll
-        || uriPathInfo.getKind() == UriResourceKind.lambdaAny);
+    assertTrue(uriPathInfo.getKind() == UriResourceKind.lambdaAll
+        || uriPathInfo.getKind() == UriResourceKind.lambdaAny,
+            "invalid resource kind: " + uriPathInfo.getKind().toString());
     return new FilterValidator()
         .setEdm(edm)
         .setExpression(uriPathInfo.getKind() == UriResourceKind.lambdaAll ?
@@ -149,7 +148,7 @@ public class ResourceValidator implements TestValidator {
 
   public ResourceValidator at(final int index) {
     uriResourceIndex = index;
-    assertTrue("not enough segments", index < uriInfo.getUriResourceParts().size());
+    assertTrue(index < uriInfo.getUriResourceParts().size(), "not enough segments");
     uriPathInfo = uriInfo.getUriResourceParts().get(index);
     return this;
   }
@@ -157,9 +156,9 @@ public class ResourceValidator implements TestValidator {
   // --- Validation ---
 
   public ResourceValidator isLambdaVar(final String var) {
-    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
-        uriPathInfo.getKind() == UriResourceKind.lambdaAll
-        || uriPathInfo.getKind() == UriResourceKind.lambdaAny);
+    assertTrue(uriPathInfo.getKind() == UriResourceKind.lambdaAll
+        || uriPathInfo.getKind() == UriResourceKind.lambdaAny,
+            "invalid resource kind: " + uriPathInfo.getKind().toString());
     final String actualVar = uriPathInfo.getKind() == UriResourceKind.lambdaAll ?
         ((UriResourceLambdaAll) uriPathInfo).getLambdaVariable() :
         ((UriResourceLambdaAny) uriPathInfo).getLambdaVariable();
@@ -168,21 +167,20 @@ public class ResourceValidator implements TestValidator {
   }
 
   public ResourceValidator isTypeFilter(final FullQualifiedName expectedType) {
-    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
-        uriPathInfo.getKind() == UriResourceKind.complexProperty
-        || uriPathInfo.getKind() == UriResourceKind.singleton);
+    assertTrue(uriPathInfo.getKind() == UriResourceKind.complexProperty
+        || uriPathInfo.getKind() == UriResourceKind.singleton,
+            "invalid resource kind: " + uriPathInfo.getKind().toString());
     final EdmType actualType = ((UriResourceTypedImpl) uriPathInfo).getTypeFilter();
-    assertNotNull("type information not set", actualType);
+    assertNotNull(actualType, "type information not set");
     assertEquals(expectedType, actualType.getFullQualifiedName());
     return this;
   }
 
   public ResourceValidator isType(final FullQualifiedName type) {
-    assertTrue("invalid resource kind: "
-        + (uriPathInfo.getKind() == null ? "null" : uriPathInfo.getKind().toString()),
-        uriPathInfo instanceof UriResourcePartTyped);
+    assertTrue(uriPathInfo instanceof UriResourcePartTyped, "invalid resource kind: "
+            + (uriPathInfo.getKind() == null ? "null" : uriPathInfo.getKind().toString()));
     final EdmType actualType = ((UriResourcePartTyped) uriPathInfo).getType();
-    assertNotNull("type information not set", actualType);
+    assertNotNull(actualType, "type information not set");
     assertEquals(type, actualType.getFullQualifiedName());
     return this;
   }
@@ -202,16 +200,17 @@ public class ResourceValidator implements TestValidator {
   }
 
   private ResourceValidator isTypeFilter(final boolean onCollection, final FullQualifiedName type) {
-    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
-        uriPathInfo instanceof UriResourceWithKeysImpl);
+    assertTrue(uriPathInfo instanceof UriResourceWithKeysImpl,
+            "invalid resource kind: " + uriPathInfo.getKind().toString());
     UriResourceWithKeysImpl uriPathInfoKeyPred = (UriResourceWithKeysImpl) uriPathInfo;
 
     // input parameter type may be null in order to assert that the type filter is not set
     final EdmType actualType = onCollection ?
         uriPathInfoKeyPred.getTypeFilterOnCollection() :
         uriPathInfoKeyPred.getTypeFilterOnEntry();
-    assertTrue("Expected a type filter of type: " + (type == null ? null : type.getFullQualifiedNameAsString()),
-        type == null || actualType != null);
+    assertTrue(type == null || actualType != null,
+            "Expected a type filter of type: "
+            + (type == null ? null : type.getFullQualifiedNameAsString()));
     assertEquals(type, type == null || actualType == null ? actualType : actualType.getFullQualifiedName());
 
     return this;
@@ -247,16 +246,15 @@ public class ResourceValidator implements TestValidator {
 	  }
 
   private UriParameter getKeyPredicate(final int index) {
-    assertTrue("invalid resource kind: " + uriPathInfo.getKind().toString(),
-        uriPathInfo instanceof UriResourceWithKeysImpl);
+    assertTrue(uriPathInfo instanceof UriResourceWithKeysImpl,
+            "invalid resource kind: " + uriPathInfo.getKind().toString());
     return ((UriResourceWithKeysImpl) uriPathInfo).getKeyPredicates().get(index);
   }
   
   private UriParameter getKeyPredicateForNavSegment(final int index) {
 	  List<UriResource> uriResources = uriInfo.getUriResourceParts();
 	  UriResource lastSegment = uriResources.get(uriResources.size() - 1);
-	    assertTrue("invalid resource kind: " + lastSegment.getKind(),
-	    		lastSegment instanceof UriResourceNavigation);
+	    assertTrue(lastSegment instanceof UriResourceNavigation, "invalid resource kind: " + lastSegment.getKind());
 	    return ((UriResourceNavigation)lastSegment).getKeyPredicates().get(index);
 	  }
 
@@ -303,7 +301,7 @@ public class ResourceValidator implements TestValidator {
 
   public ResourceValidator isUriPathInfoKind(final UriResourceKind infoType) {
     assertNotNull(uriPathInfo);
-    assertEquals("invalid resource kind: " + uriPathInfo.getKind().toString(), infoType, uriPathInfo.getKind());
+    assertEquals(infoType, uriPathInfo.getKind(), "invalid resource kind: " + uriPathInfo.getKind().toString());
     return this;
   }
 

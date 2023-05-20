@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import org.apache.karaf.features.FeaturesService;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -119,8 +119,8 @@ public class OlingoOSGiTestSupport {
 
     protected void assertBundleStarted(String name) {
         Bundle bundle = findBundleByName(name);
-        Assert.assertNotNull("Bundle " + name + " should be installed", bundle);
-        Assert.assertEquals("Bundle " + name + " should be started", Bundle.ACTIVE, bundle.getState());
+        Assertions.assertNotNull("Bundle " + name + " should be installed", bundle);
+        Assertions.assertEquals("Bundle " + name + " should be started", Bundle.ACTIVE, bundle.getState());
     }
 
     protected Bundle findBundleByName(String symbolicName) {

@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 import java.util.Random;
@@ -28,7 +28,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.ODataResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AsyncResponseSerializerTest {
   private static final String CRLF = "\r\n";

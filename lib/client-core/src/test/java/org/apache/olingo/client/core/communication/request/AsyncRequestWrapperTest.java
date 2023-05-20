@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.client.core.communication.request;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -50,7 +50,8 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchReque
 import org.apache.olingo.client.core.communication.request.invoke.ODataInvokeRequestImpl;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class AsyncRequestWrapperTest {
 
@@ -213,25 +214,31 @@ public class AsyncRequestWrapperTest {
     return (AsyncResponseWrapperImpl) wrappedResponse;
   }
 
-  @Test(expected = AsyncRequestException.class)
-  public void testLocationWithInvalidScheme() throws IOException, URISyntaxException {
+  @Test
+  public void testLocationWithInvalidScheme() {
     String target = "https://server/path";
     String location = "http://server/path";
-    createAsyncRequestWrapperImplWithLocation(target, location);
+    Assertions.assertThrows(AsyncRequestException.class, () -> {
+      createAsyncRequestWrapperImplWithLocation(target, location);
+    });
   }
 
-  @Test(expected = AsyncRequestException.class)
-  public void testLocationWithInvalidHost() throws IOException, URISyntaxException {
+  @Test
+  public void testLocationWithInvalidHost() {
     String target = "http://server/path";
     String location = "http://something.else/path";
-    createAsyncRequestWrapperImplWithLocation(target, location);
+    Assertions.assertThrows(AsyncRequestException.class, () -> {
+      createAsyncRequestWrapperImplWithLocation(target, location);
+    });
   }
 
-  @Test(expected = AsyncRequestException.class)
-  public void testLocationWithInvalidPort() throws IOException, URISyntaxException {
+  @Test
+  public void testLocationWithInvalidPort() {
     String target = "http://server/path";
     String location = "http://server:8080/path";
-    createAsyncRequestWrapperImplWithLocation(target, location);
+    Assertions.assertThrows(AsyncRequestException.class, () -> {
+      createAsyncRequestWrapperImplWithLocation(target, location);
+    });
   }
 
   @Test

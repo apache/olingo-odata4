@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.commons.core.edm.annotations;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import org.apache.olingo.commons.api.edm.Edm;
@@ -27,7 +27,7 @@ import org.apache.olingo.commons.api.edm.annotation.EdmExpression.EdmExpressionT
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression;
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlConstantExpression.ConstantExpressionType;
 import org.apache.olingo.commons.core.edm.annotation.AbstractEdmExpression;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EdmConstantExpressionImplTest extends AbstractAnnotationTest {
 

@@ -19,16 +19,14 @@
 package org.apache.olingo.server.api;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Locale;
 
-import javax.management.RuntimeErrorException;
-
 import org.apache.olingo.server.api.ODataLibraryException.ODataErrorMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TranslatedExceptionsTest {
 

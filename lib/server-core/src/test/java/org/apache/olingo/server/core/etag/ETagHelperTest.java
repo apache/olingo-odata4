@@ -18,15 +18,16 @@
  */
 package org.apache.olingo.server.core.etag;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.etag.ETagHelper;
 import org.apache.olingo.server.api.etag.PreconditionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ETagHelperTest {
 
@@ -45,9 +46,11 @@ public class ETagHelperTest {
     assertFalse(eTagHelper.checkReadPreconditions("\"ETag\"", null, Collections.singleton("\"ETag2\"")));
   }
 
-  @Test(expected = PreconditionException.class)
-  public void readPreconditionFail() throws Exception {
-    eTagHelper.checkReadPreconditions("\"ETag\"", Collections.singleton("\"ETag2\""), null);
+  @Test
+  public void readPreconditionFail() {
+    Assertions.assertThrows(PreconditionException.class, () -> {
+      eTagHelper.checkReadPreconditions("\"ETag\"", Collections.singleton("\"ETag2\""), null);
+    });
   }
 
   @Test
@@ -62,18 +65,24 @@ public class ETagHelperTest {
     eTagHelper.checkChangePreconditions("\"ETag\"", null, Collections.singleton("\"ETag2\""));
   }
 
-  @Test(expected = PreconditionException.class)
-  public void changePreconditionFailIfMatch() throws Exception {
-    eTagHelper.checkChangePreconditions("\"ETag\"", Collections.singleton("\"ETag2\""), null);
+  @Test
+  public void changePreconditionFailIfMatch() {
+    Assertions.assertThrows(PreconditionException.class, () -> {
+      eTagHelper.checkChangePreconditions("\"ETag\"", Collections.singleton("\"ETag2\""), null);
+    });
   }
 
-  @Test(expected = PreconditionException.class)
-  public void changePreconditionFailIfNoneMatch() throws Exception {
-    eTagHelper.checkChangePreconditions("\"ETag\"", null, Collections.singleton("\"ETag\""));
+  @Test
+  public void changePreconditionFailIfNoneMatch() {
+    Assertions.assertThrows(PreconditionException.class, () -> {
+      eTagHelper.checkChangePreconditions("\"ETag\"", null, Collections.singleton("\"ETag\""));
+    });
   }
 
-  @Test(expected = PreconditionException.class)
-  public void changePreconditionFailIfNoneMatchAll() throws Exception {
-    eTagHelper.checkChangePreconditions("\"ETag\"", null, Collections.singleton("*"));
+  @Test
+  public void changePreconditionFailIfNoneMatchAll() {
+    Assertions.assertThrows(PreconditionException.class, () -> {
+      eTagHelper.checkChangePreconditions("\"ETag\"", null, Collections.singleton("*"));
+    });
   }
 }

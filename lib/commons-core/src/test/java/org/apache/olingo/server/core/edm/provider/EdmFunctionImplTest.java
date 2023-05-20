@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 
 import org.apache.olingo.commons.api.edm.EdmException;
@@ -33,15 +33,16 @@ import org.apache.olingo.commons.api.edm.provider.CsdlFunction;
 import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 import org.apache.olingo.commons.core.edm.EdmFunctionImpl;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class EdmFunctionImplTest {
 
   private EdmFunction functionImpl1;
   private EdmFunction functionImpl2;
 
-  @Before
+  @BeforeEach
   public void setupFunctions() {
     EdmProviderImpl provider = mock(EdmProviderImpl.class);
 
@@ -69,10 +70,11 @@ public class EdmFunctionImplTest {
     assertEquals("String", returnType.getType().getName());
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void nonExistingReturnTypeResultsInException() {
-    functionImpl2.getReturnType();
-    fail();
+    Assertions.assertThrows(EdmException.class, () -> {
+     functionImpl2.getReturnType();
+    });
   }
 
 }

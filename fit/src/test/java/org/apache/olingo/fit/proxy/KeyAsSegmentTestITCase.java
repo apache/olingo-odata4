@@ -18,15 +18,15 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.proxy.staticservice.Service;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.InMemoryEntities;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class KeyAsSegmentTestITCase extends AbstractTestITCase {
 

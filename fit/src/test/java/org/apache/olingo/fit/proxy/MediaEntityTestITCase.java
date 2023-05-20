@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -36,7 +36,7 @@ import org.apache.olingo.ext.proxy.api.EdmStreamValue;
 import org.apache.olingo.fit.proxy.demo.Service;
 import org.apache.olingo.fit.proxy.demo.odatademo.DemoService;
 import org.apache.olingo.fit.proxy.demo.odatademo.types.Advertisement;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This is the unit test class to check media entity retrieve operations.

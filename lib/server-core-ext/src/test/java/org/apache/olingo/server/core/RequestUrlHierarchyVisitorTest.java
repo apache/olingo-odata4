@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.olingo.server.api.uri.UriInfoEntityId;
 import org.apache.olingo.server.api.uri.UriInfoKind;
@@ -47,7 +47,7 @@ import org.apache.olingo.server.core.uri.queryoption.SearchOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.SkipTokenOptionImpl;
 import org.apache.olingo.server.core.uri.queryoption.TopOptionImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RequestUrlHierarchyVisitorTest {
   

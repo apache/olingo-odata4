@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core.deserializer.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
@@ -46,16 +46,16 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
 
   private static final EdmEntityContainer entityContainer = edm.getEntityContainer();
   private final ODataDeserializer deserializer = new ODataXmlDeserializer(metadata);
 
-  @BeforeClass
+  @BeforeAll
   public static void setup() {
     XMLUnit.setIgnoreComments(true);
     XMLUnit.setIgnoreAttributeOrder(true);
@@ -112,28 +112,28 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(16, result.getProperties().size());
-    Assert.assertEquals(2, result.getNavigationBindings().size());
+    Assertions.assertEquals(16, result.getProperties().size());
+    Assertions.assertEquals(2, result.getNavigationBindings().size());
     
-    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
-    Assert.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
-    Assert.assertEquals((short) 255, result.getProperty("PropertyByte").asPrimitive());
-    Assert.assertEquals((byte) 127, result.getProperty("PropertySByte").asPrimitive());
-    Assert.assertEquals(2147483647, result.getProperty("PropertyInt32").asPrimitive());
-    Assert.assertEquals(9223372036854775807L, result.getProperty("PropertyInt64").asPrimitive());
-    Assert.assertEquals(1.79E20F, result.getProperty("PropertySingle").asPrimitive());
-    Assert.assertEquals(-1.79E19, result.getProperty("PropertyDouble").asPrimitive());
-    Assert.assertEquals(BigDecimal.valueOf(34), result.getProperty("PropertyDecimal").asPrimitive());
-    Assert.assertArrayEquals((byte[]) valueOf("ASNFZ4mrze8=", EdmPrimitiveTypeKind.Binary),
+    Assertions.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
+    Assertions.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
+    Assertions.assertEquals((short) 255, result.getProperty("PropertyByte").asPrimitive());
+    Assertions.assertEquals((byte) 127, result.getProperty("PropertySByte").asPrimitive());
+    Assertions.assertEquals(2147483647, result.getProperty("PropertyInt32").asPrimitive());
+    Assertions.assertEquals(9223372036854775807L, result.getProperty("PropertyInt64").asPrimitive());
+    Assertions.assertEquals(1.79E20F, result.getProperty("PropertySingle").asPrimitive());
+    Assertions.assertEquals(-1.79E19, result.getProperty("PropertyDouble").asPrimitive());
+    Assertions.assertEquals(BigDecimal.valueOf(34), result.getProperty("PropertyDecimal").asPrimitive());
+    Assertions.assertArrayEquals((byte[]) valueOf("ASNFZ4mrze8=", EdmPrimitiveTypeKind.Binary),
         (byte[]) result.getProperty("PropertyBinary").asPrimitive());
-    Assert.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
+    Assertions.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
         result.getProperty("PropertyDate").asPrimitive());
-    Assert.assertEquals(valueOf("2012-12-03T07:16:23Z", EdmPrimitiveTypeKind.DateTimeOffset),
+    Assertions.assertEquals(valueOf("2012-12-03T07:16:23Z", EdmPrimitiveTypeKind.DateTimeOffset),
         result.getProperty("PropertyDateTimeOffset").asPrimitive());
-    Assert.assertEquals(BigDecimal.valueOf(6), result.getProperty("PropertyDuration").asPrimitive());
-    Assert.assertEquals(UUID.fromString("01234567-89ab-cdef-0123-456789abcdef"),
+    Assertions.assertEquals(BigDecimal.valueOf(6), result.getProperty("PropertyDuration").asPrimitive());
+    Assertions.assertEquals(UUID.fromString("01234567-89ab-cdef-0123-456789abcdef"),
         result.getProperty("PropertyGuid").asPrimitive());
-    Assert.assertEquals(valueOf("03:26:05", EdmPrimitiveTypeKind.TimeOfDay),
+    Assertions.assertEquals(valueOf("03:26:05", EdmPrimitiveTypeKind.TimeOfDay),
         result.getProperty("PropertyTimeOfDay").asPrimitive());
   }
   
@@ -159,11 +159,11 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals("olingo.odata.test1.ETBase", result.getType());
-    Assert.assertEquals(3, result.getProperties().size());
-    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
-    Assert.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
-    Assert.assertNotNull(
+    Assertions.assertEquals("olingo.odata.test1.ETBase", result.getType());
+    Assertions.assertEquals(3, result.getProperties().size());
+    Assertions.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
+    Assertions.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
+    Assertions.assertNotNull(
         result.getProperty("AdditionalPropertyString_5").asPrimitive());
   }
   
@@ -189,11 +189,11 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(3, result.getProperties().size());
+    Assertions.assertEquals(3, result.getProperties().size());
     
-    Assert.assertNull(result.getProperty("PropertyInt16").asPrimitive());
-    Assert.assertNull(result.getProperty("PropertyString").asPrimitive());
-    Assert.assertNull(
+    Assertions.assertNull(result.getProperty("PropertyInt16").asPrimitive());
+    Assertions.assertNull(result.getProperty("PropertyString").asPrimitive());
+    Assertions.assertNull(
         result.getProperty("AdditionalPropertyString_5").asPrimitive());
   }
   
@@ -243,28 +243,28 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(16, result.getProperties().size());
-    Assert.assertEquals(2, result.getNavigationBindings().size());
+    Assertions.assertEquals(16, result.getProperties().size());
+    Assertions.assertEquals(2, result.getNavigationBindings().size());
     
-    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
-    Assert.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
-    Assert.assertEquals((short) 255, result.getProperty("PropertyByte").asPrimitive());
-    Assert.assertEquals((byte) 127, result.getProperty("PropertySByte").asPrimitive());
-    Assert.assertEquals(2147483647, result.getProperty("PropertyInt32").asPrimitive());
-    Assert.assertEquals(9223372036854775807L, result.getProperty("PropertyInt64").asPrimitive());
-    Assert.assertEquals(1.79E20F, result.getProperty("PropertySingle").asPrimitive());
-    Assert.assertEquals(-1.79E19, result.getProperty("PropertyDouble").asPrimitive());
-    Assert.assertEquals(BigDecimal.valueOf(34), result.getProperty("PropertyDecimal").asPrimitive());
-    Assert.assertArrayEquals((byte[]) valueOf("ASNFZ4mrze8=", EdmPrimitiveTypeKind.Binary),
+    Assertions.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
+    Assertions.assertEquals("First Resource - positive values", result.getProperty("PropertyString").asPrimitive());
+    Assertions.assertEquals((short) 255, result.getProperty("PropertyByte").asPrimitive());
+    Assertions.assertEquals((byte) 127, result.getProperty("PropertySByte").asPrimitive());
+    Assertions.assertEquals(2147483647, result.getProperty("PropertyInt32").asPrimitive());
+    Assertions.assertEquals(9223372036854775807L, result.getProperty("PropertyInt64").asPrimitive());
+    Assertions.assertEquals(1.79E20F, result.getProperty("PropertySingle").asPrimitive());
+    Assertions.assertEquals(-1.79E19, result.getProperty("PropertyDouble").asPrimitive());
+    Assertions.assertEquals(BigDecimal.valueOf(34), result.getProperty("PropertyDecimal").asPrimitive());
+    Assertions.assertArrayEquals((byte[]) valueOf("ASNFZ4mrze8=", EdmPrimitiveTypeKind.Binary),
         (byte[]) result.getProperty("PropertyBinary").asPrimitive());
-    Assert.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
+    Assertions.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
         result.getProperty("PropertyDate").asPrimitive());
-    Assert.assertEquals(valueOf("2012-12-03T07:16:23Z", EdmPrimitiveTypeKind.DateTimeOffset),
+    Assertions.assertEquals(valueOf("2012-12-03T07:16:23Z", EdmPrimitiveTypeKind.DateTimeOffset),
         result.getProperty("PropertyDateTimeOffset").asPrimitive());
-    Assert.assertEquals(BigDecimal.valueOf(6), result.getProperty("PropertyDuration").asPrimitive());
-    Assert.assertEquals(UUID.fromString("01234567-89ab-cdef-0123-456789abcdef"),
+    Assertions.assertEquals(BigDecimal.valueOf(6), result.getProperty("PropertyDuration").asPrimitive());
+    Assertions.assertEquals(UUID.fromString("01234567-89ab-cdef-0123-456789abcdef"),
         result.getProperty("PropertyGuid").asPrimitive());
-    Assert.assertEquals(valueOf("03:26:05", EdmPrimitiveTypeKind.TimeOfDay),
+    Assertions.assertEquals(valueOf("03:26:05", EdmPrimitiveTypeKind.TimeOfDay),
         result.getProperty("PropertyTimeOfDay").asPrimitive());
   }  
 
@@ -307,26 +307,26 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals("olingo.odata.test1.ETCompAllPrim",result.getType());
+    Assertions.assertEquals("olingo.odata.test1.ETCompAllPrim",result.getType());
     
-    Assert.assertEquals(2, result.getProperties().size());
-    Assert.assertEquals(0, result.getNavigationLinks().size());
+    Assertions.assertEquals(2, result.getProperties().size());
+    Assertions.assertEquals(0, result.getNavigationLinks().size());
 
-    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
+    Assertions.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
 
-    Assert.assertNotNull(result.getProperty("PropertyComp"));
+    Assertions.assertNotNull(result.getProperty("PropertyComp"));
     Property comp = result.getProperty("PropertyComp");
-    Assert.assertEquals("olingo.odata.test1.CTAllPrim", comp.getType());
+    Assertions.assertEquals("olingo.odata.test1.CTAllPrim", comp.getType());
     ComplexValue cv = comp.asComplex();
     
-    Assert.assertEquals(16, cv.getValue().size());
+    Assertions.assertEquals(16, cv.getValue().size());
     
-    Assert.assertEquals((short) 32767, getCVProperty(cv, "PropertyInt16").asPrimitive());
-    Assert.assertEquals("First Resource - first", getCVProperty(cv, "PropertyString").asPrimitive());
-    Assert.assertEquals((short) 255, getCVProperty(cv, "PropertyByte").asPrimitive());
-    Assert.assertEquals((byte) 127, getCVProperty(cv, "PropertySByte").asPrimitive());
-    Assert.assertEquals(2147483647, getCVProperty(cv, "PropertyInt32").asPrimitive());
-    Assert.assertEquals(9223372036854775807L, getCVProperty(cv, "PropertyInt64").asPrimitive());
+    Assertions.assertEquals((short) 32767, getCVProperty(cv, "PropertyInt16").asPrimitive());
+    Assertions.assertEquals("First Resource - first", getCVProperty(cv, "PropertyString").asPrimitive());
+    Assertions.assertEquals((short) 255, getCVProperty(cv, "PropertyByte").asPrimitive());
+    Assertions.assertEquals((byte) 127, getCVProperty(cv, "PropertySByte").asPrimitive());
+    Assertions.assertEquals(2147483647, getCVProperty(cv, "PropertyInt32").asPrimitive());
+    Assertions.assertEquals(9223372036854775807L, getCVProperty(cv, "PropertyInt64").asPrimitive());
   }  
 
   private Property getCVProperty(ComplexValue cv, String name) {
@@ -381,31 +381,35 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(4, result.getProperties().size());
-    Assert.assertEquals(0, result.getNavigationLinks().size());
+    Assertions.assertEquals(4, result.getProperties().size());
+    Assertions.assertEquals(0, result.getNavigationLinks().size());
 
-    Assert.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
+    Assertions.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
         "Employee3@company.example"), result.getProperty("CollPropertyString").getValue());
 
     Property comp = result.getProperty("PropertyComp");
-    Assert.assertEquals("olingo.odata.test1.CTTwoPrim", comp.getType());
+    Assertions.assertEquals("olingo.odata.test1.CTTwoPrim", comp.getType());
     ComplexValue cv = comp.asComplex();
     
-    Assert.assertEquals(2, cv.getValue().size());
-    Assert.assertEquals((short) 111, getCVProperty(cv, "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST A", getCVProperty(cv, "PropertyString").asPrimitive());
+    Assertions.assertEquals(2, cv.getValue().size());
+    Assertions.assertEquals((short) 111, getCVProperty(cv, "PropertyInt16").asPrimitive());
+    Assertions.assertEquals("TEST A", getCVProperty(cv, "PropertyString").asPrimitive());
     
     comp = result.getProperty("CollPropertyComp");
-    Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", comp.getType());
+    Assertions.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", comp.getType());
 
     List<?> properties = comp.asCollection();
-    Assert.assertEquals(3, properties.size());
+    Assertions.assertEquals(3, properties.size());
     
-    Assert.assertEquals((short) 123, getCVProperty((ComplexValue) properties.get(0), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 1", getCVProperty((ComplexValue) properties.get(0), "PropertyString").asPrimitive());
+    Assertions.assertEquals((short) 123,
+            getCVProperty((ComplexValue) properties.get(0), "PropertyInt16").asPrimitive());
+    Assertions.assertEquals("TEST 1",
+            getCVProperty((ComplexValue) properties.get(0), "PropertyString").asPrimitive());
 
-    Assert.assertEquals((short) 789, getCVProperty((ComplexValue) properties.get(2), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 3", getCVProperty((ComplexValue) properties.get(2), "PropertyString").asPrimitive());
+    Assertions.assertEquals((short) 789,
+            getCVProperty((ComplexValue) properties.get(2), "PropertyInt16").asPrimitive());
+    Assertions.assertEquals("TEST 3",
+            getCVProperty((ComplexValue) properties.get(2), "PropertyString").asPrimitive());
   }
   
 
@@ -454,34 +458,38 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(4, result.getProperties().size());
-    Assert.assertEquals(0, result.getNavigationLinks().size());
+    Assertions.assertEquals(4, result.getProperties().size());
+    Assertions.assertEquals(0, result.getNavigationLinks().size());
 
-    Assert.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
+    Assertions.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
         "Employee3@company.example"), result.getProperty("CollPropertyString").getValue());
 
     Property comp = result.getProperty("PropertyComp");
-    Assert.assertEquals("olingo.odata.test1.CTBase", comp.getType());
+    Assertions.assertEquals("olingo.odata.test1.CTBase", comp.getType());
     ComplexValue cv = comp.asComplex();
     
-    Assert.assertEquals(3, cv.getValue().size());
-    Assert.assertEquals((short) 111, getCVProperty(cv, "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST A", getCVProperty(cv, "PropertyString").asPrimitive());
-    Assert.assertEquals("Additional", getCVProperty(cv, "AdditionalPropString").asPrimitive());
+    Assertions.assertEquals(3, cv.getValue().size());
+    Assertions.assertEquals((short) 111, getCVProperty(cv, "PropertyInt16").asPrimitive());
+    Assertions.assertEquals("TEST A", getCVProperty(cv, "PropertyString").asPrimitive());
+    Assertions.assertEquals("Additional", getCVProperty(cv, "AdditionalPropString").asPrimitive());
     
     comp = result.getProperty("CollPropertyComp");
-    Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", comp.getType());
+    Assertions.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", comp.getType());
 
     List<?> properties = comp.asCollection();
-    Assert.assertEquals(3, properties.size());
+    Assertions.assertEquals(3, properties.size());
     
-    Assert.assertEquals((short) 123, getCVProperty((ComplexValue) properties.get(0), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 1", getCVProperty((ComplexValue) properties.get(0), "PropertyString").asPrimitive());
-    Assert.assertEquals("Additional test", getCVProperty((ComplexValue) properties.get(0), "AdditionalPropString")
+    Assertions.assertEquals((short) 123,
+            getCVProperty((ComplexValue) properties.get(0), "PropertyInt16").asPrimitive());
+    Assertions.assertEquals("TEST 1",
+            getCVProperty((ComplexValue) properties.get(0), "PropertyString").asPrimitive());
+    Assertions.assertEquals("Additional test",
+            getCVProperty((ComplexValue) properties.get(0), "AdditionalPropString")
         .asPrimitive());
 
-    Assert.assertEquals((short) 789, getCVProperty((ComplexValue) properties.get(2), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 3", getCVProperty((ComplexValue) properties.get(2), "PropertyString").asPrimitive());
+    Assertions.assertEquals((short) 789,
+            getCVProperty((ComplexValue) properties.get(2), "PropertyInt16").asPrimitive());
+    Assertions.assertEquals("TEST 3", getCVProperty((ComplexValue) properties.get(2), "PropertyString").asPrimitive());
   }
   
   @Test
@@ -571,8 +579,8 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
 
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
-    Assert.assertEquals(15, result.getProperties().size());
-    Assert.assertEquals(2, result.getNavigationLinks().size());
+    Assertions.assertEquals(15, result.getProperties().size());
+    Assertions.assertEquals(2, result.getNavigationLinks().size());
     assertNotNull(result.getNavigationLinks().get(0).getInlineEntitySet()
         .getEntities().get(1).getProperty("AdditionalPropertyString_5"));
     assertNotNull(result.getNavigationLinks().get(1).getInlineEntity().getProperty("AdditionalPropertyString_5"));
@@ -614,17 +622,17 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(2, result.getProperties().size());
-    Assert.assertEquals(0, result.getNavigationLinks().size());
+    Assertions.assertEquals(2, result.getProperties().size());
+    Assertions.assertEquals(0, result.getNavigationLinks().size());
 
-    Assert.assertEquals(("[[PropertyString=TEST9876], [AdditionalPropString=TEST9889, PropertyString=TEST9889]]"), 
+    Assertions.assertEquals(("[[PropertyString=TEST9876], [AdditionalPropString=TEST9889, PropertyString=TEST9889]]"), 
         result.getProperty("CollPropertyCompAno").getValue().toString());
 
     Property comp = result.getProperty("CollPropertyCompAno");
-    Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrimAno)", comp.getType());
+    Assertions.assertEquals("Collection(olingo.odata.test1.CTTwoPrimAno)", comp.getType());
     List<? extends Object> cv = comp.asCollection();
     
-    Assert.assertEquals(2, cv.size());
+    Assertions.assertEquals(2, cv.size());
     for (Object arrayElement : cv) {
 
       assertTrue(arrayElement instanceof ComplexValue);
@@ -674,15 +682,15 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(2, result.getProperties().size());
-    Assert.assertEquals(0, result.getNavigationLinks().size());
+    Assertions.assertEquals(2, result.getProperties().size());
+    Assertions.assertEquals(0, result.getNavigationLinks().size());
 
 
     Property comp = result.getProperty("CollPropertyCompAno");
-    Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrimAno)", comp.getType());
+    Assertions.assertEquals("Collection(olingo.odata.test1.CTTwoPrimAno)", comp.getType());
     List<? extends Object> cv = comp.asCollection();
     
-    Assert.assertEquals(2, cv.size());
+    Assertions.assertEquals(2, cv.size());
     for (Object arrayElement : cv) {
 
       assertTrue(arrayElement instanceof ComplexValue);
@@ -750,14 +758,14 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     final Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(6, result.getProperties().size());
+    Assertions.assertEquals(6, result.getProperties().size());
     
-    Assert.assertEquals((short) 6, result.getProperty("PropertyEnumString").asEnum());
-    Assert.assertEquals(3, result.getProperty("CollPropertyEnumString").asCollection().size());
-    Assert.assertEquals("Test", result.getProperty("PropertyDefString").asPrimitive());
-    Assert.assertEquals(2, result.getProperty("CollPropertyDefString").asCollection().size());
-    Assert.assertEquals(4, result.getProperty("PropertyCompMixedEnumDef").asComplex().getValue().size());
-    Assert.assertEquals(1, result.getProperty("CollPropertyCompMixedEnumDef").asCollection().size());
+    Assertions.assertEquals((short) 6, result.getProperty("PropertyEnumString").asEnum());
+    Assertions.assertEquals(3, result.getProperty("CollPropertyEnumString").asCollection().size());
+    Assertions.assertEquals("Test", result.getProperty("PropertyDefString").asPrimitive());
+    Assertions.assertEquals(2, result.getProperty("CollPropertyDefString").asCollection().size());
+    Assertions.assertEquals(4, result.getProperty("PropertyCompMixedEnumDef").asComplex().getValue().size());
+    Assertions.assertEquals(1, result.getProperty("CollPropertyCompMixedEnumDef").asCollection().size());
   }
 
   @Test
@@ -806,22 +814,22 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), 
         edmEntitySet.getEntityType()).getEntity();
 
-    Assert.assertEquals(2, result.getProperties().size());
-    Assert.assertEquals(1, result.getNavigationLinks().size());
+    Assertions.assertEquals(2, result.getProperties().size());
+    Assertions.assertEquals(1, result.getNavigationLinks().size());
     
-    Assert.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
-    Assert.assertEquals("Test String4", result.getProperty("PropertyString").asPrimitive());    
+    Assertions.assertEquals((short) 32767, result.getProperty("PropertyInt16").asPrimitive());
+    Assertions.assertEquals("Test String4", result.getProperty("PropertyString").asPrimitive());    
     
-    Assert.assertEquals(1, result.getNavigationLinks().size());
+    Assertions.assertEquals(1, result.getNavigationLinks().size());
     Link navLink = result.getNavigationLinks().get(0);
-    Assert.assertEquals("http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne", navLink.getRel());
-    Assert.assertEquals("id", navLink.getBindingLink());
-    Assert.assertEquals("NavPropertyETAllPrimOne", navLink.getTitle());
+    Assertions.assertEquals("http://docs.oasis-open.org/odata/ns/related/NavPropertyETAllPrimOne", navLink.getRel());
+    Assertions.assertEquals("id", navLink.getBindingLink());
+    Assertions.assertEquals("NavPropertyETAllPrimOne", navLink.getTitle());
     
     Entity inline = navLink.getInlineEntity();
-    Assert.assertEquals(1, inline.getProperties().size());
-    Assert.assertEquals(2, inline.getNavigationBindings().size());
-    Assert.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
+    Assertions.assertEquals(1, inline.getProperties().size());
+    Assertions.assertEquals(2, inline.getNavigationBindings().size());
+    Assertions.assertEquals(valueOf("2012-12-03", EdmPrimitiveTypeKind.Date),
         inline.getProperty("PropertyDate").asPrimitive());
   } 
 
@@ -835,7 +843,7 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
         + "234</metadata:value>";
 
     Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
-    Assert.assertEquals((short) 234, result.getValue()); 
+    Assertions.assertEquals((short) 234, result.getValue()); 
   }
 
   @Test
@@ -847,7 +855,7 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
         + "metadata:null=\"true\"/>";
 
     Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
-    Assert.assertNull(result.getValue());    
+    Assertions.assertNull(result.getValue());    
   }
   
   @Test
@@ -861,7 +869,7 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
         + "<metadata:element>Employee3@company.example</metadata:element>"
         + "</metadata:value>";
     Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty).getProperty();
-    Assert.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
+    Assertions.assertEquals(Arrays.asList("Employee1@company.example", "Employee2@company.example",
         "Employee3@company.example"), result.getValue());
   }
 
@@ -879,12 +887,12 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     final Property result = deserializer.property(new ByteArrayInputStream(payload.getBytes()), edmProperty)
         .getProperty();
 
-    Assert.assertEquals("PropertyComp", result.getName());
-    Assert.assertTrue(result.isComplex());
+    Assertions.assertEquals("PropertyComp", result.getName());
+    Assertions.assertTrue(result.isComplex());
     final ComplexValue cv = result.asComplex();
-    Assert.assertEquals("olingo.odata.test1.CTTwoPrim", result.getType());
-    Assert.assertEquals((short) 123, getCVProperty(cv, "PropertyInt16").asPrimitive());
-    Assert.assertTrue(getCVProperty(cv, "PropertyString").isNull());    
+    Assertions.assertEquals("olingo.odata.test1.CTTwoPrim", result.getType());
+    Assertions.assertEquals((short) 123, getCVProperty(cv, "PropertyInt16").asPrimitive());
+    Assertions.assertTrue(getCVProperty(cv, "PropertyString").isNull());    
   }
 
   @Test
@@ -919,20 +927,20 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Entity result = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), entityType)
             .getEntity();
 
-    Assert.assertNotNull(result);
+    Assertions.assertNotNull(result);
     Property propertyCompComp = result.getProperty("PropertyCompComp");
-    Assert.assertEquals("PropertyCompComp", propertyCompComp.getName());   
-    Assert.assertEquals("olingo.odata.test1.CTCompComp", propertyCompComp.getType());
-    Assert.assertTrue(propertyCompComp.isComplex());
+    Assertions.assertEquals("PropertyCompComp", propertyCompComp.getName());   
+    Assertions.assertEquals("olingo.odata.test1.CTCompComp", propertyCompComp.getType());
+    Assertions.assertTrue(propertyCompComp.isComplex());
     
     ComplexValue complexValuePropComp = propertyCompComp.asComplex();    
     Property propertyComp = getCVProperty(complexValuePropComp, "PropertyComp");
-    Assert.assertEquals("PropertyComp", propertyComp.getName()); 
-    Assert.assertEquals("olingo.odata.test1.CTBase", propertyComp.getType());
-    Assert.assertTrue(propertyComp.isComplex());  
+    Assertions.assertEquals("PropertyComp", propertyComp.getName()); 
+    Assertions.assertEquals("olingo.odata.test1.CTBase", propertyComp.getType());
+    Assertions.assertTrue(propertyComp.isComplex());  
     
     final ComplexValue cvAdditionalString = propertyComp.asComplex();
-    Assert.assertEquals("Test123",getCVProperty(cvAdditionalString, "AdditionalPropString").asPrimitive());
+    Assertions.assertEquals("Test123",getCVProperty(cvAdditionalString, "AdditionalPropString").asPrimitive());
   }
   
   @Test
@@ -959,15 +967,15 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
 
     List<?> complexCollection = result.asCollection();
 
-    Assert.assertEquals(3, complexCollection.size());
-    Assert.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", result.getType());
-    Assert.assertEquals((short) 123,
+    Assertions.assertEquals(3, complexCollection.size());
+    Assertions.assertEquals("Collection(olingo.odata.test1.CTTwoPrim)", result.getType());
+    Assertions.assertEquals((short) 123,
         getCVProperty((ComplexValue) complexCollection.get(0), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 1",
+    Assertions.assertEquals("TEST 1",
         getCVProperty((ComplexValue) complexCollection.get(0), "PropertyString").asPrimitive());
-    Assert.assertEquals((short) 789,
+    Assertions.assertEquals((short) 789,
         getCVProperty((ComplexValue) complexCollection.get(2), "PropertyInt16").asPrimitive());
-    Assert.assertEquals("TEST 3",
+    Assertions.assertEquals("TEST 3",
         getCVProperty((ComplexValue) complexCollection.get(2), "PropertyString").asPrimitive());
   }
 
@@ -980,8 +988,8 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     
     List<URI> result = deserializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
         .getEntityReferences();    
-    Assert.assertEquals(1, result.size());
-    Assert.assertEquals("http://host/service/Orders(10643)", result.get(0).toASCIIString());
+    Assertions.assertEquals(1, result.size());
+    Assertions.assertEquals("http://host/service/Orders(10643)", result.get(0).toASCIIString());
   }
 
   @Test
@@ -995,8 +1003,8 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
 
     List<URI> result = deserializer.entityReferences(new ByteArrayInputStream(payload.getBytes()))
         .getEntityReferences();    
-    Assert.assertEquals(2, result.size());
-    Assert.assertEquals("http://host/service/Orders(10643)", result.get(0).toASCIIString());
-    Assert.assertEquals("http://host/service/Orders(10759)", result.get(1).toASCIIString());
+    Assertions.assertEquals(2, result.size());
+    Assertions.assertEquals("http://host/service/Orders(10643)", result.get(0).toASCIIString());
+    Assertions.assertEquals("http://host/service/Orders(10759)", result.get(1).toASCIIString());
   }  
 }

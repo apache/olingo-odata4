@@ -30,8 +30,8 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.uri.parser.UriParserSemanticException;
 import org.apache.olingo.server.core.uri.parser.UriParserSyntaxException;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Generic test for all exceptions which inherit from ODataTranslatedException
@@ -65,7 +65,7 @@ public class TranslatedExceptionSubclassesTest {
     for (ODataLibraryException.MessageKey messageKey : messageKeys) {
       String propKey = clazz.getSimpleName() + "." + messageKey.toString();
       String value = properties.getProperty(propKey);
-      Assert.assertNotNull("No value found for message key '" + propKey + "'", value);
+      Assertions.assertNotNull("No value found for message key '" + propKey + "'", value);
       //
       int paraCount = countParameters(value);
       Constructor<? extends ODataLibraryException> ctor =
@@ -82,9 +82,9 @@ public class TranslatedExceptionSubclassesTest {
         Formatter formatter = new Formatter();
         String formattedValue = formatter.format(value, (Object[]) paras).toString();
         formatter.close();
-        Assert.assertEquals(formattedValue, translatedException.getTranslatedMessage(null).getMessage());
-        Assert.assertEquals(formattedValue, translatedException.getLocalizedMessage());
-        Assert.assertEquals(developerMessage, translatedException.getMessage());
+        Assertions.assertEquals(formattedValue, translatedException.getTranslatedMessage(null).getMessage());
+        Assertions.assertEquals(formattedValue, translatedException.getLocalizedMessage());
+        Assertions.assertEquals(developerMessage, translatedException.getMessage());
       }
     }
   }

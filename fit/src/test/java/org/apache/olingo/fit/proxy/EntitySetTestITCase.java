@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * This is the unit test class to check basic feed operations.
@@ -34,7 +34,7 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   @Test
   public void count() {
     assertNotNull(container.getOrders());
-    Assert.assertEquals(2, container.getOrders().count().longValue());
+    assertEquals(2, container.getOrders().count().longValue());
   }
 
   @Test

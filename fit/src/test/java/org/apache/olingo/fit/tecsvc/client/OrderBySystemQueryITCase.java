@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 
@@ -29,8 +29,8 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientValuable;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
 
@@ -150,7 +150,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   private void fail(final String entitySet, final String filterString, final HttpStatusCode errorCode) {
     try {
       sendRequest(entitySet, filterString);
-      Assert.fail();
+      Assertions.fail();
     } catch (ODataClientErrorException e) {
       assertEquals(errorCode.getStatusCode(), e.getStatusLine().getStatusCode());
     }

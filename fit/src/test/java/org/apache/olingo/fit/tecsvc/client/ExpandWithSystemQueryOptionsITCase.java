@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URI;
 import java.util.Collections;
@@ -37,7 +37,7 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.uri.QueryOption;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCase {
 

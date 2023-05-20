@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.core.deserializer.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -39,7 +39,7 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ODataJsonDeserializerWithInstanceAnnotationsTest extends AbstractODataDeserializerTest {
 

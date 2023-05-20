@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.fit.base;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URI;
 
@@ -35,9 +35,9 @@ import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.http.DefaultHttpClientFactory;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.CXFOAuth2HttpClientFactory;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OAuth2TestITCase extends AbstractTestITCase {
 
@@ -49,13 +49,13 @@ public class OAuth2TestITCase extends AbstractTestITCase {
 
   private EdmEnabledODataClient _edmClient;
 
-  @BeforeClass
+  @BeforeAll
   public static void enableOAuth2() {
     client.getConfiguration().setHttpClientFactory(
         new CXFOAuth2HttpClientFactory(OAUTH2_GRANT_SERVICE_URI, OAUTH2_TOKEN_SERVICE_URI));
   }
 
-  @AfterClass
+  @AfterAll
   public static void disableOAuth2() {
     client.getConfiguration().setHttpClientFactory(new DefaultHttpClientFactory());
   }

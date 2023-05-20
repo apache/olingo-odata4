@@ -39,8 +39,8 @@ package org.apache.olingo.commons.core.edm;
  import org.apache.olingo.commons.api.edm.provider.CsdlSchema;
  import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
-import org.junit.Assert;
- import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.Test;
  
  public class CrossServiceTest {
  
@@ -152,86 +152,86 @@ import org.junit.Assert;
   public void entityType() throws Exception {
     final FullQualifiedName typeName = new FullQualifiedName("Namespace.One", "EntityTypeOne");
     final EdmEntityType entityType = edm1.getEntityType(typeName);
-    Assert.assertNotNull(entityType);
-    Assert.assertNotNull(entityType.getNavigationProperty("NavigationTwo"));
+    Assertions.assertNotNull(entityType);
+    Assertions.assertNotNull(entityType.getNavigationProperty("NavigationTwo"));
 
     // We get an entity type in a foreign namespace if it is used in our namespace.
     final EdmEntityType targetType = entityType.getNavigationProperty("NavigationTwo").getType();
-    Assert.assertNotNull(targetType);
+    Assertions.assertNotNull(targetType);
     final FullQualifiedName targetName = new FullQualifiedName("Namespace.Two", "EntityTypeTwo");
-    Assert.assertEquals(targetName, targetType.getFullQualifiedName());
+    Assertions.assertEquals(targetName, targetType.getFullQualifiedName());
 
     // Directly accessing the foreign type is also possible.
-    Assert.assertNotNull(edm1.getEntityType(targetName));
-    Assert.assertEquals(targetType, edm1.getEntityType(targetName));
+    Assertions.assertNotNull(edm1.getEntityType(targetName));
+    Assertions.assertEquals(targetType, edm1.getEntityType(targetName));
 
     // However, the schema contains only elements from the own namespace.
     final List<EdmEntityType> entityTypes = edm1.getSchema("Namespace.One").getEntityTypes();
-    Assert.assertNotNull(entityTypes);
-    Assert.assertEquals(1, entityTypes.size());
-    Assert.assertEquals(typeName, entityTypes.get(0).getFullQualifiedName());
+    Assertions.assertNotNull(entityTypes);
+    Assertions.assertEquals(1, entityTypes.size());
+    Assertions.assertEquals(typeName, entityTypes.get(0).getFullQualifiedName());
 
     // The foreign service has the foreign type available, both directly and in its schema.
-    Assert.assertNotNull(edm2.getEntityType(targetName));
-    Assert.assertEquals(targetName, edm2.getEntityType(targetName).getFullQualifiedName());
-    Assert.assertEquals(targetName,
+    Assertions.assertNotNull(edm2.getEntityType(targetName));
+    Assertions.assertEquals(targetName, edm2.getEntityType(targetName).getFullQualifiedName());
+    Assertions.assertEquals(targetName,
         edm2.getSchema("AliasTwo").getEntityTypes().get(0).getFullQualifiedName());
 
     // Alias access is also supported.
-    Assert.assertNotNull(edm1.getEntityType(new FullQualifiedName("AliasOne", "EntityTypeOne")));
+    Assertions.assertNotNull(edm1.getEntityType(new FullQualifiedName("AliasOne", "EntityTypeOne")));
 
     // A wrong name leads to null result.
-    Assert.assertNull(edm1.getEntityType(new FullQualifiedName("AliasOne", "EntityTypeWrong")));
-    Assert.assertNull(edm1.getEntityType(new FullQualifiedName("AliasTwo", "EntityTypeWrong")));
-    Assert.assertNull(edm1.getEntityType(new FullQualifiedName("AliasWrong", "EntityTypeOne")));
+    Assertions.assertNull(edm1.getEntityType(new FullQualifiedName("AliasOne", "EntityTypeWrong")));
+    Assertions.assertNull(edm1.getEntityType(new FullQualifiedName("AliasTwo", "EntityTypeWrong")));
+    Assertions.assertNull(edm1.getEntityType(new FullQualifiedName("AliasWrong", "EntityTypeOne")));
   }
 
   @Test
   public void entityContainer() throws Exception {
-    Assert.assertNotNull(edm1.getEntityContainer());
-    Assert.assertNotNull(edm1.getEntityContainer(new FullQualifiedName("Namespace.One", "ContainerOne")));
-    Assert.assertEquals(edm1.getEntityContainer(),
+    Assertions.assertNotNull(edm1.getEntityContainer());
+    Assertions.assertNotNull(edm1.getEntityContainer(new FullQualifiedName("Namespace.One", "ContainerOne")));
+    Assertions.assertEquals(edm1.getEntityContainer(),
         edm1.getEntityContainer(new FullQualifiedName("Namespace.One", "ContainerOne")));
-    Assert.assertEquals(edm1.getEntityContainer(),
+    Assertions.assertEquals(edm1.getEntityContainer(),
         edm1.getEntityContainer(new FullQualifiedName("AliasOne", "ContainerOne")));
-    Assert.assertNotNull(edm1.getEntityContainer(new FullQualifiedName("AliasTwo", "ContainerTwo")));
+    Assertions.assertNotNull(edm1.getEntityContainer(new FullQualifiedName("AliasTwo", "ContainerTwo")));
 
     // A wrong name leads to null result.
-    Assert.assertNull(edm1.getEntityContainer(new FullQualifiedName("AliasTwo", "ContainerOne")));
-    Assert.assertNull(edm1.getEntityContainer(new FullQualifiedName("AliasWrong", "ContainerOne")));
+    Assertions.assertNull(edm1.getEntityContainer(new FullQualifiedName("AliasTwo", "ContainerOne")));
+    Assertions.assertNull(edm1.getEntityContainer(new FullQualifiedName("AliasWrong", "ContainerOne")));
   }
 
   @Test
   public void entitySet() throws Exception {
     final EdmEntitySet entitySet = edm1.getEntityContainer(new FullQualifiedName("AliasTwo", "ContainerTwo"))
         .getEntitySet("EntitySetTwo");
-    Assert.assertNotNull(entitySet);
-    Assert.assertEquals("EntitySetTwo", entitySet.getName());
-    Assert.assertNotNull(entitySet.getEntityType());
-    Assert.assertEquals("EntityTypeTwo", entitySet.getEntityType().getName());
+    Assertions.assertNotNull(entitySet);
+    Assertions.assertEquals("EntitySetTwo", entitySet.getName());
+    Assertions.assertNotNull(entitySet.getEntityType());
+    Assertions.assertEquals("EntityTypeTwo", entitySet.getEntityType().getName());
 
     // A wrong name leads to null result.
-    Assert.assertNull(edm1.getEntityContainer().getEntitySet("EntitySetTwo"));
-    Assert.assertNull(
+    Assertions.assertNull(edm1.getEntityContainer().getEntitySet("EntitySetTwo"));
+    Assertions.assertNull(
         edm1.getEntityContainer(new FullQualifiedName("AliasTwo", "ContainerTwo")).getEntitySet("EntitySetOne"));
   }
 
   @Test
   public void schema() throws Exception {
-    Assert.assertNotNull(edm1.getSchemas());
-    Assert.assertEquals(1, edm1.getSchemas().size());
-    Assert.assertEquals("AliasOne", edm1.getSchemas().get(0).getAlias());
-    Assert.assertNotNull(edm1.getSchemas().get(0).getEntityTypes());
-    Assert.assertEquals(1, edm1.getSchemas().get(0).getEntityTypes().size());
-    Assert.assertEquals(new FullQualifiedName("Namespace.One", "EntityTypeOne"),
+    Assertions.assertNotNull(edm1.getSchemas());
+    Assertions.assertEquals(1, edm1.getSchemas().size());
+    Assertions.assertEquals("AliasOne", edm1.getSchemas().get(0).getAlias());
+    Assertions.assertNotNull(edm1.getSchemas().get(0).getEntityTypes());
+    Assertions.assertEquals(1, edm1.getSchemas().get(0).getEntityTypes().size());
+    Assertions.assertEquals(new FullQualifiedName("Namespace.One", "EntityTypeOne"),
         edm1.getSchemas().get(0).getEntityTypes().get(0).getFullQualifiedName());
   }
 
   @Test
   public void entitySets() throws Exception {
-    Assert.assertNotNull(edm1.getEntityContainer());
-    Assert.assertNotNull(edm1.getEntityContainer().getEntitySets());
-    Assert.assertEquals(1, edm1.getEntityContainer().getEntitySets().size());
-    Assert.assertEquals("EntitySetOne", edm1.getEntityContainer().getEntitySets().get(0).getName());
+    Assertions.assertNotNull(edm1.getEntityContainer());
+    Assertions.assertNotNull(edm1.getEntityContainer().getEntitySets());
+    Assertions.assertEquals(1, edm1.getEntityContainer().getEntitySets().size());
+    Assertions.assertEquals("EntitySetOne", edm1.getEntityContainer().getEntitySets().get(0).getName());
   }
 }

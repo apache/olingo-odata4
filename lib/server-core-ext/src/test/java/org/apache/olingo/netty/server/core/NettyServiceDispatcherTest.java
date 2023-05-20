@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.netty.server.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,8 +39,8 @@ import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.core.MetadataParser;
 import org.apache.olingo.server.core.SchemaBasedEdmProvider;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import io.netty.buffer.Unpooled;
@@ -56,7 +56,7 @@ public class NettyServiceDispatcherTest {
   ODataNetty odata = ODataNetty.newInstance();
   SchemaBasedEdmProvider provider = null;
   
-  @Before
+  @BeforeEach
   public void beforeTest() throws Exception {
     MetadataParser parser = new MetadataParser();
     parser.parseAnnotations(true);

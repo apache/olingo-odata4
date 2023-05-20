@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -33,7 +33,7 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PersonCom
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.ProductCollection;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.ProductCollectionComposableInvoker;
 // CHECKSTYLE:ON (Maven checkstyle)
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {
 

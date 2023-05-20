@@ -35,7 +35,7 @@ import org.apache.olingo.server.core.uri.validator.UriValidationException;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests of the URI parser as a whole - please put more specific tests elsewhere. */
 public class UriParserTest {

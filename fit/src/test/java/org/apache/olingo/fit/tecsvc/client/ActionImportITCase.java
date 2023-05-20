@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -45,7 +45,7 @@ import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ActionImportITCase extends AbstractParamTecSvcITCase {
 
@@ -318,8 +318,7 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
 
   private <T extends ClientInvokeResult> ODataInvokeResponse<T> callAction(final String name,
       final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal) {
-    assumeTrue("The client would send wrongly formatted parameters in XML.",
-        parameters == null || parameters.isEmpty() || isJson());  // TODO: XML case
+    assumeTrue(parameters == null || parameters.isEmpty() || isJson(), "The client would send wrongly formatted parameters in XML.");  // TODO: XML case
     final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment(name).build();
     ODataInvokeRequest<T> request = getClient().getInvokeRequestFactory()
         .getActionInvokeRequest(actionURI, resultRef, parameters);

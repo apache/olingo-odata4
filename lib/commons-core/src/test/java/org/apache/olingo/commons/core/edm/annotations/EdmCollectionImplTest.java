@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.commons.core.edm.annotations;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrCompar
 import org.apache.olingo.commons.api.edm.provider.annotation.CsdlLogicalOrComparisonExpression.LogicalOrComparisonExpressionType;
 //CHECKSTYLE:ON
 import org.apache.olingo.commons.core.edm.annotation.AbstractEdmExpression;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EdmCollectionImplTest extends AbstractAnnotationTest {
 

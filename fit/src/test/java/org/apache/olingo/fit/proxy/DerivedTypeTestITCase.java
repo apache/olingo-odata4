@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -33,7 +33,7 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.CustomerCollection;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
 // CHECKSTYLE:ON (Maven checkstyle)
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DerivedTypeTestITCase extends AbstractTestITCase {
 

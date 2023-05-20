@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.serializer.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +32,8 @@ import org.apache.olingo.commons.api.edm.EdmEntityType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.server.api.OData;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class ContextURLBuilderTest {
@@ -105,11 +106,13 @@ public class ContextURLBuilderTest {
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void buildDerivedEntitySetWithoutEntitySet() {
     EdmEntityType derivedType = Mockito.mock(EdmEntityType.class);
     Mockito.when(derivedType.getFullQualifiedName()).thenReturn(new FullQualifiedName("Model", "VipCustomer"));
-    ContextURLBuilder.create(ContextURL.with().derived(derivedType).build());
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      ContextURLBuilder.create(ContextURL.with().derived(derivedType).build());
+    });
   }
 
   @Test
@@ -183,9 +186,11 @@ public class ContextURLBuilderTest {
         ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void buildSuffixWithoutEntitySet() {
-    ContextURLBuilder.create(ContextURL.with().suffix(Suffix.ENTITY).build());
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      ContextURLBuilder.create(ContextURL.with().suffix(Suffix.ENTITY).build());
+    });
   }
 
   @Test
@@ -194,11 +199,13 @@ public class ContextURLBuilderTest {
     assertEquals("../$metadata#$ref", ContextURLBuilder.create(contextURL).toASCIIString());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void buildReferenceWithEntitySet() {
     EdmEntitySet entitySet = mock(EdmEntitySet.class);
     when(entitySet.getName()).thenReturn("Customers");
-    ContextURLBuilder.create(ContextURL.with().entitySet(entitySet).suffix(Suffix.REFERENCE).build());
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      ContextURLBuilder.create(ContextURL.with().entitySet(entitySet).suffix(Suffix.REFERENCE).build());
+    });
   }
 
   @Test

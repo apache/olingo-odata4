@@ -77,12 +77,13 @@ import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ODataXmlSerializerTest {
   private static final ServiceMetadata metadata = new ServiceMetadataImpl(
@@ -96,7 +97,7 @@ public class ODataXmlSerializerTest {
   private final ODataSerializer serializer = new ODataXmlSerializer();
   private final UriHelper helper = new UriHelperImpl();
 
-  @BeforeClass
+  @BeforeAll
   public static void setup() {
     XMLUnit.setIgnoreComments(true);
     XMLUnit.setIgnoreAttributeOrder(true);
@@ -434,15 +435,17 @@ public class ODataXmlSerializerTest {
     checkXMLEqual(expected, resultString);
   }
 
-  @Test(expected = SerializerException.class)
+  @Test
   public void entityAllPrimKeyNull() throws Exception {
     final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESAllPrim");
     Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
     entity.getProperties().clear();
-    serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
-        EntitySerializerOptions.with()
-            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
-            .build());
+    Assertions.assertThrows(SerializerException.class, () -> {
+      serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+              EntitySerializerOptions.with()
+                      .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+                      .build());
+    });
   }
 
   @Test
@@ -455,12 +458,12 @@ public class ODataXmlSerializerTest {
           EntitySerializerOptions.with()
               .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
               .build());
-      Assert.fail("Expected exception not thrown!");
+      Assertions.fail("Expected exception not thrown!");
     } catch (final SerializerException e) {
-      Assert.assertEquals(SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, e.getMessageKey());
+      Assertions.assertEquals(SerializerException.MessageKeys.WRONG_PROPERTY_VALUE, e.getMessageKey());
       final String message = e.getLocalizedMessage();
-      Assert.assertThat(message, CoreMatchers.containsString("PropertyInt16"));
-      Assert.assertThat(message, CoreMatchers.containsString("false"));
+      assertThat(message, CoreMatchers.containsString("PropertyInt16"));
+      assertThat(message, CoreMatchers.containsString("false"));
     }
   }
 
@@ -491,7 +494,7 @@ public class ODataXmlSerializerTest {
         + "<a:link rel=\"next\" href=\"/next\"></a:link>"
         + "<a:entry m:etag=\"W/&quot;32767&quot;\">"
         + "<a:id>ESCompAllPrim(32767)</a:id><a:title></a:title><a:summary></a:summary>";
-    Assert.assertTrue(resultString.startsWith(prefix));
+    Assertions.assertTrue(resultString.startsWith(prefix));
   }
 
   @Test
@@ -1280,7 +1283,7 @@ public class ODataXmlSerializerTest {
         .entity(metadata, edmEntitySet.getEntityType(), entity, null).getContent();
     final String resultString = IOUtils.toString(result);
     final String expectedResult = "{\"PropertyInt16\":32766,\"PropertyString\":\"Test String1\"}";
-    Assert.assertEquals(expectedResult, resultString);
+    Assertions.assertEquals(expectedResult, resultString);
   }
 
   @Test
@@ -1297,7 +1300,7 @@ public class ODataXmlSerializerTest {
         + "{\"PropertyInt16\":-365,\"PropertyString\":\"Test String2\"},"
         + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"
         + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}";
-    Assert.assertEquals(expectedResult, resultString);
+    Assertions.assertEquals(expectedResult, resultString);
   }
 
   @Test
@@ -2706,7 +2709,7 @@ public class ODataXmlSerializerTest {
         + "m:context=\"../$metadata#ESAllPrim(32767)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\">"
         + "First Resource - positive values</m:value>";
-    Assert.assertEquals(expected, resultString);
+    Assertions.assertEquals(expected, resultString);
   }
 
   @Test
@@ -2730,7 +2733,7 @@ public class ODataXmlSerializerTest {
         + "m:context=\"../$metadata#ESAllPrim(32767)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\">"
         + "abXXcdXX</m:value>";
-    Assert.assertEquals(expected, resultString);
+    Assertions.assertEquals(expected, resultString);
   }
   
   @Test
@@ -2750,7 +2753,7 @@ public class ODataXmlSerializerTest {
         + "m:context=\"../$metadata#ESAllPrim(4242)/PropertyString\" "
         + "m:metadata-etag=\"metadataETag\" "
         + "m:null=\"true\"></m:value>";
-    Assert.assertEquals(expected, response);
+    Assertions.assertEquals(expected, response);
   }
 
   @Test
@@ -3388,6 +3391,6 @@ public class ODataXmlSerializerTest {
         + "</m:element><m:element><d:PropertyInt16 m:type=\"Int16\">2</d:PropertyInt16>"
         + "</m:element><m:element><d:PropertyInt16 m:type=\"Int16\">3</d:PropertyInt16>"
         + "</m:element></m:value>";
-    Assert.assertEquals(expectedResult, resultString);
+    Assertions.assertEquals(expectedResult, resultString);
   }
 }

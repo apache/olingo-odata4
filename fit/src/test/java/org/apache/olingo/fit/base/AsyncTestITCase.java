@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.fit.base;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.util.List;
@@ -38,8 +38,8 @@ import org.apache.olingo.client.api.domain.ClientLink;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {
 
@@ -100,13 +100,13 @@ public class AsyncTestITCase extends AbstractTestITCase {
     assertTrue(found);
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void withInlineEntryAsAtom() {
     withInlineEntry(ContentType.APPLICATION_ATOM_XML);
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void withInlineEntryAsJSON() {
     // this needs to be full, otherwise there is no mean to recognize links

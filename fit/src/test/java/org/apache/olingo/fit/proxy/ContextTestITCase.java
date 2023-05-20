@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -35,7 +35,7 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.InMemoryEntitie
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Address;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Employee;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Person;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ContextTestITCase extends AbstractTestITCase {
 

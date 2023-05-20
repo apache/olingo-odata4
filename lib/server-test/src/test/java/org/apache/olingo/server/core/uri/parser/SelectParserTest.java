@@ -35,7 +35,7 @@ import org.apache.olingo.server.tecsvc.provider.EnumTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.FunctionProvider;
 import org.apache.olingo.server.tecsvc.provider.PropertyProvider;
 import org.apache.olingo.server.tecsvc.provider.TypeDefinitionProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests of the parts of the URI parser that parse the sytem query option $select. */
 public class SelectParserTest {

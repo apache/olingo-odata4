@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.server.core.deserializer.json;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -29,7 +29,8 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ODataJsonDeserializerBasicTest {
 
@@ -115,32 +116,40 @@ public class ODataJsonDeserializerBasicTest {
     assertEquals(0, entityReferences.size());
   }
 
-  @Test(expected = DeserializerException.class)
-  public void referencesEmpty() throws Exception {
+  @Test
+  public void referencesEmpty() {
     /*
      * See OData JSON Format chapter 13
      * ... the object that MUST contain the id of the referenced entity
      */
     InputStream stream = new ByteArrayInputStream(new byte[] { '{', '}' });
-    deserializer.entityReferences(stream).getEntityReferences();
+    Assertions.assertThrows(DeserializerException.class, () -> {
+      deserializer.entityReferences(stream).getEntityReferences();
+    });
   }
 
-  @Test(expected = DeserializerException.class)
-  public void referencesNoContent() throws Exception {
-    deserializer.entityReferences(new ByteArrayInputStream(new byte[] {}));
+  @Test
+  public void referencesNoContent() {
+    Assertions.assertThrows(DeserializerException.class, () -> {
+      deserializer.entityReferences(new ByteArrayInputStream(new byte[]{}));
+    });
   }
 
-  @Test(expected = DeserializerException.class)
-  public void referencesInvalidJson() throws Exception {
-    deserializer.entityReferences(new ByteArrayInputStream(new byte[] { 'A' }));
+  @Test
+  public void referencesInvalidJson() {
+    Assertions.assertThrows(DeserializerException.class, () -> {
+      deserializer.entityReferences(new ByteArrayInputStream(new byte[]{'A'}));
+    });
   }
 
-  @Test(expected = DeserializerException.class)
-  public void referenceValueIsNotAnArray() throws Exception {
+  @Test
+  public void referenceValueIsNotAnArray() {
     String entityString = "{" +
         "  \"@odata.context\": \"$metadata#Collection($ref)\"," +
         "  \"value\": \"ESAllPrim(0)\"" + // This is not allowed. Value must be followed by an array
         "}";
-    deserializer.entityReferences(new ByteArrayInputStream(entityString.getBytes()));
+    Assertions.assertThrows(DeserializerException.class, () -> {
+      deserializer.entityReferences(new ByteArrayInputStream(entityString.getBytes()));
+    });
   }
 }

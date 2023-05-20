@@ -18,13 +18,13 @@
  */
 package org.apache.olingo.commons.core.edm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.olingo.commons.api.edm.EdmException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ActionMapKeyTest {
 
@@ -81,7 +81,7 @@ public class ActionMapKeyTest {
     someKey = new ActionMapKey(fqn, fqnType, false);
     assertEquals(key, someKey);
 
-    key = new ActionMapKey(fqn, fqnType, new Boolean(false));
+    key = new ActionMapKey(fqn, fqnType, false);
     someKey = new ActionMapKey(fqn, fqnType, false);
     assertEquals(key, someKey);
 
@@ -90,7 +90,7 @@ public class ActionMapKeyTest {
     assertNotSame(key, someKey);
 
     key = new ActionMapKey(fqn, fqnType, true);
-    someKey = new ActionMapKey(fqn, fqnType, new Boolean(false));
+    someKey = new ActionMapKey(fqn, fqnType, false);
     assertNotSame(key, someKey);
   }
 
@@ -103,7 +103,7 @@ public class ActionMapKeyTest {
     someKey = new ActionMapKey(fqn, fqnType, false);
     assertEquals(key.hashCode(), someKey.hashCode());
 
-    key = new ActionMapKey(fqn, fqnType, new Boolean(false));
+    key = new ActionMapKey(fqn, fqnType, false);
     someKey = new ActionMapKey(fqn, fqnType, false);
     assertEquals(key.hashCode(), someKey.hashCode());
 
@@ -112,7 +112,7 @@ public class ActionMapKeyTest {
     assertNotSame(key.hashCode(), someKey.hashCode());
 
     key = new ActionMapKey(fqn, fqnType, true);
-    someKey = new ActionMapKey(fqn, fqnType, new Boolean(false));
+    someKey = new ActionMapKey(fqn, fqnType, false);
     assertNotSame(key.hashCode(), someKey.hashCode());
   }
 

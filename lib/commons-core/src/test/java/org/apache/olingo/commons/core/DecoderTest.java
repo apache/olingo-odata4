@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.commons.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -62,28 +63,38 @@ public class DecoderTest {
     assertEquals(String.valueOf(Character.toChars(0x1F603)), Decoder.decode("%f0%9f%98%83"));
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void wrongCharacter() {
-    Decoder.decode("%20ä");
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      Decoder.decode("%20ä");
+    });
   }
 
-  @Test(expected = NumberFormatException.class)
+  @Test
   public void wrongPercentNumber() {
-    Decoder.decode("%-3");
+    Assertions.assertThrows(NumberFormatException.class, () -> {
+      Decoder.decode("%-3");
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void wrongPercentPercent() {
-    Decoder.decode("%%a");
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      Decoder.decode("%%a");
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void unfinishedPercent() {
-    Decoder.decode("%a");
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      Decoder.decode("%a");
+    });
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void nullByte() {
-    Decoder.decode("%\u0000ff");
+    Assertions.assertThrows(IllegalArgumentException.class, () -> {
+      Decoder.decode("%\u0000ff");
+    });
   }
 }

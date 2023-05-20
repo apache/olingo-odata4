@@ -18,14 +18,14 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.olingo.ext.proxy.api.ODataFlushException;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.Customer;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.StoredPI;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This is the unit test class to check actions overloading.

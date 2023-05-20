@@ -18,12 +18,12 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,8 +46,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlEdmProvider;
 import org.apache.olingo.commons.api.edm.provider.CsdlTerm;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.EdmTermImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class EdmTermImplTest {
 
@@ -76,7 +76,7 @@ public class EdmTermImplTest {
     }
   }
 
-  @Before
+  @BeforeEach
   public void setupTypes() throws Exception {
     CsdlEdmProvider provider = mock(CsdlEdmProvider.class);
     EdmProviderImpl edm = new EdmProviderImpl(provider);
@@ -101,10 +101,10 @@ public class EdmTermImplTest {
     derivedCsdlTerm.setAnnotations(csdlAnnotations);
 
     derivedCsdlTerm.setNullable(false);
-    derivedCsdlTerm.setMaxLength(new Integer(15));
+    derivedCsdlTerm.setMaxLength(15);
     derivedCsdlTerm.setDefaultValue("abc");
-    derivedCsdlTerm.setPrecision(new Integer(14));
-    derivedCsdlTerm.setScale(new Integer(13));
+    derivedCsdlTerm.setPrecision(14);
+    derivedCsdlTerm.setScale(13);
 
     when(provider.getTerm(derivedTermName)).thenReturn(derivedCsdlTerm);
     derivedTerm = new EdmTermImpl(edm, "namespace", derivedCsdlTerm);
@@ -150,9 +150,9 @@ public class EdmTermImplTest {
     // set facets
     assertFalse(derivedTerm.isNullable());
     assertEquals("abc", derivedTerm.getDefaultValue());
-    assertEquals(new Integer(15), derivedTerm.getMaxLength());
-    assertEquals(new Integer(14), derivedTerm.getPrecision());
-    assertEquals(new Integer(13), derivedTerm.getScale());
+    assertEquals(15, derivedTerm.getMaxLength());
+    assertEquals(14, derivedTerm.getPrecision());
+    assertEquals(13, derivedTerm.getScale());
     assertNull(derivedTerm.getSrid());
   }
 

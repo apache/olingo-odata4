@@ -18,10 +18,10 @@
  */
 package org.apache.olingo.server.core.uri.testutil;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -106,10 +106,9 @@ public class TestUriValidator implements TestValidator {
   public ResourceValidator goPath() {
     assertNotNull(uriInfo);
     assertNotNull(uriInfo.getKind());
-    assertTrue("invalid resource kind: " + uriInfo.getKind().toString(),
-        uriInfo.getKind() == UriInfoKind.resource
+    assertTrue(uriInfo.getKind() == UriInfoKind.resource
         || uriInfo.getKind() == UriInfoKind.all
-        || uriInfo.getKind() == UriInfoKind.crossjoin);
+        || uriInfo.getKind() == UriInfoKind.crossjoin, "invalid resource kind: " + uriInfo.getKind().toString());
     return new ResourceValidator()
         .setUpValidator(this)
         .setEdm(edm)
@@ -118,19 +117,19 @@ public class TestUriValidator implements TestValidator {
 
   public FilterValidator goFilter() {
     final FilterOption filter = uriInfo.getFilterOption();
-    assertNotNull("no filter found", filter);
+    assertNotNull(filter, "no filter found");
     return new FilterValidator().setValidator(this).setFilter(filter);
   }
 
   public ExpandValidator goExpand() {
     final ExpandOption expand = uriInfo.getExpandOption();
-    assertNotNull("no expand found", expand);
+    assertNotNull(expand, "no expand found");
     return new ExpandValidator().setUpValidator(this).setExpand(expand);
   }
 
   public ResourceValidator goSelectItemPath(final int index) {
     final SelectOption select = uriInfo.getSelectOption();
-    assertNotNull("no select found", select);
+    assertNotNull(select, "no select found");
     final SelectItem item = select.getSelectItems().get(index);
     return new ResourceValidator()
         .setUpValidator(this)
@@ -140,7 +139,7 @@ public class TestUriValidator implements TestValidator {
 
   public TestUriValidator isSelectStartType(final int index, final FullQualifiedName fullName) {
     final SelectOption select = uriInfo.getSelectOption();
-    assertNotNull("no select found", select);
+    assertNotNull(select, "no select found");
     final SelectItem item = select.getSelectItems().get(index);
     assertEquals(fullName, item.getStartTypeFilter().getFullQualifiedName());
     return this;
@@ -148,7 +147,7 @@ public class TestUriValidator implements TestValidator {
 
   public TestUriValidator isSelectItemStar(final int index) {
     final SelectOption select = uriInfo.getSelectOption();
-    assertNotNull("no select found", select);
+    assertNotNull(select, "no select found");
     final SelectItem item = select.getSelectItems().get(index);
     assertTrue(item.isStar());
     return this;
@@ -156,7 +155,7 @@ public class TestUriValidator implements TestValidator {
 
   public TestUriValidator isSelectItemAllOp(final int index, final FullQualifiedName fqn) {
     final SelectOption select = uriInfo.getSelectOption();
-    assertNotNull("no select found", select);
+    assertNotNull(select, "no select found");
     final SelectItem item = select.getSelectItems().get(index);
     assertEquals(fqn, item.getAllOperationsInSchemaNameSpace());
     return this;
@@ -166,7 +165,7 @@ public class TestUriValidator implements TestValidator {
   public TestUriValidator isKind(final UriInfoKind kind) {
     assertNotNull(uriInfo);
     assertNotNull(uriInfo.getKind());
-    assertEquals("invalid resource kind: " + uriInfo.getKind().toString(), kind, uriInfo.getKind());
+    assertEquals(kind, uriInfo.getKind(), "invalid resource kind: " + uriInfo.getKind().toString());
     return this;
   }
 
@@ -196,7 +195,7 @@ public class TestUriValidator implements TestValidator {
   }
 
   public TestUriValidator isSearchSerialized(final String serialized) {
-    assertNotNull("no search found", uriInfo.getSearchOption());
+    assertNotNull(uriInfo.getSearchOption(), "no search found");
     assertEquals(serialized, uriInfo.getSearchOption().getSearchExpression().toString());
     return this;
   }
@@ -210,7 +209,7 @@ public class TestUriValidator implements TestValidator {
     assertNotNull(uriInfo);
 
     final List<CustomQueryOption> list = uriInfo.getCustomQueryOptions();
-    assertTrue("not enough queryParameters", list.size() > index);
+    assertTrue(list.size() > index, "not enough queryParameters");
 
     CustomQueryOption option = list.get(index);
     assertEquals(name, option.getName());

@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.server.core.edm.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +40,8 @@ import org.apache.olingo.commons.api.edm.provider.CsdlReturnType;
 import org.apache.olingo.commons.core.edm.EdmProviderImpl;
 import org.apache.olingo.commons.core.edm.EdmReturnTypeImpl;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EdmReturnTypeImplTest {
 
@@ -91,12 +92,14 @@ public class EdmReturnTypeImplTest {
     assertTrue(cachedType == typeImpl.getType());
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void invalidPrimitiveType() {
     CsdlReturnType providerType = new CsdlReturnType().setType(
         new FullQualifiedName("Edm", "wrong")).setCollection(true);
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
-    typeImpl.getType();
+    Assertions.assertThrows(EdmException.class, () -> {
+      typeImpl.getType();
+    });
   }
 
   @Test
@@ -147,11 +150,13 @@ public class EdmReturnTypeImplTest {
     assertEquals(edmType, returnedType);
   }
 
-  @Test(expected = EdmException.class)
+  @Test
   public void invalidType() {
     CsdlReturnType providerType = new CsdlReturnType().setType(new FullQualifiedName("wrong", "wrong"));
     EdmReturnType typeImpl = new EdmReturnTypeImpl(mock(EdmProviderImpl.class), providerType);
-    typeImpl.getType();
+    Assertions.assertThrows(EdmException.class, () -> {
+      typeImpl.getType();
+    });
   }
 
 }

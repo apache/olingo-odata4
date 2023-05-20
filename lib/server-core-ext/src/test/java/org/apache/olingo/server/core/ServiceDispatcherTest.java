@@ -18,9 +18,9 @@
  */
 package org.apache.olingo.server.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileReader;
@@ -60,7 +60,7 @@ import org.apache.olingo.server.core.responses.NoContentResponse;
 import org.apache.olingo.server.core.responses.PrimitiveValueResponse;
 import org.apache.olingo.server.core.responses.PropertyResponse;
 import org.apache.olingo.server.core.responses.StreamResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 

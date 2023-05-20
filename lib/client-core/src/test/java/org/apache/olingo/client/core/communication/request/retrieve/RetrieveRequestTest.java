@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,7 +26,7 @@ import java.net.URISyntaxException;
 import org.apache.olingo.client.core.ODataClientFactory;
 import org.apache.olingo.client.core.ODataClientImpl;
 import org.apache.olingo.commons.api.format.ContentType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RetrieveRequestTest {
 

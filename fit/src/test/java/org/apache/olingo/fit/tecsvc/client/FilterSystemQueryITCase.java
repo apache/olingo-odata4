@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -38,8 +38,8 @@ import org.apache.olingo.client.api.uri.URIFilter;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
 
@@ -52,7 +52,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   @Test
   public void useFilterFactory() {
     final URIFilter filter = getFilterFactory().eq(
-        getFilterArgFactory().property("PropertyInt16"), getFilterArgFactory().literal(new Integer(0)));
+        getFilterArgFactory().property("PropertyInt16"), getFilterArgFactory().literal(0));
 
     final URIBuilder uriBuilder =
         getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).filter(filter);
@@ -1075,7 +1075,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   private void fail(final String entitySet, final String filterString, final HttpStatusCode errorCode) {
     try {
       sendRequest(entitySet, filterString);
-      Assert.fail();
+      Assertions.fail();
     } catch (ODataClientErrorException e) {
       assertEquals(errorCode.getStatusCode(), e.getStatusLine().getStatusCode());
     }

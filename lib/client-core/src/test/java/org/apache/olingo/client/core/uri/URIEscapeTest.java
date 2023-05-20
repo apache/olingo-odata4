@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.core.uri;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.provider.CsdlEnumType;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.commons.core.edm.EdmEnumTypeImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class URIEscapeTest {
 

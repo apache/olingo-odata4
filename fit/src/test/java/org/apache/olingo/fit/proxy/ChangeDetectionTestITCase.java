@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.fit.proxy;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Proxy;
 import java.sql.Timestamp;
@@ -41,7 +41,7 @@ import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.OrderColl
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PaymentInstrument;
 import org.apache.olingo.fit.proxy.staticservice.odatawcfservice.types.PaymentInstrumentCollection;
 // CHECKSTYLE:ON (Maven checkstyle)
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ChangeDetectionTestITCase extends AbstractTestITCase {
 

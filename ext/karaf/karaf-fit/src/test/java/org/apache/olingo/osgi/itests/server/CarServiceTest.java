@@ -24,8 +24,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.olingo.osgi.itests.OlingoOSGiTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
