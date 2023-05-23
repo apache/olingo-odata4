@@ -43,7 +43,6 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
       ContentType.create(ContentType.JSON, ContentType.PARAMETER_ODATA_METADATA, 
           ContentType.VALUE_ODATA_METADATA_FULL);
   
- // @Parameterized.Parameters(name = "{0}")
   public static List<ContentType[]> parameters() {
     ContentType[] a = new ContentType[1];
     a[0] = CONTENT_TYPE_JSON_FULL_METADATA;
@@ -54,6 +53,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
   
   @Test
   public void readEntitySetOperation() {
+    contentType = CONTENT_TYPE_JSON_FULL_METADATA;
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESAllPrim").build());    
@@ -63,7 +63,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("application/json; odata.metadata=full", response.getContentType());
+    assertEquals("application/json;odata.metadata=full", response.getContentType());
 
     final ClientEntitySet entitySet = response.getBody();
     assertNotNull(entitySet);
@@ -111,6 +111,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
   
   @Test
   public void readComplexPropertyOperation() {
+    contentType = CONTENT_TYPE_JSON_FULL_METADATA;
     ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCompAllPrim")
@@ -123,7 +124,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
     final ODataRetrieveResponse<ClientProperty> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("application/json; odata.metadata=full", response.getContentType());
+    assertEquals("application/json;odata.metadata=full", response.getContentType());
 
     final ClientProperty property = response.getBody();
     assertNotNull(property);
@@ -141,6 +142,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
   
   @Test
   public void invokeFunction(){
+    contentType = CONTENT_TYPE_JSON_FULL_METADATA;
       ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESAllPrim").build());    
@@ -150,7 +152,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("application/json; odata.metadata=full", response.getContentType());
+    assertEquals("application/json;odata.metadata=full", response.getContentType());
 
     final ClientEntitySet entitySet = response.getBody();
     assertNotNull(entitySet);

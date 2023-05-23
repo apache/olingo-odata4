@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.fit.rest;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.ext.Provider;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rs.security.oauth2.filters.OAuthRequestFilter;

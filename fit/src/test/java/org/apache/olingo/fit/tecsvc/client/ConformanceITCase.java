@@ -84,6 +84,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
    */
   @Test
   public void checkClientWithPayloadHeader() {
+    contentType = ContentType.JSON;
     assumeTrue(isJson(), "json conformance test with content type");
 
     ClientEntity newEntity = getFactory().newEntity(ET_ALL_PRIM);
@@ -106,10 +107,12 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
 
     // check for Content-Type
     assertEquals(
-        ContentType.APPLICATION_JSON.toContentTypeString(),
+            ContentType.create(ContentType.JSON, ContentType.PARAMETER_ODATA_METADATA,
+                    ContentType.VALUE_ODATA_METADATA_MINIMAL),
         createRequest.getHeader(HttpHeader.CONTENT_TYPE));
     assertEquals(
-        ContentType.APPLICATION_JSON.toContentTypeString(),
+            ContentType.create(ContentType.JSON, ContentType.PARAMETER_ODATA_METADATA,
+                    ContentType.VALUE_ODATA_METADATA_MINIMAL),
         createRequest.getContentType());
 
     final ODataEntityCreateResponse<ClientEntity> createResponse = createRequest.execute();
@@ -245,7 +248,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
     assertEquals("application/json;odata.metadata=minimal", req.getAccept());
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
-    assertTrue(res.getContentType().startsWith("application/json; odata.metadata=minimal"));
+    assertTrue(res.getContentType().startsWith("application/json;odata.metadata=minimal"));
 
     assertNotNull(res.getBody());
   }

@@ -35,19 +35,22 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
+import org.apache.catalina.loader.WebappClassLoader;
+import org.apache.catalina.loader.WebappClassLoaderBase;
 import org.apache.catalina.loader.WebappLoader;
+import org.apache.catalina.session.StandardManager;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -162,7 +165,7 @@ public class TomcatTestServer {
 
     private TestServerBuilder(final int fixedPort) {
       initializeProperties();
-      baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);      
+      baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);
       if (!baseDir.exists() && !baseDir.mkdirs()) {
         throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
       }
@@ -184,7 +187,7 @@ public class TomcatTestServer {
 
     private void initializeProperties() {
       /*
-       * The property file is build with a maven plugin (properties-maven-plugin) defined in pom.xml of the FIT module. 
+       * The property file is build with a maven plugin (properties-maven-plugin) defined in pom.xml of the FIT module.
        * Since the property file is build with maven its located inside the resource folder of the project.
        */
       InputStream propertiesFile =
@@ -239,9 +242,17 @@ public class TomcatTestServer {
 
       String contextPath = "/stub";
 
+
       Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
+      context.setSessionTimeout(60);
       //TODO: TOMCAT -> Thread.currentThread().getContextClassLoader()
-      context.setLoader(new WebappLoader());
+      WebappLoader webappLoader = new WebappLoader();
+      WebappClassLoaderBase webappClassLoaderBase = new WebappClassLoader(Thread.currentThread().getContextClassLoader());
+      webappLoader.setLoaderInstance(webappClassLoaderBase);
+      //StandardManager manager = new StandardManager();
+      //manager.setPathname("session.txt");
+      //context.setManager(manager);
+      context.setLoader(webappLoader);
       LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
 
       return this;
@@ -273,26 +284,26 @@ public class TomcatTestServer {
       Context cxt = getContext();
       String randomServletId = UUID.randomUUID().toString();
       Tomcat.addServlet(cxt, randomServletId, httpServlet);
-      cxt.addServletMapping(path, randomServletId);
+      cxt.addServletMappingDecoded(path, randomServletId);
       LOG.info("Added servlet {} at context {} (mapping id={}).", servletClassname, path, randomServletId);
       return this;
     }
 
-    public TestServerBuilder addAuthServlet(final Class<? extends HttpServlet> factoryClass, 
+    public TestServerBuilder addAuthServlet(final Class<? extends HttpServlet> factoryClass,
             final String servletPath, final String contextPath)
         throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, ServletException {
       if (server != null) {
         return this;
       }
       final String TOMCAT_WEB_XML = "web.xml";
-      String webXMLPath = Thread.currentThread().getContextClassLoader().getResource(TOMCAT_WEB_XML).getPath();      
+      String webXMLPath = Thread.currentThread().getContextClassLoader().getResource(TOMCAT_WEB_XML).getPath();
       String servletClassname = factoryClass.getName();
       HttpServlet httpServlet = (HttpServlet) Class.forName(servletClassname).newInstance();
       Context cxt = tomcat.addWebapp(servletPath, baseDir.getAbsolutePath());
       cxt.setAltDDName(webXMLPath);
       String randomServletId = UUID.randomUUID().toString();
       Tomcat.addServlet(cxt, randomServletId, httpServlet);
-      cxt.addServletMapping(contextPath, randomServletId); 
+      cxt.addServletMappingDecoded(contextPath, randomServletId);
 
       return this;
     }
@@ -316,7 +327,7 @@ public class TomcatTestServer {
       }
       Context cxt = getContext();
       Tomcat.addServlet(cxt, name, httpServlet);
-      cxt.addServletMapping(path, name);
+      cxt.addServletMappingDecoded(path, name);
       //
       LOG.info("Added servlet {} at context {}.", name, path);
       return this;
@@ -326,7 +337,13 @@ public class TomcatTestServer {
 
     private Context getContext() {
       if (baseContext == null) {
-        baseContext = tomcat.addContext("/", baseDir.getAbsolutePath());
+        baseContext = tomcat.addContext("/odata-server-tecsvc/odata.svc", baseDir.getAbsolutePath());
+       /* PersistentManager manager = new PersistentManager();
+        manager.setStore(new FileStore());
+        baseContext.setManager(manager);
+        StandardManager standardManager = new StandardManager();
+        standardManager.setPathname("");
+        baseContext.setManager(standardManager);*/
       }
       return baseContext;
     }

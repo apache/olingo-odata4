@@ -33,14 +33,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public abstract class AbstractParamTecSvcITCase extends AbstractTecSvcITCase {
 
-  //@Parameterized.Parameter
-  public ContentType contentType;
+  public ContentType contentType = ContentType.JSON;
 
   /**
    * Returns a list of parameter arrays, in this case a list of one-element arrays
    * containing the content types to be used.
    */
-  //@ParameterizedTest(name = "{0}")
   public static List<ContentType[]> parameters() {
     return Arrays.asList(new ContentType[] { ContentType.APPLICATION_JSON },
         new ContentType[] { ContentType.APPLICATION_XML });

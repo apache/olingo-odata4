@@ -31,6 +31,7 @@ import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeRegistrati
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
+import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
 
 public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
@@ -91,6 +92,11 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
   }
 
   @Override
+  public List<ServerAuthorizationCodeGrant> getCodeGrants(Client client, UserSubject userSubject) throws OAuthServiceException {
+    return null;
+  }
+
+  @Override
   public ServerAccessToken createAccessToken(final AccessTokenRegistration atr) throws OAuthServiceException {
     token = new BearerAccessToken(atr.getClient(), 3600L);
 
@@ -118,10 +124,13 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
   }
 
   @Override
-  public void removeAccessToken(final ServerAccessToken sat) throws OAuthServiceException {
-    if (token != null && token.getTokenKey().equals(sat.getTokenKey())) {
-      token = null;
-    }
+  public List<ServerAccessToken> getAccessTokens(Client client, UserSubject userSubject) throws OAuthServiceException {
+    return null;
+  }
+
+  @Override
+  public List<RefreshToken> getRefreshTokens(Client client, UserSubject userSubject) throws OAuthServiceException {
+    return null;
   }
 
   @Override

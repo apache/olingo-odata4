@@ -51,6 +51,7 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.junit.jupiter.api.Disabled;
@@ -772,6 +773,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
 
   @Test
   public void deepUpsert() {
+    contentType = ContentType.APPLICATION_XML;
     final ODataClient client = getEdmEnabledClient();
     final URI updateURI = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_KEY_NAV)

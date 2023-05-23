@@ -22,4 +22,9 @@
 <Context>
   <!-- Disable session persistence across Tomcat restarts -->
   <Manager pathname="" />
+  <!-- <Manager className="org.apache.catalina.session.PersistentManager"
+           saveOnRestart="false"
+           maxActiveSessions="2">
+    <Store className="org.apache.catalina.session.FileStore"/>
+  </Manager> -->
 </Context>

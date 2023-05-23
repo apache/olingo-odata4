@@ -20,8 +20,8 @@ package org.apache.olingo.fit;
 
 import java.io.IOException;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.cxf.interceptor.InInterceptors;
 import org.apache.olingo.fit.rest.XHTTPMethodInterceptor;

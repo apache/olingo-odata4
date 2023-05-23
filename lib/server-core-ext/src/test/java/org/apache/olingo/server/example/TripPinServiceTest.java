@@ -73,7 +73,7 @@ public class TripPinServiceTest {
     tomcat.getHost().setAppBase(baseDir.getAbsolutePath());
     Context cxt = tomcat.addContext("/trippin", baseDir.getAbsolutePath());
     Tomcat.addServlet(cxt, "trippin", new TripPinServlet());
-    cxt.addServletMapping("/*", "trippin");
+    cxt.addServletMappingDecoded("/*", "trippin");
     baseURL = "http://" + tomcat.getHost().getName() + ":"+ TOMCAT_PORT+"/trippin";
     tomcat.start();
   }

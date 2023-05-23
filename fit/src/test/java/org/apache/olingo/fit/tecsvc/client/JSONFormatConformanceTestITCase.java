@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.jupiter.api.Test;
 
 
@@ -44,6 +45,7 @@ public class JSONFormatConformanceTestITCase extends AbstractParamTecSvcITCase  
    */
   @Test
   public void item1() throws EdmPrimitiveTypeException {
+    contentType = ContentType.JSON;
     assumeTrue(isJson(), "json conformance test with content type");
     final EdmEnabledODataClient edmClient = getEdmEnabledClient();
     Map<String, Object> segmentValues = new LinkedHashMap<String, Object>();
@@ -56,7 +58,7 @@ public class JSONFormatConformanceTestITCase extends AbstractParamTecSvcITCase  
 
     // request format (via Accept header) is set to minimal by default
     //FIXME: set format to minimal?
-    assertEquals("application/json", req.getAccept());  
+    assertEquals("application/json;odata.metadata=minimal", req.getAccept());
 
     final ODataRetrieveResponse<ClientEntity> res = req.execute();
 

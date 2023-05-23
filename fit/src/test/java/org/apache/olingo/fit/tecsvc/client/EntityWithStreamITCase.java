@@ -45,7 +45,6 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
           ContentType.VALUE_ODATA_METADATA_FULL);
   private static final String PROPERTY_INT16 = "PropertyInt16";
 
-  //@Parameterized.Parameters(name = "{0}")
   public static List<ContentType[]> parameters() {
     ContentType[] a = new ContentType[1];
     a[0] = CONTENT_TYPE_JSON_FULL_METADATA;
@@ -56,6 +55,7 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
   
   @Test
   public void readEntitySetWithStreamProperty() {
+    contentType = CONTENT_TYPE_JSON_FULL_METADATA;
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESWithStream").build());    
@@ -65,7 +65,7 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("application/json; odata.metadata=full", response.getContentType());
+    assertEquals("application/json;odata.metadata=full", response.getContentType());
 
     final ClientEntitySet entitySet = response.getBody();
     assertNotNull(entitySet);
