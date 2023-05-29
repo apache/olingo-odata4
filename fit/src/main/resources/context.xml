@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<Context>
+<Context sessionCookiePath="/">
   <!-- Disable session persistence across Tomcat restarts -->
   <Manager pathname="" />
 </Context>
