@@ -541,9 +541,9 @@ public class TripPinServiceTest {
                 "}";
         HttpPatch updateRequest = new HttpPatch(baseURL + "/People('kristakemp')");
         updateRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
-        httpSend(updateRequest, 204);
-
-        CloseableHttpResponse response = httpGET(baseURL + "/People('kristakemp')", 200);
+        CloseableHttpResponse response = httpSend(updateRequest, 204);
+        response.close();
+        response = httpGET(baseURL + "/People('kristakemp')", 200);
         JsonNode node = getJSONNode(response);
         response.close();
         assertEquals(baseURL + "/$metadata#People/$entity", node.get("@odata.context").asText());
@@ -718,7 +718,7 @@ public class TripPinServiceTest {
 
         JsonNode node = getJSONNode(response);
         assertEquals(baseURL + "/$metadata#People", node.get("@odata.context").asText());
-
+        response.close();
         JsonNode person = ((ArrayNode) node.get("value")).get(0);
         assertEquals("scottketchum", person.get("UserName").asText());
     }
