@@ -341,7 +341,8 @@ public class TomcatTestServer {
       if (server != null) {
         return server;
       }
-      baseContext.addApplicationListener(SessionHolder.class.getName());
+      //TODO: check it later
+      //baseContext.addApplicationListener(SessionHolder.class.getName());
       tomcat.start();
 
       LOG.info("Started server at endpoint "
