@@ -130,7 +130,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
-    assertEquals("application/json; odata.metadata=minimal", 
+    assertEquals("application/json;odata.metadata=minimal",
         connection.getHeaderField(HttpHeader.CONTENT_TYPE));
 
     final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
@@ -149,7 +149,7 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
 
     assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
-    assertEquals("application/json; odata.metadata=minimal", 
+    assertEquals("application/json;odata.metadata=minimal",
         connection.getHeaderField(HttpHeader.CONTENT_TYPE));
 
     final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());

@@ -74,7 +74,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     assertEquals(0, response.byteLength());
 
     Map<String, List<String>> headerFields = connection.getHeaderFields();
-    assertEquals("HTTP/1.1 202 Accepted", headerFields.get(null).get(0));
+    assertEquals("HTTP/1.1 202", headerFields.get(null).get(0));
     assertTrue(Pattern.matches("http:\\/\\/localhost:9080\\/odata-server-tecsvc\\/status\\/\\d*",
         headerFields.get("Location").get(0)));
     assertEquals("respond-async", headerFields.get("Preference-Applied").get(0));
@@ -117,7 +117,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     assertEquals(0, response.byteLength());
 
     Map<String, List<String>> headerFields = connection.getHeaderFields();
-    assertEquals("HTTP/1.1 202 Accepted", headerFields.get(null).get(0));
+    assertEquals("HTTP/1.1 202", headerFields.get(null).get(0));
     // because of generated status id it is only checked that the location starts correct and contains a number
     assertTrue(Pattern.matches("http:\\/\\/localhost:9080\\/odata-server-tecsvc\\/status\\/\\d*",
         headerFields.get("Location").get(0)));

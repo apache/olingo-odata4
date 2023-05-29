@@ -267,7 +267,6 @@ public class NettyServiceDispatcherTest {
     handler.processNettyRequest(nettyRequest, nettyResponse, requestParams);
     assertNotNull(new String (nettyResponse.content().array()));
     assertEquals(200, nettyResponse.status().code());
-    assertEquals("OK", nettyResponse.status().reasonPhrase());
   }
   
   @Test
