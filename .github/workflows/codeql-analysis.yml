@@ -42,10 +42,10 @@ jobs:
       with:
         languages: ${{ matrix.language }}
 
-    - name: Set up JDK 17 (Corretto)
+    - name: Set up JDK 8 (Corretto)
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '8'
         distribution: 'corretto'
         cache: maven
 
