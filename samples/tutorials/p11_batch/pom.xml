@@ -30,7 +30,7 @@
 	<name>${project.artifactId}-Webapp</name>
 
   <properties>
-    <javax.version>2.5</javax.version>
+    <javax.version>3.1.0</javax.version>
     <odata.version>4.10.0-SNAPSHOT</odata.version>
     <slf4j.version>1.7.7</slf4j.version>
     <project.source>1.6</project.source>
@@ -56,7 +56,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+			<artifactId>javax.servlet-api</artifactId>
 			<version>${javax.version}</version>
 			<scope>provided</scope>
 		</dependency>
