@@ -35,14 +35,14 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -273,7 +273,7 @@ public class TomcatTestServer {
       Context cxt = getContext();
       String randomServletId = UUID.randomUUID().toString();
       Tomcat.addServlet(cxt, randomServletId, httpServlet);
-      cxt.addServletMapping(path, randomServletId);
+      cxt.addServletMappingDecoded(path, randomServletId);
       LOG.info("Added servlet {} at context {} (mapping id={}).", servletClassname, path, randomServletId);
       return this;
     }
@@ -292,7 +292,7 @@ public class TomcatTestServer {
       cxt.setAltDDName(webXMLPath);
       String randomServletId = UUID.randomUUID().toString();
       Tomcat.addServlet(cxt, randomServletId, httpServlet);
-      cxt.addServletMapping(contextPath, randomServletId); 
+      cxt.addServletMappingDecoded(contextPath, randomServletId);
 
       return this;
     }
@@ -316,7 +316,7 @@ public class TomcatTestServer {
       }
       Context cxt = getContext();
       Tomcat.addServlet(cxt, name, httpServlet);
-      cxt.addServletMapping(path, name);
+      cxt.addServletMappingDecoded(path, name);
       //
       LOG.info("Added servlet {} at context {}.", name, path);
       return this;

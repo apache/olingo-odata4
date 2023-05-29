@@ -31,8 +31,8 @@ import org.apache.olingo.server.api.ODataResponse;
 import org.apache.olingo.server.api.processor.Processor;
 import org.apache.olingo.server.api.serializer.SerializerException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.Closeable;
 import java.io.IOException;
