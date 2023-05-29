@@ -104,7 +104,7 @@
 
     <tomcat.servlet.port>9080</tomcat.servlet.port>
     <tomcat.version>8.5.89</tomcat.version>
-
+    <tomcat.logging.version>8.5.2</tomcat.logging.version>
     <!-- for osgi integration testing -->
     <osgi.version>4.2.0</osgi.version>
     <karaf.version>3.0.3</karaf.version>
@@ -254,6 +254,11 @@
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-core</artifactId>
         <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-logging-log4j</artifactId>
+        <version>${tomcat.logging.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomcat</groupId>
