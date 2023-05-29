@@ -47,11 +47,13 @@ import jakarta.servlet.http.HttpSessionListener;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
+import org.apache.catalina.loader.WebappClassLoader;
+import org.apache.catalina.loader.WebappClassLoaderBase;
 import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.tomcat.util.http.LegacyCookieProcessor;
+import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,7 +243,8 @@ public class TomcatTestServer {
       String contextPath = "/stub";
 
       Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
-      context.setLoader(new WebappLoader(Thread.currentThread().getContextClassLoader()));
+      WebappLoader webappLoader = new WebappLoader();
+      context.setLoader(webappLoader);
       LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
 
       return this;
@@ -326,8 +329,8 @@ public class TomcatTestServer {
 
     private Context getContext() {
       if (baseContext == null) {
-        baseContext = tomcat.addContext("/", baseDir.getAbsolutePath());
-        baseContext.setCookieProcessor(new LegacyCookieProcessor());
+        baseContext = tomcat.addContext("", baseDir.getAbsolutePath());
+        baseContext.setCookieProcessor(new Rfc6265CookieProcessor());
       }
       return baseContext;
     }

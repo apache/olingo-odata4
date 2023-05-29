@@ -80,8 +80,8 @@
     <commons.vfs.version>2.0</commons.vfs.version>
     <esigate.version>4.4</esigate.version>
     <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-    <cxf.version>3.0.16</cxf.version>
-    <spring.version>4.0.9.RELEASE</spring.version>
+    <cxf.version>4.0.1</cxf.version>
+    <spring.version>6.0.9</spring.version>
     <netty.version>4.1.84.Final</netty.version>
 
     <velocity.version>1.7</velocity.version>
@@ -180,8 +180,8 @@
         <version>${jackson.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.fasterxml.jackson.jaxrs</groupId>
-        <artifactId>jackson-jaxrs-json-provider</artifactId>
+        <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+        <artifactId>jackson-jakarta-rs-json-provider</artifactId>
         <version>${jackson.version}</version>
       </dependency>
       <dependency>
@@ -224,9 +224,9 @@
         <version>${jakarta.servlet.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-javamail_1.4_spec</artifactId>
-        <version>1.7.1</version>
+        <groupId>org.apache.geronimo.javamail</groupId>
+        <artifactId>geronimo-javamail_1.6_mail</artifactId>
+        <version>1.0.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
