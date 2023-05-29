@@ -1178,7 +1178,7 @@ public class BatchRequestParserTest {
   }
 
   private InputStream readFile(final String fileName) throws IOException {
-    final InputStream in = BatchRequestParserTest.class.getResourceAsStream(fileName);
+    final InputStream in = ClassLoader.class.getResourceAsStream(fileName);
     if (in == null) {
       throw new IOException("Requested file '" + fileName + "' was not found.");
     }

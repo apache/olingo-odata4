@@ -180,7 +180,7 @@ public class ParserTest {
         .goPath().first()
         .isNavProperty("Products", nameProducts, false)
         .isType(nameProducts, false);
-    Mockito.verifyNoInteractions(esProduct);
+    Mockito.verifyZeroInteractions(esProduct);
   }
 
   /**
