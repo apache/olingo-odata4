@@ -79,7 +79,7 @@
     <commons.logging.version>1.2</commons.logging.version>
     <commons.vfs.version>2.0</commons.vfs.version>
     <esigate.version>4.4</esigate.version>
-    <servlet.version>3.1.0</servlet.version>
+    <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
     <cxf.version>3.0.16</cxf.version>
     <spring.version>4.0.9.RELEASE</spring.version>
     <netty.version>4.1.84.Final</netty.version>
@@ -103,8 +103,7 @@
     <sl4j.version>1.7.36</sl4j.version>
 
     <tomcat.servlet.port>9080</tomcat.servlet.port>
-    <tomcat.version>8.5.89</tomcat.version>
-    <tomcat.logging.version>8.5.2</tomcat.logging.version>
+    <tomcat.version>10.1.9</tomcat.version>
     <!-- for osgi integration testing -->
     <osgi.version>4.2.0</osgi.version>
     <karaf.version>3.0.3</karaf.version>
@@ -220,9 +219,9 @@
         <version>${esigate.version}</version>
       </dependency>
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>${servlet.version}</version>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${jakarta.servlet.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
@@ -254,11 +253,6 @@
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-core</artifactId>
         <version>${tomcat.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomcat.embed</groupId>
-        <artifactId>tomcat-embed-logging-log4j</artifactId>
-        <version>${tomcat.logging.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomcat</groupId>
