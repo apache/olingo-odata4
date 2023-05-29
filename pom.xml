@@ -103,7 +103,7 @@
     <sl4j.version>1.7.36</sl4j.version>
 
     <tomcat.servlet.port>9080</tomcat.servlet.port>
-    <tomcat.version>8.5.89</tomcat.version>
+    <tomcat.version>7.0.109</tomcat.version>
     <tomcat.logging.version>8.5.2</tomcat.logging.version>
     <!-- for osgi integration testing -->
     <osgi.version>4.2.0</osgi.version>
