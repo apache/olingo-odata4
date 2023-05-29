@@ -69,7 +69,8 @@ public class TripPinServiceTest {
 
     @BeforeClass
     public static void beforeTest() throws Exception {
-        PoolingClientConnectionManager conMan = new PoolingClientConnectionManager(SchemeRegistryFactory.createDefault());
+        PoolingClientConnectionManager conMan =
+                new PoolingClientConnectionManager(SchemeRegistryFactory.createDefault());
         conMan.setMaxTotal(200);
         conMan.setDefaultMaxPerRoute(200);
         http = new DefaultHttpClient(conMan);
@@ -188,10 +189,12 @@ public class TripPinServiceTest {
                 node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFavoriteAirline").get("target").asText());
 
         assertEquals("Microsoft.OData.SampleService.Models.TripPin.GetFriendsTrips",
-                node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFriendsTrips(userName)").get("title").asText());
+        node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFriendsTrips(userName)")
+                .get("title").asText());
         assertEquals("/People('russellwhyte')/Microsoft.OData."
                         + "SampleService.Models.TripPin.GetFriendsTrips(userName=@userName)",
-                node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFriendsTrips(userName)").get("target").asText());
+        node.get("#Microsoft.OData.SampleService.Models.TripPin.GetFriendsTrips(userName)")
+                .get("target").asText());
     }
 
     @Test
@@ -365,7 +368,8 @@ public class TripPinServiceTest {
     public void testSelectOption() throws Exception {
         HttpResponse response = httpGET(baseURL + "/People('russellwhyte')?$select=FirstName,LastName", 200);
         JsonNode node = getJSONNode(response);
-        assertEquals(baseURL+"/$metadata#People(UserName,FirstName,LastName)/$entity", node.get("@odata.context").asText());
+        assertEquals(baseURL+"/$metadata#People(UserName,FirstName,LastName)/$entity",
+                node.get("@odata.context").asText());
         assertEquals("Russell", node.get("FirstName").asText());
     }
 
