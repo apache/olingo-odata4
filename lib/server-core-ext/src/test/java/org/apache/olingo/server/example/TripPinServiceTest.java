@@ -201,7 +201,7 @@ public class TripPinServiceTest {
     public void testErrorResponse() throws Exception {
         HttpResponse response = httpGET(baseURL + "/Airlines(1)", 400);
         Header[] headers = response.getHeaders("Content-Type");
-        assertEquals("application/json;odata.metadata=minimal", headers[0].getValue());
+        assertEquals("application/json; odata.metadata=minimal", headers[0].getValue());
         assertEquals("{\"error\":{\"code\":null,\"message\":\"The key value '' is invalid.\"}}",
                 IOUtils.toString(response.getEntity().getContent()));
     }
