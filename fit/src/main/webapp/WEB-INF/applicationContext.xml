@@ -40,16 +40,18 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
   <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/>
 
-  <util:list id="requiredScopes" value-type="java.lang.String">
-    <value>foo</value>
-    <value>bar</value>
-  </util:list>
-
   <jaxrs:server id="services" address="/" basePackages="org.apache.olingo.fit">
     <jaxrs:providers>
       <bean class="com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider"/>
       <bean class="org.apache.olingo.fit.rest.OAuth2RequestFilter">
-        <property name="requiredScopes" ref="requiredScopes" />
+        <property name="requiredScopes">
+          <util:list id="requiredScopes" value-type="java.lang.String">
+            <list>
+              <value>foo</value>
+              <value>bar</value>
+            </list>
+          </util:list>
+        </property>
         <property name="dataProvider" ref="oauthProvider"/>
         <property name="jwtTokenConsumer" ref="jwtTokenConsumer"/>
         <property name="messageContext" ref="messageContext" />
