@@ -69,6 +69,12 @@
     </dependency>
 
     <dependency>
+      <groupId>jakarta.inject</groupId>
+      <artifactId>jakarta.inject-api</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.olingo</groupId>
       <artifactId>odata-client-core</artifactId>
       <version>${project.version}</version>
