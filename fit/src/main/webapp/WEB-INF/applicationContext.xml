@@ -43,6 +43,7 @@
       <bean class="org.apache.olingo.fit.rest.OAuth2RequestFilter">
         <property name="dataProvider" ref="oauthProvider"/>
         <property name="jwtTokenConsumer" ref="jwtTokenConsumer"/>
+        <property name="messageContext" ref="messageContext" />
       </bean>
       <bean class="org.apache.olingo.fit.rest.ServiceNameResponseFilter"/>
     </jaxrs:providers>
@@ -50,6 +51,7 @@
 
   <bean id="oauthProvider" class="org.apache.olingo.fit.rest.OAuth2Provider"/>
   <bean id="jwtTokenConsumer" class="org.apache.cxf.rs.security.jose.jwt.JoseJwtConsumer"/>
+  <bean id="messageContext" class="org.apache.cxf.jaxrs.impl.tl.ThreadLocalMessageContext" />
   <bean id="authorizationService" class="org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService">
     <property name="dataProvider" ref="oauthProvider"/>
   </bean>
