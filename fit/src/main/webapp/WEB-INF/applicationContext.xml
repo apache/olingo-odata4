@@ -45,12 +45,10 @@
       <bean class="com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider"/>
       <bean class="org.apache.olingo.fit.rest.OAuth2RequestFilter">
         <property name="requiredScopes">
-          <util:list list-class="java.util.List"  value-type="java.lang.String">
             <list>
               <value>foo</value>
               <value>bar</value>
             </list>
-          </util:list>
         </property>
         <property name="dataProvider" ref="oauthProvider"/>
         <property name="jwtTokenConsumer" ref="jwtTokenConsumer"/>
