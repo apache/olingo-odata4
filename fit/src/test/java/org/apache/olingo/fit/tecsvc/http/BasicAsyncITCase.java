@@ -84,7 +84,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     HttpURLConnection statusRequest = getRequest(new URL(respondUri), Collections.<String, String>emptyMap());
     StringHelper.Stream statusBody = StringHelper.toStream(statusRequest.getInputStream());
     Map<String, List<String>> statusHeaderFields = statusRequest.getHeaderFields();
-    assertEquals("HTTP/1.1 202 Accepted", statusHeaderFields.get(null).get(0));
+    assertEquals("HTTP/1.1 202", statusHeaderFields.get(null).get(0));
     assertEquals(0, statusBody.byteLength());
 
     // get async response (now finished)
@@ -94,10 +94,10 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     Map<String, List<String>> resultHeaderFields = result.getHeaderFields();
     String resBody = resultBody.asString();
 
-    assertEquals("HTTP/1.1 200 OK", resultHeaderFields.get(null).get(0));
+    assertEquals("HTTP/1.1 200", resultHeaderFields.get(null).get(0));
     assertEquals(1007, resultBody.byteLength());
     contains(resBody,
-        "HTTP/1.1 200 OK",
+        "HTTP/1.1 200",
         "OData-Version: 4.0",
         "Content-Length: 605",
         "\"@odata.context\":\"$metadata#ESAllPrim/$entity\"",
@@ -128,7 +128,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     HttpURLConnection statusRequest = getRequest(new URL(respondUri), Collections.<String, String>emptyMap());
     StringHelper.Stream statusBody = StringHelper.toStream(statusRequest.getInputStream());
     Map<String, List<String>> statusHeaderFields = statusRequest.getHeaderFields();
-    assertEquals("HTTP/1.1 202 Accepted", statusHeaderFields.get(null).get(0));
+    assertEquals("HTTP/1.1 202", statusHeaderFields.get(null).get(0));
     assertEquals(0, statusBody.byteLength());
 
     // get async response (now finished)
@@ -136,10 +136,10 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     StringHelper.Stream resultBody = StringHelper.toStream(result.getInputStream());
     Map<String, List<String>> resultHeaderFields = result.getHeaderFields();
     String resBody = resultBody.asString();
-    assertEquals("HTTP/1.1 200 OK", resultHeaderFields.get(null).get(0));
+    assertEquals("HTTP/1.1 200", resultHeaderFields.get(null).get(0));
     assertEquals(2321, resultBody.byteLength());
     contains(resBody,
-        "HTTP/1.1 200 OK",
+        "HTTP/1.1 200",
         "OData-Version: 4.0",
         "Content-Length: 605",
         "\"@odata.context\":\"$metadata#ESAllPrim/$entity\"",

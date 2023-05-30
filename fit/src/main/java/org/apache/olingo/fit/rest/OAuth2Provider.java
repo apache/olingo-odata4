@@ -92,7 +92,8 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
   }
 
   @Override
-  public List<ServerAuthorizationCodeGrant> getCodeGrants(Client client, UserSubject userSubject) throws OAuthServiceException {
+  public List<ServerAuthorizationCodeGrant>
+    getCodeGrants(Client client, UserSubject userSubject) throws OAuthServiceException {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 

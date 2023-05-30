@@ -292,13 +292,16 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <phase>pre-integration-test</phase>
             <goals>
               <goal>java</goal>
             </goals>
+            <configuration>
+              <fork>true</fork>
+            </configuration>
           </execution>
         </executions>
         <configuration>

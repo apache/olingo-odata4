@@ -24,9 +24,6 @@ import jakarta.servlet.http.*;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
-import org.apache.catalina.loader.WebappClassLoader;
-import org.apache.catalina.loader.WebappClassLoaderBase;
-import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -96,7 +93,8 @@ public class TomcatTestServer {
             try {
                 return Integer.parseInt(portParam[1]);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Port parameter (" + portParameter + ") could not be parsed.");
+                throw new IllegalArgumentException("Port parameter " +
+                        "(" + portParameter + ") could not be parsed.");
             }
         }
         throw new IllegalArgumentException("Port parameter (" + portParameter + ") could not be parsed.");
@@ -155,7 +153,8 @@ public class TomcatTestServer {
             initializeProperties();
             baseDir = getFileForDirProperty(TOMCAT_BASE_DIR);
             if (!baseDir.exists() && !baseDir.mkdirs()) {
-                throw new RuntimeException("Unable to create temporary test directory at {" + baseDir.getAbsolutePath() + "}");
+                throw new RuntimeException("Unable to create temporary " +
+                        "test directory at {" + baseDir.getAbsolutePath() + "}");
             }
             resourceDir = getFileForDirProperty(PROJECT_RESOURCES_DIR);
             if (!resourceDir.exists()) {
@@ -175,8 +174,10 @@ public class TomcatTestServer {
 
         private void initializeProperties() {
             /*
-             * The property file is build with a maven plugin (properties-maven-plugin) defined in pom.xml of the FIT module.
-             * Since the property file is build with maven its located inside the resource folder of the project.
+             * The property file is build with a maven plugin (properties-maven-plugin)
+             * defined in pom.xml of the FIT module.
+             * Since the property file is build with maven its located inside
+             * the resource folder of the project.
              */
             InputStream propertiesFile =
                     Thread.currentThread().getContextClassLoader().getResourceAsStream("mavenBuild.properties");
@@ -221,7 +222,9 @@ public class TomcatTestServer {
                 webAppDir = new File(baseDir, webAppProjectDir.getName());
                 FileUtils.deleteDirectory(webAppDir);
                 if (!webAppDir.mkdirs()) {
-                    throw new RuntimeException("Unable to create temporary directory at {" + webAppDir.getAbsolutePath() + "}");
+                    throw new
+                            RuntimeException("Unable to create temporary " +
+                            "directory at {" + webAppDir.getAbsolutePath() + "}");
                 }
                 FileUtils.copyDirectory(webAppProjectDir, webAppDir);
             } else {
@@ -231,10 +234,11 @@ public class TomcatTestServer {
             String contextPath = "/stub";
 
             Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
-            WebappLoader webappLoader = new WebappLoader();
-            WebappClassLoaderBase webappClassLoaderBase = new WebappClassLoader(Thread.currentThread().getContextClassLoader());
-            webappLoader.setLoaderInstance(webappClassLoaderBase);
-            context.setLoader(webappLoader);
+            //WebappLoader webappLoader = new WebappLoader();
+            //WebappClassLoaderBase webappClassLoaderBase =
+            // new WebappClassLoader(Thread.currentThread().getContextClassLoader());
+            //webappLoader.setLoaderInstance(webappClassLoaderBase);
+            //context.setLoader(webappLoader);
             LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
 
             return this;
@@ -273,7 +277,8 @@ public class TomcatTestServer {
 
         public TestServerBuilder addAuthServlet(final Class<? extends HttpServlet> factoryClass,
                                                 final String servletPath, final String contextPath)
-                throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException, ServletException {
+                throws InstantiationException, IllegalAccessException, ClassNotFoundException,
+                IOException, ServletException {
             if (server != null) {
                 return this;
             }
@@ -361,10 +366,11 @@ public class TomcatTestServer {
         SessionHolder.invalidateAllSession();
     }
 
+
     public static class SessionHolder implements HttpSessionListener {
 
         private static final Map<ServletContext, Set<HttpSession>> ALL_SESSIONS =
-                Collections.synchronizedMap(new HashMap<ServletContext, Set<HttpSession>>());
+                Collections.synchronizedMap(new HashMap<>());
 
         @Override
         public void sessionCreated(HttpSessionEvent se) {

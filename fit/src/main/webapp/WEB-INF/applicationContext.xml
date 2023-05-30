@@ -39,7 +39,7 @@
   
   <jaxrs:server id="services" address="/" basePackages="org.apache.olingo.fit">
     <jaxrs:providers>
-      <bean class="org.apache.olingo.fit.rest.jaxb.JacksonJaxbJsonProvider"/>
+      <bean class="com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider"/>
       <bean class="org.apache.olingo.fit.rest.OAuth2RequestFilter">
         <property name="dataProvider" ref="oauthProvider"/>
       </bean>
