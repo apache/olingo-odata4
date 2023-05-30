@@ -104,6 +104,7 @@ public class ServiceDispatcherTest {
     Tomcat.addServlet(cxt, "trippin", new SampleODataServlet(serviceHandler, metadata));
     cxt.addServletMappingDecoded("/*", "trippin");
     tomcat.setPort(TOMCAT_PORT);
+    tomcat.getConnector().setSecure(false);
     tomcat.start();
   }
 
