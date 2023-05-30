@@ -192,10 +192,10 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
       HttpURLConnection statusRequest = getRequest(new URL(location), Collections.<String, String>emptyMap());
       Map<String, List<String>> statusHeaderFields = statusRequest.getHeaderFields();
       String statusHeader = statusHeaderFields.get(null).get(0);
-      if("HTTP/1.1 202 Accepted".equals(statusHeader)) {
+      if("HTTP/1.1 202".equals(statusHeader)) {
         TimeUnit.MILLISECONDS.sleep(SLEEP_TIMEOUT_IN_MS);
         waitCounter -= SLEEP_TIMEOUT_IN_MS;
-      } else if("HTTP/1.1 200 OK".equals(statusHeader)) {
+      } else if("HTTP/1.1 200".equals(statusHeader)) {
         result = statusRequest;
       } else {
         throw new RuntimeException("Unexpected status header ('" + statusHeader +
