@@ -78,6 +78,7 @@ public class TripPinServiceTest {
         File baseDir = new File(System.getProperty("java.io.tmpdir"));
         tomcat.setBaseDir(baseDir.getAbsolutePath());
         tomcat.getHost().setAppBase(baseDir.getAbsolutePath());
+        tomcat.getConnector().setSecure(false);
         Context cxt = tomcat.addContext("/trippin", baseDir.getAbsolutePath());
         Tomcat.addServlet(cxt, "trippin", new TripPinServlet());
         cxt.addServletMappingDecoded("/*", "trippin");
