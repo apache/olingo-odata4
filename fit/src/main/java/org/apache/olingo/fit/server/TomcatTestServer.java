@@ -89,7 +89,7 @@ public class TomcatTestServer {
         } catch (LifecycleException e) {
             throw new RuntimeException("Failed to start Tomcat server from main method.", e);
         } finally {
-            server.stop();
+            server.destroy();
         }
     }
 
