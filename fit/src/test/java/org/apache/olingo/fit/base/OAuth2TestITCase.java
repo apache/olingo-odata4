@@ -102,7 +102,6 @@ public class OAuth2TestITCase extends AbstractTestITCase {
   }
 
   @Test
-  @Ignore
   public void testOAuth() {
     try {
       readAsAtom();

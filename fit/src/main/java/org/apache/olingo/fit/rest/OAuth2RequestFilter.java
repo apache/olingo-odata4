@@ -24,7 +24,6 @@ import jakarta.ws.rs.ext.Provider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rs.security.oauth2.filters.OAuthRequestFilter;
 
-@Provider
 public class OAuth2RequestFilter extends OAuthRequestFilter {
 
   @Override
