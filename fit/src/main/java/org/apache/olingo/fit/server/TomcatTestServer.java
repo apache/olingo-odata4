@@ -354,12 +354,9 @@ public class TomcatTestServer {
             tomcat.getServer().await();
         }
 
-        public void stop() throws LifecycleException {
+        public void destroy() throws LifecycleException {
             if (tomcat.getServer() != null
                     && tomcat.getServer().getState() != LifecycleState.DESTROYED) {
-                if (tomcat.getServer().getState() != LifecycleState.STOPPED) {
-                    tomcat.stop();
-                }
                 tomcat.destroy();
             }
         }
