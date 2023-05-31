@@ -305,9 +305,6 @@
             <goals>
               <goal>java</goal>
             </goals>
-            <configuration>
-              <fork>true</fork>
-            </configuration>
           </execution>
         </executions>
         <configuration>

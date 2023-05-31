@@ -24,6 +24,9 @@ import jakarta.servlet.http.*;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleState;
+import org.apache.catalina.loader.WebappClassLoader;
+import org.apache.catalina.loader.WebappClassLoaderBase;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -54,10 +57,11 @@ public class TomcatTestServer {
         this.tomcat = tomcat;
     }
 
-    public static void main(final String[] params) {
+    public static void main(final String[] params) throws LifecycleException {
+        TestServerBuilder server = null;
         try {
             LOG.trace("Start tomcat embedded server from main()");
-            TestServerBuilder server = TomcatTestServer.init(9180)
+            server = TomcatTestServer.init(9180)
                     .addStaticContent("/stub/StaticService/V40/OpenType.svc/$metadata", "V40/openTypeMetadata.xml")
                     .addStaticContent("/stub/StaticService/V40/Demo.svc/$metadata", "V40/demoMetadata.xml")
                     .addStaticContent("/stub/StaticService/V40/Static.svc/$metadata", "V40/metadata.xml");
@@ -84,6 +88,8 @@ public class TomcatTestServer {
             throw new RuntimeException("Failed to start Tomcat server from main method.", e);
         } catch (LifecycleException e) {
             throw new RuntimeException("Failed to start Tomcat server from main method.", e);
+        } finally {
+            server.stop();
         }
     }
 
@@ -234,11 +240,10 @@ public class TomcatTestServer {
             String contextPath = "/stub";
 
             Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
-            //WebappLoader webappLoader = new WebappLoader();
-            //WebappClassLoaderBase webappClassLoaderBase =
-            // new WebappClassLoader(Thread.currentThread().getContextClassLoader());
-            //webappLoader.setLoaderInstance(webappClassLoaderBase);
-            //context.setLoader(webappLoader);
+            WebappLoader webappLoader = new WebappLoader();
+            WebappClassLoaderBase webappClassLoaderBase =  new WebappClassLoader(Thread.currentThread().getContextClassLoader());
+            webappLoader.setLoaderInstance(webappClassLoaderBase);
+            context.setLoader(webappLoader);
             LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
 
             return this;
@@ -350,16 +355,17 @@ public class TomcatTestServer {
             start();
             tomcat.getServer().await();
         }
-    }
 
-    public void stop() throws LifecycleException {
-        if (tomcat.getServer() != null
-                && tomcat.getServer().getState() != LifecycleState.DESTROYED) {
-            if (tomcat.getServer().getState() != LifecycleState.STOPPED) {
-                tomcat.stop();
+        public void stop() throws LifecycleException {
+            if (tomcat.getServer() != null
+                    && tomcat.getServer().getState() != LifecycleState.DESTROYED) {
+                if (tomcat.getServer().getState() != LifecycleState.STOPPED) {
+                    tomcat.stop();
+                }
+                tomcat.destroy();
             }
-            tomcat.destroy();
         }
+
     }
 
     public void invalidateAllSessions() {
