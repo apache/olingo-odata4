@@ -86,7 +86,7 @@ public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory 
         OAuth2Provider.CLIENT_ID,
         OAuth2Provider.REDIRECT_URI,
         null,
-        null);
+        "foo bar");
 
     // Disable automatic redirects handling
     final HttpParams params = new BasicHttpParams();
@@ -121,6 +121,7 @@ public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory 
           addParameter("client_id", oAuthAuthorizationData.get("clientId").asText()).
           addParameter("redirect_uri", oAuthAuthorizationData.get("redirectUri").asText()).
           addParameter("oauthDecision", "allow").
+          addParameter("scope", "foo bar").
           build();
       final HttpGet method = new HttpGet(location);
       method.addHeader("Authorization", "Basic " + Base64.encodeBase64String("odatajclient:odatajclient".getBytes()));

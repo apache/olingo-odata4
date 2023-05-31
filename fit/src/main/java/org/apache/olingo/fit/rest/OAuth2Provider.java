@@ -20,6 +20,7 @@ package org.apache.olingo.fit.rest;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.cxf.rs.security.oauth2.common.AccessTokenRegistration;
 import org.apache.cxf.rs.security.oauth2.common.Client;
@@ -66,7 +67,7 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
   @Override
   public List<OAuthPermission> convertScopeToPermissions(final Client client, final List<String> list) {
-    return Collections.singletonList(new OAuthPermission());
+    return list.stream().map(l -> new OAuthPermission((l))).collect(Collectors.toList());
   }
 
   @Override
