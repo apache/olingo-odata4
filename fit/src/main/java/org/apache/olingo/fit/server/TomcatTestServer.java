@@ -241,8 +241,6 @@ public class TomcatTestServer {
 
             Context context = tomcat.addWebapp(tomcat.getHost(), contextPath, webAppDir.getAbsolutePath());
             WebappLoader webappLoader = new WebappLoader();
-            WebappClassLoaderBase webappClassLoaderBase =  new WebappClassLoader(Thread.currentThread().getContextClassLoader());
-            webappLoader.setLoaderInstance(webappClassLoaderBase);
             context.setLoader(webappLoader);
             LOG.info("Webapp {} at context {}.", webAppDir.getName(), contextPath);
 
