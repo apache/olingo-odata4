@@ -62,6 +62,9 @@
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
           <compilerArgument>-Xlint:unchecked</compilerArgument>
+          <includes>
+            <include>${project.basedir}/target/generated-sources/**</include>
+          </includes>
         </configuration>
       </plugin>
       <plugin>
