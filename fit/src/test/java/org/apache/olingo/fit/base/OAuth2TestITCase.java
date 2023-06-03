@@ -37,7 +37,6 @@ import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.fit.CXFOAuth2HttpClientFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class OAuth2TestITCase extends AbstractTestITCase {
