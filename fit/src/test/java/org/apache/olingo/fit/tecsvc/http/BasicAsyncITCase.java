@@ -74,7 +74,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     assertEquals(0, response.byteLength());
 
     Map<String, List<String>> headerFields = connection.getHeaderFields();
-    assertEquals("HTTP/1.1 202 Accepted", headerFields.get(null).get(0));
+    assertEquals("HTTP/1.1 202", headerFields.get(null).get(0));
     assertTrue(Pattern.matches("http:\\/\\/localhost:9080\\/odata-server-tecsvc\\/status\\/\\d*",
         headerFields.get("Location").get(0)));
     assertEquals("respond-async", headerFields.get("Preference-Applied").get(0));
@@ -84,7 +84,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     HttpURLConnection statusRequest = getRequest(new URL(respondUri), Collections.<String, String>emptyMap());
     StringHelper.Stream statusBody = StringHelper.toStream(statusRequest.getInputStream());
     Map<String, List<String>> statusHeaderFields = statusRequest.getHeaderFields();
-    assertEquals("HTTP/1.1 202 Accepted", statusHeaderFields.get(null).get(0));
+    assertEquals("HTTP/1.1 202", statusHeaderFields.get(null).get(0));
     assertEquals(0, statusBody.byteLength());
 
     // get async response (now finished)
@@ -94,10 +94,10 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     Map<String, List<String>> resultHeaderFields = result.getHeaderFields();
     String resBody = resultBody.asString();
 
-    assertEquals("HTTP/1.1 200 OK", resultHeaderFields.get(null).get(0));
+    assertEquals("HTTP/1.1 200", resultHeaderFields.get(null).get(0));
     assertEquals(1007, resultBody.byteLength());
     contains(resBody,
-        "HTTP/1.1 200 OK",
+        "HTTP/1.1 200",
         "OData-Version: 4.0",
         "Content-Length: 605",
         "\"@odata.context\":\"$metadata#ESAllPrim/$entity\"",
@@ -117,7 +117,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     assertEquals(0, response.byteLength());
 
     Map<String, List<String>> headerFields = connection.getHeaderFields();
-    assertEquals("HTTP/1.1 202 Accepted", headerFields.get(null).get(0));
+    assertEquals("HTTP/1.1 202", headerFields.get(null).get(0));
     // because of generated status id it is only checked that the location starts correct and contains a number
     assertTrue(Pattern.matches("http:\\/\\/localhost:9080\\/odata-server-tecsvc\\/status\\/\\d*",
         headerFields.get("Location").get(0)));
@@ -128,7 +128,7 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     HttpURLConnection statusRequest = getRequest(new URL(respondUri), Collections.<String, String>emptyMap());
     StringHelper.Stream statusBody = StringHelper.toStream(statusRequest.getInputStream());
     Map<String, List<String>> statusHeaderFields = statusRequest.getHeaderFields();
-    assertEquals("HTTP/1.1 202 Accepted", statusHeaderFields.get(null).get(0));
+    assertEquals("HTTP/1.1 202", statusHeaderFields.get(null).get(0));
     assertEquals(0, statusBody.byteLength());
 
     // get async response (now finished)
@@ -136,10 +136,10 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
     StringHelper.Stream resultBody = StringHelper.toStream(result.getInputStream());
     Map<String, List<String>> resultHeaderFields = result.getHeaderFields();
     String resBody = resultBody.asString();
-    assertEquals("HTTP/1.1 200 OK", resultHeaderFields.get(null).get(0));
+    assertEquals("HTTP/1.1 200", resultHeaderFields.get(null).get(0));
     assertEquals(2321, resultBody.byteLength());
     contains(resBody,
-        "HTTP/1.1 200 OK",
+        "HTTP/1.1 200",
         "OData-Version: 4.0",
         "Content-Length: 605",
         "\"@odata.context\":\"$metadata#ESAllPrim/$entity\"",
@@ -192,10 +192,10 @@ public class BasicAsyncITCase extends AbstractBaseTestITCase {
       HttpURLConnection statusRequest = getRequest(new URL(location), Collections.<String, String>emptyMap());
       Map<String, List<String>> statusHeaderFields = statusRequest.getHeaderFields();
       String statusHeader = statusHeaderFields.get(null).get(0);
-      if("HTTP/1.1 202 Accepted".equals(statusHeader)) {
+      if("HTTP/1.1 202".equals(statusHeader)) {
         TimeUnit.MILLISECONDS.sleep(SLEEP_TIMEOUT_IN_MS);
         waitCounter -= SLEEP_TIMEOUT_IN_MS;
-      } else if("HTTP/1.1 200 OK".equals(statusHeader)) {
+      } else if("HTTP/1.1 200".equals(statusHeader)) {
         result = statusRequest;
       } else {
         throw new RuntimeException("Unexpected status header ('" + statusHeader +

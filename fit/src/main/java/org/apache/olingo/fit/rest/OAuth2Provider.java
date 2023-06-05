@@ -18,8 +18,8 @@
  */
 package org.apache.olingo.fit.rest;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.cxf.rs.security.oauth2.common.AccessTokenRegistration;
 import org.apache.cxf.rs.security.oauth2.common.Client;
@@ -31,6 +31,8 @@ import org.apache.cxf.rs.security.oauth2.grants.code.AuthorizationCodeRegistrati
 import org.apache.cxf.rs.security.oauth2.grants.code.ServerAuthorizationCodeGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthServiceException;
 import org.apache.cxf.rs.security.oauth2.tokens.bearer.BearerAccessToken;
+import org.apache.cxf.rs.security.oauth2.tokens.refresh.RefreshToken;
+
 
 public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
@@ -65,7 +67,7 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
 
   @Override
   public List<OAuthPermission> convertScopeToPermissions(final Client client, final List<String> list) {
-    return Collections.singletonList(new OAuthPermission());
+    return list.stream().map(l -> new OAuthPermission((l))).collect(Collectors.toList());
   }
 
   @Override
@@ -118,14 +120,23 @@ public class OAuth2Provider implements AuthorizationCodeDataProvider {
   }
 
   @Override
-  public void removeAccessToken(final ServerAccessToken sat) throws OAuthServiceException {
-    if (token != null && token.getTokenKey().equals(sat.getTokenKey())) {
-      token = null;
-    }
+  public void revokeToken(final Client client, final String string, final String string1) throws OAuthServiceException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public void revokeToken(final Client client, final String string, final String string1) throws OAuthServiceException {
+  public List<ServerAuthorizationCodeGrant>
+  getCodeGrants(Client client, UserSubject userSubject) throws OAuthServiceException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<ServerAccessToken> getAccessTokens(Client client, UserSubject userSubject) throws OAuthServiceException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public List<RefreshToken> getRefreshTokens(Client client, UserSubject userSubject) throws OAuthServiceException {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 

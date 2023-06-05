@@ -20,7 +20,7 @@ package org.apache.olingo.fit;
 
 import java.io.IOException;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import org.springframework.stereotype.Service;
 

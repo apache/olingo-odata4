@@ -28,7 +28,7 @@ Content-Type: application/http
 Content-Transfer-Encoding: binary
 Content-ID: 2
 
-HTTP/1.1 200 OK
+HTTP/1.1 200
 DataServiceVersion: 2.0
 Content-Type: text/plain;charset=utf-8
 Content-length: 13

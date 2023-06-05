@@ -241,7 +241,7 @@ public class DemoEntityProcessor implements EntityProcessor, MediaEntityProcesso
    * Example request:
    * 
    * POST URL: http://localhost:8080/DemoService/DemoService.svc/Products
-   * Header: Content-Type: application/json; odata.metadata=minimal
+   * Header: Content-Type: application/json;odata.metadata=minimal
    * Request body:
    * {
    * "ID":3,

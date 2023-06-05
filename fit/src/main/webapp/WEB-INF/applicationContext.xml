@@ -22,32 +22,46 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://cxf.apache.org/jaxrs
                            http://cxf.apache.org/schemas/jaxrs.xsd
                            http://www.springframework.org/schema/context
-                           http://www.springframework.org/schema/context/spring-context.xsd">
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd">
 
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
   <context:property-placeholder/>
   <context:annotation-config/>
-  <bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"/>
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
   <bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"/>
   
   <jaxrs:server id="services" address="/" basePackages="org.apache.olingo.fit">
     <jaxrs:providers>
-      <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
+      <bean class="com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider"/>
       <bean class="org.apache.olingo.fit.rest.OAuth2RequestFilter">
+        <property name="requiredScopes">
+          <list>
+            <value>foo</value>
+            <value>bar</value>
+          </list>
+        </property>
         <property name="dataProvider" ref="oauthProvider"/>
+        <property name="jwtTokenConsumer" ref="jwtTokenConsumer"/>
+        <property name="messageContext" ref="messageContext" />
       </bean>
       <bean class="org.apache.olingo.fit.rest.ServiceNameResponseFilter"/>
     </jaxrs:providers>
   </jaxrs:server>
 
-  <bean id="oauthProvider" class="org.apache.olingo.fit.rest.OAuth2Provider"/>    
+  <bean id="oauthProvider" class="org.apache.olingo.fit.rest.OAuth2Provider"/>
+  <bean id="jwtTokenConsumer" class="org.apache.cxf.rs.security.jose.jwt.JoseJwtConsumer"/>
+  <bean id="messageContext" class="org.apache.cxf.jaxrs.impl.tl.ThreadLocalMessageContext" />
   <bean id="authorizationService" class="org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService">
     <property name="dataProvider" ref="oauthProvider"/>
   </bean>

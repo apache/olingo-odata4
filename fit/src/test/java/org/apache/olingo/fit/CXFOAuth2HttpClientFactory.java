@@ -21,7 +21,7 @@ package org.apache.olingo.fit;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -49,14 +49,16 @@ import org.apache.http.util.EntityUtils;
 import org.apache.olingo.client.core.http.AbstractOAuth2HttpClientFactory;
 import org.apache.olingo.client.core.http.OAuth2Exception;
 import org.apache.olingo.fit.rest.OAuth2Provider;
+import org.apache.cxf.rs.security.oauth2.client.Consumer;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory {
 
-  private static final OAuthClientUtils.Consumer OAUTH2_CONSUMER =
-      new OAuthClientUtils.Consumer(OAuth2Provider.CLIENT_ID, OAuth2Provider.CLIENT_SECRET);
+  private static final Consumer OAUTH2_CONSUMER =
+          new Consumer(OAuth2Provider.CLIENT_ID, OAuth2Provider.CLIENT_SECRET);
 
   private ClientAccessToken accessToken;
 
@@ -85,7 +87,7 @@ public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory 
         OAuth2Provider.CLIENT_ID,
         OAuth2Provider.REDIRECT_URI,
         null,
-        null);
+        "foo bar");
 
     // Disable automatic redirects handling
     final HttpParams params = new BasicHttpParams();
@@ -120,6 +122,7 @@ public class CXFOAuth2HttpClientFactory extends AbstractOAuth2HttpClientFactory 
           addParameter("client_id", oAuthAuthorizationData.get("clientId").asText()).
           addParameter("redirect_uri", oAuthAuthorizationData.get("redirectUri").asText()).
           addParameter("oauthDecision", "allow").
+          addParameter("scope", "foo bar").
           build();
       final HttpGet method = new HttpGet(location);
       method.addHeader("Authorization", "Basic " + Base64.encodeBase64String("odatajclient:odatajclient".getBytes()));
