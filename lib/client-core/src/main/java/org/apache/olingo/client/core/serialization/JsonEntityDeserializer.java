@@ -226,6 +226,9 @@ public class JsonEntityDeserializer extends JsonDeserializer {
           toRemove.add(link.getTitle() + "@" + annotation.getTerm());
         }
       }
+//      if (tree.get(link.getTitle() + Constants.JSON_TYPE) != null) {
+//        toRemove.add(link.getTitle() + Constants.JSON_TYPE);
+//      }
     }
 
     tree.remove(toRemove);
