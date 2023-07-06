@@ -1,0 +1,19 @@
+{
+  "@odata.context": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/$metadata#Employees/$entity",
+  "@odata.etag": "W/\"f557984846c2e312e155c9e8bede6186c4be9094b4edec2f5f32fe2a813f0cf1\"",
+  "@odata.id": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Employees(1)",
+  "Id@odata.type": "#Int64",
+  "Id": 1,
+  "FirstName": "Paul",
+  "LastName": "Mayor",
+  "DateOfBirth@odata.type": "#Date",
+  "DateOfBirth": "1973-08-17",
+  "Picture@odata.type": "#Stream",
+  "Picture@odata.mediaEtag": "W/\"32d1efc04f8aa14e828fa67d5161fa3664366e089b187402732a7c054ea2bc26\"",
+  "Picture@odata.mediaContentType": "image/jpeg",
+  "Picture@odata.mediaEditLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Employees(1)/Picture",
+  "Thumbnail@odata.type": "#Stream",
+  "Thumbnail@odata.mediaEtag": "W/\"7234c31b74af36899934883c9ff09ab0c70f8d0efdab9ac1a90010074f812931\"",
+  "Thumbnail@odata.mediaContentType": "image/jpeg",
+  "Thumbnail@odata.mediaEditLink": "http://odatae2etest.azurewebsites.net/javatest/DefaultService/Employees(1)/Thumbnail"
+}
