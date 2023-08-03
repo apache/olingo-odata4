@@ -21,9 +21,7 @@ package org.apache.olingo.server.core.serializer.json;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.data.AbstractEntityCollection;
@@ -255,15 +253,6 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
 
   }
 
-  private Property findProperty(final String propertyName, final List<Property> properties) {
-    for (final Property property : properties) {
-      if (propertyName.equals(property.getName())) {
-        return property;
-      }
-    }
-    return null;
-  }
-
   protected void writeProperty(final ServiceMetadata metadata,
       final EdmProperty edmProperty, final Property property,
       final Set<List<String>> selectedPaths, final JsonGenerator json)
@@ -475,8 +464,9 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
       final Set<List<String>> selectedPaths, final JsonGenerator json)
       throws IOException, SerializerException {
 
+    Map<String, Property> mappedProperties = mapProperties(properties);
     for (final String propertyName : type.getPropertyNames()) {
-      final Property property = findProperty(propertyName, properties);
+    final Property property = mappedProperties.get(propertyName);
       if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
         writeProperty(metadata, (EdmProperty) type.getProperty(propertyName), property,
             selectedPaths == null ? null : ExpandSelectHelper.getReducedSelectedPaths(selectedPaths, propertyName),
@@ -492,15 +482,24 @@ public class JsonDeltaSerializerWithNavigations implements EdmDeltaSerializer {
     final boolean all = ExpandSelectHelper.isAll(select);
     final Set<String> selected = all ? new HashSet<>() : ExpandSelectHelper.getSelectedPropertyNames(select
         .getSelectItems());
+    final Map<String, Property> mappedProperties = mapProperties(properties);
     for (final String propertyName : type.getPropertyNames()) {
       if ((all || selected.contains(propertyName)) && !properties.isEmpty()) {
         final EdmProperty edmProperty = type.getStructuralProperty(propertyName);
-        final Property property = findProperty(propertyName, properties);
+        final Property property = mappedProperties.get(propertyName);
         final Set<List<String>> selectedPaths = all || edmProperty.isPrimitive() ? null : ExpandSelectHelper
             .getSelectedPaths(select.getSelectItems(), propertyName);
         writeProperty(metadata, edmProperty, property, selectedPaths, json);
       }
     }
+  }
+
+  private Map<String, Property> mapProperties(final List<Property> properties) {
+    final Map<String, Property> mappedProperties = new HashMap<>();
+    for (final Property property : properties) {
+      mappedProperties.put(property.getName(), property);
+    }
+    return mappedProperties;
   }
 
   protected void writeNavigationProperties(final ServiceMetadata metadata,
