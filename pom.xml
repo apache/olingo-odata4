@@ -87,7 +87,7 @@
     <velocity.version>1.7</velocity.version>
     <maven.plugin.api.version>3.6.1</maven.plugin.api.version>
     <maven.plugin.tools.version>3.6.1</maven.plugin.tools.version>
-    <maven.bundle.plugin.version>2.5.4</maven.bundle.plugin.version>
+    <maven.bundle.plugin.version>5.1.9</maven.bundle.plugin.version>
     <hc.client.version>4.5.14</hc.client.version>
     <hc.core.version>4.4.16</hc.core.version>
     <jackson.version>2.14.0</jackson.version>
