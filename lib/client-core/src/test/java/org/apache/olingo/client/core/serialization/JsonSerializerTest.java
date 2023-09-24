@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.StringWriter;
+import java.math.BigDecimal;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -63,6 +64,33 @@ public class JsonSerializerTest {
         objFactory.newPrimitiveProperty(
             "testStringNull",
             objFactory.newPrimitiveValueBuilder().buildString(null)));
+
+    JsonSerializer jsonSerializer = new JsonSerializer(false, ContentType.JSON_FULL_METADATA);
+
+    StringWriter writer = new StringWriter();
+    jsonSerializer.write(writer, odataClient.getBinder().getEntity(clientEntity));
+    assertThat(writer.toString(), is(expectedJson));
+  }
+  @Test
+  public void testClientEntityJSONWithBigDecimal() throws ODataSerializerException {
+    String expectedJson = "{\"@odata.type\":\"#test.testClientEntity\","
+            + "\"testLeadingZerosDecimal@odata.type\":\"Decimal\","
+            + "\"testLeadingZerosDecimal\":0.01,"
+            + "\"testArbitraryPrecisionDecimal@odata.type\":\"Decimal\","
+            + "\"testArbitraryPrecisionDecimal\":0.01000000000000000020816681711721685132943093776702880859375}";
+
+    ODataClient odataClient = ODataClientFactory.getClient();
+    ClientObjectFactory objFactory = odataClient.getObjectFactory();
+    ClientEntity clientEntity = objFactory.newEntity(new FullQualifiedName("test", "testClientEntity"));
+
+    clientEntity.getProperties().add(
+            objFactory.newPrimitiveProperty(
+                    "testLeadingZerosDecimal",
+                    objFactory.newPrimitiveValueBuilder().buildDecimal(new BigDecimal("0.01"))));
+    clientEntity.getProperties().add(
+            objFactory.newPrimitiveProperty(
+                    "testArbitraryPrecisionDecimal",
+                    objFactory.newPrimitiveValueBuilder().buildDecimal(new BigDecimal(0.01))));
 
     JsonSerializer jsonSerializer = new JsonSerializer(false, ContentType.JSON_FULL_METADATA);
 
