@@ -20,6 +20,7 @@ package org.apache.olingo.client.core;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import org.apache.olingo.client.api.domain.ClientValue;
@@ -63,5 +64,17 @@ public class PrimitiveValueTest extends AbstractTest {
     assertEquals(expected.get(Calendar.DATE), actual.get(Calendar.DATE));
 
     assertEquals("2013-01-10", value.asPrimitive().toString());
+  }
+
+  @Test
+  public void testBigDecimalToStringConversion() throws EdmPrimitiveTypeException {
+    final ClientValue leadingZerosDecimalValue = client.getObjectFactory().newPrimitiveValueBuilder()
+            .setType(EdmPrimitiveTypeKind.Decimal).setValue(new BigDecimal("0.01")).build();
+    final ClientValue arbitraryPrecisionDecimalValue = client.getObjectFactory().newPrimitiveValueBuilder()
+            .setType(EdmPrimitiveTypeKind.Decimal).setValue(new BigDecimal(0.01)).build();
+
+    assertEquals("0.01", leadingZerosDecimalValue.asPrimitive().toString());
+    assertEquals("0.01000000000000000020816681711721685132943093776702880859375",
+        arbitraryPrecisionDecimalValue.asPrimitive().toString());
   }
 }
