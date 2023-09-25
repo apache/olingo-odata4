@@ -206,12 +206,16 @@ public class ClientPrimitiveValueImpl extends AbstractClientValue implements Cli
       return value.toString();
     } else {
       try {
-        // TODO: set facets
         Integer precision = Constants.DEFAULT_PRECISION;
         Integer scale = Constants.DEFAULT_SCALE;
         if (typeKind.equals(EdmPrimitiveTypeKind.Decimal) && value instanceof BigDecimal) {
             precision = ((BigDecimal) value).precision();
             scale = ((BigDecimal) value).scale();
+            if (precision == 0) {
+              precision = null;
+            } else if (scale > precision) {
+              precision = scale;
+            }
         }
         return type.valueToString(value, null, null, precision, scale, null);
       } catch (EdmPrimitiveTypeException e) {

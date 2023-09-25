@@ -296,16 +296,20 @@ public class JsonSerializer implements ODataSerializer {
         jgen.writeString(value.toString()); // This might not be valid OData.
       }
     } else {
-      // TODO: add facets
-      Integer precesion = Constants.DEFAULT_PRECISION;
+      Integer precision = Constants.DEFAULT_PRECISION;
       Integer scale = Constants.DEFAULT_SCALE;
       if(kind == EdmPrimitiveTypeKind.Decimal && value instanceof BigDecimal){
           BigDecimal bigDecimal = (BigDecimal)value;
-          precesion = bigDecimal.precision();
+          precision = bigDecimal.precision();
           scale = bigDecimal.scale();
+          if (precision == 0) {
+            precision = null;
+          } else if (scale > precision) {
+            precision = scale;
+          }
       }
       final String serialized = EdmPrimitiveTypeFactory.getInstance(kind)
-          .valueToString(value, null, null, precesion, scale, null);
+          .valueToString(value, null, null, precision, scale, null);
 
       if (isIEEE754Compatible && (kind == EdmPrimitiveTypeKind.Int64 || kind == EdmPrimitiveTypeKind.Decimal)
           || !NUMBER_TYPES.contains(kind)) {
