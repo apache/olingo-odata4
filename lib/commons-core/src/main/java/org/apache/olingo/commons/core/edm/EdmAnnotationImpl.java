@@ -39,6 +39,11 @@ public class EdmAnnotationImpl extends AbstractEdmAnnotatable implements EdmAnno
   }
 
   @Override
+  public String getTermAsString() {
+    return annotation.getTerm();
+  }
+
+  @Override
   public EdmTerm getTerm() {
     if (term == null) {
       if (annotation.getTerm() == null) {

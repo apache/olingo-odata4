@@ -56,7 +56,8 @@ public class ClientPrimitiveValueImpl extends AbstractClientValue implements Cli
 
     @Override
     public BuilderImpl setType(final EdmPrimitiveTypeKind type) {
-      if (type == EdmPrimitiveTypeKind.Stream) {
+    	// Ilya: throwing these exceptions from here doesn't make sense
+      /*if (type == EdmPrimitiveTypeKind.Stream) {
         throw new IllegalArgumentException(String.format(
                 "Cannot build a primitive value for %s", EdmPrimitiveTypeKind.Stream.toString()));
       }
@@ -66,7 +67,7 @@ public class ClientPrimitiveValueImpl extends AbstractClientValue implements Cli
                         + "An entity can declare a property to be of type Geometry. "
                         + "An instance of an entity MUST NOT have a value of type Geometry. "
                         + "Each value MUST be of some subtype.");
-      }
+      }*/
 
       instance.typeKind = type == null ? EdmPrimitiveTypeKind.String : type;
       instance.type = EdmPrimitiveTypeFactory.getInstance(instance.typeKind);

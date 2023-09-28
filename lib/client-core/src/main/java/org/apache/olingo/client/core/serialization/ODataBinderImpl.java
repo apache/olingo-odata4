@@ -851,8 +851,9 @@ public class ODataBinderImpl implements ODataBinder {
         value.asCollection().add(getODataValue(type, fake, contextURL, metadataETag));
       }
     } else if (valuable.isEnum()) {
+      Object enumValue = valuable.asEnum();
       value = client.getObjectFactory().newEnumValue(type == null ? null : type.toString(),
-          valuable.asEnum().toString());
+          enumValue==null? null: enumValue.toString());
     } else if (valuable.isComplex()) {
       final ClientComplexValue lcValue =
           client.getObjectFactory().newComplexValue(type == null ? null : type.toString());

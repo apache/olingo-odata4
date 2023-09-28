@@ -363,7 +363,7 @@ public class EntityTest extends AbstractTest {
     assertEquals("com.contoso.display.styleType", annotation.getValue().getTypeName());
     assertTrue(annotation.hasComplexValue());
     assertEquals(2,
-        annotation.getValue().asComplex().get("order").getPrimitiveValue().toCastValue(Integer.class), 0);
+        annotation.getValue().asComplex().get("order").getPrimitiveValue().toCastValue(Integer.class).intValue(), 0);
 
     final ClientEntity written = client.getBinder().getODataEntity(
         new ResWrap<Entity>((URI) null, null, client.getBinder().getEntity(entity)));

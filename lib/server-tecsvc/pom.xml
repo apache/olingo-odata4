@@ -97,7 +97,7 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+      <!-- <plugin>
         <groupId>com.keyboardsamurais.maven</groupId>
         <artifactId>maven-timestamp-plugin</artifactId>
         <configuration>
@@ -111,7 +111,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin> -->
     </plugins>
   </build>
 
