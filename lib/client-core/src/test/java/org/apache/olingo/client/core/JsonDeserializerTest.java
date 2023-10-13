@@ -38,9 +38,8 @@ public class JsonDeserializerTest {
 
 
     /**
-     * Without the attached fix this test with the corresponding resource json will throw a {@link java.lang.IllegalArgumentException}
-     * with the message: 'Cannot build a primitive value for Stream'
-     *
+     * Without the attached fix this test with the corresponding resource json will throw
+     * a {@link java.lang.IllegalArgumentException} with the message: 'Cannot build a primitive value for Stream'
      * this is because the <streamproptitle>@odata.type key is incorrectly filtered by the previous implementation
      */
     @Test
