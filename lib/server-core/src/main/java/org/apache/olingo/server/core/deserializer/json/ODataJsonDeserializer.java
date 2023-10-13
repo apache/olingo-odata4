@@ -48,6 +48,7 @@ import org.apache.olingo.commons.api.data.Delta;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Link;
+import org.apache.olingo.commons.api.data.Linked;
 import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
@@ -223,19 +224,19 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       final ExpandTreeBuilder expandBuilder) throws DeserializerException {
     Entity entity = new Entity();
     entity.setType(edmEntityType.getFullQualifiedName().getFullQualifiedNameAsString());
-    
+
     // Check and consume @id for v4.01
     consumeId(tree, entity);
 
     // Check and consume all Properties
-    consumeEntityProperties(edmEntityType, tree, entity);
+    consumeEntityProperties(edmEntityType, tree, entity, expandBuilder);
 
     // Check and consume all expanded Navigation Properties
     consumeExpandedNavigationProperties(edmEntityType, tree, entity, expandBuilder);
 
     // consume delta json node fields for v4.01
     consumeDeltaJsonNodeFields(edmEntityType, tree, entity, expandBuilder);
-    
+
     // consume remaining json node fields
     consumeRemainingJsonNodeFields(edmEntityType, tree, entity);
 
@@ -245,7 +246,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
   }
 
   private void consumeDeltaJsonNodeFields(EdmEntityType edmEntityType, ObjectNode node,
-      Entity entity, ExpandTreeBuilder expandBuilder) 
+      Entity entity, ExpandTreeBuilder expandBuilder)
       throws DeserializerException {
     if (constants instanceof Constantsv01) {
       List<String> navigationPropertyNames = edmEntityType.getNavigationPropertyNames();
@@ -287,7 +288,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
               deltaValue.getDeletedEntities().add(deletedEntity);
             } else {
               //For @id and properties create normal entity
-            	Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(), 
+            	Entity inlineEntity = consumeEntityNode(edmNavigationProperty.getType(),
               		  (ObjectNode) arrayElement, expandBuilder);
               deltaValue.getEntities().add(inlineEntity);
             }
@@ -301,7 +302,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
 
   }
 
-  private void consumeId(ObjectNode node, Entity entity) 
+  private void consumeId(ObjectNode node, Entity entity)
       throws DeserializerException {
     if (node.get(constants.getId()) != null && constants instanceof Constantsv01) {
       try {
@@ -328,7 +329,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       		InputStream inputStream1 = new ByteArrayInputStream(inputContent);
     	      ObjectNode tree = parseJsonTree(inputStream1);
     	      parameters = consumeParameters(edmAction, tree);
-    	
+
     	      if (tree.isObject()) {
     	        removeAnnotations(tree);
     	      }
@@ -461,17 +462,17 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         Link bindingLink = consumeBindingLink(field.getKey(), field.getValue(), edmEntityType);
         entity.getNavigationBindings().add(bindingLink);
         toRemove.add(field.getKey());
-      } else if (!field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX) && 
+      } else if (!field.getKey().contains(ODATA_CONTROL_INFORMATION_PREFIX) &&
     		  field.getKey().contains(ODATA_ANNOTATION_MARKER) &&
     		  field.getKey().substring(field.getKey().indexOf(ODATA_ANNOTATION_MARKER))
     		  .contains(".")) {
-    	// Instance annotations start with @ sign followed by 
-          // alias or namespace 
+    	// Instance annotations start with @ sign followed by
+          // alias or namespace
           // followed by a dot and then term name
     	  String[] keySplit = field.getKey().split(ODATA_ANNOTATION_MARKER);
     	  String termName = keySplit[1];
     	  Annotation annotation = instanceAnnotDeserializer.consumeInstanceAnnotation(termName, field.getValue());
-    	  // If keySplit has a value at zeroth index then instance annotation is specified like 
+    	  // If keySplit has a value at zeroth index then instance annotation is specified like
     	  // propertyName@Term
     	  if (!keySplit[0].isEmpty()) {
     		  if (edmEntityType.getPropertyNames().contains(keySplit[0])) {
@@ -542,8 +543,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     property.getAnnotations().add(annotation);
   }
 
-  private void consumeEntityProperties(final EdmEntityType edmEntityType, final ObjectNode node,
-      final Entity entity) throws DeserializerException {
+  private void consumeEntityProperties(final EdmEntityType edmEntityType, final ObjectNode node, final Entity entity,
+                                       ExpandTreeBuilder expandBuilder) throws DeserializerException {
     List<String> propertyNames = edmEntityType.getPropertyNames();
     for (String propertyName : propertyNames) {
       JsonNode jsonNode = node.get(propertyName);
@@ -557,24 +558,25 @@ public class ODataJsonDeserializer implements ODataDeserializer {
             edmProperty.isCollection(), edmProperty.isNullable(), edmProperty.getMaxLength(),
             edmProperty.getPrecision(), edmProperty.getScale(), edmProperty.isUnicode(), edmProperty.getMapping(),
             jsonNode);
+
         entity.addProperty(property);
         node.remove(propertyName);
       }
     }
   }
 
-  private void consumeExpandedNavigationProperties(final EdmEntityType edmEntityType, final ObjectNode node,
-      final Entity entity, final ExpandTreeBuilder expandBuilder) throws DeserializerException {
-    List<String> navigationPropertyNames = edmEntityType.getNavigationPropertyNames();
+  private void consumeExpandedNavigationProperties(final EdmStructuredType edmStructuredType, final ObjectNode node,
+       final Linked linked, final ExpandTreeBuilder expandBuilder) throws DeserializerException {
+    List<String> navigationPropertyNames = edmStructuredType.getNavigationPropertyNames();
     for (String navigationPropertyName : navigationPropertyNames) {
       // read expanded navigation property
       JsonNode jsonNode = node.get(navigationPropertyName);
       if (jsonNode != null) {
-        EdmNavigationProperty edmNavigationProperty = edmEntityType.getNavigationProperty(navigationPropertyName);
+        EdmNavigationProperty edmNavigationProperty = edmStructuredType.getNavigationProperty(navigationPropertyName);
         checkNotNullOrValidNull(jsonNode, edmNavigationProperty);
 
         Link link = createLink(expandBuilder, navigationPropertyName, jsonNode, edmNavigationProperty);
-        entity.getNavigationLinks().add(link);
+        linked.getNavigationLinks().add(link);
         node.remove(navigationPropertyName);
       }
     }
@@ -625,7 +627,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
     return link;
   }
-  
+
   private Link consumeBindingLink(final String key, final JsonNode jsonNode, final EdmEntityType edmEntityType)
       throws DeserializerException {
     String[] splitKey = key.split(ODATA_ANNOTATION_MARKER);
@@ -664,7 +666,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         bindingLink.setBindingLink(null);
       } else {
         assertIsNullNode(key, jsonNode);
-        bindingLink.setBindingLink(jsonNode.asText());        
+        bindingLink.setBindingLink(jsonNode.asText());
       }
       bindingLink.setType(Constants.ENTITY_BINDING_LINK_TYPE);
     }
@@ -726,7 +728,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
       final JsonNode jsonNode)
       throws DeserializerException {
     // read and add all complex properties
-    ComplexValue value = readComplexValue(name, type, isNullable, jsonNode);
+    ComplexValue value = readComplexValue(name, type, isNullable, jsonNode, null);
 
     if (jsonNode.isObject()) {
       removeAnnotations((ObjectNode) jsonNode);
@@ -776,8 +778,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
-  private ComplexValue readComplexValue(final String name, final EdmType type,
-      final boolean isNullable, final JsonNode jsonNode) throws DeserializerException {
+  private ComplexValue readComplexValue(final String name, final EdmType type, final boolean isNullable,
+      final JsonNode jsonNode, final ExpandTreeBuilder expandBuilder) throws DeserializerException {
     if (isValidNull(name, isNullable, jsonNode)) {
       return null;
     }
@@ -789,10 +791,10 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     // Even if there are no properties defined we have to give back an empty list
     ComplexValue complexValue = new ComplexValue();
     EdmComplexType edmType = (EdmComplexType) type;
-    
+
     //Check if the properties are from derived type
     edmType = (EdmComplexType) getDerivedType(edmType, jsonNode);
-    
+
     // Check and consume all Properties
     for (String propertyName : edmType.getPropertyNames()) {
       JsonNode subNode = jsonNode.get(propertyName);
@@ -811,6 +813,8 @@ public class ODataJsonDeserializer implements ODataDeserializer {
         ((ObjectNode) jsonNode).remove(propertyName);
       }
     }
+
+    consumeExpandedNavigationProperties(edmType, (ObjectNode) jsonNode, complexValue, null);
     complexValue.setTypeName(edmType.getFullQualifiedName().getFullQualifiedNameAsString());
     return complexValue;
   }
@@ -874,7 +878,7 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           jsonNode.remove(Constants.JSON_CRS).get(Constants.PROPERTIES).
             get(Constants.JSON_NAME).asText().split(":")[1]);
         }
-        
+
         assertJsonNodeIsEmpty(jsonNode);
 
         if (topNode != null && topNode.isArray()) {
