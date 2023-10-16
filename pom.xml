@@ -100,7 +100,7 @@
     <android.platform.version>4.1.1.4</android.platform.version>
     <stax.api.version>1.0-2</stax.api.version>
 
-    <sl4j.version>1.7.36</sl4j.version>
+    <sl4j.version>2.0.9</sl4j.version>
 
     <tomcat.servlet.port>9080</tomcat.servlet.port>
     <tomcat.version>7.0.109</tomcat.version>
