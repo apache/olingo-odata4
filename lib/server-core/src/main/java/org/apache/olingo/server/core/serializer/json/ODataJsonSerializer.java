@@ -37,6 +37,7 @@ import org.apache.olingo.commons.api.data.AbstractEntityCollection;
 import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.ContextURL;
 import org.apache.olingo.commons.api.data.Entity;
+import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.EntityIterator;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Linked;
@@ -654,12 +655,18 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
           json.writeStartArray();
           json.writeEndArray();
         } else {
+          final EntityCollection inlineEntitySet = navigationLink.getInlineEntitySet();
           if (innerCount != null && innerCount.getValue()) {
-            writeInlineCount(property.getName(), navigationLink.getInlineEntitySet().getCount(), json);
+            writeInlineCount(property.getName(), inlineEntitySet.getCount(), json);
           }
           json.writeFieldName(property.getName());
-          writeEntitySet(metadata, property.getType(), navigationLink.getInlineEntitySet(), innerExpand, toDepth,
+          writeEntitySet(metadata, property.getType(), inlineEntitySet, innerExpand, toDepth,
               innerSelect, writeOnlyRef, ancestors, name, json);
+
+          final URI nextLink = inlineEntitySet.getNext();
+          if (nextLink != null) {
+            json.writeStringField(navigationLink.getTitle() + constants.getNextLink(), nextLink.toASCIIString());
+          }
         }
       }
     } else {
