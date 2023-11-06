@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Locale;
 
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;

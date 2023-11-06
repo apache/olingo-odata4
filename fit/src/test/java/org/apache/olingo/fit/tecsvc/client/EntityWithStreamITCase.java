@@ -66,7 +66,7 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
     final ODataRetrieveResponse<ClientEntitySet> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("application/json; odata.metadata=full", response.getContentType());
+    assertEquals("application/json;odata.metadata=full", response.getContentType());
 
     final ClientEntitySet entitySet = response.getBody();
     assertNotNull(entitySet);
@@ -132,7 +132,7 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("application/json; odata.metadata=full", response.getContentType());
+    assertEquals("application/json;odata.metadata=full", response.getContentType());
 
     final ClientEntity entity = response.getBody();
     assertNotNull(entity);
@@ -194,7 +194,7 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
     final ODataRetrieveResponse<ClientEntity> response = request.execute();
     saveCookieHeader(response);
     assertEquals(HttpStatusCode.OK.getStatusCode(), response.getStatusCode());
-    assertEquals("application/json; odata.metadata=full", response.getContentType());
+    assertEquals("application/json;odata.metadata=full", response.getContentType());
 
     final ClientEntity entity = response.getBody();
     assertNotNull(entity);

@@ -30,7 +30,7 @@
   <description>A simple IT verifying the basic use case of pojogen-maven-plugin.</description>
 
   <properties>
-    <project.source>1.6</project.source>
+    <project.source>17</project.source>
     <compiler.plugin.version>3.2</compiler.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

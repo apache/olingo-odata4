@@ -24,12 +24,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -791,19 +791,19 @@ public class ODataHandlerImplTest {
     final MediaEntityProcessor processor = mock(MediaEntityProcessor.class);
 
     dispatch(HttpMethod.GET, uri, processor);
-    verifyZeroInteractions(processor);
+    verifyNoInteractions(processor);
 
     dispatch(HttpMethod.POST, uri, processor);
-    verifyZeroInteractions(processor);
+    verifyNoInteractions(processor);
 
     dispatch(HttpMethod.PUT, uri, processor);
-    verifyZeroInteractions(processor);
+    verifyNoInteractions(processor);
 
     dispatch(HttpMethod.DELETE, uri, processor);
-    verifyZeroInteractions(processor);
+    verifyNoInteractions(processor);
     
     dispatch(HttpMethod.HEAD, uri, processor);
-    verifyZeroInteractions(processor);
+    verifyNoInteractions(processor);
   }
 
   @Test
@@ -1108,7 +1108,7 @@ public class ODataHandlerImplTest {
     EntityProcessor processor = mock(EntityProcessor.class);
     final ODataResponse response = dispatch(HttpMethod.POST, "ESAllPrim", null,
         HttpHeader.CONTENT_TYPE, "*/*", processor);
-    verifyZeroInteractions(processor);
+    verifyNoInteractions(processor);
     assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), response.getStatusCode());
   }
 
@@ -1117,7 +1117,7 @@ public class ODataHandlerImplTest {
     EntityProcessor processor = mock(EntityProcessor.class);
     ErrorProcessor errorProcessor = mock(ErrorProcessor.class);
     dispatch(HttpMethod.POST, "ESAllPrim", null, HttpHeader.CONTENT_TYPE, "some/unsupported", errorProcessor);
-    verifyZeroInteractions(processor);
+    verifyNoInteractions(processor);
     verify(errorProcessor).processError(any(ODataRequest.class), any(ODataResponse.class),
         any(ODataServerError.class),
         any(ContentType.class));

@@ -84,65 +84,65 @@ public class MockedBatchHandlerTest {
   @Test
   public void test() throws Exception {
     final String content = "--batch_12345" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 3" + CRLF
-        + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 4" + CRLF
-        + CRLF
-        + "PUT $3/PropertyInt32 HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
-        + CRLF
-        + "POST ESAllPrim HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 5" + CRLF
-        + CRLF
-        + "POST http://localhost:8080/odata/$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 2" + CRLF
-        + CRLF
-        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 6" + CRLF
-        + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345--" + CRLF
-        + CRLF
-        + "--batch_12345--";
+            + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 3" + CRLF
+            + CRLF
+            + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 4" + CRLF
+            + CRLF
+            + "PUT $3/PropertyInt32 HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 1" + CRLF
+            + CRLF
+            + "POST ESAllPrim HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 5" + CRLF
+            + CRLF
+            + "POST http://localhost:8080/odata/$1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 2" + CRLF
+            + CRLF
+            + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 6" + CRLF
+            + CRLF
+            + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345--" + CRLF
+            + CRLF
+            + "--batch_12345--";
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
     final ODataRequest request = buildODataRequest(content, header);
@@ -150,7 +150,7 @@ public class MockedBatchHandlerTest {
     batchHandler.process(request, response, true);
 
     BatchLineReader reader =
-        new BatchLineReader(response.getContent());
+            new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
@@ -205,14 +205,14 @@ public class MockedBatchHandlerTest {
   @Test
   public void testGetRequest() throws Exception {
     final String content = ""
-        + "--batch_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + CRLF
-        + "GET ESAllPrim(0) HTTP/1.1" + CRLF
-        + CRLF
-        + CRLF
-        + "--batch_12345--";
+            + "--batch_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + CRLF
+            + "GET ESAllPrim(0) HTTP/1.1" + CRLF
+            + CRLF
+            + CRLF
+            + "--batch_12345--";
 
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
@@ -221,7 +221,7 @@ public class MockedBatchHandlerTest {
     batchHandler.process(request, response, true);
 
     BatchLineReader reader =
-        new BatchLineReader(response.getContent());
+            new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     int line = 0;
@@ -245,54 +245,54 @@ public class MockedBatchHandlerTest {
   @Test
   public void testMultipleChangeSets() throws Exception {
     final String content = ""
-        + "--batch_12345" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
-        + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 2" + CRLF
-        + CRLF
-        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345--" + CRLF
+            + "--batch_12345" + CRLF
+            + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 1" + CRLF
+            + CRLF
+            + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 2" + CRLF
+            + CRLF
+            + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345--" + CRLF
 
-        + "--batch_12345" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_54321" + CRLF
-        + CRLF
-        + "--changeset_54321" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
-        + CRLF
-        + "PUT http://localhost:8080/odata/ESAllPrim(2) HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_54321" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 2" + CRLF
-        + CRLF
-        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_54321--" + CRLF
+            + "--batch_12345" + CRLF
+            + "Content-Type: multipart/mixed; boundary=changeset_54321" + CRLF
+            + CRLF
+            + "--changeset_54321" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 1" + CRLF
+            + CRLF
+            + "PUT http://localhost:8080/odata/ESAllPrim(2) HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_54321" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 2" + CRLF
+            + CRLF
+            + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_54321--" + CRLF
 
-        + CRLF
-        + "--batch_12345--";
+            + CRLF
+            + "--batch_12345--";
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
     final ODataRequest request = buildODataRequest(content, header);
@@ -300,7 +300,7 @@ public class MockedBatchHandlerTest {
     batchHandler.process(request, response, true);
 
     BatchLineReader reader =
-        new BatchLineReader(response.getContent());
+            new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
@@ -367,49 +367,49 @@ public class MockedBatchHandlerTest {
   @Test
   public void mimeBodyPartTransitive() throws Exception {
     final String content = ""
-        + "--batch_12345" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
-        + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 2" + CRLF
-        + CRLF
-        + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 3" + CRLF
-        + CRLF
-        + "POST $2/NavPropertyETAllPrimMany HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 4" + CRLF
-        + CRLF
-        + "POST $3/NavPropertyETTwoPrimOne HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345--" + CRLF
+            + "--batch_12345" + CRLF
+            + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 1" + CRLF
+            + CRLF
+            + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 2" + CRLF
+            + CRLF
+            + "POST $1/NavPropertyETTwoPrimMany HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 3" + CRLF
+            + CRLF
+            + "POST $2/NavPropertyETAllPrimMany HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 4" + CRLF
+            + CRLF
+            + "POST $3/NavPropertyETTwoPrimOne HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345--" + CRLF
 
-        + CRLF
-        + "--batch_12345--";
+            + CRLF
+            + "--batch_12345--";
 
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
@@ -418,7 +418,7 @@ public class MockedBatchHandlerTest {
     batchHandler.process(request, response, true);
 
     BatchLineReader reader =
-        new BatchLineReader(response.getContent());
+            new BatchLineReader(response.getContent());
 
     final List<String> responseContent = reader.toList();
     reader.close();
@@ -468,21 +468,21 @@ public class MockedBatchHandlerTest {
   @Test(expected = BatchDeserializerException.class)
   public void testInvalidMethod() throws Exception {
     final String content = ""
-        + "--batch_12345" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
-        + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345--" + CRLF
-        + CRLF
-        + "--batch_12345--";
+            + "--batch_12345" + CRLF
+            + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 1" + CRLF
+            + CRLF
+            + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345--" + CRLF
+            + CRLF
+            + "--batch_12345--";
 
     final Map<String, List<String>> header = getMimeHeader();
     final ODataResponse response = new ODataResponse();
@@ -495,21 +495,21 @@ public class MockedBatchHandlerTest {
   @Test(expected = BatchDeserializerException.class)
   public void testInvalidContentType() throws Exception {
     final String content = ""
-        + "--batch_12345" + CRLF
-        + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
-        + CRLF
-        + "--changeset_12345" + CRLF
-        + "Content-Type: application/http" + CRLF
-        + "Content-Transfer-Encoding: binary" + CRLF
-        + "Content-Id: 1" + CRLF
-        + CRLF
-        + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
-        + "Content-Type: application/json;odata=verbose" + CRLF
-        + CRLF
-        + CRLF
-        + "--changeset_12345--" + CRLF
-        + CRLF
-        + "--batch_12345--";
+            + "--batch_12345" + CRLF
+            + "Content-Type: multipart/mixed; boundary=changeset_12345" + CRLF
+            + CRLF
+            + "--changeset_12345" + CRLF
+            + "Content-Type: application/http" + CRLF
+            + "Content-Transfer-Encoding: binary" + CRLF
+            + "Content-Id: 1" + CRLF
+            + CRLF
+            + "PUT ESAllPrim(1) HTTP/1.1" + CRLF
+            + "Content-Type: application/json;odata=verbose" + CRLF
+            + CRLF
+            + CRLF
+            + "--changeset_12345--" + CRLF
+            + CRLF
+            + "--batch_12345--";
 
     final Map<String, List<String>> header = new HashMap<String, List<String>>();
     header.put(HttpHeader.CONTENT_TYPE, Arrays.asList(new String[] { "application/http" }));
@@ -543,7 +543,7 @@ public class MockedBatchHandlerTest {
   }
 
   private ODataRequest buildODataRequest(final String content, final Map<String, List<String>> header)
-      throws Exception {
+          throws Exception {
     final ODataRequest request = new ODataRequest();
 
     for (final String key : header.keySet()) {
@@ -591,11 +591,11 @@ public class MockedBatchHandlerTest {
 
     @Override
     public void processBatch(final BatchFacade fascade, final ODataRequest request, final ODataResponse response)
-        throws ODataApplicationException, BatchSerializerException, ODataLibraryException {
+            throws ODataApplicationException, BatchSerializerException, ODataLibraryException {
       final String boundary = getBoundary(request.getHeader(HttpHeader.CONTENT_TYPE));
       final BatchOptions options = BatchOptions.with().isStrict(true).rawBaseUri(BASE_URI).build();
       final List<BatchRequestPart> parts =
-          odata.createFixedFormatDeserializer().parseBatchRequest(request.getBody(), boundary, options);
+              odata.createFixedFormatDeserializer().parseBatchRequest(request.getBody(), boundary, options);
       final List<ODataResponsePart> responseParts = new ArrayList<ODataResponsePart>();
 
       for (BatchRequestPart part : parts) {
@@ -616,7 +616,7 @@ public class MockedBatchHandlerTest {
 
       final String responeBoundary = "batch_" + UUID.randomUUID().toString();
       final InputStream responseStream =
-          odata.createFixedFormatSerializer().batchResponse(responseParts, responeBoundary);
+              odata.createFixedFormatSerializer().batchResponse(responseParts, responeBoundary);
 
       response.setStatusCode(HttpStatusCode.ACCEPTED.getStatusCode());
       response.setHeader(HttpHeader.CONTENT_TYPE, ContentType.MULTIPART_MIXED + ";boundary=" + responeBoundary);

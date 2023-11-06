@@ -27,9 +27,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
@@ -60,6 +60,7 @@ import org.apache.olingo.server.core.responses.NoContentResponse;
 import org.apache.olingo.server.core.responses.PrimitiveValueResponse;
 import org.apache.olingo.server.core.responses.PropertyResponse;
 import org.apache.olingo.server.core.responses.StreamResponse;
+import org.junit.After;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -102,11 +103,13 @@ public class ServiceDispatcherTest {
     tomcat.getHost().setAppBase(baseDir.getAbsolutePath());
     Context cxt = tomcat.addContext("/trippin", baseDir.getAbsolutePath());
     Tomcat.addServlet(cxt, "trippin", new SampleODataServlet(serviceHandler, metadata));
-    cxt.addServletMapping("/*", "trippin");
+    cxt.addServletMappingDecoded("/*", "trippin");
     tomcat.setPort(TOMCAT_PORT);
+    tomcat.getConnector().setSecure(false);
     tomcat.start();
   }
 
+  @After
   public void afterTest() throws Exception {
     tomcat.stop();
     tomcat.destroy();
@@ -136,7 +139,6 @@ public class ServiceDispatcherTest {
     beforeTest(handler);
     httpGET("http://localhost:" + TOMCAT_PORT + "/" + path);
     validator.validate();
-    afterTest();
   }
 
   private void helpTest(ServiceHandler handler, String path, String method, String payload,
@@ -163,7 +165,6 @@ public class ServiceDispatcherTest {
     http.execute(getLocalhost(), request);
 
     validator.validate();
-    afterTest();
   }
 
   @Test
@@ -186,7 +187,7 @@ public class ServiceDispatcherTest {
       @Override
       public void validate() throws Exception {
         ArgumentCaptor<DataRequest> arg1 = ArgumentCaptor.forClass(DataRequest.class);
-        ArgumentCaptor<EntityResponse> arg2 = ArgumentCaptor.forClass(EntityResponse.class);
+        ArgumentCaptor<EntitySetResponse> arg2 = ArgumentCaptor.forClass(EntitySetResponse.class);
         Mockito.verify(handler).read(arg1.capture(), arg2.capture());
 
         DataRequest request = arg1.getValue();
@@ -323,7 +324,7 @@ public class ServiceDispatcherTest {
       @Override
       public void validate() throws Exception {
         ArgumentCaptor<FunctionRequest> arg1 = ArgumentCaptor.forClass(FunctionRequest.class);
-        ArgumentCaptor<PropertyResponse> arg3 = ArgumentCaptor.forClass(PropertyResponse.class);
+        ArgumentCaptor<EntityResponse> arg3 = ArgumentCaptor.forClass(EntityResponse.class);
         ArgumentCaptor<HttpMethod> arg2 = ArgumentCaptor.forClass(HttpMethod.class);
         Mockito.verify(handler).invoke(arg1.capture(), arg2.capture(), arg3.capture());
 
