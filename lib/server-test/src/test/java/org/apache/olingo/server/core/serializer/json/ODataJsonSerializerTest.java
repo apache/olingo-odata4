@@ -25,9 +25,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -92,6 +94,7 @@ import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -1698,6 +1701,45 @@ public class ODataJsonSerializerTest {
         + "{\"PropertyInt16\":-32766,\"PropertyString\":null},"
         + "{\"PropertyInt16\":32767,\"PropertyString\":\"Test String4\"}]}]}",
         resultString);
+  }
+
+  @Test
+  public void expandWithNextLink() throws Exception {
+
+    final EdmEntitySet edmEntitySet = entityContainer.getEntitySet("ESTwoPrim");
+    final EdmEntityType entityType = edmEntitySet.getEntityType();
+    final EdmEntitySet innerEntitySet = entityContainer.getEntitySet("ESAllPrim");
+    final Entity entity = data.readAll(edmEntitySet).getEntities().get(0);
+    final EntityCollection innerEntities = data.readAll(innerEntitySet);
+    innerEntities.setNext(URI.create("/next"));
+    final ExpandItem expandItem = ExpandSelectMock.mockExpandItem(edmEntitySet, "NavPropertyETAllPrimMany");
+    final List<ExpandItem> expandItems = new ArrayList<>();
+    expandItems.add(expandItem);
+
+    final ExpandOption expandOption = ExpandSelectMock.mockExpandOption(expandItems);
+    final Link link = new Link();
+    link.setTitle("NavPropertyETAllPrimMany");
+    link.setInlineEntitySet(innerEntities);
+    entity.getNavigationLinks().add(link);
+
+
+    final ContextURL build = ContextURL.with().entitySet(edmEntitySet)
+            .selectList(helper.buildContextURLSelectList(entityType, expandOption, null))
+            .suffix(Suffix.ENTITY).build();
+    final String resultString = IOUtils.toString(serializerV401
+            .entity(metadata, entityType, entity,
+                    EntitySerializerOptions.with()
+                            .contextURL(build)
+                            .expand(expandOption)
+                            .build()).getContent(), Charset.defaultCharset());
+
+
+    final Matcher<String> stringMatcher = CoreMatchers.endsWith("}],"
+            + "\"NavPropertyETAllPrimMany@nextLink\":\"/next\"}");
+
+    final boolean matchResult = stringMatcher.matches(resultString);
+    Assert.assertTrue(matchResult);
+
   }
 
   @Test
