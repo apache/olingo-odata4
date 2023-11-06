@@ -101,6 +101,16 @@
 
     <sl4j.version>1.7.36</sl4j.version>
 
+    <jakarta.inject.version>2.0.1</jakarta.inject.version>
+    <jakarta.ws.version>3.1.0</jakarta.ws.version>
+    <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
+    <jakarta.annotation.version>2.1.1</jakarta.annotation.version>
+    <jakarta.xml.version>4.0.0</jakarta.xml.version>
+
+    <spring.version>6.0.9</spring.version>
+    <javax.activation.version>1.1</javax.activation.version>
+    <geronimo.version>1.0.1</geronimo.version>
+
     <tomcat.servlet.port>9080</tomcat.servlet.port>
     <tomcat.version>10.0.27</tomcat.version>
 
@@ -111,17 +121,9 @@
 
     <!-- Project build settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.build.source>8</project.build.source>
+    <project.build.release.version>8</project.build.release.version>
     <project.build.outputTimestamp>${maven.build.timestamp}</project.build.outputTimestamp>
     <olingo.deploy.skip>true</olingo.deploy.skip>
-    <jakarta.inject.version>2.0.1</jakarta.inject.version>
-    <jakarta.ws.version>3.1.0</jakarta.ws.version>
-    <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-    <jakarta.annotation.version>2.1.1</jakarta.annotation.version>
-    <jakarta.xml.version>4.0.0</jakarta.xml.version>
-    <spring.version>6.0.9</spring.version>
-    <javax.activation.version>1.1</javax.activation.version>
-    <geronimo.version>1.0.1</geronimo.version>
 
     <!-- Setting needed for Java 8 release builds -->
     <additionalparam>-Xdoclint:none</additionalparam>
@@ -433,8 +435,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>${project.build.source}</source>
-          <target>${project.build.source}</target>
+          <release>${project.build.release.version}</release>
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
           <compilerArgument>-Xlint:unchecked</compilerArgument>
