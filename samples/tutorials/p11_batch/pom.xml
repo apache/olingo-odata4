@@ -34,7 +34,7 @@
     <odata.version>5.0.0-ALPHA-02</odata.version>
     <slf4j.version>1.7.7</slf4j.version>
     <project.source>17</project.source>
-    <compiler.plugin.version>3.2</compiler.plugin.version>
+    <compiler.plugin.version>3.11.0</compiler.plugin.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 

@@ -80,7 +80,7 @@
     <commons.vfs.version>2.0</commons.vfs.version>
     <esigate.version>4.4</esigate.version>
     <servlet.version>3.1.0</servlet.version>
-    <cxf.version>4.0.1</cxf.version>
+    <cxf.version>4.0.3</cxf.version>
     <netty.version>4.1.97.Final</netty.version>
 
     <velocity.version>1.7</velocity.version>
@@ -107,7 +107,7 @@
     <jakarta.annotation.version>2.1.1</jakarta.annotation.version>
     <jakarta.xml.version>4.0.0</jakarta.xml.version>
 
-    <spring.version>6.0.9</spring.version>
+    <spring.version>6.1.0</spring.version>
     <javax.activation.version>1.1</javax.activation.version>
     <geronimo.version>1.0.1</geronimo.version>
 
@@ -117,7 +117,7 @@
     <!-- for osgi integration testing -->
     <osgi.version>4.2.0</osgi.version>
     <karaf.version>3.0.3</karaf.version>
-    <pax.exam.version>4.13.1</pax.exam.version>
+    <pax.exam.version>4.13.5</pax.exam.version>
 
     <!-- Project build settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
