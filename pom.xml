@@ -25,7 +25,7 @@
 
   <groupId>org.apache.olingo</groupId>
   <artifactId>odata-parent</artifactId>
-  <version>5.0.0-ALPHA-01</version>
+  <version>5.0.0-ALPHA-02</version>
   <packaging>pom</packaging>
 
   <name>Olingo-OData</name>
