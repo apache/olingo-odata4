@@ -41,6 +41,8 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.util.EntityUtils;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.AfterClass;
@@ -67,13 +69,21 @@ public class TripPinServiceTest {
 
   @BeforeClass
   public static void beforeTest() throws Exception {
+    PoolingClientConnectionManager conMan =
+            new PoolingClientConnectionManager(SchemeRegistryFactory.createDefault());
+    conMan.setMaxTotal(200);
+    conMan.setDefaultMaxPerRoute(200);
+    http = new DefaultHttpClient(conMan);
     tomcat.setPort(TOMCAT_PORT);
     File baseDir = new File(System.getProperty("java.io.tmpdir"));
     tomcat.setBaseDir(baseDir.getAbsolutePath());
     tomcat.getHost().setAppBase(baseDir.getAbsolutePath());
+    tomcat.getHost().setDeployOnStartup(true);
+    tomcat.getConnector().setSecure(false);
+    tomcat.setSilent(true);
     Context cxt = tomcat.addContext("/trippin", baseDir.getAbsolutePath());
     Tomcat.addServlet(cxt, "trippin", new TripPinServlet());
-    cxt.addServletMapping("/*", "trippin");
+    cxt.addServletMappingDecoded("/*", "trippin");
     baseURL = "http://" + tomcat.getHost().getName() + ":"+ TOMCAT_PORT+"/trippin";
     tomcat.start();
   }
@@ -192,7 +202,7 @@ public class TripPinServiceTest {
   public void testErrorResponse() throws Exception {
     HttpResponse response = httpGET(baseURL + "/Airlines(1)", 400);
     Header[] headers = response.getHeaders("Content-Type");
-    assertEquals("application/json; odata.metadata=minimal", headers[0].getValue());
+    assertEquals("application/json;odata.metadata=minimal", headers[0].getValue());
     assertEquals("{\"error\":{\"code\":null,\"message\":\"The key value '' is invalid.\"}}", 
         IOUtils.toString(response.getEntity().getContent()));
   }

@@ -25,7 +25,7 @@
 	<groupId>my.group.id</groupId>
 	<artifactId>DemoService-ActionPreparation</artifactId>
 	<packaging>war</packaging>
-	<version>5.0.0-SNAPSHOT</version>
+	<version>5.0.0-ALPHA-02</version>
 
 	<name>${project.artifactId}-Webapp</name>
 
@@ -35,7 +35,7 @@
 
 	<properties>
 		<javax.version>2.5</javax.version>
-		<odata.version>5.0.0-SNAPSHOT</odata.version>
+		<odata.version>5.0.0-ALPHA-02</odata.version>
 		<slf4j.version>1.7.7</slf4j.version>
 	</properties>
 
