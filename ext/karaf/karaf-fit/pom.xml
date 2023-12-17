@@ -30,7 +30,7 @@
   <parent>
     <groupId>org.apache.olingo</groupId>
     <artifactId>odata-karaf</artifactId>
-    <version>5.0.0-ALPHA-02</version>
+    <version>5.0.0</version>
     <relativePath>..</relativePath>
   </parent>
   <dependencies>
