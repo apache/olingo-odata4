@@ -243,12 +243,7 @@ public final class EdmDecimal extends SingletonPrimitiveType {
       final int digits = bigDecimalValue.scale() >= 0
           ? Math.max(bigDecimalValue.precision(), bigDecimalValue.scale())
               : bigDecimalValue.precision() - bigDecimalValue.scale();
-          if ((precision == null || precision >= digits) && (bigDecimalValue.scale() <= (scale == null ? 0 : scale))) {
-            result = bigDecimalValue.toPlainString();
-          } else {
-            throw new EdmPrimitiveTypeException("The value '" + value + "' does not match the facets' constraints.");
-          }
-
+      result = bigDecimalValue.toPlainString();
     } else {
       throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
