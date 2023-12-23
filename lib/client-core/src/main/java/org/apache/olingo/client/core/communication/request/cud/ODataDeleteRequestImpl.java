@@ -37,7 +37,7 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDeleteResponse>
         implements ODataDeleteRequest {
 
-  ODataDeleteRequestImpl(final ODataClient odataClient, final HttpMethod method, final URI uri) {
+  public ODataDeleteRequestImpl(final ODataClient odataClient, final HttpMethod method, final URI uri) {
     super(odataClient, method, uri);
   }
 
