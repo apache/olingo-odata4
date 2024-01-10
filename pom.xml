@@ -112,7 +112,7 @@
     <geronimo.version>1.0.1</geronimo.version>
 
     <tomcat.servlet.port>9080</tomcat.servlet.port>
-    <tomcat.version>10.0.27</tomcat.version>
+    <tomcat.version>10.1.18</tomcat.version>
 
     <!-- for osgi integration testing -->
     <osgi.version>4.2.0</osgi.version>
