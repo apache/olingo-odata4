@@ -442,6 +442,9 @@ public class ODataBinderImpl implements ODataBinder {
       final Linked linked, final ClientLinked odataLinked, final String metadataETag, final URI base) {
     for (Link link : linked.getNavigationLinks()) {
       final String href = link.getHref();
+      if (href==null) {
+    	  continue; // @odata.nextLink is missing, ignore.
+      }
       final String title = link.getTitle();
       final Entity inlineEntity = link.getInlineEntity();
       final EntityCollection inlineEntitySet = link.getInlineEntitySet();
