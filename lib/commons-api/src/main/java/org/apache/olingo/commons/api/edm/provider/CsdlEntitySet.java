@@ -30,6 +30,9 @@ public class CsdlEntitySet extends CsdlBindingTarget {
   // Default for EntitySets is true
   private boolean includeInServiceDocument = true;
 
+  // Default for EntitySets is false
+  private boolean keyAsSegmentAllowed = false;
+
   @Override
   public CsdlEntitySet setName(final String name) {
     this.name = name;
@@ -81,7 +84,27 @@ public class CsdlEntitySet extends CsdlBindingTarget {
     this.includeInServiceDocument = includeInServiceDocument;
     return this;
   }
-  
+
+  /**
+   * Is this entity set allowed to be followed by a path variable.
+   *
+   * @return the boolean
+   */
+  public boolean isKeyAsSegmentAllowed() {
+    return keyAsSegmentAllowed;
+  }
+
+  /**
+   * Sets the path variable allowed parameter.
+   *
+   * @param keyAsSegmentAllowed whether path variables are allowed
+   * @return EntitySet with path variable boolean set.
+   */
+  public CsdlEntitySet setKeyAsSegmentAllowed(boolean keyAsSegmentAllowed) {
+    this.keyAsSegmentAllowed = keyAsSegmentAllowed;
+    return this;
+  }
+
   @Override
   public CsdlEntitySet setTitle(String title) {
     super.setTitle(title);

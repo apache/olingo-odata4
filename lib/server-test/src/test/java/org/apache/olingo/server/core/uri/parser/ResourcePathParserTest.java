@@ -196,6 +196,30 @@ public class ResourcePathParserTest {
   }
 
   @Test
+  public void testPathVariables() {
+    testRes.run("ESKeyAsSegmentString/thisIsAKey")
+            .isEntitySet("ESKeyAsSegmentString")
+            .isKeyPredicate(0, "PropertyString", "'thisIsAKey'");
+
+    testRes.run("ESKeyAsSegmentInt/1001")
+            .isEntitySet("ESKeyAsSegmentInt")
+            .isKeyPredicate(0, "PropertyInt16", "1001");
+
+    testUri.runEx("ESKeyAsSegmentString('thisIsAKey')/thisIsAnotherKey").isExSemantic(MessageKeys.PROPERTY_NOT_IN_TYPE);
+    testUri.runEx("ESComplexKeyAsSegment/thisIsAKey").isExSemantic(MessageKeys.PROPERTY_AFTER_COLLECTION);
+  }
+
+  @Test
+  public void testPathVariablesNavigation() {
+    testRes.run("ESKeyAsSegmentStringNavKeyAsSegment/thisIsAKey/NavPropertyKeyAsSegment/navKey")
+            .isEntitySet("ESKeyAsSegmentStringNavKeyAsSegment")
+            .isKeyPredicate(0, "PropertyString", "'thisIsAKey'")
+            .n() // this means move to the next property.
+            .isNavProperty("NavPropertyKeyAsSegment", PropertyProvider.navPropertyKeyAsSegment.getTypeFQN(), false)
+            .isKeyPredicate(0, "PropertyString", "'navKey'");
+  }
+
+  @Test
   public void esNameParaKeys() throws Exception {
     testRes.run("ESAllKey(PropertyString='O''Neil',PropertyBoolean=true,PropertyByte=255,"
         + "PropertySByte=-128,PropertyInt16=-32768,PropertyInt32=-2147483648,"

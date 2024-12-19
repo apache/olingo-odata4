@@ -60,4 +60,9 @@ public interface EdmNavigationProperty extends EdmElement, EdmAnnotatable {
   
   EdmOnDelete getOnDelete();
 
+  /**
+   * @return true if the entity set allows for the next segment to be the key.
+   */
+  boolean isKeyAsSegmentAllowed();
+
 }

@@ -730,7 +730,31 @@ public class ContainerProvider {
       return new CsdlEntitySet()
           .setName("ESStreamOnComplexProp")
           .setType(EntityTypeProvider.nameETStreamOnComplexProp);
-      } 
+    } else if (name.equals("ESKeyAsSegmentString")) {
+      return new CsdlEntitySet()
+          .setName("ESKeyAsSegmentString")
+          .setType(EntityTypeProvider.nameETKeyAsSegmentString)
+          .setKeyAsSegmentAllowed(true);
+    } else if (name.equals("ESKeyAsSegmentInt")) {
+      return new CsdlEntitySet()
+          .setName("ESKeyAsSegmentInt")
+          .setType(EntityTypeProvider.nameETKeyAsSegmentInt)
+          .setKeyAsSegmentAllowed(true);
+    } else if (name.equals("ESComplexKeyAsSegment")) {
+      return new CsdlEntitySet()
+          .setName("ESComplexKeyAsSegment")
+          .setType(EntityTypeProvider.nameETComplexKeyAsSegment)
+          .setKeyAsSegmentAllowed(true);
+      } else if (name.equals("ESKeyAsSegmentStringNavKeyAsSegment")) {
+      return new CsdlEntitySet()
+          .setName("ESKeyAsSegmentStringNavKeyAsSegment")
+          .setType(EntityTypeProvider.nameETKeyAsSegmentStringNavKeyAsSegment)
+          .setKeyAsSegmentAllowed(true)
+          .setNavigationPropertyBindings(Arrays.asList(new CsdlNavigationPropertyBinding()
+            .setPath(PropertyProvider.navPropertyKeyAsSegment.getName())
+            .setTarget("ESKeyAsSegmentString")
+          ));
+      }
     }
     return null;
   }

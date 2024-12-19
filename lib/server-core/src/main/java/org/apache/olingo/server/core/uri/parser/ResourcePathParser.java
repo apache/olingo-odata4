@@ -36,7 +36,9 @@ import org.apache.olingo.commons.api.edm.EdmSingleton;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.EdmKeyPropertyRef;
 import org.apache.olingo.commons.api.edm.constants.EdmTypeKind;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmString;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
@@ -56,6 +58,7 @@ import org.apache.olingo.server.core.uri.UriResourceSingletonImpl;
 import org.apache.olingo.server.core.uri.UriResourceTypedImpl;
 import org.apache.olingo.server.core.uri.UriResourceValueImpl;
 import org.apache.olingo.server.core.uri.UriResourceWithKeysImpl;
+import org.apache.olingo.server.core.uri.UriParameterImpl;
 import org.apache.olingo.server.core.uri.parser.UriTokenizer.TokenKind;
 import org.apache.olingo.server.core.uri.validator.UriValidationException;
 
@@ -89,16 +92,35 @@ public class ResourcePathParser {
       }
 
     } else {
-      if (tokenizer.next(TokenKind.REF)) {
-        return ref(previous);
-      } else if (tokenizer.next(TokenKind.VALUE)) {
-        return value(previous);
-      } else if (tokenizer.next(TokenKind.COUNT)) {
-        return count(previous);
-      } else if (tokenizer.next(TokenKind.QualifiedName)) {
-        return boundOperationOrTypeCast(previous);
-      } else if (tokenizer.next(TokenKind.ODataIdentifier)) {
-        return navigationOrProperty(previous);
+      try {
+        if (tokenizer.next(TokenKind.REF)) {
+          return ref(previous);
+        } else if (tokenizer.next(TokenKind.VALUE)) {
+          return value(previous);
+        } else if (tokenizer.next(TokenKind.COUNT)) {
+          return count(previous);
+        } else if (tokenizer.next(TokenKind.QualifiedName)) {
+          return boundOperationOrTypeCast(previous);
+        } else if (tokenizer.next(TokenKind.ODataIdentifier)) {
+          return navigationOrProperty(previous);
+        } else if (canParseKeyFromSegment(pathSegment, previous)) {
+          /*
+           * This should only be reached if the path segment is an integer. If it can be parsed as a key segment,
+           * null is returned so that this portion of the path is skipped.
+           */
+          return null;
+        }
+      } catch (UriParserException e) {
+        /*
+         * This exception will be caught if the path segment is a string. It will first try to be parsed as a navigation
+         * or property. That will fail if the path segment is not part of the schema. If it can be parsed as a key
+         * segment, null is returned so that this portion of the path is skipped. If it can not be parsed as a key
+         * segment, then the original exception is re-thrown.
+         */
+        if (canParseKeyFromSegment(pathSegment,previous)) {
+          return null;
+        }
+        throw e;
       }
     }
 
@@ -139,6 +161,30 @@ public class ResourcePathParser {
     ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
     ParserHelper.requireTokenEnd(tokenizer);
     return entitySetNames;
+  }
+
+  /*
+   * This logic is to handle our use case of supporting keys as segments.
+   * If all the existing parsing fails, then we check if the previous segment is an entity set, or navigation.
+   * If it is, and it has the flag set allow keys as segments, then we check if the entity set already has
+   * the key parameter set. If it does, then we return the original parse exception (ie /entitySet('key')/un-parseable).
+   * If there is no key set, then we pass the current segment back to the previous segment as the key.
+   * With this logic, /entitySet('key') and /entitySet/key should be equivalent.
+   */
+  private boolean canParseKeyFromSegment(final String pathSegment, UriResource previous) {
+    if (previous instanceof UriResourceEntitySetImpl) {
+      UriResourceEntitySetImpl entitySet = (UriResourceEntitySetImpl) previous;
+      if (entitySet.getEntitySet().isKeyAsSegmentAllowed()) {
+        return didSetKeySegmentAsKey(pathSegment, entitySet, entitySet.getEntitySet().getEntityType());
+      }
+    } else if (previous instanceof UriResourceNavigationPropertyImpl) {
+      UriResourceNavigationPropertyImpl navProp = (UriResourceNavigationPropertyImpl) previous;
+      EdmNavigationProperty edmNavProperty = navProp.getProperty();
+      if (edmNavProperty.isKeyAsSegmentAllowed()) {
+        return didSetKeySegmentAsKey(pathSegment, navProp, edmNavProperty.getType());
+      }
+    }
+    return false;
   }
 
   private UriResource ref(final UriResource previous) throws UriParserException {
@@ -422,5 +468,29 @@ public class ResourcePathParser {
     }
     ParserHelper.requireTokenEnd(tokenizer);
     return resource;
+  }
+
+  private boolean didSetKeySegmentAsKey(
+    final String pathSegment,
+    UriResourceWithKeysImpl resourceWithKeys,
+    EdmEntityType entityType) {
+    List<EdmKeyPropertyRef> keys = entityType.getKeyPropertyRefs();
+    if (keys != null && keys.size() == 1) {
+      // Currently only supports types with a single key.
+      EdmKeyPropertyRef propertyRef = keys.get(0);
+      String keyName = propertyRef.getName();
+      List<UriParameter> parameterList = new ArrayList<>(resourceWithKeys.getKeyPredicates());
+      if (parameterList.stream().noneMatch(u -> keyName.equals(u.getName()))) {
+        String value = pathSegment;
+        if (propertyRef.getProperty().getType() instanceof EdmString) {
+          value = "'" + value + "'";
+        }
+        parameterList.add(new UriParameterImpl().setName(keyName).setText(value));
+        resourceWithKeys.setKeyPredicates(parameterList);
+        return true;
+      }
+    }
+
+    return false;
   }
 }

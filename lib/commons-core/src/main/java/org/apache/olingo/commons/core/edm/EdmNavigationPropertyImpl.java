@@ -127,4 +127,9 @@ public class EdmNavigationPropertyImpl extends AbstractEdmNamed implements EdmNa
     CsdlOnDelete csdlOnDelete = navigationProperty.getOnDelete();
     return csdlOnDelete != null ? new EdmOnDeleteImpl(edm, csdlOnDelete) : null;
   }
+
+  @Override
+  public boolean isKeyAsSegmentAllowed() {
+    return navigationProperty.isKeyAsSegmentAllowed();
+  }
 }
