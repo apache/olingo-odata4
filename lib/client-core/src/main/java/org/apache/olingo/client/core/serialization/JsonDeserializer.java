@@ -155,7 +155,17 @@ public class JsonDeserializer implements ODataDeserializer {
       final Link link = new Link();
       link.setTitle(getTitle(field));
       link.setRel(Constants.NS_ASSOCIATION_LINK_REL + getTitle(field));
-      link.setHref(field.getValue().textValue());
+      if (field.getValue() instanceof ObjectNode) {
+    	  ObjectNode values = (ObjectNode)field.getValue();
+    	  JsonNode value = values.findValue(Constants.JSON_ASSOCIATION_LINK);
+    	  if (value!=null) {
+    		  link.setHref(value.textValue());
+    	  } else {
+        	  link.setHref(field.getValue().textValue());
+    	  }
+      } else {
+    	  link.setHref(field.getValue().textValue());
+      }
       link.setType(Constants.ASSOCIATION_LINK_TYPE);
       linked.getAssociationLinks().add(link);
 
