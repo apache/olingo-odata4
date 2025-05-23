@@ -20,6 +20,8 @@ package org.apache.olingo.client.core.serialization;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -60,16 +62,16 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
 
     URI contextURL;
     if (tree.hasNonNull(Constants.JSON_CONTEXT)) {
-      contextURL = URI.create(tree.get(Constants.JSON_CONTEXT).textValue());
+      contextURL = getUri(tree.get(Constants.JSON_CONTEXT).textValue());
       tree.remove(Constants.JSON_CONTEXT);
     } else if (tree.hasNonNull(Constants.JSON_METADATA)) {
-      contextURL = URI.create(tree.get(Constants.JSON_METADATA).textValue());
+      contextURL = getUri(tree.get(Constants.JSON_METADATA).textValue());
       tree.remove(Constants.JSON_METADATA);
     } else {
       contextURL = null;
     }
     if (contextURL != null) {
-      entitySet.setBaseURI(URI.create(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA)));
+      entitySet.setBaseURI(getUri(StringUtils.substringBefore(contextURL.toASCIIString(), Constants.METADATA)));
     }
 
     final String metadataETag;
@@ -85,11 +87,11 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
       tree.remove(Constants.JSON_COUNT);
     }
     if (tree.hasNonNull(Constants.JSON_NEXT_LINK)) {
-      entitySet.setNext(URI.create(tree.get(Constants.JSON_NEXT_LINK).textValue()));
+      entitySet.setNext(getUri(tree.get(Constants.JSON_NEXT_LINK).textValue()));
       tree.remove(Constants.JSON_NEXT_LINK);
     }
     if (tree.hasNonNull(Constants.JSON_DELTA_LINK)) {
-      entitySet.setDeltaLink(URI.create(tree.get(Constants.JSON_DELTA_LINK).textValue()));
+      entitySet.setDeltaLink(getUri(tree.get(Constants.JSON_DELTA_LINK).textValue()));
       tree.remove(Constants.JSON_DELTA_LINK);
     }
 
@@ -121,12 +123,39 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
 
         final ObjectNode opNode = (ObjectNode) tree.get(field.getKey());
         operation.setTitle(opNode.get(Constants.ATTR_TITLE).asText());
-        operation.setTarget(URI.create(opNode.get(Constants.ATTR_TARGET).asText()));
+        operation.setTarget(getUri(opNode.get(Constants.ATTR_TARGET).asText()));
         entitySet.getOperations().add(operation);
         toRemove.add(field.getKey());
       }
     }
     tree.remove(toRemove);
     return new ResWrap<>(contextURL, metadataETag, entitySet);
+  }
+  
+  private URI getUri(String str) throws IOException {
+    if (StringUtils.containsAny(str, " $()")) {
+      URL url = new URL(str);
+      String baseUrl = url.getProtocol() + "://" + url.getHost() + url.getPath();
+      String query = url.getQuery();
+      StringBuilder fixedQuery = new StringBuilder();
+      for (String param : query.split("&")) {
+        int idx = param.indexOf('=');
+        if (idx > 0) {
+          String key = param.substring(0, idx);
+          String value = param.substring(idx + 1);
+          if (!StringUtils.startsWith( key, "$" ))
+            key = "$"+key;
+          String encodedKey = URLEncoder.encode(key, "UTF-8").replace("+", "%20");
+          String encodedValue = URLEncoder.encode(value, "UTF-8").replace("+", "%20");
+          if (fixedQuery.length() > 0)
+            fixedQuery.append("&");
+          fixedQuery.append(encodedKey).append("=").append(encodedValue);
+        } else {
+          fixedQuery.append(URLEncoder.encode(param, "UTF-8"));
+        }
+      }
+      str = baseUrl + "?" + fixedQuery;
+    }
+    return URI.create(str);
   }
 }
