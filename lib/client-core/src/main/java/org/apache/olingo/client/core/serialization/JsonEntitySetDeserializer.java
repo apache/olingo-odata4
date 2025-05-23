@@ -143,12 +143,14 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
         if (idx > 0) {
           String key = param.substring(0, idx);
           String value = param.substring(idx + 1);
-          if (!StringUtils.startsWith( key, "$" ))
+          if (!StringUtils.startsWith( key, "$" )) {
             key = "$"+key;
+          }
           String encodedKey = URLEncoder.encode(key, "UTF-8").replace("+", "%20");
           String encodedValue = URLEncoder.encode(value, "UTF-8").replace("+", "%20");
-          if (fixedQuery.length() > 0)
+          if (fixedQuery.length() > 0) {
             fixedQuery.append("&");
+          }
           fixedQuery.append(encodedKey).append("=").append(encodedValue);
         } else {
           fixedQuery.append(URLEncoder.encode(param, "UTF-8"));
