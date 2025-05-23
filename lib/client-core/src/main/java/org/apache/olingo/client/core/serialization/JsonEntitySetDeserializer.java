@@ -21,6 +21,7 @@ package org.apache.olingo.client.core.serialization;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -133,31 +134,51 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
   }
   
   private URI getUri(String str) throws IOException {
-    if (StringUtils.containsAny(str, " $()")) {
+    try {
       URL url = new URL(str);
-      String baseUrl = url.getProtocol() + "://" + url.getHost() + url.getPath();
+      String scheme = url.getProtocol();
+      String host = url.getHost();
+      int port = url.getPort();
+      String path = url.getPath();
+      String baseUrl = scheme + "://" + host + (port != -1 ? ":" + port : "") + path;
       String query = url.getQuery();
+
+      if (query == null || query.isEmpty()) {
+        return URI.create(baseUrl);
+      }
+
       StringBuilder fixedQuery = new StringBuilder();
       for (String param : query.split("&")) {
         int idx = param.indexOf('=');
         if (idx > 0) {
           String key = param.substring(0, idx);
           String value = param.substring(idx + 1);
-          if (!StringUtils.startsWith( key, "$" )) {
-            key = "$"+key;
+
+          key = URLDecoder.decode(key, "UTF-8");
+          value = URLDecoder.decode(value, "UTF-8");
+
+          if (!key.startsWith("$")) {
+            key = "$" + key;
           }
+
           String encodedKey = URLEncoder.encode(key, "UTF-8").replace("+", "%20");
           String encodedValue = URLEncoder.encode(value, "UTF-8").replace("+", "%20");
+
           if (fixedQuery.length() > 0) {
             fixedQuery.append("&");
           }
+
           fixedQuery.append(encodedKey).append("=").append(encodedValue);
         } else {
-          fixedQuery.append(URLEncoder.encode(param, "UTF-8"));
+          String decoded = URLDecoder.decode(param, "UTF-8");
+          fixedQuery.append(URLEncoder.encode(decoded, "UTF-8").replace("+", "%20"));
         }
       }
-      str = baseUrl + "?" + fixedQuery;
+
+      return new URI(baseUrl + "?" + fixedQuery);
+
+    } catch (Exception e) {
+      throw new IOException("Failed to normalize URI: " + str, e);
     }
-    return URI.create(str);
   }
 }
