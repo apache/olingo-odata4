@@ -142,9 +142,10 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
       String path = url.getPath();
       String baseUrl = scheme + "://" + host + (port != -1 ? ":" + port : "") + path;
       String query = url.getQuery();
+      String anchor = StringUtils.substringAfterLast(str, "#");
 
       if (query == null || query.isEmpty()) {
-        return URI.create(baseUrl);
+        return URI.create(str);
       }
 
       StringBuilder fixedQuery = new StringBuilder();
@@ -173,6 +174,12 @@ public class JsonEntitySetDeserializer extends JsonDeserializer {
           String decoded = URLDecoder.decode(param, "UTF-8");
           fixedQuery.append(URLEncoder.encode(decoded, "UTF-8").replace("+", "%20"));
         }
+      }
+      
+      if (StringUtils.isNotBlank(anchor)) {
+        anchor = URLDecoder.decode(anchor, "UTF-8");
+        String encodedAnchor = URLEncoder.encode(anchor, "UTF-8").replace("+", "%20");
+        fixedQuery.append("#").append(encodedAnchor);
       }
 
       return new URI(baseUrl + "?" + fixedQuery);
