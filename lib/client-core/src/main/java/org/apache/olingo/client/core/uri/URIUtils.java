@@ -72,7 +72,7 @@ public final class URIUtils {
    * Logger.
    */
 
-  private static final Pattern ENUM_VALUE = Pattern.compile("(.+\\.)?.+'.+'");
+  private static final Pattern ENUM_VALUE = Pattern.compile("([^']+\\.[^']+)?'[^']+'");
   private static final String URI_OPTIONS = "/$";
 
   private URIUtils() {
