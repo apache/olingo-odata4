@@ -47,6 +47,9 @@ public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlN
 
   private List<CsdlAnnotation> annotations = new ArrayList<CsdlAnnotation>();
 
+  // Default for EntitySets is false
+  private boolean keyAsSegmentAllowed = false;
+
   @Override
   public String getName() {
     return name;
@@ -239,6 +242,26 @@ public class CsdlNavigationProperty extends CsdlAbstractEdmItem implements CsdlN
    */
   public CsdlNavigationProperty setAnnotations(final List<CsdlAnnotation> annotations) {
     this.annotations = annotations;
+    return this;
+  }
+
+  /**
+   * Is this entity set allowed to be followed by a path variable.
+   *
+   * @return the boolean
+   */
+  public boolean isKeyAsSegmentAllowed() {
+    return keyAsSegmentAllowed;
+  }
+
+  /**
+   * Sets the path variable allowed parameter.
+   *
+   * @param keyAsSegmentAllowed whether path variables are allowed
+   * @return EntitySet with path variable boolean set.
+   */
+  public CsdlNavigationProperty setKeyAsSegmentAllowed(boolean keyAsSegmentAllowed) {
+    this.keyAsSegmentAllowed = keyAsSegmentAllowed;
     return this;
   }
 }

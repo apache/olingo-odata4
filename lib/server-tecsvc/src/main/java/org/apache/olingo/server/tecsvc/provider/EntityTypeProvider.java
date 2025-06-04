@@ -100,6 +100,18 @@ public class EntityTypeProvider {
   
   public static final FullQualifiedName nameETStreamOnComplexProp = 
       new FullQualifiedName(SchemaProvider.NAMESPACE, "ETStreamOnComplexProp");
+
+  public static final FullQualifiedName nameETKeyAsSegmentString =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "ETKeyAsSegmentString");
+
+  public static final FullQualifiedName nameETKeyAsSegmentInt =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "ETKeyAsSegmentInt");
+
+  public static final FullQualifiedName nameETComplexKeyAsSegment =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "ETComplexKeyAsSegment");
+
+  public static final FullQualifiedName nameETKeyAsSegmentStringNavKeyAsSegment =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "ETKeyAsSegmentStringNavKeyAsSegment");
   
   public CsdlEntityType getEntityType(final FullQualifiedName entityTypeName) throws ODataException {
     if(entityTypeName.equals(nameETAllPrimDefaultValues)){        
@@ -574,6 +586,37 @@ public class EntityTypeProvider {
               PropertyProvider.propertyInt32, PropertyProvider.propertyEntityStream,
               PropertyProvider.propertyCompWithStream_CTWithStreamProp
               ));
+    } else if (entityTypeName.equals(nameETKeyAsSegmentString)) {
+      return new CsdlEntityType()
+              .setName("ETKeyAsSegmentString")
+              .setKey(Arrays.asList(
+                      new CsdlPropertyRef().setName("PropertyString")))
+              .setProperties(Arrays.asList(
+                      PropertyProvider.propertyString_NotNullable));
+    } else if (entityTypeName.equals(nameETKeyAsSegmentInt)) {
+      return new CsdlEntityType()
+              .setName("ETKeyAsSegmentInt")
+              .setKey(Arrays.asList(
+                      new CsdlPropertyRef().setName("PropertyInt16")))
+              .setProperties(Arrays.asList(
+                      PropertyProvider.propertyInt16_NotNullable));
+    } else if (entityTypeName.equals(nameETComplexKeyAsSegment)) {
+      return new CsdlEntityType()
+              .setName("ETComplexKeyAsSegment")
+              .setKey(Arrays.asList(
+                      new CsdlPropertyRef().setName("PropertyString"),
+                      new CsdlPropertyRef().setName("PropertyInt16")))
+              .setProperties(Arrays.asList(
+                      PropertyProvider.propertyString_NotNullable,
+                      PropertyProvider.propertyInt16_NotNullable));
+    } else if(entityTypeName.equals(nameETKeyAsSegmentStringNavKeyAsSegment)) {
+      return new CsdlEntityType()
+              .setName(nameETKeyAsSegmentStringNavKeyAsSegment.getName())
+              .setKey(Arrays.asList(
+                      new CsdlPropertyRef().setName("PropertyString")))
+              .setProperties(Arrays.asList(
+                      PropertyProvider.propertyString_NotNullable))
+              .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyKeyAsSegment));
     }
     return null;
   }

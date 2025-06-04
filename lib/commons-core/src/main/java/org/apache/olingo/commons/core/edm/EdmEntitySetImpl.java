@@ -37,4 +37,8 @@ public class EdmEntitySetImpl extends AbstractEdmBindingTarget implements EdmEnt
     return entitySet.isIncludeInServiceDocument();
   }
 
+  @Override
+  public boolean isKeyAsSegmentAllowed() {
+    return entitySet.isKeyAsSegmentAllowed();
+  }
 }

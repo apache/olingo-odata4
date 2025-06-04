@@ -1051,4 +1051,9 @@ public class PropertyProvider {
       .setName("NavPropertyETStreamOnComplexPropMany")
       .setType(EntityTypeProvider.nameETStream)
       .setCollection(true);
-}
+
+  public static final CsdlNavigationProperty navPropertyKeyAsSegment = new CsdlNavigationProperty()
+      .setName("NavPropertyKeyAsSegment")
+      .setType(EntityTypeProvider.nameETKeyAsSegmentStringNavKeyAsSegment)
+      .setKeyAsSegmentAllowed(true);
+  }
