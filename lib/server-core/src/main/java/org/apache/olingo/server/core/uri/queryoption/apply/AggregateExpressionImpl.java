@@ -20,8 +20,9 @@ package org.apache.olingo.server.core.uri.queryoption.apply;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -29,6 +30,7 @@ import org.apache.olingo.server.api.ODataApplicationException;
 import org.apache.olingo.server.api.uri.UriInfo;
 import org.apache.olingo.server.api.uri.UriResource;
 import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression;
+import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpressionDynamicPropertyOptions;
 import org.apache.olingo.server.api.uri.queryoption.expression.Expression;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitException;
 import org.apache.olingo.server.api.uri.queryoption.expression.ExpressionVisitor;
@@ -45,7 +47,7 @@ public class AggregateExpressionImpl implements AggregateExpression {
   private String alias;
   private AggregateExpression inlineAggregateExpression;
   private List<AggregateExpression> from = new ArrayList<>();
-  private Set<String> dynamicProperties = new HashSet<>();
+  private Map<String, AggregateExpressionDynamicPropertyOptions> dynamicProperties = new HashMap<>();
 
   @Override
   public List<UriResource> getPath() {
@@ -125,11 +127,21 @@ public class AggregateExpressionImpl implements AggregateExpression {
   
   @Override
   public Set<String> getDynamicProperties() {
-    return Collections.unmodifiableSet(dynamicProperties);
+    return Collections.unmodifiableSet(dynamicProperties.keySet());
   }
 
   @Override
   public void addDynamicProperty(String name) {
-    dynamicProperties.add(name);
+    dynamicProperties.put(name, null);
+  }
+
+  @Override
+  public void addDynamicProperty(String name, AggregateExpressionDynamicPropertyOptions options) {
+    dynamicProperties.put(name, options);
+  }
+
+  @Override
+  public Map<String, AggregateExpressionDynamicPropertyOptions> getDynamicPropertiesWithOptions() {
+    return Collections.unmodifiableMap(dynamicProperties);
   }
 }

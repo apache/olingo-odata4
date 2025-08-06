@@ -96,7 +96,7 @@ public class CarServiceTest extends OlingoOSGiTestSupport {
         return new Option[] {
             olingoBaseConfig(),
             features(olingoUrl, "olingo-server", "olingo-client"),
-            mavenBundle("org.apache.olingo", "odata-server-osgi-sample", "5.0.1-SNAPSHOT"),
+            mavenBundle("org.apache.olingo", "odata-server-osgi-sample", "5.0.2-SNAPSHOT"),
             logLevel(LogLevel.INFO)
         };
     }

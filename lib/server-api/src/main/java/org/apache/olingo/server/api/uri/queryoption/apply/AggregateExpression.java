@@ -19,6 +19,7 @@
 package org.apache.olingo.server.api.uri.queryoption.apply;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -85,9 +86,26 @@ public interface AggregateExpression extends Expression {
    */
   Set<String> getDynamicProperties();
 
+
+  /**
+   * Gets the dynamic properties for aggregation expression.
+   * @return the set of properties
+   */
+  Map<String, AggregateExpressionDynamicPropertyOptions> getDynamicPropertiesWithOptions();
+
+
   /**
    * Adds the dynamic property for aggregation expression.
    * @param name an identifier
    */
   void addDynamicProperty(String name);
+
+    /**
+   * Adds the dynamic property for aggregation expression.
+   * @param name an identifier
+   * @param options the options for the dynamic property
+   */
+  void addDynamicProperty(String name, AggregateExpressionDynamicPropertyOptions options);
+
 }
+

@@ -96,9 +96,10 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
     connection.setRequestProperty(HttpHeader.ODATA_MAX_VERSION, "5.0");
     connection.connect();
 
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
     assertNotNull(content);
   }
 
@@ -112,10 +113,11 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
     connection.setRequestProperty(HttpHeader.ODATA_MAX_VERSION, "5.0");
     connection.connect();
 
+    assertEquals(HttpStatusCode.OK.getStatusCode(), connection.getResponseCode());
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
-    assertNotNull(content);;
+    final String content = IOUtils.toString(connection.getInputStream(), Charset.defaultCharset());
+    assertNotNull(content);
   }
   
   @Test

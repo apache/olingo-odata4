@@ -21,7 +21,7 @@ package org.apache.olingo.server.core.uri.parser;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +54,7 @@ import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
 import org.apache.olingo.server.api.uri.queryoption.apply.Aggregate;
 import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression;
 import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpression.StandardMethod;
+import org.apache.olingo.server.api.uri.queryoption.apply.AggregateExpressionDynamicPropertyOptions;
 import org.apache.olingo.server.api.uri.queryoption.apply.BottomTop;
 import org.apache.olingo.server.api.uri.queryoption.apply.Compute;
 import org.apache.olingo.server.api.uri.queryoption.apply.Concat;
@@ -223,22 +224,37 @@ public class ApplyParser {
   private Aggregate parseAggregateTrafo(EdmStructuredType referencedType)
       throws UriParserException, UriValidationException {
     AggregateImpl aggregate = new AggregateImpl();
-    Set<String> dynamicProps = new HashSet<>();
+    Map<String, AggregateExpressionDynamicPropertyOptions> dynamicProps = new HashMap<>();
     do {
-    	AggregateExpression aggregateExpr = parseAggregateExpr(referencedType, dynamicProps, Requirement.REQUIRED);
-        aggregate.addExpression(aggregateExpr);
-        dynamicProps.addAll(aggregateExpr.getDynamicProperties());
+    	AggregateExpression aggregateExpr = parseAggregateExpr(
+        referencedType,
+        dynamicProps.keySet(),
+        Requirement.REQUIRED
+      );
+      aggregate.addExpression(aggregateExpr);
+      dynamicProps.putAll(aggregateExpr.getDynamicPropertiesWithOptions());
     } while (tokenizer.next(TokenKind.COMMA));
-    dynamicProps.forEach(dp -> addPropertyToRefType(referencedType, dp));
+    dynamicProps.keySet().forEach(dp -> 
+      addPropertyToRefType(referencedType, dp, dynamicProps.get(dp))
+    );
     ParserHelper.requireNext(tokenizer, TokenKind.CLOSE);
     return aggregate;
   }
   
-  private void addPropertyToRefType(EdmStructuredType referencedType, String alias) {
-      ((DynamicStructuredType) referencedType).addProperty(
-              createDynamicProperty(alias,
-                  // The OData standard mandates Edm.Decimal (with no decimals), although counts are always integer.
-                  odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal)));
+  private void addPropertyToRefType(
+    EdmStructuredType referencedType,
+    String alias,
+    AggregateExpressionDynamicPropertyOptions options
+  ) {
+    DynamicProperty dynamicProperty = createDynamicProperty(
+      alias,
+      odata.createPrimitiveTypeInstance(EdmPrimitiveTypeKind.Decimal)
+    );
+    if (options != null && options.scale != null) {
+      dynamicProperty.setScale(options.scale);
+    }
+
+    ((DynamicStructuredType) referencedType).addProperty(dynamicProperty);
   }
   
   public AggregateExpression parseAggregateMethodCallExpr(UriTokenizer tokenizer, EdmStructuredType referringType)
@@ -300,7 +316,12 @@ public class ApplyParser {
 	      final String alias = parseAsAlias(referencedType, dynamicProps, aliasRequired);
 	      if(alias != null) {
 	        aggregateExpression.setAlias(alias);
-	        aggregateExpression.addDynamicProperty(alias);
+          AggregateExpressionDynamicPropertyOptions options = new AggregateExpressionDynamicPropertyOptions();
+          if (aggregateExpression.getStandardMethod() == StandardMethod.SUM
+            || aggregateExpression.getStandardMethod() == StandardMethod.AVERAGE) {
+            options.scale = Integer.MAX_VALUE;
+          }
+	        aggregateExpression.addDynamicProperty(alias, options);
 	      }
 	      parseAggregateFrom(aggregateExpression, referencedType);
 	    }
