@@ -77,6 +77,7 @@ import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
 import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.format.ContentType;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
@@ -238,6 +239,10 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     
     // consume remaining json node fields
     consumeRemainingJsonNodeFields(edmEntityType, tree, entity);
+
+    if (edmEntityType.isOpenType()) {
+      consumeOpenEntityProperties(tree, entity);
+    }
 
     assertJsonNodeIsEmpty(tree);
 
@@ -563,6 +568,202 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     }
   }
 
+  private void consumeOpenEntityProperties(final ObjectNode tree, final Entity entity) throws DeserializerException {
+    List<String> toRemove = new ArrayList<String>();
+    Iterator<String> fieldNames = tree.fieldNames();
+    while (fieldNames.hasNext()) {
+      String propertyName = fieldNames.next();
+      JsonNode childNode = tree.get(propertyName);
+      if (entity.getProperty(propertyName) == null) {
+        entity.addProperty(readDynamicProperty(propertyName, childNode));
+        toRemove.add(propertyName);
+      } else {
+        throw new DeserializerException("Duplicated property: " + propertyName, MessageKeys.DUPLICATE_PROPERTY);
+      }
+    }
+    tree.remove(toRemove);
+  }
+
+  private Property readDynamicProperty(String propertyName, JsonNode node) throws DeserializerException {
+    Property property = null;
+    if (node == null || node.isNull()) {
+      property = new Property(null, propertyName, ValueType.PRIMITIVE, null);
+    } else if (node.isValueNode()) {
+      property = readDynamicPrimitiveProperty(propertyName, node);
+    } else if (node.isArray()) {
+      property = readDynamicCollectionProperty(propertyName, node);
+    } else if (node.isObject()) {
+      EdmType edmType = getDynamicEdmType(node);
+      switch (edmType.getKind()) {
+        case PRIMITIVE:
+          try {
+           Geospatial geospatial = readPrimitiveGeoValue(propertyName, (EdmPrimitiveType) edmType, (ObjectNode) node);
+            property = new Property(edmType.getFullQualifiedName().getFullQualifiedNameAsString(), propertyName,
+                ValueType.GEOSPATIAL, geospatial);
+          } catch (EdmPrimitiveTypeException e) {
+            throw new DeserializerException(
+                "Failed to load GeoJson element: " + propertyName, MessageKeys.UNKNOWN_CONTENT);
+          }
+          break;
+        case COMPLEX:
+          ComplexValue value = readDynamicComplexValue(propertyName, node);
+          property = new Property(value.getTypeName(), propertyName, ValueType.COMPLEX, value);
+          break;
+        default:
+          throw new DeserializerException(
+              "Unsupported dynamic property kind: " + edmType.getKind().name(), MessageKeys.UNSUPPORTED_FORMAT);
+      }
+    } else {
+      throw new DeserializerException("Unknown content: " + propertyName, MessageKeys.UNKNOWN_CONTENT);
+    }
+    return property;
+  }
+
+  private Property readDynamicPrimitiveProperty(String propertyName, JsonNode node) throws DeserializerException {
+    // Cannot support all primitive type due to a Json ambiguity and limitation
+    String type;
+    Object value;
+    if (node.isBoolean()) {
+      type = EdmPrimitiveTypeKind.Boolean.getFullQualifiedName().getFullQualifiedNameAsString();
+      value = node.asBoolean();
+    } else if (node.isNumber()) {
+      JsonParser.NumberType numberType = node.numberType();
+      switch (numberType) {
+        case INT:
+          type = EdmPrimitiveTypeKind.Int32.getFullQualifiedName().getFullQualifiedNameAsString();
+          value = node.asInt();
+          break;
+        case LONG:
+          type = EdmPrimitiveTypeKind.Int64.getFullQualifiedName().getFullQualifiedNameAsString();
+          value = node.asLong();
+          break;
+        case FLOAT:
+        case DOUBLE:
+          type = EdmPrimitiveTypeKind.Double.getFullQualifiedName().getFullQualifiedNameAsString();
+          value = node.asDouble();
+          break;
+        default:
+          throw new DeserializerException(
+              "Unsupported Json dynamic primitive type: " + numberType, MessageKeys.UNSUPPORTED_FORMAT);
+      }
+    } else if (node.isTextual()) {
+      type = EdmPrimitiveTypeKind.String.getFullQualifiedName().getFullQualifiedNameAsString();
+      value = node.asText();
+    } else {
+      throw new DeserializerException(
+          "Unsupported json dynamic primitive: " + propertyName, MessageKeys.UNSUPPORTED_FORMAT);
+    }
+    return new Property(type, propertyName, ValueType.PRIMITIVE, value);
+  }
+
+  private ComplexValue readDynamicComplexValue(String propertyName, JsonNode node) throws DeserializerException {
+    return readDynamicComplexValue(propertyName, null, node);
+  }
+
+  private ComplexValue readDynamicComplexValue(final String propertyName, final EdmComplexType type,
+      final JsonNode node) throws DeserializerException {
+    EdmComplexType edmComplexType = type;
+    if (edmComplexType == null) {
+      JsonNode typeField = node.get(Constants.JSON_TYPE);
+      if (typeField == null) {
+        throw new DeserializerException("Missing type of property: " + propertyName, MessageKeys.UNKNOWN_CONTENT);
+      }
+      String typeName = typeField.asText().substring(1);
+      try {
+        edmComplexType = serviceMetadata.getEdm().getComplexType(new FullQualifiedName(typeName));
+      } catch (IllegalArgumentException e) {
+        throw new DeserializerException(e.getMessage(), MessageKeys.UNKNOWN_CONTENT);
+      }
+      if (edmComplexType == null) {
+        throw new DeserializerException("Unknown type: " + typeName, MessageKeys.UNKNOWN_CONTENT);
+      }
+    }
+    ComplexValue complexValue = new ComplexValue();
+    complexValue.setTypeName(edmComplexType.getFullQualifiedName().getFullQualifiedNameAsString());
+
+    Iterator<String> propertyNames = node.fieldNames();
+    while (propertyNames.hasNext()) {
+      String name = propertyNames.next();
+      if (!name.startsWith(ODATA_CONTROL_INFORMATION_PREFIX)) {
+        if (edmComplexType.getPropertyNames().contains(name)) {
+          EdmProperty propertyType = edmComplexType.getStructuralProperty(name);
+          complexValue.getValue().add(consumePropertyNode(name, propertyType.getType(), propertyType.isCollection(),
+              propertyType.isNullable(), propertyType.getMaxLength(), propertyType.getPrecision(),
+              propertyType.getScale(), propertyType.isUnicode(), propertyType.getMapping(), node.get(name)));
+        } else {
+          complexValue.getValue().add(readDynamicProperty(name, node.get(name)));
+        }
+      }
+    }
+    return complexValue;
+  }
+
+  private Property readDynamicCollectionProperty(String propertyName, JsonNode node) throws DeserializerException {
+    List<Property> foundProperties = dynamicCollectionAsPropertyList(propertyName, node);
+    EdmType type = getTypeOfDynamicCollectionElements(foundProperties);
+    List<Object> values = new ArrayList<Object>();
+    for (Property property : foundProperties) {
+      values.add(property.getValue());
+    }
+    ValueType valueType;
+    switch (foundProperties.get(0).getValueType()) {
+      case PRIMITIVE:
+        valueType = ValueType.COLLECTION_PRIMITIVE;
+        break;
+      case GEOSPATIAL:
+        valueType = ValueType.COLLECTION_GEOSPATIAL;
+        break;
+      case COMPLEX:
+        valueType = ValueType.COLLECTION_COMPLEX;
+        break;
+        default:
+          throw new DeserializerException("Unsupported dynamic value type: " + foundProperties.get(0).getValueType(),
+              MessageKeys.UNSUPPORTED_FORMAT);
+    }
+    return new Property(type.getFullQualifiedName().getFullQualifiedNameAsString(), propertyName, valueType, values);
+  }
+
+  private List<Property> dynamicCollectionAsPropertyList(String propertyName, JsonNode node)
+      throws DeserializerException{
+    List<Property> properties = new ArrayList<Property>();
+    Iterator<JsonNode> it = node.iterator();
+    while (it.hasNext()) {
+      JsonNode childNode = it.next();
+      if (childNode.isArray()) {
+        throw new DeserializerException(
+            "Unsupported dynamic property: " + propertyName, MessageKeys.UNSUPPORTED_FORMAT);
+      } else if (childNode.isValueNode()) {
+        Property property = readDynamicPrimitiveProperty(propertyName, childNode);
+        properties.add(property);
+      } else if (childNode.isObject()) {
+        EdmType type = getDynamicEdmType(childNode);
+        switch (type.getKind()) {
+          case PRIMITIVE:
+            try {
+              Geospatial geospatial = readPrimitiveGeoValue(
+                  propertyName, (EdmPrimitiveType) type, (ObjectNode) childNode);
+              properties.add(new Property(type.getFullQualifiedName().getFullQualifiedNameAsString(),
+                  propertyName, ValueType.GEOSPATIAL, geospatial));
+            } catch (EdmPrimitiveTypeException e) {
+              throw new DeserializerException(
+                  "Failed to load a GeoJson element into array: " + propertyName, MessageKeys.UNKNOWN_CONTENT);
+            }
+            break;
+          case COMPLEX:
+            ComplexValue complex = readDynamicComplexValue(propertyName, (EdmComplexType) type, childNode);
+            properties.add(new Property(complex.getTypeName(), propertyName, ValueType.COMPLEX, complex));
+            break;
+          default:
+            throw new DeserializerException(
+                "Unsupported dynamic property kind: " + type.getKind().name(), MessageKeys.UNSUPPORTED_FORMAT);
+        }
+      } else {
+        throw new DeserializerException("Unknown content: " + propertyName, MessageKeys.UNKNOWN_CONTENT);
+      }
+    }
+    return properties;
+  }
+
   private void consumeExpandedNavigationProperties(final EdmEntityType edmEntityType, final ObjectNode node,
       final Entity entity, final ExpandTreeBuilder expandBuilder) throws DeserializerException {
     List<String> navigationPropertyNames = edmEntityType.getNavigationPropertyNames();
@@ -712,8 +913,11 @@ public class ODataJsonDeserializer implements ODataDeserializer {
           jsonNode);
       property.setType(derivedType.getFullQualifiedName()
           .getFullQualifiedNameAsString());
-
-      value = readComplexNode(name, derivedType, isNullable, jsonNode);
+      if (((EdmStructuredType) derivedType).isOpenType()) {
+        value = readDynamicComplexValue(name, (EdmComplexType) derivedType, jsonNode);
+      } else {
+        value = readComplexNode(name, derivedType, isNullable, jsonNode);
+      }
       property.setValue(ValueType.COMPLEX, value);
       break;
     default:
@@ -861,21 +1065,23 @@ public class ODataJsonDeserializer implements ODataDeserializer {
    */
   private Geospatial readPrimitiveGeoValue(final String name, final EdmPrimitiveType type, ObjectNode jsonNode)
       throws DeserializerException, EdmPrimitiveTypeException {
-    JsonNode typeNode = jsonNode.remove(Constants.ATTR_TYPE);
+    // protective copy for dynamic exploration
+    ObjectNode copyNode = jsonNode.deepCopy();
+    JsonNode typeNode = copyNode.remove(Constants.ATTR_TYPE);
     if (typeNode != null && typeNode.isTextual()) {
       final Class<? extends Geospatial> geoDataType = jsonNameToGeoDataType.get(typeNode.asText());
       if (geoDataType != null && (type == null || geoDataType.equals(type.getDefaultType()))) {
-        final JsonNode topNode = jsonNode.remove(
+        final JsonNode topNode = copyNode.remove(
             geoDataType.equals(GeospatialCollection.class) ? Constants.JSON_GEOMETRIES : Constants.JSON_COORDINATES);
 
         SRID srid = null;
-        if (jsonNode.has(Constants.JSON_CRS)) {
+        if (copyNode.has(Constants.JSON_CRS)) {
           srid = SRID.valueOf(
-          jsonNode.remove(Constants.JSON_CRS).get(Constants.PROPERTIES).
+          copyNode.remove(Constants.JSON_CRS).get(Constants.PROPERTIES).
             get(Constants.JSON_NAME).asText().split(":")[1]);
         }
         
-        assertJsonNodeIsEmpty(jsonNode);
+        assertJsonNodeIsEmpty(copyNode);
 
         if (topNode != null && topNode.isArray()) {
           final Geospatial.Dimension dimension = type == null || type.getName().startsWith("Geometry") ?
@@ -1221,5 +1427,232 @@ public class ODataJsonDeserializer implements ODataDeserializer {
     return edmStructuredTypeToAssign != null
         && (edmStructuredType.getFullQualifiedName().equals(edmStructuredTypeToAssign.getFullQualifiedName())
             || isAssignable(edmStructuredType, edmStructuredTypeToAssign.getBaseType()));
+  }
+
+  private EdmType getDynamicEdmType(final JsonNode node) throws DeserializerException {
+    JsonNode typeField = node.get(Constants.JSON_TYPE);
+    if (typeField == null) {
+      if (node.isValueNode()) {
+        if (node.isBoolean()) {
+          return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Boolean);
+        } else if (node.isInt()) {
+          return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int32);
+        } else if (node.isLong()) {
+          return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Int64);
+        } else if (node.isFloat() || typeField.isDouble()) {
+          return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.Double);
+        } else if (node.isTextual()) {
+          return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String);
+        }
+      } else if (node.isObject()) {
+        return retrieveDynamicGeoType(node);
+      }
+      throw new DeserializerException(
+          "Unknown content of Json node: " + node.toString(), MessageKeys.UNKNOWN_CONTENT);
+    } else {
+      String typeName = typeField.asText().substring(1); // remove first character: #
+      FullQualifiedName fnq = new FullQualifiedName(typeName);
+      EdmType edmType = serviceMetadata.getEdm().getComplexType(fnq);
+      if (edmType == null) {
+        edmType = serviceMetadata.getEdm().getEntityType(fnq);
+      }
+      if (edmType == null) {
+        edmType = serviceMetadata.getEdm().getEnumType(fnq);
+      }
+      if (edmType == null) {
+        edmType = serviceMetadata.getEdm().getTypeDefinition(fnq);
+      }
+      if (edmType == null) {
+        throw new DeserializerException("Unknown type: " + typeName, MessageKeys.UNKNOWN_CONTENT);
+      }
+      return edmType;
+    }
+  }
+
+  private EdmType getTypeOfDynamicCollectionElements(final List<Property> properties) throws DeserializerException {
+    if (properties.isEmpty()) {
+      throw new DeserializerException("Unsupported empty dynamic collection", MessageKeys.UNSUPPORTED_FORMAT);
+    }
+
+    EdmType edmType = null;
+    for (Property property : properties) {
+      EdmType foundEdmType;
+      String type = property.getType();
+      if (type.startsWith("Edm")) {
+        foundEdmType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOfFQN(type));
+      } else {
+        foundEdmType = serviceMetadata.getEdm().getComplexType(new FullQualifiedName(type));
+      }
+
+      if (edmType == null) {
+        edmType = foundEdmType;
+      } else {
+        if (edmType instanceof EdmStructuredType) {
+          edmType = getBestBaseType((EdmStructuredType) edmType, (EdmStructuredType) foundEdmType);
+          if (edmType == null) {
+            throw new DeserializerException(
+                "Incompatible type into collection", MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+          }
+        } else if (!edmType.equals(foundEdmType)) {
+          throw new DeserializerException("Incompatible type into collection", MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+        }
+      }
+    }
+    return edmType;
+  }
+
+  /**
+   * Retrieves the best base type between two given structural types.
+   * @param type first structural type
+   * @param otherType second structural type
+   * @return the best common base type, otherwise null.
+   */
+  private EdmStructuredType getBestBaseType(final EdmStructuredType type, final EdmStructuredType otherType) {
+    if (type == null || otherType == null) {
+      return null;
+    }
+
+    if (type.equals(otherType)) {
+      return type;
+    }
+
+    if (type.equals(otherType.getBaseType())) {
+      return type;
+    }
+
+    if (otherType.equals(type.getBaseType())) {
+      return otherType;
+    }
+
+    List<EdmStructuredType> baseTypeList = getBaseTypeListOf(type);
+    List<EdmStructuredType> baseOtherTypeList = getBaseTypeListOf(otherType);
+    for (int i = 0; i < baseTypeList.size(); i++) {
+      for (int j = 0; j < baseOtherTypeList.size(); j++) {
+        if (baseTypeList.get(i).equals(baseOtherTypeList.get(j))) {
+          baseTypeList.get(i);
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns an ordered base type list of the given type.
+   * @param edmStructuredType type source
+   * @return an ordered list of EdmStructuredType.
+   */
+  private List<EdmStructuredType> getBaseTypeListOf(final EdmStructuredType edmStructuredType) {
+    ArrayList<EdmStructuredType> baseTypeList = new ArrayList<EdmStructuredType>();
+    EdmStructuredType baseType = edmStructuredType.getBaseType();
+    while (baseType != null) {
+      baseTypeList.add(baseType);
+      baseType = baseType.getBaseType();
+    }
+    return baseTypeList;
+  }
+
+  private EdmType retrieveDynamicGeoType(final JsonNode node) throws DeserializerException {
+    JsonNode type = node.get(Constants.ATTR_TYPE);
+    if (type == null || !type.isTextual()) {
+      throw new DeserializerException("Geo-type" + node.toString(), MessageKeys.UNKNOWN_CONTENT);
+    }
+    String geoType = type.asText();
+    JsonNode position;
+    if ("GeometryCollection".equals(geoType)) {
+      checkGeoJsonHasNamedChild(node, Constants.JSON_GEOMETRIES);
+      JsonNode geometriesNode = node.get(Constants.JSON_GEOMETRIES);
+      if (geometriesNode.size() == 0) {
+        return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryCollection);
+      }
+      Property p = readDynamicProperty(Constants.JSON_GEOMETRIES, geometriesNode.get(0));
+      if (p.getType().startsWith("Edm.Geometry")) {
+        return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeometryCollection);
+      } else if (p.getType().startsWith("Edm.Geography")) {
+        return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.GeographyCollection);
+      }
+      throw new DeserializerException("Not implemented yet", MessageKeys.NOT_IMPLEMENTED);
+    } else if ("Feature".equals(geoType)) {
+      throw new DeserializerException("GeoJson type Feature is not supported", MessageKeys.UNSUPPORTED_FORMAT);
+    } else {
+      checkGeoJsonHasNamedChild(node, Constants.JSON_COORDINATES);
+      position = retrieveGeoJsonPosition(geoType, node.get(Constants.JSON_COORDINATES));
+    }
+
+    if (position == null) {
+      throw new DeserializerException("Unknown GeoJson content", MessageKeys.UNKNOWN_CONTENT);
+    }
+    Geospatial.Dimension dimension = retrieveDimension(position);
+    String prefix = dimension.name().substring(0, 1) + dimension.name().substring(1).toLowerCase();
+    return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(prefix + geoType));
+  }
+
+  /**
+   * Checks existence of a specific child into a GeoJson node.
+   * @param node GeoJson node
+   * @param childName child node name
+   * @throws DeserializerException if child is not found.
+   */
+  private void checkGeoJsonHasNamedChild(final JsonNode node, final String childName) throws DeserializerException {
+    if (!node.has(childName)) {
+      throw new DeserializerException("Missing GeoJson property: " + childName, MessageKeys.UNKNOWN_CONTENT);
+    }
+  }
+
+  /**
+   * Retrieves first Position of a GeoJson object containing coordinates.
+   * @param geoJsonType GeoJson type
+   * @param node coordinates Json node
+   * @return Json node representing the found position, otherwise null
+   */
+  private JsonNode retrieveGeoJsonPosition(final String geoJsonType, final JsonNode node) {
+    if (node == null || !node.isArray()) {
+      return null;
+    }
+    JsonNode position = node;
+    if ("Point".equals(geoJsonType)) {
+      return position;
+    }
+
+    position = position.get(0);
+    if (position != null) {
+      if (position.isArray() && position.size() > 0
+          && ("LineString".equals(geoJsonType) || "MultiPoint".equals(geoJsonType))) {
+        return position;
+      }
+      position = position.get(0);
+    }
+
+    if (position != null) {
+      if (position.isArray() && position.size() > 0
+          && ("MultiLineString".equals(geoJsonType) || "Polygon".equals(geoJsonType))) {
+        return position;
+      }
+      position = position.get(0);
+    }
+
+    if (position != null && position.isArray() && ("MultiPolygon".equals(geoJsonType))) {
+      return position;
+    }
+    return null;
+  }
+
+  /**
+   * Retrieves dimension of a GeoJson geometry object Position.
+   * @param node GeoJson Position
+   * @return dimension of the GeoJson position
+   * @throws DeserializerException if the given node is not a GeoJson Position
+   */
+  private Geospatial.Dimension retrieveDimension(final JsonNode node) throws DeserializerException {
+    if (!node.isArray()) {
+      throw new DeserializerException("GeoJson Position must be a array", MessageKeys.UNKNOWN_CONTENT);
+    }
+    switch (node.size()) {
+      case 2:
+        return Geospatial.Dimension.GEOMETRY;
+      case 3:
+        return Geospatial.Dimension.GEOGRAPHY;
+      default:
+          throw new DeserializerException("Invalid GeoJson Position", MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+    }
   }
 }

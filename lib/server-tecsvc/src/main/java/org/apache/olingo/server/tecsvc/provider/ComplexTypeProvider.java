@@ -20,6 +20,7 @@ package org.apache.olingo.server.tecsvc.provider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
@@ -60,6 +61,8 @@ public class ComplexTypeProvider {
   public static final FullQualifiedName nameCTNavCont = new FullQualifiedName(SchemaProvider.NAMESPACE, "CTNavCont");
   public static final FullQualifiedName nameCTWithStreamProp = 
       new FullQualifiedName(SchemaProvider.NAMESPACE, "CTWithStreamProp");
+
+  public static final FullQualifiedName nameOCTNoProp = new FullQualifiedName(SchemaProvider.NAMESPACE, "OCTNoProp");
 
   public CsdlComplexType getComplexType(final FullQualifiedName complexTypeName) throws ODataException {
 
@@ -227,6 +230,11 @@ public class ComplexTypeProvider {
               PropertyProvider.propertyComp_CTTwoPrim))
           .setNavigationProperties(Arrays.asList(PropertyProvider.navPropertyETStreamOnComplexProp_ETStreamNav,
               PropertyProvider.navPropertyETStreamOnComplexPropMany_ETStreamNav));
+    } else if (complexTypeName.equals(nameOCTNoProp)) {
+      return new CsdlComplexType()
+          .setName(nameOCTNoProp.getName())
+          .setOpenType(true)
+          .setProperties(Collections.<CsdlProperty>emptyList());
     }
 
     return null;

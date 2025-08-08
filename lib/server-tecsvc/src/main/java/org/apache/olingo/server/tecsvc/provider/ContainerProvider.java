@@ -112,7 +112,8 @@ public class ContainerProvider {
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESPeople"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESTwoPrimDerived"));
     entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESAllPrimDerived"));
-    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESDelta")); 
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "ESDelta"));
+    entitySets.add(prov.getEntitySet(ContainerProvider.nameContainer, "OESTwoPrim"));
 
     // Singletons
     List<CsdlSingleton> singletons = new ArrayList<CsdlSingleton>();
@@ -754,6 +755,10 @@ public class ContainerProvider {
             .setPath(PropertyProvider.navPropertyKeyAsSegment.getName())
             .setTarget("ESKeyAsSegmentString")
           ));
+      } else if (name.equals("OESTwoPrim")) {
+        return new CsdlEntitySet()
+                .setName("OESTwoPrim")
+                .setType(EntityTypeProvider.nameOETTwoPrim);
       }
     }
     return null;

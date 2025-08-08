@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.edm.provider.CsdlAction;
@@ -121,6 +122,7 @@ public class ActionProvider {
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTTwoParam");
   public static final FullQualifiedName nameUARTByteNineParam =
       new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTByteNineParam");
+  public static final FullQualifiedName nameUARTPrim = new FullQualifiedName(SchemaProvider.NAMESPACE, "UARTPrim");
   
   public static List<CsdlAction> getBoundActionsForEntityType(FullQualifiedName entityType) throws ODataException {
     FullQualifiedName[] actionNames = {nameBAESAllPrimRTETAllPrim, 
@@ -483,6 +485,13 @@ public class ActionProvider {
                   new CsdlParameter().setName("BindingParam").setType(EntityTypeProvider.nameETTwoKeyNav)
                       .setNullable(false)))
               .setReturnType(new CsdlReturnType().setType(ComplexTypeProvider.nameCTTwoBasePrimCompNav)));
+    } else if (actionName.equals(nameUARTPrim)) {
+      return Collections.singletonList(new CsdlAction()
+          .setName(nameUARTPrim.getName())
+          .setParameters(Collections.singletonList(new CsdlParameter()
+              .setName("ParameterOCTNoProp")
+              .setType(ComplexTypeProvider.nameOCTNoProp)))
+          .setReturnType(new CsdlReturnType().setType(EdmPrimitiveTypeKind.Boolean.getFullQualifiedName())));
     }
     return null;
   }

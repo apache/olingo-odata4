@@ -55,6 +55,7 @@ import org.apache.olingo.commons.api.edm.geo.MultiPoint;
 import org.apache.olingo.commons.api.edm.geo.MultiPolygon;
 import org.apache.olingo.commons.api.edm.geo.Point;
 import org.apache.olingo.commons.api.edm.geo.Polygon;
+import org.apache.olingo.commons.api.edm.geo.SRID;
 import org.apache.olingo.commons.api.edm.provider.CsdlMapping;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
@@ -1829,6 +1830,161 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
             "\"PropertyTimeOfDay\":\"03:26:05\"}";
     expectException(entityString, "ETAllPrim",
         DeserializerException.MessageKeys.INVALID_VALUE_FOR_PROPERTY);
+  }
+
+  @Test
+  public void openEntity() throws Exception {
+    String payload = "{"
+        + "\"id\":5,"
+        + "\"PropertyString\":\"foobar\","
+        + "\"value\":null,"
+        + "\"open\":true,"
+        + "\"complex\":{\"@odata.type\":\"#olingo.odata.test1.CTPrim\",\"PropertyInt16\":512},"
+        + "\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[0.0,0.0],[5.0,0.0],[5.0,5.0],[0.0,5.0],[0.0,0.0]]]},"
+        + "\"geography\":{\"type\":\"Point\",\"coordinates\":[0.0,0.0,1.0],\"crs\":{\"type\":\"name\","
+          + "\"properties\":{\"name\":\"EPSG:2970\"}}},"
+        + "\"geo_collection\":{\"type\":\"GeometryCollection\",\"geometries\":["
+          + "{\"type\":\"LineString\",\"coordinates\":[[5.0,3.0,1.0],[7.0,5.0,2.0]]}"
+//          + "{\"type\":\"MultiPoint\",\"coordinates\":[[0.0,0.0,0.0],[1.0,1.0,1.0]]}"
+        + "]},"
+        + "\"array_prim\":[\"a\", \"b\", \"c\"],"
+        + "\"array_complex\":["
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTBase\", \"PropertyInt16\":1,\"PropertyString\":\"x\","
+          + "\"AdditionalPropString\":\"foo\"},"
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\", \"PropertyInt16\":2,\"PropertyString\":\"y\"},"
+        + "{\"@odata.type\":\"#olingo.odata.test1.CTTwoPrim\", \"PropertyInt16\":3,\"PropertyString\":\"z\"}"
+        + "],"
+        + ""
+        + "\"price\":" + Long.MAX_VALUE
+        + "}";
+    Entity entity = deserialize(payload, "OETTwoPrim");
+    Assert.assertNotNull(entity);
+    Assert.assertEquals(11, entity.getProperties().size());
+
+    // check defined properties
+    Assert.assertEquals(5, entity.getProperty("id").getValue());
+    Assert.assertEquals("foobar", entity.getProperty("PropertyString").getValue());
+
+    // check basic property
+    Assert.assertTrue(entity.getProperty("value").isNull());
+    Assert.assertTrue((Boolean) entity.getProperty("open").getValue());
+    Assert.assertEquals(Long.MAX_VALUE, entity.getProperty("price").getValue());
+
+    // check complex property
+    Property property = entity.getProperty("complex");
+    Assert.assertNotNull(property);
+    Assert.assertTrue(property.isComplex());
+    Assert.assertFalse(property.isCollection());
+    Assert.assertEquals(ValueType.COMPLEX, property.getValueType());
+    Assert.assertEquals("olingo.odata.test1.CTPrim", property.getType());
+    ComplexValue complex = (ComplexValue) property.getValue();
+    Assert.assertNotNull(complex);
+    Assert.assertEquals("olingo.odata.test1.CTPrim", complex.getTypeName());
+    Assert.assertEquals(1, complex.getValue().size());
+    Property complexProperty = complex.getValue().get(0);
+    Assert.assertEquals("Edm.Int16", complexProperty.getType());
+    Assert.assertEquals(ValueType.PRIMITIVE, complexProperty.getValueType());
+    Assert.assertEquals((short) 512, complexProperty.getValue());
+
+    // check geo-spacial property
+    property = entity.getProperty("geometry");
+    Assert.assertNotNull(property);
+    Assert.assertTrue(property.isGeospatial());
+    Assert.assertFalse(property.isCollection());
+    Assert.assertEquals(ValueType.GEOSPATIAL, property.getValueType());
+    Assert.assertEquals("Edm.GeometryPolygon", property.getType());
+    Geospatial geospatial = (Geospatial) property.getValue();
+    Assert.assertEquals(Geospatial.Dimension.GEOMETRY, geospatial.getDimension());
+    Assert.assertEquals(Geospatial.Type.POLYGON, geospatial.getGeoType());
+/*    FIXME default SRID cause SRID#eqauls issue
+ *    SRID srid = SRID.valueOf("0");
+ *    srid.setDimension(Geospatial.Dimension.GEOMETRY);
+ *    Assert.assertEquals(srid, geospatial.getSrid());
+ */
+    Assert.assertEquals("0", geospatial.getSrid().toString());
+    property = entity.getProperty("geography");
+    Assert.assertNotNull(property);
+    Assert.assertTrue(property.isGeospatial());
+    Assert.assertFalse(property.isCollection());
+    Assert.assertEquals(ValueType.GEOSPATIAL, property.getValueType());
+    Assert.assertEquals("Edm.GeographyPoint", property.getType());
+    geospatial = (Geospatial) property.getValue();
+    Assert.assertEquals(Geospatial.Dimension.GEOGRAPHY, geospatial.getDimension());
+    Assert.assertEquals(Geospatial.Type.POINT, geospatial.getGeoType());
+    SRID srid = SRID.valueOf("2970");
+    srid.setDimension(Geospatial.Dimension.GEOGRAPHY);
+    Assert.assertEquals(srid, geospatial.getSrid());
+    property = entity.getProperty("geo_collection");
+    Assert.assertNotNull(property);
+    Assert.assertTrue(property.isGeospatial());
+    Assert.assertFalse(property.isCollection());
+    Assert.assertEquals(ValueType.GEOSPATIAL, property.getValueType());
+    Assert.assertEquals("Edm.GeographyCollection", property.getType());
+    Assert.assertNotNull(property.getValue());
+
+    // check basic array property
+    property = entity.getProperty("array_prim");
+    Assert.assertNotNull(property);
+    Assert.assertTrue(property.isCollection());
+    Assert.assertTrue(property.isPrimitive());
+    Assert.assertEquals(ValueType.COLLECTION_PRIMITIVE, property.getValueType());
+    Assert.assertEquals("Edm.String", property.getType());
+    Assert.assertEquals(Arrays.asList("a", "b", "c"), property.getValue());
+
+    // check complex array property
+    ComplexValue value1 = new ComplexValue();
+    value1.setTypeName("olingo.odata.test1.CTBase");
+    value1.getValue().add(new Property("Edm.Int16", "PropertyInt16", ValueType.PRIMITIVE, 1));
+    value1.getValue().add(new Property("Edm.String", "PropertyString", ValueType.PRIMITIVE, "x"));
+    value1.getValue().add(new Property("Edm.String", "AdditionalPropString", ValueType.PRIMITIVE, "foo"));
+    ComplexValue value2 = new ComplexValue();
+    value2.setTypeName("olingo.odata.test1.CTTwoPrim");
+    value2.getValue().add(new Property("Edm.Int16", "PropertyInt16", ValueType.PRIMITIVE, 2));
+    value2.getValue().add(new Property("Edm.String", "PropertyString", ValueType.PRIMITIVE, "y"));
+    ComplexValue value3 = new ComplexValue();
+    value3.setTypeName("olingo.odata.test1.CTTwoPrim");
+    value3.getValue().add(new Property("Edm.Int16", "PropertyInt16", ValueType.PRIMITIVE, 3));
+    value3.getValue().add(new Property("Edm.String", "PropertyString", ValueType.PRIMITIVE, "z"));
+    property = entity.getProperty("array_complex");
+    Assert.assertNotNull(property);
+    Assert.assertTrue(property.isCollection());
+    Assert.assertTrue(property.isComplex());
+    Assert.assertEquals(ValueType.COLLECTION_COMPLEX, property.getValueType());
+    Assert.assertEquals("olingo.odata.test1.CTTwoPrim", property.getType());
+    @SuppressWarnings("unchecked")
+    List<ComplexValue> complexValueList = (List<ComplexValue>) property.getValue();
+    Assert.assertNotNull(complexValueList);
+    Assert.assertEquals(3, complexValueList.size());
+    complex = complexValueList.get(0);
+    Assert.assertNotNull(complex);
+    List<Property> properties = complex.getValue();
+    Assert.assertEquals("olingo.odata.test1.CTBase", complex.getTypeName());
+    Assert.assertEquals(3, properties.size());
+    complexProperty = properties.get(0);
+    Assert.assertEquals("PropertyInt16", complexProperty.getName());
+    Assert.assertEquals("Edm.Int16", complexProperty.getType());
+    Assert.assertEquals(ValueType.PRIMITIVE, complexProperty.getValueType());
+    Assert.assertEquals((short) 1, complexProperty.getValue());
+    complex = complexValueList.get(2);
+    Assert.assertNotNull(complex);
+    properties = complex.getValue();
+    Assert.assertEquals("olingo.odata.test1.CTTwoPrim", complex.getTypeName());
+    Assert.assertEquals(2, properties.size());
+    complexProperty = properties.get(1);
+    Assert.assertEquals("PropertyString", complexProperty.getName());
+    Assert.assertEquals("Edm.String", complexProperty.getType());
+    Assert.assertEquals(ValueType.PRIMITIVE, complexProperty.getValueType());
+    Assert.assertEquals("z", complexProperty.getValue());
+  }
+
+  @Test
+  public void openEntityTwice() {
+    String payload = "{"
+        + "\"id\":5,"
+        + "\"PropertyString\":\"foobar\","
+        + "\"PropertyString\":\"barfoo\""
+        + "}";
+    expectException(payload, "OETTwoPrim", DeserializerException.MessageKeys.DUPLICATE_PROPERTY);
   }
 
   protected static Entity deserialize(final InputStream stream, final String entityTypeName,

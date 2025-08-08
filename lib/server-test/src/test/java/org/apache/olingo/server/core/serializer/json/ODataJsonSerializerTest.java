@@ -92,6 +92,7 @@ import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.serializer.ExpandSelectMock;
 import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
@@ -2947,5 +2948,50 @@ public class ODataJsonSerializerTest {
         + "\"PropertyCompWithStream\":{\"PropertyStream\":\"\ufffdioz\ufffd\\\"\ufffd\","
             + "\"PropertyComp\":{\"PropertyInt16\":333,\"PropertyString\":\"TEST123\"}}}";
     Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void openEntity() throws Exception {
+    EdmEntitySet edmEntitySet = entityContainer.getEntitySet("OESTwoPrim");
+    Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    String result = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+        EntitySerializerOptions.with()
+            .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+            .build())
+        .getContent());
+    String expected = "{"
+        + "\"@odata.context\":\"$metadata#OESTwoPrim/$entity\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"id\":2,"
+        + "\"PropertyString\":\"bar\","
+        + "\"PropertyBoolean\":true,"
+        + "\"PropertyInt16\":" + Short.MAX_VALUE
+        + "}";
+    Assert.assertEquals(expected, result);
+  }
+
+  @Test
+  public void openComplex() throws Exception {
+    FullQualifiedName complexFqn = ComplexTypeProvider.nameOCTNoProp;
+    EdmComplexType edmComplexType = metadata.getEdm().getComplexType(complexFqn);
+
+    ComplexValue complex = new ComplexValue();
+    complex.setTypeName(complexFqn.getFullQualifiedNameAsString());
+    complex.getValue().add(new Property("Edm.Boolean", "dynamic_prop_1", ValueType.PRIMITIVE, Boolean.TRUE));
+    complex.getValue().add(new Property("Edm.String", "dynamic_prop_2", ValueType.PRIMITIVE, "foobar"));
+    complex.getValue().add(new Property("Edm.Int64", "dynamic_prop_3", ValueType.PRIMITIVE, 5));
+
+    Property property = new Property(complexFqn.getFullQualifiedNameAsString(), "test", ValueType.COMPLEX, complex);
+    String result = IOUtils.toString(serializer.complex(metadata, edmComplexType, property,
+        ComplexSerializerOptions.with().contextURL(ContextURL.with().build()).build()).getContent());
+
+    String expected = "{"
+        + "\"@odata.context\":\"$metadata\","
+        + "\"@odata.metadataEtag\":\"W/\\\"metadataETag\\\"\","
+        + "\"dynamic_prop_1\":true,"
+        + "\"dynamic_prop_2\":\"foobar\","
+        + "\"dynamic_prop_3\":5"
+        + "}";
+    Assert.assertEquals(expected, result);
   }
 }

@@ -55,11 +55,7 @@ import org.apache.olingo.commons.api.ex.ODataException;
 import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.uri.UriHelper;
-import org.apache.olingo.server.tecsvc.provider.ActionProvider;
-import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
-import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
-import org.apache.olingo.server.tecsvc.provider.FunctionProvider;
-import org.apache.olingo.server.tecsvc.provider.SchemaProvider;
+import org.apache.olingo.server.tecsvc.provider.*;
 
 public class DataCreator {
 
@@ -106,6 +102,7 @@ public class DataCreator {
     data.put("ETBaseCont", createETBaseCont(edm, odata));
     data.put("ETTwoCont", createETTwoCont(edm, odata));
     data.put("ESStreamOnComplexProp", createETStreamOnComplexProp(edm, odata));
+    data.put("OESTwoPrim", createOESTwoPrim(edm, odata));
     
     linkSINav(data);
     linkESTwoPrim(data);
@@ -2504,6 +2501,31 @@ public class DataCreator {
     id = id + "/NavPropertyETBaseContTwoContMany(" + 
         entityCollection.getEntities().get(2).getProperty("PropertyInt16").getValue() + ")";
         entityCollection.getEntities().get(2).setId(URI.create(id));
+    return entityCollection;
+  }
+
+  private EntityCollection createOESTwoPrim(final Edm edm, final OData odata) {
+    EntityCollection entityCollection = new EntityCollection();
+
+    entityCollection.getEntities().add(new Entity()
+      .addProperty(new Property(PropertyProvider.propertyId.getType(), PropertyProvider.propertyId.getName(),
+        ValueType.PRIMITIVE, 1))
+      .addProperty(new Property(PropertyProvider.propertyString.getType(), PropertyProvider.propertyString.getName(),
+        ValueType.PRIMITIVE, "foo")));
+
+    entityCollection.getEntities().add(new Entity()
+      .addProperty(new Property(PropertyProvider.propertyId.getType(), PropertyProvider.propertyId.getName(),
+        ValueType.PRIMITIVE, 2))
+      .addProperty(new Property(PropertyProvider.propertyString.getType(), PropertyProvider.propertyString.getName(),
+              ValueType.PRIMITIVE, "bar"))
+      .addProperty(new Property(PropertyProvider.propertyBoolean.getType(), PropertyProvider.propertyBoolean.getName(),
+              ValueType.PRIMITIVE, true))
+      .addProperty(new Property(PropertyProvider.propertyInt16.getType(), PropertyProvider.propertyInt16.getName(),
+        ValueType.PRIMITIVE, Short.MAX_VALUE)));
+
+    setEntityType(entityCollection, edm.getEntityType(EntityTypeProvider.nameOETTwoPrim));
+    createEntityId(edm, odata, "OESTwoPrim", entityCollection);
+    createOperations("OESTwoPrim", entityCollection, EntityTypeProvider.nameOETTwoPrim);
     return entityCollection;
   }
 }

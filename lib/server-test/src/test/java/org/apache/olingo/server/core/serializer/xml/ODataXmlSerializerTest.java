@@ -36,13 +36,7 @@ import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.EntityCollection;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.ValueType;
-import org.apache.olingo.commons.api.edm.EdmComplexType;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmProperty;
-import org.apache.olingo.commons.api.edm.FullQualifiedName;
+import org.apache.olingo.commons.api.edm.*;
 import org.apache.olingo.commons.api.edmx.EdmxReference;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.server.api.OData;
@@ -58,6 +52,7 @@ import org.apache.olingo.server.api.serializer.SerializerException;
 import org.apache.olingo.server.api.serializer.SerializerResult;
 import org.apache.olingo.server.api.uri.UriHelper;
 import org.apache.olingo.server.api.uri.UriInfoResource;
+import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.queryoption.CountOption;
 import org.apache.olingo.server.api.uri.queryoption.ExpandItem;
 import org.apache.olingo.server.api.uri.queryoption.ExpandOption;
@@ -68,9 +63,13 @@ import org.apache.olingo.server.core.ServiceMetadataImpl;
 import org.apache.olingo.server.core.serializer.ExpandSelectMock;
 import org.apache.olingo.server.core.serializer.json.ODataJsonSerializer;
 import org.apache.olingo.server.core.uri.UriHelperImpl;
+import org.apache.olingo.server.core.uri.UriParameterImpl;
 import org.apache.olingo.server.tecsvc.MetadataETagSupport;
 import org.apache.olingo.server.tecsvc.data.DataProvider;
+import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.apache.olingo.server.tecsvc.provider.EdmTechProvider;
+import org.apache.olingo.server.tecsvc.provider.EntityTypeProvider;
+import org.apache.olingo.server.tecsvc.provider.FunctionProvider;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
@@ -3389,5 +3388,72 @@ public class ODataXmlSerializerTest {
         + "</m:element><m:element><d:PropertyInt16 m:type=\"Int16\">3</d:PropertyInt16>"
         + "</m:element></m:value>";
     Assert.assertEquals(expectedResult, resultString);
+  }
+
+  @Test
+  public void openEntity() throws Exception {
+    EdmEntitySet edmEntitySet = entityContainer.getEntitySet("OESTwoPrim");
+    Entity entity = data.readAll(edmEntitySet).getEntities().get(1);
+    long currentMillis = System.currentTimeMillis();
+    String result = IOUtils.toString(serializer.entity(metadata, edmEntitySet.getEntityType(), entity,
+            EntitySerializerOptions.with()
+                .contextURL(ContextURL.with().entitySet(edmEntitySet).suffix(Suffix.ENTITY).build())
+                .build())
+            .getContent());
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
+            + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+            + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+            + "m:context=\"$metadata#OESTwoPrim/$entity\" "
+            + "m:metadata-etag=\"metadataETag\">"
+            + "<a:id>OESTwoPrim(2)</a:id>"
+            + "<a:title />"
+            + "<a:summary />"
+            + "<a:updated>" + UPDATED_FORMAT.format(new Date(currentMillis)) + "</a:updated>"
+            + "<a:author><a:name /></a:author>"
+            + "<a:link rel=\"edit\" href=\"OESTwoPrim(2)\" />"
+            + "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" "
+            + "term=\"#olingo.odata.test1.OETTwoPrim\" />"
+            + "<a:content type=\"application/xml\">"
+            + "<m:properties>"
+            + "<d:id m:type=\"Int32\">2</d:id>"
+            + "<d:PropertyString>bar</d:PropertyString>"
+            + "<d:PropertyBoolean m:type=\"Boolean\">true</d:PropertyBoolean>"
+            + "<d:PropertyInt16 m:type=\"Int16\">" + Short.MAX_VALUE + "</d:PropertyInt16>"
+            + "</m:properties></a:content>"
+            + "<m:function metadata=\"#olingo.odata.test1.BFOETTwoPrimRTOCTNoProp\" "
+            + "title=\"olingo.odata.test1.BFOETTwoPrimRTOCTNoProp\" "
+            + "target=\"OESTwoPrim(2)/olingo.odata.test1.BFOETTwoPrimRTOCTNoProp\" />"
+            + "</a:entry>";
+    checkXMLEqual(expected, result);
+  }
+
+  @Test
+  public void openComplex() throws Exception {
+    FullQualifiedName complexFqn = ComplexTypeProvider.nameOCTNoProp;
+    EdmComplexType edmComplexType = metadata.getEdm().getComplexType(complexFqn);
+
+    ComplexValue complex = new ComplexValue();
+    complex.setTypeName(complexFqn.getFullQualifiedNameAsString());
+    complex.getValue().add(new Property("Edm.Boolean", "dynamic_prop_1", ValueType.PRIMITIVE, true));
+    complex.getValue().add(new Property("Edm.String", "dynamic_prop_2", ValueType.PRIMITIVE, "foobar"));
+    complex.getValue().add(new Property("Edm.Int64", "dynamic_prop_3", ValueType.PRIMITIVE, 5));
+
+    Property property = new Property(complexFqn.getFullQualifiedNameAsString(), "test", ValueType.COMPLEX, complex);
+    String result = IOUtils.toString(serializer.complex(metadata, edmComplexType, property,
+            ComplexSerializerOptions.with().contextURL(ContextURL.with().build()).build()).getContent());
+
+    String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<m:value xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+            + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\" "
+            + "xmlns:a=\"http://www.w3.org/2005/Atom\" "
+            + "m:type=\"#olingo.odata.test1.OCTNoProp\" "
+            + "m:context=\"$metadata\" "
+            + "m:metadata-etag=\"metadataETag\">"
+            + "<d:dynamic_prop_1 m:type=\"Boolean\">true</d:dynamic_prop_1>"
+            + "<d:dynamic_prop_2>foobar</d:dynamic_prop_2>"
+            + "<d:dynamic_prop_3 m:type=\"Int64\">5</d:dynamic_prop_3>"
+            + "</m:value>";
+    checkXMLEqual(expected, result);
   }
 }
