@@ -69,6 +69,7 @@ import org.apache.olingo.server.api.uri.UriInfoResource;
 import org.apache.olingo.server.api.uri.UriParameter;
 import org.apache.olingo.server.api.uri.UriResourceEntitySet;
 import org.apache.olingo.server.api.uri.queryoption.expression.Literal;
+import org.apache.olingo.server.tecsvc.PropertyFinder;
 
 public class DataProvider {
 
@@ -532,10 +533,13 @@ public class DataProvider {
       edmType = derivedType;
       }
     }
+
+    PropertyFinder propertyFinder = new PropertyFinder(givenProperties);
+
     // Create ALL properties, even if no value is given. Check if null is allowed
     for (final String propertyName : edmType.getPropertyNames()) {
       final EdmProperty innerEdmProperty = (EdmProperty) edmType.getProperty(propertyName);
-      final Property currentProperty = findProperty(propertyName, givenProperties);
+      final Property currentProperty = propertyFinder.find(propertyName);
       final Property newProperty = createProperty(innerEdmProperty, propertyName);
       result.getValue().add(newProperty);
 
