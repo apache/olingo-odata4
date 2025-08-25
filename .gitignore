@@ -3,6 +3,7 @@
 .classpath
 .settings
 .idea
+*.iml
 target
 bin
 *.iml
