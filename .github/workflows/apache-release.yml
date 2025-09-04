@@ -1,0 +1,30 @@
+name: Build and Deploy to Apache Maven
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+          server-id: 'apache.snapshots.https'
+          server-username: 'APACHE_NEXUS_USERNAME'
+          server-password: 'APACHE_NEXUS_PASSWORD'
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Build and Deploy
+        run: mvn -B clean deploy -P apache-release -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+        env:
+          MAVEN_USERNAME: ${{ secrets.APACHE_NEXUS_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.APACHE_NEXUS_PASSWORD }}
