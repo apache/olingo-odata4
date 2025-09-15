@@ -47,7 +47,7 @@ public class ODataReferenceAddingRequestImpl extends AbstractODataBasicRequest<O
 
   final ResWrap<URI> reference;
 
-  ODataReferenceAddingRequestImpl(
+  public ODataReferenceAddingRequestImpl(
       final ODataClient odataClient, final HttpMethod method, final URI uri, final ResWrap<URI> reference) {
     super(odataClient, method, uri);
     this.reference = reference;

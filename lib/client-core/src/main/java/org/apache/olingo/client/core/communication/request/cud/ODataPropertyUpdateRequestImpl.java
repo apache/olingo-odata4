@@ -58,7 +58,7 @@ public class ODataPropertyUpdateRequestImpl extends AbstractODataBasicRequest<OD
    * @param targetURI entity set or entity or entity property URI.
    * @param property value to be created.
    */
-  ODataPropertyUpdateRequestImpl(final ODataClient odataClient,
+  public ODataPropertyUpdateRequestImpl(final ODataClient odataClient,
           final HttpMethod method, final URI targetURI, final ClientProperty property) {
 
     super(odataClient, method, targetURI);
