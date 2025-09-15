@@ -639,6 +639,10 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       final boolean writeOnlyCount, final boolean writeOnlyRef, final Set<String> ancestors,
       String name, final JsonGenerator json) throws IOException, SerializerException, DecoderException {
 
+    if (isODataMetadataFull) {
+      json.writeStringField(property.getName() + Constants.JSON_NAVIGATION_LINK, navigationLink.getHref());
+    }
+    
     if (property.isCollection()) {
       if (writeOnlyCount) {
         if (navigationLink == null || navigationLink.getInlineEntitySet() == null) {
