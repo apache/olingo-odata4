@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.server.api;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -34,7 +35,15 @@ public class ODataResponseTest {
   public void testResponse() {
     ODataResponse  r = new ODataResponse ();
     assertNotNull(r);
-    r.addHeader("header", "value");
+    r.addHeader("header", "value1");
+    r.addHeader("header", "value2");
+    List<String> header = r.getAllHeaders().get("header");
+    assertNotNull(header);
+    assertEquals(2, header.size());
+    // Check the actual values in the header list
+    assertEquals("value1", header.get(0));
+    assertEquals("value2", header.get(1));
+
     List<String> list = new ArrayList<String>();
     r.addHeader("headerList", list );
     assertNotNull(r.getAllHeaders());
@@ -45,7 +54,7 @@ public class ODataResponseTest {
     ODataServerError  r = new ODataServerError ();
     assertNotNull(r);
     assertNull(r.getLocale());
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, String> map = new HashMap<>();
     r.setInnerError(map);
     assertNotNull(r.getInnerError());
   }
