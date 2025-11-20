@@ -70,7 +70,7 @@ public class ODataResponse {
    * @see <a href="http://ietf.org/rfc/rfc7230.txt">RFC 7230, section 3.2.2</a>
    */
   public void addHeader(final String name, final String value) {
-    headers.setHeader(name, value);
+    headers.addHeader(name, value);
   }
 
   /**
