@@ -59,24 +59,25 @@ public final class EdmDate extends SingletonPrimitiveType {
     }
 
     // appropriate types
-    if (returnType.isAssignableFrom(LocalDate.class)) {
+    if (LocalDate.class.isAssignableFrom(returnType)) {
       return (T) date;
-    } else if (returnType.isAssignableFrom(java.sql.Date.class)) {
-      return (T) java.sql.Date.valueOf(date);
+    } else if (java.sql.Date.class.isAssignableFrom(returnType)) {
+      /*
+        Using java.sql.Date.valueOf would result in the Julian instead of the (proleptic) Gregorian calendar
+        being used for historical dates (before the Julian-Gregorian cutover date)
+       */
+      return (T) new java.sql.Date(toZonedDateTime(date).toInstant().toEpochMilli());
     }
 
     // inappropriate types, which need to be supported for backward compatibility
-    ZonedDateTime zdt = LocalDateTime.of(date, LocalTime.MIDNIGHT).atZone(ZoneId.systemDefault());
-    if (returnType.isAssignableFrom(Calendar.class)) {
-      return (T) GregorianCalendar.from(zdt);
-    } else if (returnType.isAssignableFrom(Long.class)) {
-      return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
-    } else if (returnType.isAssignableFrom(java.sql.Date.class)) {
-      throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
-    } else if (returnType.isAssignableFrom(java.sql.Timestamp.class)) {
-      return (T) java.sql.Timestamp.from(zdt.toInstant());
-    } else if (returnType.isAssignableFrom(java.util.Date.class)) {
-      return (T) java.util.Date.from(zdt.toInstant());
+    if (Calendar.class.isAssignableFrom(returnType)) {
+      return (T) GregorianCalendar.from(toZonedDateTime(date));
+    } else if (Long.class.isAssignableFrom(returnType)) {
+      return (T) Long.valueOf(toZonedDateTime(date).toInstant().toEpochMilli());
+    } else if (java.sql.Timestamp.class.isAssignableFrom(returnType)) {
+      return (T) java.sql.Timestamp.from(toZonedDateTime(date).toInstant());
+    } else if (java.util.Date.class.isAssignableFrom(returnType)) {
+      return (T) java.util.Date.from(toZonedDateTime(date).toInstant());
     } else {
       throw new EdmPrimitiveTypeException("The value type " + returnType + " is not supported.");
     }
@@ -89,7 +90,11 @@ public final class EdmDate extends SingletonPrimitiveType {
     if (value instanceof LocalDate) {
       return value.toString();
     } else if (value instanceof java.sql.Date) {
-      return value.toString();
+      /*
+        Using java.sql.Date.toString would result in the Julian instead of the (proleptic) Gregorian calendar
+        being used for historical dates (before the Julian-Gregorian cutover date)
+       */
+      return toLocalDateString(((java.sql.Date) value).getTime());
     }
 
     // inappropriate types, which need to be supported for backward compatibility
@@ -98,17 +103,20 @@ public final class EdmDate extends SingletonPrimitiveType {
       return calendar.toZonedDateTime().toLocalDate().toString();
     }
 
-    long millis;
     if (value instanceof Long) {
-      millis = (Long) value;
+      return toLocalDateString((Long) value);
     } else if (value instanceof java.util.Date) {
-      millis = ((java.util.Date) value).getTime();
+      return toLocalDateString(((java.util.Date) value).getTime());
     } else {
       throw new EdmPrimitiveTypeException("The value type " + value.getClass() + " is not supported.");
     }
+  }
 
-    ZonedDateTime zdt = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault());
+  private ZonedDateTime toZonedDateTime(LocalDate localDate) {
+    return LocalDateTime.of(localDate, LocalTime.MIDNIGHT).atZone(ZoneId.systemDefault());
+  }
 
-    return zdt.toLocalDate().toString();
+  private String toLocalDateString(long millis) {
+    return Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate().toString();
   }
 }

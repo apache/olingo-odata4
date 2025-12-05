@@ -1158,9 +1158,9 @@ public class ODataJsonDeserializerEntityTest extends AbstractODataDeserializerTe
     assertEquals(2, properties.size());
 
     assertNotNull(entity.getProperty("PropertyDate").getValue());
-    assertEquals(java.sql.Date.class, entity.getProperty("PropertyDate").getValue().getClass());
+    assertEquals(Date.class, entity.getProperty("PropertyDate").getValue().getClass());
     assertNotNull(entity.getProperty("PropertyDateTimeOffset").getValue());
-    assertEquals(java.sql.Timestamp.class, entity.getProperty("PropertyDateTimeOffset").getValue().getClass());
+    assertEquals(Date.class, entity.getProperty("PropertyDateTimeOffset").getValue().getClass());
   }
 
   // ---------------------------------- Negative Tests -----------------------------------------------------------

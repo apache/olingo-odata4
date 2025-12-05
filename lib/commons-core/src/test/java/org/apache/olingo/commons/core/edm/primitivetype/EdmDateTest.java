@@ -20,8 +20,12 @@ package org.apache.olingo.commons.core.edm.primitivetype;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
@@ -70,6 +74,26 @@ public class EdmDateTest extends PrimitiveTypeBaseTest {
   }
 
   @Test
+  public void valueToStringYear1000() throws Exception {
+    ZonedDateTime zdtYear1000 = LocalDate.of(1000, 1, 1).atStartOfDay(ZoneId.systemDefault());
+    Instant instantYear1000 = zdtYear1000.toInstant();
+    // GregorianCalendar.from(ZonedDateTime) will create a pure (proleptic) Gregorian calendar
+    Calendar calendarYear1000 = GregorianCalendar.from(zdtYear1000);
+
+    assertEquals("1000-01-01",
+        instance.valueToString(calendarYear1000, null, null, null, null, null));
+    assertEquals("1000-01-01",
+        instance.valueToString(instantYear1000.toEpochMilli(), null, null, null, null, null));
+    assertEquals("1000-01-01",
+        instance.valueToString(java.util.Date.from(instantYear1000), null, null, null, null, null));
+    // Using java.sql.Date.valueOf would result in the Julian instead of the (proleptic) Gregorian calendar being used
+    assertEquals("1000-01-01",
+        instance.valueToString(new java.sql.Date(instantYear1000.toEpochMilli()), null, null, null, null, null));
+    assertEquals("1000-01-01",
+        instance.valueToString(zdtYear1000.toLocalDate(), null, null, null, null, null));
+  }
+
+  @Test
   public void valueOfString() throws Exception {
     Calendar dateTime = Calendar.getInstance();
     dateTime.clear();
@@ -104,5 +128,26 @@ public class EdmDateTest extends PrimitiveTypeBaseTest {
     expectContentErrorInValueOfString(instance, "123-02-03");
 
     expectTypeErrorInValueOfString(instance, "2012-02-29");
+  }
+
+  @Test
+  public void valueOfStringYear1000() throws Exception {
+    ZonedDateTime zdtYear1000 = LocalDate.of(1000, 1, 1).atStartOfDay(ZoneId.systemDefault());
+    Instant instantYear1000 = zdtYear1000.toInstant();
+    // GregorianCalendar.from(ZonedDateTime) will create a pure (proleptic) Gregorian calendar
+    Calendar calendarYear1000 = GregorianCalendar.from(zdtYear1000);
+
+    assertEqualCalendar(calendarYear1000,
+      instance.valueOfString("1000-01-01", null, null, null, null, null, Calendar.class));
+    assertEquals(Long.valueOf(instantYear1000.toEpochMilli()),
+      instance.valueOfString("1000-01-01", null, null, null, null, null, Long.class));
+    assertEquals(java.util.Date.from(instantYear1000),
+      instance.valueOfString("1000-01-01", null, null, null, null, null, java.util.Date.class));
+    assertEquals(zdtYear1000.toLocalDate(),
+      instance.valueOfString("1000-01-01", null, null, null, null, null, LocalDate.class));
+    // Using java.sql.Date.valueOf would result in the Julian instead of the (proleptic) Gregorian calendar being used
+    java.util.Date dateValue = instance.valueOfString("1000-01-01", null, null, null, null, null, java.sql.Date.class);
+    assertEquals(java.sql.Date.class, dateValue.getClass());
+    assertEquals(new java.sql.Date(instantYear1000.toEpochMilli()), dateValue);
   }
 }

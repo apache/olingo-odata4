@@ -90,21 +90,21 @@ public final class EdmDateTimeOffset extends SingletonPrimitiveType {
 
   @SuppressWarnings("unchecked")
   private static <T> T convertZonedDateTime(ZonedDateTime zdt, Class<T> returnType) {
-    if (returnType == ZonedDateTime.class) {
+    if (ZonedDateTime.class == returnType) {
       return (T) zdt;
-    } else if (returnType == Instant.class) {
+    } else if (Instant.class == returnType) {
       return (T) zdt.toInstant();
-    } else if (returnType.isAssignableFrom(Timestamp.class)) {
+    } else if (Timestamp.class.isAssignableFrom(returnType)) {
       return (T) Timestamp.from(zdt.toInstant());
-    } else if (returnType.isAssignableFrom(java.util.Date.class)) {
-      return (T) java.util.Date.from(zdt.toInstant());
-    } else if (returnType.isAssignableFrom(java.sql.Time.class)) {
+    } else if (java.sql.Time.class.isAssignableFrom(returnType)) {
       return (T) new java.sql.Time(zdt.toInstant().truncatedTo(ChronoUnit.SECONDS).toEpochMilli());
-    } else if (returnType.isAssignableFrom(java.sql.Date.class)) {
+    } else if (java.sql.Date.class.isAssignableFrom(returnType)) {
       return (T) new java.sql.Date(zdt.toInstant().truncatedTo(ChronoUnit.SECONDS).toEpochMilli());
-    } else if (returnType.isAssignableFrom(Long.class)) {
+    } else if (java.util.Date.class.isAssignableFrom(returnType)) {
+      return (T) java.util.Date.from(zdt.toInstant());
+    } else if (Long.class.isAssignableFrom(returnType)) {
       return (T) Long.valueOf(zdt.toInstant().toEpochMilli());
-    } else if (returnType.isAssignableFrom(Calendar.class)) {
+    } else if (Calendar.class.isAssignableFrom(returnType)) {
       return (T) GregorianCalendar.from(zdt);
     } else {
       throw new ClassCastException("Unsupported return type " + returnType.getSimpleName());

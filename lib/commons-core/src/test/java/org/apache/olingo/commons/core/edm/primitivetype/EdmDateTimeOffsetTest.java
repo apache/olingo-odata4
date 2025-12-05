@@ -23,7 +23,9 @@ import static org.junit.Assert.assertEquals;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -184,9 +186,9 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
 
   @Test
   public void valueOfStringToTimestamp() throws Exception {
-    assertEquals(530000001, instance
-        .valueOfString("2012-02-29T01:02:03.530000001+11:00", null, null, 9, null, null, Timestamp.class)
-        .getNanos());
+    java.util.Date dateValue = instance.valueOfString("2012-02-29T01:02:03.530000001+11:00", null, null, 9, null, null, Timestamp.class);
+    assertEquals(Timestamp.class, dateValue.getClass());
+    assertEquals(530000001, ((Timestamp)dateValue).getNanos());
   }
 
   @Test
@@ -227,6 +229,18 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
         instance.valueOfString("1970-01-01T00:00:00.012", null, null, 3, null, null, java.sql.Date.class));
     assertEquals(new java.sql.Date(0),
         instance.valueOfString("1970-01-01T00:00:00.12", null, null, 2, null, null, java.sql.Date.class));
+    // String value without time zone information means UTC for EdmDateTimeOffset
+    java.util.Date dateValue = instance.valueOfString("1000-01-01T00:00:00", null, null, null, null, null, java.sql.Date.class);
+    assertEquals(java.sql.Date.class, dateValue.getClass());
+    assertEquals(new java.sql.Date(toInstantAsUtc(LocalDate.of(1000, 1, 1)).toEpochMilli()), dateValue);
+  }
+
+  @Test
+  public void valueOfStringToJavaUtilDate() throws Exception {
+    // String value without time zone information means UTC for EdmDateTimeOffset
+    java.util.Date dateValue = instance.valueOfString("1000-01-01T00:00:00", null, null, null, null, null, java.util.Date.class);
+    assertEquals(java.util.Date.class, dateValue.getClass());
+    assertEquals(java.util.Date.from(toInstantAsUtc(LocalDate.of(1000, 1, 1))), dateValue);
   }
 
   @Test
@@ -239,4 +253,7 @@ public class EdmDateTimeOffsetTest extends PrimitiveTypeBaseTest {
     expectTypeErrorInValueOfString(instance, "2012-02-29T01:02:03Z");
   }
 
+  private Instant toInstantAsUtc(LocalDate localDate) {
+    return localDate.atStartOfDay().atOffset(ZoneOffset.UTC).toInstant();
+  }
 }
