@@ -237,6 +237,28 @@ public class ODataJsonDeserializerActionParametersTest extends AbstractODataDese
     expectException("{\"ParameterInt16\":[42]}", "UARTParam", null, MessageKeys.INVALID_JSON_TYPE_FOR_PROPERTY);
   }
 
+  @Test
+  public void openComplex() throws Exception {
+    String payload = "{\"ParameterOCTNoProp\":{\"status\":\"PENDING\"}}";
+    Map<String, Parameter> parameters = deserialize(payload, "UARTPrim", null);
+    assertNotNull(parameters);
+
+    Parameter parameter = parameters.get("ParameterOCTNoProp");
+    assertNotNull(parameter);
+    assertTrue(parameter.isComplex());
+    assertFalse(parameter.isCollection());
+
+    ComplexValue complex = parameter.asComplex();
+    assertEquals(1, complex.getValue().size());
+    assertEquals("PENDING", complex.getValue().get(0).getValue());
+  }
+
+  @Test
+  public void openComplexTwice() {
+    String payload = "{\"ParameterOCTNoProp\":{\"status\":\"PENDING\",\"status\":\"RUNNING\"}}";
+    expectException(payload, "UATRPrim", null, MessageKeys.DUPLICATE_PROPERTY);
+  }
+
   private Parameter deserializeUARTByteNineParam(final String parameterName, final String parameterJsonValue)
       throws DeserializerException {
     final Map<String, Parameter> parameters = deserialize(

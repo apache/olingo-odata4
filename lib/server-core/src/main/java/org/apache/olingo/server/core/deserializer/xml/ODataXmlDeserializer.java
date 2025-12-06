@@ -43,6 +43,7 @@ import org.apache.olingo.commons.api.data.Parameter;
 import org.apache.olingo.commons.api.data.Property;
 import org.apache.olingo.commons.api.data.Valuable;
 import org.apache.olingo.commons.api.data.ValueType;
+import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.edm.EdmAction;
 import org.apache.olingo.commons.api.edm.EdmComplexType;
 import org.apache.olingo.commons.api.edm.EdmEntityType;
@@ -51,6 +52,7 @@ import org.apache.olingo.commons.api.edm.EdmNavigationProperty;
 import org.apache.olingo.commons.api.edm.EdmParameter;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
 import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
+import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
 import org.apache.olingo.commons.api.edm.EdmProperty;
 import org.apache.olingo.commons.api.edm.EdmStructuredType;
 import org.apache.olingo.commons.api.edm.EdmType;
@@ -58,12 +60,14 @@ import org.apache.olingo.commons.api.edm.FullQualifiedName;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.apache.olingo.commons.core.edm.EdmTypeInfo;
 import org.apache.olingo.commons.core.edm.primitivetype.AbstractGeospatialType;
+import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.apache.olingo.server.api.ServiceMetadata;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.api.deserializer.DeserializerResult;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.DeserializerResultImpl;
+import org.apache.olingo.server.core.deserializer.OpenTypeDeserializerUtils;
 
 public class ODataXmlDeserializer implements ODataDeserializer {
 
@@ -136,34 +140,70 @@ public class ODataXmlDeserializer implements ODataDeserializer {
   private Object complex(final XMLEventReader reader, final StartElement start, final EdmComplexType edmComplex)
       throws XMLStreamException, EdmPrimitiveTypeException, DeserializerException {
     ComplexValue value = new ComplexValue();
-    EdmType resolvedType = edmComplex;
+    // retrieve complex edm type
+    EdmComplexType resolvedType = (EdmComplexType) getDerivedType(edmComplex, extractTypeString(start));
+    // load complex properties
     boolean foundEndProperty = false;
     while (reader.hasNext() && !foundEndProperty) {
       final XMLEvent event = reader.nextEvent();
-      
-      if (event.isStartElement()) {        
-        //Get the derived type from the element tag
-        final Attribute attrType = start.getAttributeByName(typeQName);
-        if (attrType != null ) {
-          String type = new EdmTypeInfo.Builder().setTypeExpression(attrType.getValue()).build().internal();
-          if (type.startsWith("Collection(") && type.endsWith(")")) {
-            type = type.substring(11, type.length()-1);
-          }
-          resolvedType = getDerivedType(edmComplex, type);
-        }
-        
-        
+      if (event.isStartElement()) {
         StartElement se = event.asStartElement();
-        EdmProperty p = (EdmProperty) ((EdmComplexType)resolvedType).getProperty(se.getName().getLocalPart());
-        value.getValue().add(property(reader, se, p.getType(), p.isNullable(), p.getMaxLength(),
-            p.getPrecision(), p.getScale(), p.isUnicode(), p.isCollection()));
-        value.setTypeName(resolvedType.getFullQualifiedName().getFullQualifiedNameAsString());
+        EdmProperty p = (EdmProperty) resolvedType.getProperty(se.getName().getLocalPart());
+        if (p == null) {
+          if (resolvedType.isOpenType()) {
+            String typeString = extractTypeString(se);
+            boolean isCollection = extractTypeIsCollection(se);
+            EdmType type = getEdmType(typeString);
+            p = OpenTypeDeserializerUtils.generateDynamicEdmProperty(se.getName().getLocalPart(), type, isCollection);
+          } else {
+            throw new DeserializerException("An unknown property found into complex", MessageKeys.UNKNOWN_CONTENT);
+          }
+        }
+        if (!complexValueContainsPropertyNamed(value, se.getName().getLocalPart())) {
+          value.getValue().add(property(reader, se, p.getType(), p.isNullable(), p.getMaxLength(),
+              p.getPrecision(), p.getScale(), p.isUnicode(), p.isCollection()));
+          value.setTypeName(p.getType().getFullQualifiedName().getFullQualifiedNameAsString());
+        } else {
+          throw new DeserializerException("Duplicated property into complex", MessageKeys.DUPLICATE_PROPERTY);
+        }
       }
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
         foundEndProperty = true;
       }
     }
     return value;
+  }
+
+  private String extractTypeString(StartElement xmlStartElement) {
+    Attribute typeAttribute = xmlStartElement.getAttributeByName(typeQName);
+    if (typeAttribute != null) {
+      String typeString = typeAttribute.getValue();
+      if (typeString.startsWith("#Collection(") && typeString.endsWith(")")) {
+        typeString = typeString.substring(11, typeString.length() - 1);
+      }
+      return typeString.startsWith("#") ? typeString.substring(1) : typeString;
+    }
+    return null;
+  }
+
+  private boolean extractTypeIsCollection(StartElement xmlStartElement) {
+    Attribute typeAttribute = xmlStartElement.getAttributeByName(typeQName);
+    if (typeAttribute != null) {
+      String typeString = typeAttribute.getValue();
+      if (typeString.startsWith("#Collection(") && typeString.endsWith(")")) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean complexValueContainsPropertyNamed(ComplexValue value, String propertyName) {
+    for (final Property property : value.getValue()) {
+      if (property.getName().equals(propertyName)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private void collection(final Valuable valuable, final XMLEventReader reader, final StartElement start,
@@ -436,26 +476,101 @@ public class ODataXmlDeserializer implements ODataDeserializer {
       final XMLEvent event = reader.nextEvent();
 
       if (event.isStartElement()) {
+        Property property;
         String propertyName = event.asStartElement().getName().getLocalPart();
         EdmProperty edmProperty = (EdmProperty) edmEntityType.getProperty(propertyName);
         if (edmProperty == null) {
-          throw new DeserializerException("Invalid Property in payload with name: " + propertyName,
-              DeserializerException.MessageKeys.UNKNOWN_CONTENT, propertyName);
+          if (edmEntityType.isOpenType()) {
+            if (containsPropertyName(entity, propertyName)) {
+              throw new DeserializerException("Duplicated property: " + propertyName, MessageKeys.DUPLICATE_PROPERTY);
+            }
+            property = dynamicProperty(reader, event.asStartElement());
+          } else {
+            throw new DeserializerException("Invalid Property in payload with name: " + propertyName,
+                DeserializerException.MessageKeys.UNKNOWN_CONTENT, propertyName);
+          }
+        } else {
+          property = property(reader, event.asStartElement(),
+              edmProperty.getType(),
+              edmProperty.isNullable(),
+              edmProperty.getMaxLength(),
+              edmProperty.getPrecision(),
+              edmProperty.getScale(),
+              edmProperty.isUnicode(),
+              edmProperty.isCollection());
         }
-        entity.getProperties().add(property(reader, event.asStartElement(),
-            edmProperty.getType(),
-            edmProperty.isNullable(),
-            edmProperty.getMaxLength(),
-            edmProperty.getPrecision(),
-            edmProperty.getScale(),
-            edmProperty.isUnicode(),
-            edmProperty.isCollection()));
+        entity.getProperties().add(property);
       }
 
       if (event.isEndElement() && start.getName().equals(event.asEndElement().getName())) {
         foundEndProperties = true;
       }
     }
+  }
+
+  private boolean containsPropertyName(Entity entity, String propertyName) {
+    for (final Property property : entity.getProperties()) {
+      if (propertyName.equals(property.getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private Property dynamicProperty(XMLEventReader reader, StartElement start) throws XMLStreamException,
+      DeserializerException, EdmPrimitiveTypeException {
+    EdmType edmType;
+    boolean isCollection = false;
+
+    Attribute attributeType = start.getAttributeByName(typeQName);
+    String typeName = null;
+    if (attributeType != null) {
+      typeName = attributeType.getValue();
+      if (typeName.startsWith("#Collection(")) {
+        isCollection = true;
+        typeName = typeName.substring(12, (typeName.length() - 1));
+      }
+    }
+    edmType = getEdmType(typeName);
+    return property(reader, start, edmType, true, null, null, null, true, isCollection);
+  }
+
+  private EdmType getEdmType(final String xmlTypeString) throws DeserializerException {
+    if (xmlTypeString == null) {
+      return EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.String);
+    }
+
+    String typeName = xmlTypeString.startsWith("#") ? xmlTypeString.substring(1) : xmlTypeString;
+    EdmType edmType;
+    try {
+      // retrieve if primitive
+      edmType = EdmPrimitiveTypeFactory.getInstance(EdmPrimitiveTypeKind.valueOf(typeName));
+    } catch (IllegalArgumentException e) {
+      // retrieve into the metadata service
+      edmType = findTypeIntoMetadataService(typeName);
+    }
+    return edmType;
+  }
+
+  private EdmType findTypeIntoMetadataService(final String typeName) throws DeserializerException {
+    EdmType type;
+    FullQualifiedName fnq = new FullQualifiedName(typeName);
+    Edm edm = serviceMetadata.getEdm();
+
+    type = edm.getTypeDefinition(fnq);
+    if (type == null) {
+      type = edm.getEnumType(fnq);
+    }
+    if (type == null) {
+      type = edm.getComplexType(fnq);
+    }
+    if (type == null) {
+      type = edm.getEntityType(fnq);
+    }
+    if (type == null) {
+      throw new DeserializerException("Unknown type: " + typeName, MessageKeys.UNKNOWN_CONTENT);
+    }
+    return type;
   }
 
   private Entity entityRef(final StartElement start) throws XMLStreamException {

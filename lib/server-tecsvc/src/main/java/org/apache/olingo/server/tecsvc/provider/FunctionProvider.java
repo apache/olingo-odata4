@@ -135,6 +135,9 @@ public class FunctionProvider {
   
   public static final FullQualifiedName nameBFCESTwoKeyNavRTCollDecimal =
           new FullQualifiedName(SchemaProvider.NAMESPACE, "BFCESTwoKeyNavRTCollDecimal");
+
+  public static final FullQualifiedName nameBFOETTwoPrimRTOCTNoProp =
+          new FullQualifiedName(SchemaProvider.NAMESPACE, "BFOETTwoPrimRTOCTNoProp");
   
   // Unknown
    public static final FullQualifiedName name_FC_RTTimeOfDay_ =
@@ -239,7 +242,8 @@ public class FunctionProvider {
         nameBFCESKeyNavRTESTwoKeyNav,
         nameBFCESTwoKeyNavRTCollDecimal,
         nameBFNESTwoKeyNavRTString,
-        name_FC_RTTimeOfDay_
+        name_FC_RTTimeOfDay_,
+        nameBFOETTwoPrimRTOCTNoProp
     };
     
     List<CsdlFunction> functions = new ArrayList<CsdlFunction>();
@@ -1150,6 +1154,14 @@ public class FunctionProvider {
               .setReturnType(
                   new CsdlReturnType().setType(EntityTypeProvider.nameETTwoKeyNav).setCollection(true)
                       .setNullable(false)));
+    } else if (functionName.equals(nameBFOETTwoPrimRTOCTNoProp)) {
+      return Collections.singletonList(
+          new CsdlFunction()
+              .setName(nameBFOETTwoPrimRTOCTNoProp.getName())
+              .setBound(true)
+              .setParameters(Collections.singletonList(new CsdlParameter()
+                      .setName("BindingParam").setType(EntityTypeProvider.nameOETTwoPrim).setNullable(false)))
+              .setReturnType(new CsdlReturnType().setType(ComplexTypeProvider.nameOCTNoProp)));
     }
 
     return null;

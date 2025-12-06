@@ -39,6 +39,8 @@ import org.apache.olingo.server.api.OData;
 import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.DeserializerException.MessageKeys;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
+import org.apache.olingo.server.tecsvc.provider.ActionProvider;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ODataXMLDeserializerActionParametersTest extends AbstractODataDeserializerTest {
@@ -212,6 +214,40 @@ public class ODataXMLDeserializerActionParametersTest extends AbstractODataDeser
         + "<data:ParameterInt16>2</data:ParameterInt16>"
         + POSTAMBLE,
         "UARTParam", null, MessageKeys.DUPLICATE_PROPERTY);
+  }
+
+  @Test
+  public void openParameter() throws Exception {
+    String payload = PREAMBLE
+        + "<data:ParameterOCTNoProp>"
+        + "<data:PropertyString>foo</data:PropertyString>"
+        + "<data:PropertyInt32 metadata:type=\"Int32\">32</data:PropertyInt32>"
+        + "</data:ParameterOCTNoProp>"
+        + POSTAMBLE;
+
+    Map<String, Parameter> parameterMap = deserialize(payload, ActionProvider.nameUARTPrim.getName(), null);
+    Assert.assertNotNull(parameterMap);
+    Assert.assertEquals(1, parameterMap.size());
+
+    Parameter parameter = parameterMap.get("ParameterOCTNoProp");
+    Assert.assertNotNull(parameter);
+    Assert.assertTrue(parameter.isComplex());
+    Assert.assertFalse(parameter.isCollection());
+    List<Property> complexValues = parameter.asComplex().getValue();
+    Assert.assertEquals(2, complexValues.size());
+    Assert.assertEquals("foo", complexValues.get(0).getValue());
+    Assert.assertEquals(32, complexValues.get(1).getValue());
+  }
+
+  @Test
+  public void openComplexTwice() {
+    String payload = PREAMBLE
+        + "<data:ParameterOCTNoProp>"
+        + "<data:PropertyString>foo</data:PropertyString>"
+        + "<data:PropertyString>bar</data:PropertyString>"
+        + "</data:ParameterOCTNoProp>"
+        + POSTAMBLE;
+    expectException(payload, ActionProvider.nameUARTPrim.getName(), null, MessageKeys.DUPLICATE_PROPERTY);
   }
 
   private Parameter deserializeUARTByteNineParam(final String parameterName, final String parameterXmlValue)

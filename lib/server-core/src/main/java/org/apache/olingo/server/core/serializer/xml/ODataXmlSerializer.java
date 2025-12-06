@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -76,6 +77,7 @@ import org.apache.olingo.server.api.uri.queryoption.LevelsExpandOption;
 import org.apache.olingo.server.api.uri.queryoption.SelectOption;
 import org.apache.olingo.server.core.ODataWritableContent;
 import org.apache.olingo.server.core.serializer.AbstractODataSerializer;
+import org.apache.olingo.server.core.serializer.OpenTypeSerializerUtils;
 import org.apache.olingo.server.core.serializer.SerializerResultImpl;
 import org.apache.olingo.server.core.serializer.utils.CircleStreamBuffer;
 import org.apache.olingo.server.core.serializer.utils.ContextURLBuilder;
@@ -630,6 +632,8 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
         ExpandSelectHelper.getSelectedPropertyNames(select.getSelectItems());
     addKeyPropertiesToSelected(selected, type);
     Set<List<String>> expandedPaths = ExpandSelectHelper.getExpandedItemsPath(expand);
+    // write defined properties
+    List<Property> wroteProperties = new ArrayList<Property>(type.getPropertyNames().size());
     for (final String propertyName : type.getPropertyNames()) {
       if (all || selected.contains(propertyName)) {
         final EdmProperty edmProperty = type.getStructuralProperty(propertyName);
@@ -638,6 +642,22 @@ public class ODataXmlSerializer extends AbstractODataSerializer {
             ExpandSelectHelper.getSelectedPaths(select.getSelectItems(), propertyName);
         writeProperty(metadata, edmProperty, property, selectedPaths, 
             xml10InvalidCharReplacement, writer, expandedPaths, linked, expand);
+        wroteProperties.add(property);
+      }
+    }
+    // write dynamic properties
+    if (type.isOpenType()) {
+      List<Property> dynamicProperties = new ArrayList<Property>(properties);
+      dynamicProperties.removeAll(wroteProperties);
+      for (final Property property : dynamicProperties) {
+        final String propertyName = property.getName();
+        if (all || selected.contains(propertyName)) {
+          final EdmProperty edmProperty = OpenTypeSerializerUtils.generateDynamicEdmProperty(metadata, property);
+          final Set<List<String>> selectedPaths = all || edmProperty.isNullable() ? null :
+              ExpandSelectHelper.getSelectedPaths(select.getSelectItems(), propertyName);
+          writeProperty(metadata, edmProperty, property, selectedPaths,
+              xml10InvalidCharReplacement, writer, expandedPaths, linked, expand);
+        }
       }
     }
   }

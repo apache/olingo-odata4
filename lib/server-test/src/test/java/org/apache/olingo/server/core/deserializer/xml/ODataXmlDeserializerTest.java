@@ -35,16 +35,13 @@ import org.apache.olingo.commons.api.data.ComplexValue;
 import org.apache.olingo.commons.api.data.Entity;
 import org.apache.olingo.commons.api.data.Link;
 import org.apache.olingo.commons.api.data.Property;
-import org.apache.olingo.commons.api.edm.EdmEntityContainer;
-import org.apache.olingo.commons.api.edm.EdmEntitySet;
-import org.apache.olingo.commons.api.edm.EdmEntityType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveType;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeException;
-import org.apache.olingo.commons.api.edm.EdmPrimitiveTypeKind;
-import org.apache.olingo.commons.api.edm.EdmProperty;
+import org.apache.olingo.commons.api.edm.*;
+import org.apache.olingo.commons.core.edm.EdmPropertyImpl;
 import org.apache.olingo.server.api.OData;
+import org.apache.olingo.server.api.deserializer.DeserializerException;
 import org.apache.olingo.server.api.deserializer.ODataDeserializer;
 import org.apache.olingo.server.core.deserializer.AbstractODataDeserializerTest;
+import org.apache.olingo.server.tecsvc.provider.ComplexTypeProvider;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -998,5 +995,54 @@ public class ODataXmlDeserializerTest extends AbstractODataDeserializerTest {
     Assert.assertEquals(2, result.size());
     Assert.assertEquals("http://host/service/Orders(10643)", result.get(0).toASCIIString());
     Assert.assertEquals("http://host/service/Orders(10759)", result.get(1).toASCIIString());
-  }  
+  }
+
+  @Test
+  public void openEntity() throws Exception {
+    String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+        + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\">"
+        + "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" term=\"#olingo.odata.test1.OETTwoPrim\" />"
+        + "<a:content type=\"application/xml\"><m:properties>"
+        + "<d:id m:type=\"Int32\">5</d:id>"
+        + "<d:PropertyString>foobar</d:PropertyString>"
+        + "<d:active m:type=\"Boolean\">false</d:active>"
+        + "<d:price m:type=\"Double\">3.75</d:price>"
+        + "</m:properties></a:content>"
+        + "</a:entry>";
+
+    EdmEntityType edmEntityType = entityContainer.getEntitySet("OESTwoPrim").getEntityType();
+    Entity entity = deserializer.entity(new ByteArrayInputStream(payload.getBytes()), edmEntityType).getEntity();
+
+    Assert.assertNotNull(entity);
+    Assert.assertEquals(5, entity.getProperty("id").getValue());
+    Assert.assertEquals("foobar", entity.getProperty("PropertyString").getValue());
+    Assert.assertEquals(false, entity.getProperty("active").getValue());
+    Assert.assertEquals(3.75, entity.getProperty("price").getValue());
+  }
+
+  @Test
+  public void openEntityTwice() {
+    String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "<a:entry xmlns:a=\"http://www.w3.org/2005/Atom\" "
+        + "xmlns:m=\"http://docs.oasis-open.org/odata/ns/metadata\" "
+        + "xmlns:d=\"http://docs.oasis-open.org/odata/ns/data\">"
+        + "<a:category scheme=\"http://docs.oasis-open.org/odata/ns/scheme\" term=\"#olingo.odata.test1.OETTwoPrim\" />"
+        + "<a:content type=\"application/xml\"><m:properties>"
+        + "<d:id m:type=\"Int32\">5</d:id>"
+        + "<d:PropertyString>foobar</d:PropertyString>"
+        + "<d:active m:type=\"Boolean\">false</d:active>"
+        + "<d:active m:type=\"Boolean\">true</d:active>"
+        + "</m:properties></a:content>"
+        + "</a:entry>";
+
+    EdmEntityType edmEntityType = entityContainer.getEntitySet("OESTwoPrim").getEntityType();
+    try {
+      deserializer.entity(new ByteArrayInputStream(payload.getBytes()), edmEntityType);
+      Assert.fail("Expected exception not thrown");
+    } catch (DeserializerException e) {
+      assertEquals(DeserializerException.MessageKeys.DUPLICATE_PROPERTY, e.getMessageKey());
+    }
+  }
 }

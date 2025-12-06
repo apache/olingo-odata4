@@ -101,6 +101,9 @@ public class EntityTypeProvider {
   public static final FullQualifiedName nameETStreamOnComplexProp = 
       new FullQualifiedName(SchemaProvider.NAMESPACE, "ETStreamOnComplexProp");
 
+  public static final FullQualifiedName nameOETTwoPrim =
+      new FullQualifiedName(SchemaProvider.NAMESPACE, "OETTwoPrim");
+
   public static final FullQualifiedName nameETKeyAsSegmentString =
           new FullQualifiedName(SchemaProvider.NAMESPACE, "ETKeyAsSegmentString");
 
@@ -586,6 +589,12 @@ public class EntityTypeProvider {
               PropertyProvider.propertyInt32, PropertyProvider.propertyEntityStream,
               PropertyProvider.propertyCompWithStream_CTWithStreamProp
               ));
+    } else if (entityTypeName.equals(nameOETTwoPrim)) {
+      return new CsdlEntityType()
+          .setName(nameOETTwoPrim.getName())
+          .setKey(Arrays.asList(new CsdlPropertyRef().setName(PropertyProvider.propertyId.getName())))
+          .setOpenType(true)
+          .setProperties(Arrays.asList(PropertyProvider.propertyId, PropertyProvider.propertyString));
     } else if (entityTypeName.equals(nameETKeyAsSegmentString)) {
       return new CsdlEntityType()
               .setName("ETKeyAsSegmentString")
