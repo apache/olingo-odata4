@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1101,7 +1102,7 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
         }
       }
     }
-    
+
     for (final String propertyName : type.getPropertyNames()) {
       final Property property = findProperty(propertyName, properties);
       if (selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, propertyName)) {
@@ -1114,6 +1115,23 @@ public class ODataJsonSerializer extends AbstractODataSerializer {
       writeNavigationProperties(metadata, type, linked, expand, null, null, complexPropName, json);
     } catch (DecoderException e) {
       throw new SerializerException(IO_EXCEPTION_TEXT, e, SerializerException.MessageKeys.IO_EXCEPTION);
+    }
+    if (type.isOpenType()) {
+
+      Iterator<Property> openProperties = properties.stream()
+              .filter(prop -> type.getProperty(prop.getName()) == null)
+              .filter(prop -> type.getNavigationProperty(prop.getName()) == null)
+              .filter(prop -> selectedPaths == null || ExpandSelectHelper.isSelected(selectedPaths, prop.getName()))
+              .iterator();
+
+      for (; openProperties.hasNext(); ) {
+        Property property = openProperties.next();
+        final EdmProperty edmProperty = OpenTypeSerializerUtils.generateDynamicEdmProperty(metadata, property);
+        writeProperty(metadata, edmProperty, property,
+                selectedPaths == null ? null
+                        : ExpandSelectHelper.getReducedSelectedPaths(selectedPaths, property.getName()),
+                json, expandedPaths, linked, expand);
+      }
     }
   }
     
