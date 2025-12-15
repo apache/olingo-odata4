@@ -15,7 +15,7 @@ You can build Apache Olingo like this:
 
     mvn clean install
 
-You need Maven 3 with Java 6 (or higher) for the build.
+You need Maven 3 with Java 8 (or higher) for the build.
 Set the environment variable MAVEN_OPTS to 
 '-Xmx1024m -XX:MaxPermSize=256m' to give Maven more memory.
 
