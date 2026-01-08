@@ -26,7 +26,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -293,6 +295,10 @@ public class ConditionalITCase extends AbstractParamTecSvcITCase {
     } catch (final ODataClientErrorException e) {
       assertEquals(status.getStatusCode(), e.getStatusLine().getStatusCode());
       assertThat(e.getODataError().getMessage(), anyOf(containsString("condition"), containsString("match")));
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 }

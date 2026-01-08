@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -167,7 +168,7 @@ public abstract class AbstractODataBatchResponseItem implements ODataBatchRespon
    * {@inheritDoc }
    */
   @Override
-  public void close() {
+  public void close() throws IOException {
     for (ODataResponse response : responses.values()) {
       response.close();
     }

@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,7 +52,8 @@ import org.junit.Test;
 
 public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
 
-  private void functions(final ContentType contentType) throws EdmPrimitiveTypeException {
+  private void functions(final ContentType contentType) throws EdmPrimitiveTypeException,
+          URISyntaxException, IOException {
     // GetEmployeesCount
     URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<ClientSingleton> singletonReq =
@@ -169,17 +172,17 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void atomFunctions() throws EdmPrimitiveTypeException {
+  public void atomFunctions() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     functions(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void jsonFunctions() throws EdmPrimitiveTypeException {
+  public void jsonFunctions() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     functions(ContentType.JSON_FULL_METADATA);
   }
 
   @Test
-  public void edmEnabledFunctions() throws EdmPrimitiveTypeException {
+  public void edmEnabledFunctions() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     // GetEmployeesCount
     final ODataInvokeRequest<ClientProperty> getEmployeesCountReq =
         edmClient.getInvokeRequestFactory().getBoundFunctionInvokeRequest(
@@ -264,7 +267,8 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
     assertEquals(41.79, getActualAmountRes.getPrimitiveValue().toCastValue(Double.class), 0);
   }
 
-  private void actions(final ContentType contentType) throws EdmPrimitiveTypeException {
+  private void actions(final ContentType contentType) throws EdmPrimitiveTypeException,
+          URISyntaxException, IOException {
     // IncreaseRevenue
     URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     ODataEntityRequest<ClientEntity> entityReq =
@@ -369,17 +373,17 @@ public class BoundOperationInvokeTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void atomActions() throws EdmPrimitiveTypeException {
+  public void atomActions() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     actions(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void jsonActions() throws EdmPrimitiveTypeException {
+  public void jsonActions() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     actions(ContentType.JSON_FULL_METADATA);
   }
 
   @Test
-  public void edmEnabledActions() throws EdmPrimitiveTypeException {
+  public void edmEnabledActions() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     // IncreaseRevenue
     final ClientPrimitiveValue increaseValue = edmClient.getObjectFactory().newPrimitiveValueBuilder().buildInt64(12L);
     final ODataInvokeRequest<ClientProperty> increaseRevenueReq =

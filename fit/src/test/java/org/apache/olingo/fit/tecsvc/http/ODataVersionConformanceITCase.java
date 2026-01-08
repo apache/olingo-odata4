@@ -98,7 +98,11 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
 
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
+    java.io.InputStream stream = connection.getErrorStream();
+    if (stream == null) {
+      stream = connection.getInputStream();
+    }
+    final String content = IOUtils.toString(stream, Charset.defaultCharset());
     assertNotNull(content);
   }
 
@@ -114,8 +118,12 @@ public class ODataVersionConformanceITCase extends AbstractBaseTestITCase {
 
     assertEquals("4.0", connection.getHeaderField(HttpHeader.ODATA_VERSION));
 
-    final String content = IOUtils.toString(connection.getErrorStream(), Charset.defaultCharset());
-    assertNotNull(content);;
+    java.io.InputStream stream = connection.getErrorStream();
+    if (stream == null) {
+      stream = connection.getInputStream();
+    }
+    final String content = IOUtils.toString(stream, Charset.defaultCharset());
+    assertNotNull(content);
   }
   
   @Test

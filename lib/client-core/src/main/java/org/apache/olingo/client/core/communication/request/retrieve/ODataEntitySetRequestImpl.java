@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -57,8 +59,8 @@ public class ODataEntitySetRequestImpl<ES extends ClientEntitySet>
   }
 
   @Override
-  public ODataRetrieveResponse<ES> execute() {
-    final HttpResponse res = doExecute();
+  public ODataRetrieveResponse<ES> execute() throws URISyntaxException, IOException {
+    final ClassicHttpResponse res = doExecute();
     return new ODataEntitySetResponseImpl(odataClient, httpClient, res);
   }
 
@@ -67,15 +69,15 @@ public class ODataEntitySetRequestImpl<ES extends ClientEntitySet>
    */
   protected class ODataEntitySetResponseImpl extends AbstractODataRetrieveResponse {
 
-    private ODataEntitySetResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-        final HttpResponse res) {
+    private ODataEntitySetResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+        final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public ES getBody() {
+    public ES getBody() throws IOException {
       if (entitySet == null) {
         try {
           final ResWrap<EntityCollection> resource =

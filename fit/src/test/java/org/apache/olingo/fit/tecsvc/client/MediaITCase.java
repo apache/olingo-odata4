@@ -25,8 +25,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -83,7 +85,7 @@ public class MediaITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void delete() {
+  public void delete() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(TecSvcConst.BASE_URI)
         .appendEntitySetSegment("ESMedia").appendKeySegment(4).appendValueSegment().build();
     ODataDeleteRequest request = getClient().getCUDRequestFactory().getDeleteRequest(uri);

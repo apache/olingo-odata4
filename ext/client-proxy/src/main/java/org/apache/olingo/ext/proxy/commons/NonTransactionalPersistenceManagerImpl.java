@@ -102,6 +102,11 @@ public class NonTransactionalPersistenceManagerImpl extends AbstractPersistenceM
         LOG.error("While performing {}", entry.getKey().getURI(), e);
 
         throw new ODataFlushException(0, Collections.singletonList(new ODataResponseError(e, index, request)));
+      } catch (Exception e) {
+        // handle checked exceptions (e.g., URISyntaxException, IOException) by wrapping
+        LOG.error("While performing {}", entry.getKey().getURI(), e);
+        throw new ODataFlushException(0, Collections.singletonList(
+            new ODataResponseError(new org.apache.olingo.commons.api.ex.ODataRuntimeException(e), index, request)));
       }
     }
   }

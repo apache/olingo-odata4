@@ -21,7 +21,9 @@ package org.apache.olingo.fit.base;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -38,16 +40,16 @@ import org.junit.Test;
 public class EntityCreateTestITCase extends AbstractTestITCase {
 
   @Test
-  public void atomOnContained() {
+  public void atomOnContained() throws URISyntaxException, IOException {
     onContained(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void jsonOnContained() {
+  public void jsonOnContained() throws URISyntaxException, IOException {
     onContained(ContentType.JSON);
   }
   
-  private void onContained(final ContentType contentType) {
+  private void onContained(final ContentType contentType) throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Accounts").
         appendKeySegment(101).appendNavigationSegment("MyPaymentInstruments").build();
 

@@ -31,12 +31,15 @@ import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 /**
  * This is the unit test class to check basic feed operations.
  */
 public class EntitySetTestITCase extends AbstractTestITCase {
 
-  private void readODataEntitySetIterator(final ContentType contentType) {
+  private void readODataEntitySetIterator(final ContentType contentType) throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("People");
 
     final ODataEntitySetIteratorRequest<ClientEntitySet, ClientEntity> req =
@@ -59,22 +62,22 @@ public class EntitySetTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readODataEntitySetIteratorFromAtom() {
+  public void readODataEntitySetIteratorFromAtom() throws URISyntaxException, IOException {
     readODataEntitySetIterator(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void readODataEntitySetIteratorFromJSON() {
+  public void readODataEntitySetIteratorFromJSON() throws URISyntaxException, IOException {
     readODataEntitySetIterator(ContentType.JSON);
   }
 
   @Test
-  public void readODataEntitySetIteratorFromJSONFull() {
+  public void readODataEntitySetIteratorFromJSONFull() throws URISyntaxException, IOException {
     readODataEntitySetIterator(ContentType.JSON_FULL_METADATA);
   }
 
   @Test
-  public void readODataEntitySetIteratorFromJSONNo() {
+  public void readODataEntitySetIteratorFromJSONNo() throws URISyntaxException, IOException {
     readODataEntitySetIterator(ContentType.JSON_NO_METADATA);
   }
 }

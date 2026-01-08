@@ -27,8 +27,8 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.ODataBatchConstants;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
@@ -62,7 +62,7 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
    * Wrapper for actual streamed request's future. This holds information about the HTTP request / response currently
    * open.
    */
-  protected final Wrapper<Future<HttpResponse>> futureWrapper = new Wrapper<>();
+  protected final Wrapper<Future<ClassicHttpResponse>> futureWrapper = new Wrapper<>();
 
   /**
    * Constructor.
@@ -100,10 +100,10 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
     payloadManager = getPayloadManager();
 
     if (URIUtils.shouldUseRepeatableHttpBodyEntry(odataClient)) {
-      futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
+      futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<ClassicHttpResponse>() {
         @Override
-        public HttpResponse call() throws Exception { //NOSONAR
-          ((HttpEntityEnclosingRequestBase) request).setEntity(
+        public ClassicHttpResponse call() throws Exception { //NOSONAR
+          request.setEntity(
                   URIUtils.buildInputStreamEntity(odataClient, payloadManager.getBody()));
           try {
             return doExecute();
@@ -113,12 +113,12 @@ public abstract class AbstractODataStreamedRequest<V extends ODataResponse, T ex
         }
       }));
     } else {
-      ((HttpEntityEnclosingRequestBase) request).setEntity(
+      request.setEntity(
               URIUtils.buildInputStreamEntity(odataClient, payloadManager.getBody()));
 
-      futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<HttpResponse>() {
+      futureWrapper.setWrapped(odataClient.getConfiguration().getExecutor().submit(new Callable<ClassicHttpResponse>() {
         @Override
-        public HttpResponse call() throws Exception { //NOSONAR
+        public ClassicHttpResponse call() throws Exception { //NOSONAR
           try {
             return doExecute();
           } finally {

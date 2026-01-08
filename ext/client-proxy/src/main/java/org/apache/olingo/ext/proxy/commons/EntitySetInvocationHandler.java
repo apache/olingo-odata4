@@ -93,10 +93,21 @@ public class EntitySetInvocationHandler<
 
   @Override
   public Long count() {
-    final ODataValueRequest req = getClient().getRetrieveRequestFactory().
-            getValueRequest(getClient().newURIBuilder(this.uri.build().toASCIIString()).count().build());
-    req.setFormat(ContentType.TEXT_PLAIN);
-    return Long.valueOf(req.execute().getBody().asPrimitive().toString());
+    try {
+      final ODataValueRequest req = getClient().getRetrieveRequestFactory().
+              getValueRequest(getClient().newURIBuilder(this.uri.build().toASCIIString()).count().build());
+      req.setFormat(ContentType.TEXT_PLAIN);
+      return Long.valueOf(req.execute().getBody().asPrimitive().toString());
+    } catch (java.net.URISyntaxException e) {
+      LOG.warn("Invalid URI building for count on entity set '" + uri + "'", e);
+      throw new IllegalArgumentException("Invalid URI for count on " + this.uri, e);
+    } catch (java.io.IOException e) {
+      LOG.warn("I/O error while executing count request for entity set '" + uri + "'", e);
+      throw new IllegalArgumentException("I/O error while executing count for " + this.uri, e);
+    } catch (Exception e) {
+      LOG.warn("Error executing count for entity set '" + uri + "'", e);
+      throw new IllegalArgumentException("Error executing count for " + this.uri, e);
+    }
   }
 
   @Override

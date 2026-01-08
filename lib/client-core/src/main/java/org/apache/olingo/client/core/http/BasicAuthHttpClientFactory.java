@@ -20,9 +20,11 @@ package org.apache.olingo.client.core.http;
 
 import java.net.URI;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -40,13 +42,13 @@ public class BasicAuthHttpClientFactory extends DefaultHttpClientFactory {
   }
 
   @Override
-  public DefaultHttpClient create(final HttpMethod method, final URI uri) {
-    final DefaultHttpClient httpclient = super.create(method, uri);
+  public CloseableHttpClient create(final HttpMethod method, final URI uri) {
+      BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+      credsProvider.setCredentials(
+              new AuthScope(uri.getHost(), uri.getPort()),
+              new UsernamePasswordCredentials(username, password.toCharArray())  // 5.x requires char[]
+      );
 
-    httpclient.getCredentialsProvider().setCredentials(
-            new AuthScope(uri.getHost(), uri.getPort()),
-            new UsernamePasswordCredentials(username, password));
-
-    return httpclient;
+    return HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
   }
 }

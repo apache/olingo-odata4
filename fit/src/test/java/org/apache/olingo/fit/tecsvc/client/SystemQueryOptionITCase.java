@@ -23,7 +23,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
@@ -40,7 +42,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   private static final String ES_ALL_PRIM = "ESAllPrim";
 
   @Test
-  public void countSimple() {
+  public void countSimple() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
@@ -55,7 +57,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void serverSidePagingCount() {
+  public void serverSidePagingCount() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
@@ -70,7 +72,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void topSimple() {
+  public void topSimple() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
@@ -89,7 +91,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void skipSimple() {
+  public void skipSimple() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
@@ -108,7 +110,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void topNothing() {
+  public void topNothing() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
@@ -123,7 +125,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void skipNothing() {
+  public void skipNothing() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
@@ -137,7 +139,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void searchAndFilterWithTopSkipOrderByAndServerSidePaging() {
+  public void searchAndFilterWithTopSkipOrderByAndServerSidePaging() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
@@ -197,7 +199,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void nextLinkFormat() {
+  public void nextLinkFormat() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
@@ -221,7 +223,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void nextLinkFormatWithQueryOptions() {
+  public void nextLinkFormatWithQueryOptions() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
@@ -257,7 +259,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void nextLinkFormatWithClientPageSize() {
+  public void nextLinkFormatWithClientPageSize() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_SERVER_SIDE_PAGING).build();
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
     request.setPrefer(getClient().newPreferences().maxPageSize(7));
@@ -283,6 +285,8 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException e) {
+      fail("Unexpected exception while executing negativeSkip test: " + e);
     }
   }
 
@@ -299,11 +303,15 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 
   @Test
-  public void basicSearch() {
+  public void basicSearch() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
@@ -315,7 +323,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void basicSearchPhrase() {
+  public void basicSearchPhrase() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
@@ -328,7 +336,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void andSearch() {
+  public void andSearch() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)
@@ -340,7 +348,7 @@ public class SystemQueryOptionITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void orSearch() {
+  public void orSearch() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM)

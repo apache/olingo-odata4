@@ -18,11 +18,13 @@
  */
 package org.apache.olingo.client.core.communication.request.cud;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataDeleteRequest;
 import org.apache.olingo.client.api.communication.response.ODataDeleteResponse;
@@ -55,7 +57,7 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
   }
 
   @Override
-  public ODataDeleteResponse execute() {
+  public ODataDeleteResponse execute() throws URISyntaxException, IOException {
     return new ODataDeleteResponseImpl(odataClient, httpClient, doExecute());
   }
 
@@ -64,8 +66,8 @@ public class ODataDeleteRequestImpl extends AbstractODataBasicRequest<ODataDelet
    */
   private class ODataDeleteResponseImpl extends AbstractODataResponse implements ODataDeleteResponse {
 
-    private ODataDeleteResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+    private ODataDeleteResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+            final ClassicHttpResponse res) throws IOException {
 
       super(odataClient, httpClient, res);
       this.close();

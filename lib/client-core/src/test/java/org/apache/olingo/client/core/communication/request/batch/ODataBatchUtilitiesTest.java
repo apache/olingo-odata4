@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -124,7 +125,7 @@ public class ODataBatchUtilitiesTest {
   }
   
   @Test
-  public void testChangeSetResponse() throws URISyntaxException{
+  public void testChangeSetResponse() throws URISyntaxException, IOException {
     ODataChangesetResponseItem expectedResItem = new ODataChangesetResponseItem(true);
     expectedResItem.setUnexpected();
     assertNotNull(expectedResItem);

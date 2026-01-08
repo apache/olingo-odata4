@@ -18,12 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -46,7 +48,7 @@ public class XMLMetadataRequestImpl
   }
 
   @Override
-  public ODataRetrieveResponse<XMLMetadata> execute() {
+  public ODataRetrieveResponse<XMLMetadata> execute() throws IOException, URISyntaxException {
     SingleXMLMetadatRequestImpl rootReq = new SingleXMLMetadatRequestImpl(odataClient, uri);
     if (getPrefer() != null) {
       rootReq.setPrefer(getPrefer());
@@ -135,13 +137,13 @@ public class XMLMetadataRequestImpl
 
   private class SingleXMLMetadatRequestImpl extends AbstractMetadataRequestImpl<XMLMetadata> {
 
-    private HttpResponse httpResponse;
+    private ClassicHttpResponse httpResponse;
 
     public SingleXMLMetadatRequestImpl(final ODataClient odataClient, final URI uri) {
       super(odataClient, uri);
     }
 
-    public HttpResponse getHttpResponse() {
+    public ClassicHttpResponse getHttpResponse() {
       return httpResponse;
     }
 
@@ -151,14 +153,14 @@ public class XMLMetadataRequestImpl
     }
 
     @Override
-    public ODataRetrieveResponse<XMLMetadata> execute() {
+    public ODataRetrieveResponse<XMLMetadata> execute() throws URISyntaxException, IOException {
       httpResponse = doExecute();
       return new AbstractODataRetrieveResponse(odataClient, httpClient, httpResponse) {
 
         private XMLMetadata metadata = null;
 
         @Override
-        public XMLMetadata getBody() {
+        public XMLMetadata getBody() throws IOException {
           if (metadata == null) {
             try {
               metadata = odataClient.getDeserializer(ContentType.APPLICATION_XML).toMetadata(getRawResponse());
@@ -176,8 +178,8 @@ public class XMLMetadataRequestImpl
 
     private final XMLMetadata metadata;
 
-    private XMLMetadataResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-        final HttpResponse res, final XMLMetadata metadata) {
+    private XMLMetadataResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+                                    final ClassicHttpResponse res, final XMLMetadata metadata) {
 
       super(odataClient, httpClient, null);
       initFromHttpResponse(res);

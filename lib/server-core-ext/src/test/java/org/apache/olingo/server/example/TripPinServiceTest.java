@@ -28,22 +28,15 @@ import java.io.IOException;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.impl.conn.SchemeRegistryFactory;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -63,17 +56,16 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 public class TripPinServiceTest {
   private static Tomcat tomcat = new Tomcat();
   private static String baseURL;
-  private static DefaultHttpClient http = new DefaultHttpClient();
+  private static CloseableHttpClient http = HttpClients.createDefault();
   private static final int TOMCAT_PORT = 9900;
   private static final String CRLF = "\r\n";
 
   @BeforeClass
   public static void beforeTest() throws Exception {
-    PoolingClientConnectionManager conMan =
-            new PoolingClientConnectionManager(SchemeRegistryFactory.createDefault());
+    PoolingHttpClientConnectionManager conMan = new PoolingHttpClientConnectionManager();
     conMan.setMaxTotal(200);
     conMan.setDefaultMaxPerRoute(200);
-    http = new DefaultHttpClient(conMan);
+    http = HttpClients.custom().setConnectionManager(conMan).build();
     tomcat.setPort(TOMCAT_PORT);
     File baseDir = new File(System.getProperty("java.io.tmpdir"));
     tomcat.setBaseDir(baseDir.getAbsolutePath());
@@ -97,25 +89,25 @@ public class TripPinServiceTest {
     return new HttpHost(tomcat.getHost().getName(), TOMCAT_PORT);
   }
   
-  private HttpResponse httpGET(String url, int expectedStatus) throws Exception{
-    HttpRequest request = new HttpGet(url);
+  private CloseableHttpResponse httpGET(String url, int expectedStatus) throws Exception{
+      ClassicHttpRequest request = new HttpGet(url);
 	  return httpSend(request, expectedStatus);
   }
   
-  private HttpResponse httpSend(HttpRequest request, int expectedStatus) throws Exception{
-    HttpResponse response = http.execute(getLocalhost(), request);
-    assertEquals(expectedStatus, response.getStatusLine().getStatusCode());
+  private CloseableHttpResponse httpSend(ClassicHttpRequest request, int expectedStatus) throws Exception{
+    CloseableHttpResponse response = http.execute(getLocalhost(), request);
+    assertEquals(expectedStatus, response.getCode());
     return response;
   }
 
-  private JsonNode getJSONNode(HttpResponse response) throws IOException {
+  private JsonNode getJSONNode(CloseableHttpResponse response) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     JsonNode node = objectMapper.readTree(response.getEntity().getContent());
     return node;
   }
   
   private String getHeader(HttpResponse response, String header) {
-    Header[] headers = response.getAllHeaders();
+    Header[] headers = response.getHeaders();
     for (Header h : headers) {
       if (h.getName().equalsIgnoreCase(header)) {
         return h.getValue();
@@ -126,10 +118,10 @@ public class TripPinServiceTest {
 
   @Test
   public void testXMLInvalidChars() throws Exception {
-    HttpRequest req = new HttpGet(baseURL+"/Airlines('FM')");
+    ClassicHttpRequest req = new HttpGet(baseURL+"/Airlines('FM')");
     req.setHeader("Accept", "application/xml");
 
-    HttpResponse response = httpSend(req, 200);
+    CloseableHttpResponse response = httpSend(req, 200);
     String actual = IOUtils.toString(response.getEntity().getContent());
     String expected = 
         "<m:properties>"
@@ -145,17 +137,17 @@ public class TripPinServiceTest {
 
   @Test
   public void testmetadata() throws Exception {
-    HttpRequest req = new HttpGet(baseURL+"/$metadata");
-    HttpResponse response = httpSend(req, 200);
+    ClassicHttpRequest req = new HttpGet(baseURL+"/$metadata");
+    CloseableHttpResponse response = httpSend(req, 200);
     IOUtils.toString(response.getEntity().getContent());
   }
   
   @Test
   public void testReadEntitySetWithPaging() throws Exception {
     String url = baseURL+"/People";
-    HttpRequest request = new HttpGet(url);
+    ClassicHttpRequest request = new HttpGet(url);
     request.setHeader("Prefer", "odata.maxpagesize=10");
-    HttpResponse response = httpSend(request, 200);
+    CloseableHttpResponse response = httpSend(request, 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People", node.get("@odata.context").asText());
     assertEquals(baseURL+"/People?$skiptoken=10", node.get("@odata.nextLink").asText());
@@ -167,7 +159,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testReadEntityWithKey() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Airlines('AA')", 200);
+    CloseableHttpResponse response = httpGET(baseURL + "/Airlines('AA')", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#Airlines/$entity", node.get("@odata.context").asText());
     assertEquals("American Airlines", node.get("Name").asText());
@@ -176,7 +168,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testReadEntityWithFullMetadata() throws Exception {
-    HttpResponse response = httpGET(
+    CloseableHttpResponse response = httpGET(
         baseURL+ "/People('russellwhyte')?$format=application/json;odata.metadata=full",
         200);
     JsonNode node = getJSONNode(response);
@@ -200,7 +192,7 @@ public class TripPinServiceTest {
   
   @Test
   public void testErrorResponse() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Airlines(1)", 400);
+    CloseableHttpResponse response = httpGET(baseURL + "/Airlines(1)", 400);
     Header[] headers = response.getHeaders("Content-Type");
     assertEquals("application/json;odata.metadata=minimal", headers[0].getValue());
     assertEquals("{\"error\":{\"code\":null,\"message\":\"The key value '' is invalid.\"}}", 
@@ -209,19 +201,19 @@ public class TripPinServiceTest {
   
   @Test
   public void testReadEntityWithNonExistingKey() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Airlines('OO')", 404);
+    CloseableHttpResponse response = httpGET(baseURL + "/Airlines('OO')", 404);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
   @Test
   public void testRead$Count() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Airlines/$count", 200);
+    CloseableHttpResponse response = httpGET(baseURL + "/Airlines/$count", 200);
     assertEquals("15", IOUtils.toString(response.getEntity().getContent()));
   }
 
   @Test
   public void testReadPrimitiveProperty() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Airlines('AA')/Name", 200);
+    CloseableHttpResponse response = httpGET(baseURL + "/Airlines('AA')/Name", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#Airlines('AA')/Name", node.get("@odata.context").asText());
     assertEquals("American Airlines", node.get("value").asText());
@@ -229,13 +221,13 @@ public class TripPinServiceTest {
 
   @Test
   public void testReadNonExistentProperty() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Airlines('AA')/Unknown", 404);
+    CloseableHttpResponse response = httpGET(baseURL + "/Airlines('AA')/Unknown", 404);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
   @Test
   public void testReadPrimitiveArrayProperty() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/People('russellwhyte')/Emails", 200);
+    CloseableHttpResponse response = httpGET(baseURL + "/People('russellwhyte')/Emails", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('russellwhyte')/Emails", node.get("@odata.context").asText());
     assertTrue(node.get("value").isArray());
@@ -245,7 +237,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testReadPrimitivePropertyValue() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Airlines('AA')/Name/$value", 200);
+    CloseableHttpResponse response = httpGET(baseURL + "/Airlines('AA')/Name/$value", 200);
     assertEquals("American Airlines", IOUtils.toString(response.getEntity().getContent()));
   }
   
@@ -256,7 +248,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/Airlines('AF')/Name/$value";
     HttpPut put = new HttpPut(editUrl);
     put.setEntity(new StringEntity("Safari"));
-    HttpResponse response = httpSend(put, 204);
+    CloseableHttpResponse response = httpSend(put, 204);
     EntityUtils.consumeQuietly(response.getEntity());
     
     response = httpGET(baseURL + "/Airlines('AF')/Name/$value", 200);
@@ -272,7 +264,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testReadComplexArrayProperty() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/People('russellwhyte')/AddressInfo", 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/People('russellwhyte')/AddressInfo", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('russellwhyte')/AddressInfo", node.get("@odata.context").asText());
     assertTrue(node.get("value").isArray());
@@ -281,7 +273,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testReadMedia() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Photos(1)/$value", 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/Photos(1)/$value", 200);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -292,7 +284,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/Photos(1)/$value";
     HttpPut request = new HttpPut(editUrl);
     request.setEntity(new ByteArrayEntity("bytecontents".getBytes(), ContentType.APPLICATION_OCTET_STREAM));
-    HttpResponse response = httpSend(request, 204);
+   CloseableHttpResponse response = httpSend(request, 204);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -302,7 +294,7 @@ public class TripPinServiceTest {
     // how entity payload and media payload can be sent at same time in request's body
     String editUrl = baseURL + "/Photos(1)/$value";
     HttpDelete request = new HttpDelete(editUrl);
-    HttpResponse response = httpSend(request, 204);
+   CloseableHttpResponse response = httpSend(request, 204);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -314,7 +306,7 @@ public class TripPinServiceTest {
     HttpPost request = new HttpPost(editUrl);
     request.setEntity(new ByteArrayEntity("bytecontents".getBytes(), ContentType.APPLICATION_OCTET_STREAM));
     // method not allowed
-    HttpResponse response = httpSend(request, 405);
+   CloseableHttpResponse response = httpSend(request, 405);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -325,7 +317,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/Airlines('AA')/Picture";
     HttpPut request = new HttpPut(editUrl);
     request.setEntity(new ByteArrayEntity("bytecontents".getBytes(), ContentType.APPLICATION_OCTET_STREAM));
-    HttpResponse response = httpSend(request, 204);
+   CloseableHttpResponse response = httpSend(request, 204);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -335,7 +327,7 @@ public class TripPinServiceTest {
     // how entity payload and media payload can be sent at same time in request's body
     String editUrl = baseURL + "/Airlines('AA')/Picture";
     HttpDelete request = new HttpDelete(editUrl);
-    HttpResponse response = httpSend(request, 204);
+   CloseableHttpResponse response = httpSend(request, 204);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -344,7 +336,7 @@ public class TripPinServiceTest {
     // treating update and create as same for now, as there is details about
     // how entity payload and media payload can be sent at same time in request's body
     String editUrl = baseURL + "/Airlines('AA')/Picture";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -353,13 +345,13 @@ public class TripPinServiceTest {
     // this is just testing to see the lamda expressions are going through the
     // framework, none of the system options are not implemented in example service
     String query = "Friends/any(d%3Ad/UserName%20eq%20'foo')";
-    HttpResponse response = httpGET(baseURL + "/People?$filter=" + query, 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/People?$filter=" + query, 200);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
   @Test
   public void testSingleton() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/Me", 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/Me", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#Me", node.get("@odata.context").asText());
     assertEquals("russellwhyte", node.get("UserName").asText());
@@ -367,7 +359,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testSelectOption() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/People('russellwhyte')?$select=FirstName,LastName", 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/People('russellwhyte')?$select=FirstName,LastName", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People(UserName,FirstName,LastName)/$entity", node.get("@odata.context").asText());
     assertEquals("Russell", node.get("FirstName").asText());
@@ -376,13 +368,13 @@ public class TripPinServiceTest {
   @Test
   public void testActionImportWithNoResponse() throws Exception {
     HttpPost request = new HttpPost(baseURL + "/ResetDataSource");
-    HttpResponse response = httpSend(request, 204);
+   CloseableHttpResponse response = httpSend(request, 204);
     EntityUtils.consumeQuietly(response.getEntity());
   }
   
   @Test
   public void testAllowHeader() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/ResetDataSource", 405);
+   CloseableHttpResponse response = httpGET(baseURL + "/ResetDataSource", 405);
     Header[] headers = response.getHeaders("Allow");
     assertEquals("POST", headers[0].getValue());
     EntityUtils.consumeQuietly(response.getEntity());
@@ -391,19 +383,19 @@ public class TripPinServiceTest {
   @Test @Ignore
   public void testFunctionImport() throws Exception {
     //TODO: fails because of lack of geometery support
-    HttpResponse response = httpGET(baseURL + "/GetNearestAirport(lat=23.0,lon=34.0)", 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/GetNearestAirport(lat=23.0,lon=34.0)", 200);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
   @Test
   public void testBadReferences() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/People('russelwhyte')/$ref", 405);
+   CloseableHttpResponse response = httpGET(baseURL + "/People('russelwhyte')/$ref", 405);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
   @Test
   public void testReadReferences() throws Exception {
-    HttpResponse response = httpGET(baseURL + "/People('russellwhyte')/Friends/$ref", 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/People('russellwhyte')/Friends/$ref", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#Collection($ref)", node.get("@odata.context").asText());
     assertTrue(node.get("value").isArray());
@@ -413,7 +405,7 @@ public class TripPinServiceTest {
   @Test
   public void testAddCollectionReferences() throws Exception {
     //GET
-    HttpResponse response = httpGET(baseURL + "/People('kristakemp')/Friends/$ref", 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/People('kristakemp')/Friends/$ref", 200);
     JsonNode node = getJSONNode(response);
 
     assertTrue(node.get("value").isArray());
@@ -441,7 +433,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testEntityId() throws Exception {
-    HttpResponse response = httpGET(baseURL+"/$entity?$id="+baseURL 
+   CloseableHttpResponse response = httpGET(baseURL+"/$entity?$id="+baseURL
         + "/People('kristakemp')&$select=FirstName", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People(UserName,FirstName)/$entity", node.get("@odata.context").asText());
@@ -480,7 +472,7 @@ public class TripPinServiceTest {
     postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
     postRequest.addHeader("Prefer", "return=minimal");
 
-    HttpResponse response = httpSend(postRequest, 204);
+   CloseableHttpResponse response = httpSend(postRequest, 204);
     // the below would be 204, if minimal was not supplied
     assertEquals(baseURL +"/People('olingodude')", getHeader(response, "Location"));
     assertEquals("return=minimal", getHeader(response, "Preference-Applied"));
@@ -509,7 +501,7 @@ public class TripPinServiceTest {
     updateRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
     httpSend(updateRequest, 204);
     
-    HttpResponse response = httpGET(baseURL + "/People('kristakemp')", 200);
+   CloseableHttpResponse response = httpGET(baseURL + "/People('kristakemp')", 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People/$entity", node.get("@odata.context").asText());
     assertEquals("Krista@example.com", node.get("Emails").get(0).asText());
@@ -520,7 +512,7 @@ public class TripPinServiceTest {
   public void testDeleteEntity() throws Exception{
     // fail because no key predicates supplied
     HttpDelete deleteRequest = new HttpDelete(baseURL+"/People");
-    HttpResponse response = httpSend(deleteRequest, 405);
+   CloseableHttpResponse response = httpSend(deleteRequest, 405);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
@@ -553,7 +545,7 @@ public class TripPinServiceTest {
     HttpPost postRequest = new HttpPost(baseURL + "/People");
     postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
     postRequest.setHeader("Prefer", "return=minimal");
-    HttpResponse response = httpSend(postRequest, 204);
+   CloseableHttpResponse response = httpSend(postRequest, 204);
     EntityUtils.consumeQuietly(response.getEntity());
     
     response = httpGET(baseURL+"/People('olingo')/Friends", 200);
@@ -593,7 +585,7 @@ public class TripPinServiceTest {
     HttpPost postRequest = new HttpPost(baseURL + "/People");
     postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
     postRequest.setHeader("Prefer", "return=minimal");
-    HttpResponse response = httpSend(postRequest, 204);
+   CloseableHttpResponse response = httpSend(postRequest, 204);
     EntityUtils.consumeQuietly(response.getEntity());
     
     response = httpGET(baseURL+"/People('olingo')/Friends", 200);
@@ -612,7 +604,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/People('russellwhyte')/FirstName";
     HttpPut postRequest = new HttpPut(editUrl);
     postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
-    HttpResponse response = httpSend(postRequest, 204);
+   CloseableHttpResponse response = httpSend(postRequest, 204);
     EntityUtils.consumeQuietly(response.getEntity());
     
     response = httpGET(editUrl, 200);
@@ -632,7 +624,7 @@ public class TripPinServiceTest {
     String editUrl = baseURL + "/People('russellwhyte')/Emails";
     HttpPut postRequest = new HttpPut(editUrl);
     postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
-    HttpResponse response = httpSend(postRequest, 204);
+   CloseableHttpResponse response = httpSend(postRequest, 204);
     EntityUtils.consumeQuietly(response.getEntity());
 
     response = httpGET(editUrl, 200);
@@ -645,7 +637,7 @@ public class TripPinServiceTest {
   @Test
   public void testDeleteProperty() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/FirstName";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
     assertEquals("Russell", node.get("value").asText());
 
@@ -660,7 +652,7 @@ public class TripPinServiceTest {
   @Test
   public void testReadNavigationPropertyEntityCollection() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Friends";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
 
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People", node.get("@odata.context").asText());
@@ -672,7 +664,7 @@ public class TripPinServiceTest {
   @Test
   public void testReadNavigationPropertyNoContainsTarget() throws Exception {
     String editUrl = baseURL + "/People('scottketchum')/Photo";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
 
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#Photos/$entity", node.get("@odata.context").asText());
@@ -687,7 +679,7 @@ public class TripPinServiceTest {
   @Test
   public void testReadNavigationPropertyEntityCollection2() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Friends('scottketchum')/Trips";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('russellwhyte')/Friends('scottketchum')/Trips",
         node.get("@odata.context").asText());
@@ -698,7 +690,7 @@ public class TripPinServiceTest {
   @Test
   public void testReadNavigationPropertyEntity() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Trips(1003)";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('russellwhyte')/Trips/$entity",
         node.get("@odata.context").asText());
@@ -708,14 +700,14 @@ public class TripPinServiceTest {
   @Test
   public void testReadNavigationPropertyEntityNotExisting() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Trips(9999)";
-    HttpResponse response = httpGET(editUrl, 204);
+   CloseableHttpResponse response = httpGET(editUrl, 204);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
   @Test
   public void testReadNavigationPropertyEntitySetNotExisting() throws Exception {
     String editUrl = baseURL + "/People('jhondoe')/Trips";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('jhondoe')/Trips",
         node.get("@odata.context").asText());
@@ -725,14 +717,14 @@ public class TripPinServiceTest {
   @Test
   public void testBadNavigationProperty() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Unknown";
-    HttpResponse response = httpGET(editUrl, 404);
+   CloseableHttpResponse response = httpGET(editUrl, 404);
     EntityUtils.consumeQuietly(response.getEntity());
   }
 
   @Test
   public void testReadNavigationPropertyEntityProperty() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Trips(1003)/PlanItems(5)/ConfirmationCode";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('russellwhyte')/Trips(1003)/PlanItems(5)/ConfirmationCode",
         node.get("@odata.context").asText());
@@ -742,7 +734,7 @@ public class TripPinServiceTest {
   @Test
   public void testReadNavigationPropertyEntityMultipleDerivedTypes() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Trips(1003)/PlanItems";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('russellwhyte')/Trips(1003)/PlanItems",
         node.get("@odata.context").asText());
@@ -754,7 +746,7 @@ public class TripPinServiceTest {
   public void testReadNavigationPropertyEntityCoolectionDerivedFilter() throws Exception {
     String editUrl = baseURL
         + "/People('russellwhyte')/Trips(1003)/PlanItems/Microsoft.OData.SampleService.Models.TripPin.Event";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
 
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('russellwhyte')/Trips(1003)/PlanItems/"
@@ -769,7 +761,7 @@ public class TripPinServiceTest {
   public void testReadNavigationPropertyEntityDerivedFilter() throws Exception {
     String editUrl = baseURL+ "/People('russellwhyte')/Trips(1003)/PlanItems(56)/"
         + "Microsoft.OData.SampleService.Models.TripPin.Event";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     JsonNode node = getJSONNode(response);
     assertEquals(baseURL+"/$metadata#People('russellwhyte')/Trips(1003)/PlanItems/"
         + "Microsoft.OData.SampleService.Models.TripPin.Event/$entity",
@@ -780,7 +772,7 @@ public class TripPinServiceTest {
 
   @Test
   public void testUpdateReference() throws Exception {
-    HttpResponse response = httpGET(baseURL+"/People('ronaldmundy')/Photo/$ref", 200);
+   CloseableHttpResponse response = httpGET(baseURL+"/People('ronaldmundy')/Photo/$ref", 200);
     JsonNode node = getJSONNode(response);
     assertEquals("/Photos(12)", node.get("@odata.id").asText());
 
@@ -809,7 +801,7 @@ public class TripPinServiceTest {
     HttpPost postRequest = new HttpPost(editUrl);
     postRequest.setEntity(new StringEntity(msg, ContentType.APPLICATION_JSON));
     postRequest.addHeader("Content-Type", "application/json;odata.metadata=minimal");
-    HttpResponse response = httpSend(postRequest, 204);
+   CloseableHttpResponse response = httpSend(postRequest, 204);
     EntityUtils.consumeQuietly(response.getEntity());
     
     // get
@@ -845,7 +837,7 @@ public class TripPinServiceTest {
     HttpPost postRequest = new HttpPost(editUrl);
     postRequest.setEntity(new StringEntity(msg, ContentType.APPLICATION_JSON));
     postRequest.addHeader("Content-Type", "application/json;odata.metadata=minimal");
-    HttpResponse response = httpSend(postRequest, 405);
+   CloseableHttpResponse response = httpSend(postRequest, 405);
     EntityUtils.consumeQuietly(response.getEntity());
   }
   
@@ -859,7 +851,7 @@ public class TripPinServiceTest {
     HttpPost postRequest = new HttpPost(editUrl);
     postRequest.setEntity(new StringEntity(msg, ContentType.APPLICATION_JSON));
     postRequest.addHeader("Content-Type", "application/json;odata.metadata=minimal");
-    HttpResponse response = httpSend(postRequest, 201);
+   CloseableHttpResponse response = httpSend(postRequest, 201);
     EntityUtils.consumeQuietly(response.getEntity());
     
     response = httpGET(baseURL+"/People('vincentcalabrese')/Photo", 200);
@@ -894,7 +886,7 @@ public class TripPinServiceTest {
     HttpPost postRequest = new HttpPost(editUrl);
     postRequest.setEntity(new StringEntity(payload, ContentType.APPLICATION_JSON));
     postRequest.addHeader("Content-Type", "application/json;odata.metadata=minimal");
-    HttpResponse response = httpSend(postRequest, 201);
+   CloseableHttpResponse response = httpSend(postRequest, 201);
     EntityUtils.consumeQuietly(response.getEntity());
     
     response = httpGET(baseURL+"/People('vincentcalabrese')/Friends", 200);
@@ -907,7 +899,7 @@ public class TripPinServiceTest {
   @Test
   public void testDeleteReference() throws Exception {
     String editUrl = baseURL + "/People('russellwhyte')/Photo/$ref";
-    HttpResponse response = httpGET(editUrl, 200);
+   CloseableHttpResponse response = httpGET(editUrl, 200);
     EntityUtils.consumeQuietly(response.getEntity());
     
     HttpDelete deleteRequest = new HttpDelete(editUrl);
@@ -922,16 +914,16 @@ public class TripPinServiceTest {
   public void crossJoin() throws Exception {
     String editUrl = baseURL + "/$crossjoin(People,Airlines)?$filter="
         + "People/UserName%20eq%20Airlines/AirlineCode";
-    HttpResponse response = httpGET(editUrl, 501);
+   CloseableHttpResponse response = httpGET(editUrl, 501);
     EntityUtils.consumeQuietly(response.getEntity());
   }
   
   @Test
   public void dataIsolation() throws Exception {
     String url = baseURL + "/People";
-    HttpRequest request = new HttpGet(url);
+    ClassicHttpRequest request = new HttpGet(url);
     request.setHeader(HttpHeader.ODATA_ISOLATION, "snapshot");
-    HttpResponse response = httpSend(request, 412);
+   CloseableHttpResponse response = httpSend(request, 412);
     EntityUtils.consumeQuietly(response.getEntity());
   }  
   
@@ -950,12 +942,15 @@ public class TripPinServiceTest {
         + "--batch_12345--";
   	
     HttpPost request = new HttpPost(batchtUrl);
-    StringEntity stringEntity = new StringEntity(content);
-    stringEntity.setContentType("multipart/mixed;boundary=batch_12345");
+    // Use ContentType.parse to accept media type parameters (boundary)
+    StringEntity stringEntity = new StringEntity(
+        content,
+        org.apache.hc.core5.http.ContentType.parse("multipart/mixed; boundary=batch_12345")
+    );
     request.setEntity(stringEntity);
     // multipart/mixed should work as an Accept value
     request.setHeader("Accept", "multipart/mixed");
-    HttpResponse response = httpSend(request, 202);
+   CloseableHttpResponse response = httpSend(request, 202);
     EntityUtils.consumeQuietly(response.getEntity());
   }
   

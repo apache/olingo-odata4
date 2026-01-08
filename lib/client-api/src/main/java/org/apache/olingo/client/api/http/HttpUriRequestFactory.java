@@ -20,7 +20,7 @@ package org.apache.olingo.client.api.http;
 
 import java.net.URI;
 
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**

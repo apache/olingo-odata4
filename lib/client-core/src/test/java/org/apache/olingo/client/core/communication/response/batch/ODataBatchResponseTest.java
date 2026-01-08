@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.LineIterator;
-import org.apache.http.HttpResponse;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchResponseItem;
 import org.apache.olingo.client.api.communication.response.ODataBatchResponse;
@@ -43,6 +42,7 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchLineI
 import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtilities;
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.junit.Test;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 
 public class ODataBatchResponseTest {
 
@@ -123,7 +123,7 @@ public class ODataBatchResponseTest {
     }
 
     @Override
-    public ODataResponse initFromHttpResponse(HttpResponse res) {
+    public ODataResponse initFromHttpResponse(ClassicHttpResponse res) {
       return null;
     }
 

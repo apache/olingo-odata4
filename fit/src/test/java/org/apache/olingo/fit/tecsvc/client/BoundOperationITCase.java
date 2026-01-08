@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +56,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readEntitySetOperation() {
+  public void readEntitySetOperation() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESAllPrim").build());    
@@ -111,7 +113,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
   } 
   
   @Test
-  public void readComplexPropertyOperation() {
+  public void readComplexPropertyOperation() throws URISyntaxException, IOException {
     ODataPropertyRequest<ClientProperty> request = getClient().getRetrieveRequestFactory()
         .getPropertyRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCompAllPrim")
@@ -141,7 +143,7 @@ public class BoundOperationITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void invokeFunction(){
+  public void invokeFunction() throws URISyntaxException, IOException {
       ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESAllPrim").build());    

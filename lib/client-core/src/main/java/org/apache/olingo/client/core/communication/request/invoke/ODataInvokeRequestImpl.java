@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent;
 import org.apache.olingo.client.api.communication.response.ODataInvokeResponse;
@@ -64,8 +64,8 @@ public class ODataInvokeRequestImpl<T extends ClientInvokeResult> extends Abstra
 
     private T invokeResult = null;
 
-    private ODataInvokeResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-        final HttpResponse res) {
+    private ODataInvokeResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+        final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
@@ -74,14 +74,14 @@ public class ODataInvokeRequestImpl<T extends ClientInvokeResult> extends Abstra
      * {@inheritDoc }
      */
     @Override
-    public T getBody() {
+    public T getBody() throws IOException {
       if (invokeResult == null) {
         try {
           if (ClientNoContent.class.isAssignableFrom(reference)) {
             invokeResult = reference.cast(new ClientNoContent());
           } else {
             // avoid getContent() twice:IllegalStateException: Content has been consumed
-            final InputStream responseStream = this.payload == null ? res.getEntity().getContent() : this.payload;
+            final InputStream responseStream = this.payload != null ? this.payload : res.getEntity().getContent();
             if (ClientEntitySet.class.isAssignableFrom(reference)) {
               invokeResult = reference.cast(odataClient.getReader().readEntitySet(responseStream,
                   ContentType.parse(getContentType())));

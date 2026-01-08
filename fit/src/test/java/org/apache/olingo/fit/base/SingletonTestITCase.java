@@ -23,7 +23,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -41,7 +43,8 @@ import org.junit.Test;
 
 public class SingletonTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException {
+  private void read(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException,
+          URISyntaxException, IOException {
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Company");
     final ODataEntityRequest<ClientSingleton> singleton =
         client.getRetrieveRequestFactory().getSingletonRequest(builder.build());
@@ -57,22 +60,22 @@ public class SingletonTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readFromAtom() throws EdmPrimitiveTypeException {
+  public void readFromAtom() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     read(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void readFromJSON() throws EdmPrimitiveTypeException {
+  public void readFromJSON() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     read(edmClient, ContentType.JSON);
   }
 
   @Test
-  public void readfromJSONFull() throws EdmPrimitiveTypeException {
+  public void readfromJSONFull() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     read(client, ContentType.JSON_FULL_METADATA);
   }
 
   private void readWithAnnotations(final ODataClient client, final ContentType contentType)
-      throws EdmPrimitiveTypeException {
+          throws EdmPrimitiveTypeException, URISyntaxException, IOException {
 
     final URIBuilder builder = client.newURIBuilder(testStaticServiceRootURL).appendSingletonSegment("Boss");
     final ODataEntityRequest<ClientSingleton> singleton =
@@ -88,21 +91,21 @@ public class SingletonTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readWithAnnotationsFromAtom() throws EdmPrimitiveTypeException {
+  public void readWithAnnotationsFromAtom() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     readWithAnnotations(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void readWithAnnotationsFromJSON() throws EdmPrimitiveTypeException {
+  public void readWithAnnotationsFromJSON() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     readWithAnnotations(edmClient, ContentType.JSON);
   }
 
   @Test
-  public void readWithAnnotationsFromJSONFull() throws EdmPrimitiveTypeException {
+  public void readWithAnnotationsFromJSONFull() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     readWithAnnotations(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void update(final ContentType contentType) throws EdmPrimitiveTypeException {
+  private void update(final ContentType contentType) throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final ClientSingleton changes = getClient().getObjectFactory().newSingleton(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Company"));
     changes.getProperties().add(getClient().getObjectFactory().newPrimitiveProperty("Revenue",
@@ -123,12 +126,12 @@ public class SingletonTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void atomUpdate() throws EdmPrimitiveTypeException {
+  public void atomUpdate() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     update(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void jsonUpdate() throws EdmPrimitiveTypeException {
+  public void jsonUpdate() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     update(ContentType.JSON);
   }
 

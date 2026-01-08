@@ -46,7 +46,7 @@ public class URIBuilderTest extends AbstractTest {
   public void metadata() throws URISyntaxException {
     final URI uri = client.newURIBuilder(SERVICE_ROOT).appendMetadataSegment().build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/$metadata").build(), uri);
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/$metadata").build(), uri);
   }
 
   @Test
@@ -54,7 +54,7 @@ public class URIBuilderTest extends AbstractTest {
     final URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("AnEntitySet").
         appendKeySegment(11).build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/AnEntitySet(11)").build(), uri);
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/AnEntitySet(11)").build(), uri);
 
     final Map<String, Object> multiKey = new LinkedHashMap<String, Object>();
     multiKey.put("OrderId", -10);
@@ -63,19 +63,19 @@ public class URIBuilderTest extends AbstractTest {
         appendEntitySetSegment("OrderLine").appendKeySegment(multiKey).
         appendPropertySegment("Quantity").appendValueSegment();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/OrderLine(OrderId=-10,ProductId=-10)/Quantity/$value").build(), uriBuilder.build());
 
     uriBuilder = client.newURIBuilder(SERVICE_ROOT).
         appendEntitySetSegment("Customer").appendKeySegment(-10).
         select("CustomerId", "Name", "Orders").expand("Orders");
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customer(-10)").
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Customer(-10)").
         addParameter("$select", "CustomerId,Name,Orders").addParameter("$expand", "Orders").build(),
         uriBuilder.build());
 
     uriBuilder = client.newURIBuilder(SERVICE_ROOT).
         appendEntitySetSegment("Customer").appendKeySegment(-10).appendNavigationSegment("Orders").appendRefSegment();
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customer(-10)/Orders/$ref").build(),
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Customer(-10)/Orders/$ref").build(),
         uriBuilder.build());
   }
 
@@ -91,7 +91,7 @@ public class URIBuilderTest extends AbstractTest {
           }
         }).expand("Orders", "Customers").build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Products(5)").
         addParameter("$expand", "ProductDetails($expand=ProductInfo;$select=Price),Orders,Customers").build(), uri);
   }
   
@@ -105,7 +105,7 @@ public class URIBuilderTest extends AbstractTest {
             put(QueryOption.SELECT, "Price");
           }
         }).expand("Orders", "Customers").build();
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Products(5)").
         addParameter("$expand", "ProductDetails($expand=ProductInfo;$select=Price)/$count,Orders,Customers")
         .build(), uri);
   }  
@@ -115,7 +115,7 @@ public class URIBuilderTest extends AbstractTest {
         expandWithOptions("Customer", Collections.<QueryOption, Object> singletonMap(QueryOption.LEVELS, 4)).
         build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(1)").
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Products(1)").
         addParameter("$expand", "Customer($levels=4)").build(), uri);
   }
 
@@ -123,11 +123,11 @@ public class URIBuilderTest extends AbstractTest {
   public void count() throws URISyntaxException {
     URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count().build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products/$count").build(), uri);
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Products/$count").build(), uri);
 
     uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").count(true).build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products").
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Products").
         addParameter("$count", "true").build(), uri);
   }
 
@@ -163,7 +163,7 @@ public class URIBuilderTest extends AbstractTest {
     URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Products").appendKeySegment(5).
         expand("Orders", "Customers").expand("Info").build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Products(5)").
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Products(5)").
         addParameter("$expand", "Orders,Customers,Info").build(), uri);
   }
 
@@ -172,7 +172,7 @@ public class URIBuilderTest extends AbstractTest {
     URI uri = client.newURIBuilder(SERVICE_ROOT).appendEntitySetSegment("Customers").appendKeySegment(5).
         select("Name", "Surname").expand("Info").select("Gender").build();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(SERVICE_ROOT + "/Customers(5)").
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(SERVICE_ROOT + "/Customers(5)").
         addParameter("$select", "Name,Surname,Gender").addParameter("$expand", "Info").build(), uri);
   }
 
@@ -181,7 +181,7 @@ public class URIBuilderTest extends AbstractTest {
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_ROOT).
         appendSingletonSegment("BestProductEverCreated");
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/BestProductEverCreated").build(), uriBuilder.build());
   }
 
@@ -190,7 +190,7 @@ public class URIBuilderTest extends AbstractTest {
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_ROOT).
         appendEntityIdSegment("Products(0)");
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/$entity").addParameter("$id", "Products(0)").build(), uriBuilder.build());
   }
 
@@ -201,7 +201,7 @@ public class URIBuilderTest extends AbstractTest {
         appendNavigationSegment("Products").
         appendActionCallSegment("Model.AllOrders");
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/Categories(1)/Products/Model.AllOrders").build(), uriBuilder.build());
   }
 
@@ -212,7 +212,7 @@ public class URIBuilderTest extends AbstractTest {
         appendNavigationSegment("Products").
         appendOperationCallSegment("Model.AllOrders");
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/Categories(1)/Products/Model.AllOrders()").build(), uriBuilder.build());
   }
 
@@ -222,14 +222,14 @@ public class URIBuilderTest extends AbstractTest {
         appendEntitySetSegment("Categories").appendKeySegment(1).
         appendNavigationSegment("Products").appendRefSegment();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/Categories(1)/Products/$ref").build(), uriBuilder.build());
 
     uriBuilder = client.newURIBuilder(SERVICE_ROOT).
         appendEntitySetSegment("Categories").appendKeySegment(1).
         appendNavigationSegment("Products").appendRefSegment().id("../../Products(0)");
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/Categories(1)/Products/$ref").addParameter("$id", "../../Products(0)").build(),
         uriBuilder.build());
   }
@@ -239,7 +239,7 @@ public class URIBuilderTest extends AbstractTest {
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_ROOT).
         appendEntitySetSegment("Customers").appendDerivedEntityTypeSegment("Model.VipCustomer").appendKeySegment(1);
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/Customers/Model.VipCustomer(1)").build(), uriBuilder.build());
   }
 
@@ -248,7 +248,7 @@ public class URIBuilderTest extends AbstractTest {
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_ROOT).
         appendCrossjoinSegment("Products", "Sales");
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/$crossjoin(Products,Sales)").build(), uriBuilder.build());
   }
 
@@ -256,7 +256,7 @@ public class URIBuilderTest extends AbstractTest {
   public void all() throws URISyntaxException {
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_ROOT).appendAllSegment();
 
-    assertEquals(new org.apache.http.client.utils.URIBuilder(
+    assertEquals(new org.apache.hc.core5.net.URIBuilder(
         SERVICE_ROOT + "/$all").build(), uriBuilder.build());
   }
 

@@ -18,11 +18,13 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 
 /**
@@ -86,7 +88,7 @@ public interface ODataResponse {
    * @param res HTTP response.
    * @return OData response;
    */
-  ODataResponse initFromHttpResponse(HttpResponse res);
+  ODataResponse initFromHttpResponse(ClassicHttpResponse res);
 
   /**
    * Initializes response from batch response item.
@@ -123,5 +125,5 @@ public interface ODataResponse {
    * for client-side scenarios where application layer code processes only the response headers and ignores the response
    * entity.
    */
-  void close();
+  void close() throws IOException;
 }

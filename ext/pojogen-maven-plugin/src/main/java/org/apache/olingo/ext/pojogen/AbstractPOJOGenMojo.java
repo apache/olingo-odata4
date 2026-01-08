@@ -198,7 +198,8 @@ public abstract class AbstractPOJOGenMojo extends AbstractMojo {
 
   protected abstract ODataClient getClient();
 
-  private Triple<XMLMetadata, String, Edm> getMetadata() throws FileNotFoundException {
+  private Triple<XMLMetadata, String, Edm> getMetadata()
+      throws FileNotFoundException, java.net.URISyntaxException, java.io.IOException {
     if (StringUtils.isEmpty(serviceRootURL) && StringUtils.isEmpty(localEdm)) {
       throw new IllegalArgumentException("Must provide either serviceRootURL or localEdm");
     }

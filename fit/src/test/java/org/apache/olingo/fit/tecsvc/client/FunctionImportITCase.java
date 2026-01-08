@@ -21,6 +21,8 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -87,7 +89,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void entityCollection() {
+  public void entityCollection() throws URISyntaxException, IOException {
     ODataInvokeRequest<ClientEntitySet> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
             getClient().newURIBuilder(TecSvcConst.BASE_URI)
@@ -116,7 +118,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void entityCollectionWithAppendedKey() {
+  public void entityCollectionWithAppendedKey() throws URISyntaxException, IOException {
     // .../odata.svc/FICRTCollESMedia()(1)
     ODataInvokeRequest<ClientEntity> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
@@ -140,7 +142,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void entityCollectionWithAppendedKeyAndProperty() {
+  public void entityCollectionWithAppendedKeyAndProperty() throws URISyntaxException, IOException {
     // .../odata.svc/FICRTCollESMedia()(2)/PropertyInt16
     ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(
@@ -240,7 +242,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void FICRTStringTwoParamNotNull() {
+  public void FICRTStringTwoParamNotNull() throws URISyntaxException, IOException {
     ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendOperationCallSegment("FICRTStringTwoParam").build(),
@@ -253,7 +255,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void FICRTStringTwoParamNull() {
+  public void FICRTStringTwoParamNull() throws URISyntaxException, IOException {
     ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendOperationCallSegment("FICRTStringTwoParam").build(),
@@ -267,7 +269,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void FICRTStringTwoParamWithAliases() {
+  public void FICRTStringTwoParamWithAliases() throws URISyntaxException, IOException {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters.put("ParameterInt16", getFactory().newPrimitiveValueBuilder().setValue(
         new ParameterAlias("first")).build());
@@ -287,7 +289,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void FICRTCollCTTwoPrimTwoParamNotNull() {
+  public void FICRTCollCTTwoPrimTwoParamNotNull() throws URISyntaxException, IOException {
     ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendOperationCallSegment("FICRTCollCTTwoPrimTwoParam").build(),
@@ -310,7 +312,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void FICRTCollCTTwoPrimTwoParamNull() {
+  public void FICRTCollCTTwoPrimTwoParamNull() throws URISyntaxException, IOException {
     ODataInvokeRequest<ClientProperty> request = getClient().getInvokeRequestFactory()
         .getFunctionInvokeRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendOperationCallSegment("FICRTCollCTTwoPrimTwoParam").build(),
@@ -333,7 +335,7 @@ public class FunctionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void allParameterKinds() {
+  public void allParameterKinds() throws URISyntaxException, IOException {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters.put("ParameterEnum", getFactory().newEnumValue("Namespace1_Alias.ENString", "String1"));
     parameters.put("ParameterDef", getFactory().newPrimitiveValueBuilder().buildString("key1"));

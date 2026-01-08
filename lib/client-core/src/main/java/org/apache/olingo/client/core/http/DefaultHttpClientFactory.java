@@ -18,11 +18,11 @@
  */
 package org.apache.olingo.client.core.http;
 
+import java.io.IOException;
 import java.net.URI;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -31,15 +31,13 @@ import org.apache.olingo.commons.api.http.HttpMethod;
 public class DefaultHttpClientFactory extends AbstractHttpClientFactory {
 
   @Override
-  public DefaultHttpClient create(final HttpMethod method, final URI uri) {
-    final DefaultHttpClient client = new DefaultHttpClient();
-    client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, USER_AGENT);
-    return client;
+  public CloseableHttpClient create(final HttpMethod method, final URI uri) {
+    return HttpClients.custom().setUserAgent(USER_AGENT).build();
   }
 
   @Override
-  public void close(final HttpClient httpClient) {
-    httpClient.getConnectionManager().shutdown();
+  public void close(final CloseableHttpClient httpClient) throws IOException {
+      httpClient.close();
   }
 
 }

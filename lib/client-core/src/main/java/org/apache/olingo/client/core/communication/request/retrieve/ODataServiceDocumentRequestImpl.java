@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataServiceDocumentRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -53,8 +55,8 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
   }
 
   @Override
-  public ODataRetrieveResponse<ClientServiceDocument> execute() {
-    final HttpResponse res = doExecute();
+  public ODataRetrieveResponse<ClientServiceDocument> execute() throws URISyntaxException, IOException {
+    final ClassicHttpResponse res = doExecute();
     return new ODataServiceResponseImpl(odataClient, httpClient, res);
   }
 
@@ -65,14 +67,14 @@ public class ODataServiceDocumentRequestImpl extends AbstractODataRetrieveReques
 
     private ClientServiceDocument serviceDocument = null;
 
-    private ODataServiceResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+    private ODataServiceResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
 
     @Override
-    public ClientServiceDocument getBody() {
+    public ClientServiceDocument getBody() throws IOException {
       if (serviceDocument == null) {
         try {
           final ResWrap<ServiceDocument> resource = odataClient.

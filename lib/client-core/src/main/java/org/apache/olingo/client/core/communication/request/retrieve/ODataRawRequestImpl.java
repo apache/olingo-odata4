@@ -21,10 +21,13 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataRawRequest;
 import org.apache.olingo.client.api.communication.response.ODataRawResponse;
@@ -62,7 +65,7 @@ public class ODataRawRequestImpl extends AbstractODataRequest implements ODataRa
   }
 
   @Override
-  public ODataRawResponse execute() {
+  public ODataRawResponse execute() throws URISyntaxException, IOException {
     return new ODataRawResponseImpl(odataClient, httpClient, doExecute());
   }
 
@@ -70,14 +73,14 @@ public class ODataRawRequestImpl extends AbstractODataRequest implements ODataRa
 
     private byte[] obj = null;
 
-    private ODataRawResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+    private ODataRawResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
 
     @Override
-    public <T> ResWrap<T> getBodyAs(final Class<T> reference) {
+    public <T> ResWrap<T> getBodyAs(final Class<T> reference) throws IOException {
       if (obj == null) {
         try {
           this.obj = IOUtils.toByteArray(getRawResponse());

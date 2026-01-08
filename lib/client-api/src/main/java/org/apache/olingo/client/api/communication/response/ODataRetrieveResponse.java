@@ -18,6 +18,8 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
+import java.io.IOException;
+
 /**
  * This class implements a response to a specific query request.
  *
@@ -30,5 +32,5 @@ public interface ODataRetrieveResponse<T> extends ODataResponse {
    *
    * @return query result objects.
    */
-  T getBody();
+  T getBody() throws IOException;
 }

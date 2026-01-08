@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**

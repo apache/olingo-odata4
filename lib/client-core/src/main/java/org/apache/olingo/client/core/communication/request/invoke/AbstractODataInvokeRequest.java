@@ -21,14 +21,17 @@ package org.apache.olingo.client.core.communication.request.invoke;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
 import org.apache.olingo.client.api.communication.request.invoke.ClientNoContent;
@@ -151,12 +154,12 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
    * {@inheritDoc }
    */
   @Override
-  public ODataInvokeResponse<T> execute() {
+  public ODataInvokeResponse<T> execute() throws URISyntaxException, IOException {
     final InputStream input = getPayload();
 
     if (!this.parameters.isEmpty()) {
       if (this.method == HttpMethod.GET) {
-        ((HttpRequestBase) this.request).setURI(
+        ((HttpUriRequestBase) this.request).setUri(
             URIUtils.buildFunctionInvokeURI(this.uri, parameters));
       } else if (this.method == HttpMethod.POST) {
         ((HttpPost) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
@@ -179,8 +182,8 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
 
     private T invokeResult = null;
 
-    private ODataInvokeResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-        final HttpResponse res) {
+    private ODataInvokeResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+        final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
@@ -189,7 +192,7 @@ public abstract class AbstractODataInvokeRequest<T extends ClientInvokeResult>
      * {@inheritDoc }
      */
     @Override
-    public T getBody() {
+    public T getBody() throws IOException {
       if (invokeResult == null) {
         try {
           if (ClientNoContent.class.isAssignableFrom(reference)) {

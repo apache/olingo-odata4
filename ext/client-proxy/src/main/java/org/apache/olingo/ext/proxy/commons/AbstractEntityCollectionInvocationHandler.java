@@ -100,56 +100,61 @@ public abstract class AbstractEntityCollectionInvocationHandler<T extends Entity
     final URI next;
     final List<ClientAnnotation> anns = new ArrayList<ClientAnnotation>();
 
-    if (isSingleton) {
-      final ODataRetrieveResponse<ClientSingleton> res =
-          ((ODataClient) getClient()).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
+    try {
+      if (isSingleton) {
+        final ODataRetrieveResponse<ClientSingleton> res =
+            ((ODataClient) getClient()).getRetrieveRequestFactory().getSingletonRequest(uri).execute();
 
-      entities.add(res.getBody());
-      next = null;
-    } else {
-      final ODataEntitySetRequest<ClientEntitySet> req =
-          getClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
-      req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
+        entities.add(res.getBody());
+        next = null;
+      } else {
+        final ODataEntitySetRequest<ClientEntitySet> req =
+            getClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
+        req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
 
-      final ODataRetrieveResponse<ClientEntitySet> res = req.execute();
+        final ODataRetrieveResponse<ClientEntitySet> res = req.execute();
 
-      final ClientEntitySet entitySet = res.getBody();
-      entities.addAll(entitySet.getEntities());
-      next = entitySet.getNext();
-      anns.addAll(entitySet.getAnnotations());
-    }
-
-    final List<T> res = new ArrayList<T>(entities.size());
-
-    for (ClientEntity entity : entities) {
-      Class<?> actualRef = null;
-      if (entity.getTypeName() != null) {
-        actualRef = service.getEntityTypeClass(entity.getTypeName().toString());
-      }
-      if (actualRef == null) {
-        actualRef = typeRef;
+        final ClientEntitySet entitySet = res.getBody();
+        entities.addAll(entitySet.getEntities());
+        next = entitySet.getNext();
+        anns.addAll(entitySet.getAnnotations());
       }
 
-      final EntityInvocationHandler handler =
-          this instanceof EntitySetInvocationHandler
-              ? EntityInvocationHandler.getInstance(
-                  entity,
-                  EntitySetInvocationHandler.class.cast(this),
-                  actualRef)
-              : EntityInvocationHandler.getInstance(
-                  entity,
-                  targetEntitySetURI,
-                  actualRef,
-                  service);
+      final List<T> res = new ArrayList<T>(entities.size());
 
-      final EntityInvocationHandler handlerInTheContext = getContext().entityContext().getEntity(handler.getUUID());
+      for (ClientEntity entity : entities) {
+        Class<?> actualRef = null;
+        if (entity.getTypeName() != null) {
+          actualRef = service.getEntityTypeClass(entity.getTypeName().toString());
+        }
+        if (actualRef == null) {
+          actualRef = typeRef;
+        }
 
-      res.add((T) Proxy.newProxyInstance(
-          Thread.currentThread().getContextClassLoader(),
-          new Class<?>[] { actualRef },
-          handlerInTheContext == null ? handler : handlerInTheContext));
+        final EntityInvocationHandler handler =
+            this instanceof EntitySetInvocationHandler
+                ? EntityInvocationHandler.getInstance(
+                    entity,
+                    EntitySetInvocationHandler.class.cast(this),
+                    actualRef)
+                : EntityInvocationHandler.getInstance(
+                    entity,
+                    targetEntitySetURI,
+                    actualRef,
+                    service);
+
+        final EntityInvocationHandler handlerInTheContext = getContext().entityContext().getEntity(handler.getUUID());
+
+        res.add((T) Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] { actualRef },
+            handlerInTheContext == null ? handler : handlerInTheContext));
+      }
+
+      return new ImmutableTriple<List<T>, URI, List<ClientAnnotation>>(res, next, anns);
+    } catch (Exception e) {
+      LOG.warn("Error fetching entity set partial '" + uri + "'", e);
+      throw new IllegalArgumentException("Error fetching entity set", e);
     }
-
-    return new ImmutableTriple<List<T>, URI, List<ClientAnnotation>>(res, next, anns);
   }
 }

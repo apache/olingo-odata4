@@ -92,7 +92,8 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
   @Override
   @SuppressWarnings("unchecked")
   public Triple<List<T>, URI, List<ClientAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
-    final ODataPropertyRequest<ClientProperty> req =
+      try {
+      final ODataPropertyRequest<ClientProperty> req =
             getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
       req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
 
@@ -107,14 +108,23 @@ public class PrimitiveCollectionInvocationHandler<T extends Serializable>
       }
     }
 
-    return new ImmutableTriple<List<T>, URI, List<ClientAnnotation>>(
-            resItems, null, Collections.<ClientAnnotation>emptyList());
+      return new ImmutableTriple<List<T>, URI, List<ClientAnnotation>>(
+              resItems, null, Collections.<ClientAnnotation>emptyList());
+    } catch (Exception e) {
+      LOG.warn("Error fetching primitive collection '" + uri + "'", e);
+      throw new IllegalArgumentException("Error fetching primitive collection", e);
+    }
   }
 
   public void delete() {
     if (baseURI != null) {
-      getContext().entityContext().addFurtherDeletes(
-              getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build());
+      try {
+        getContext().entityContext().addFurtherDeletes(
+                getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build());
+      } catch (Exception e) {
+        LOG.warn("Error scheduling delete for primitive collection '" + baseURI + "'", e);
+        throw new IllegalArgumentException("Error deleting primitive collection", e);
+      }
     }
   }
 

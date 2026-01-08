@@ -20,14 +20,14 @@ package org.apache.olingo.client.core.communication.request;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DecompressingHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.header.ODataHeaders;
 import org.apache.olingo.client.api.communication.request.ODataRequest;
@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
@@ -77,7 +78,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
   /**
    * HTTP client.
    */
-  protected HttpClient httpClient;
+  protected CloseableHttpClient httpClient;
 
   /**
    * HTTP request.
@@ -267,6 +268,8 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
       this.request.abort();
       EntityUtils.consumeQuietly(httpEntity);
       throw new HttpClientException(e);
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
     }
   }
 
@@ -275,7 +278,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
    *
    * @return HttpReponse object.
    */
-  protected HttpResponse doExecute() {
+  protected ClassicHttpResponse doExecute() throws URISyntaxException, IOException {
     checkRequest(odataClient, request);
 
     // Set Content-Type and Accept headers with default values, if not yet set
@@ -297,19 +300,19 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     }
 
     if (LOG.isDebugEnabled()) {
-      for (Header header : request.getAllHeaders()) {
+      for (Header header : request.getHeaders()) {
         LOG.debug("HTTP header being sent: " + header);
       }
     }
 
-    HttpResponse response;
+      ClassicHttpResponse response;
     try {
       response = httpClient.execute(request);
     } catch (IOException e) {
-      throw new HttpClientException(request.getURI().toASCIIString(), e);
+      throw new HttpClientException(request.getUri().toASCIIString(), e);
     } catch (RuntimeException e) {
       request.abort();
-      throw new HttpClientException(request.getURI().toASCIIString(), e);
+      throw new HttpClientException(request.getUri().toASCIIString(), e);
     }
 
     try {
@@ -323,7 +326,7 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     return response;
   }
 
-  private void closeHttpResponse(HttpResponse response) {
+  private void closeHttpResponse(ClassicHttpResponse response) {
     if (response instanceof CloseableHttpResponse) {
       try {
         ((CloseableHttpResponse) response).close();
@@ -346,24 +349,31 @@ public abstract class AbstractODataRequest extends AbstractRequest implements OD
     for (Class<?> clazz : this.getClass().getDeclaredClasses()) {
       if (ODataResponse.class.isAssignableFrom(clazz)) {
         try {
-          final Constructor<?> constructor = clazz.getDeclaredConstructor(
-              this.getClass(), ODataClient.class, HttpClient.class, HttpResponse.class);
-          constructor.setAccessible(true);
-          return (V) constructor.newInstance(this, odataClient, httpClient, null);
-        } catch (Exception e) {
-          LOG.error("Error retrieving response class template instance", e);
-        }
-      }
-    }
+          for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+            final Class<?>[] params = constructor.getParameterTypes();
+            if (params.length == 4 && params[0] == this.getClass()
+                && params[1].isAssignableFrom(ODataClient.class)
+                && HttpClient.class.isAssignableFrom(params[2])
+                && ClassicHttpResponse.class.isAssignableFrom(params[3])) {
+              constructor.setAccessible(true);
+              return (V) constructor.newInstance(this, odataClient, httpClient, null);
+            }
+          }
+         } catch (Exception e) {
+           LOG.error("Error retrieving response class template instance", e);
+         }
+       }
+     }
 
     throw new IllegalStateException("No response class template has been found");
   }
 
-  private HttpClient getHttpClient(final HttpMethod method, final URI uri) {
-    HttpClient client = odataClient.getConfiguration().getHttpClientFactory().create(method, uri);
-    if (odataClient.getConfiguration().isGzipCompression()) {
-      client = new DecompressingHttpClient(client);
-    }
-    return client;
+  private CloseableHttpClient getHttpClient(final HttpMethod method, final URI uri) {
+      CloseableHttpClient client =
+              (CloseableHttpClient) odataClient.getConfiguration().getHttpClientFactory().create(method, uri);
+
+      // HttpClient 5.x handles gzip automatically via interceptors
+      return client;
   }
 }
+

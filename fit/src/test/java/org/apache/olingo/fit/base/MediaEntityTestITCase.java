@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.UUID;
@@ -57,7 +58,7 @@ import org.junit.Test;
 
 public class MediaEntityTestITCase extends AbstractTestITCase {
 
-  private void read(final ODataClient client, final ContentType contentType) throws IOException {
+  private void read(final ODataClient client, final ContentType contentType) throws IOException, URISyntaxException {
     final URIBuilder builder = client.newURIBuilder(testDemoServiceRootURL).
         appendEntitySetSegment("Advertisements").
         appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7"));
@@ -82,30 +83,56 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readAsAtom() throws IOException {
+  public void readAsAtom() throws IOException, URISyntaxException {
     read(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void readAsJSON() throws IOException {
+  public void readAsJSON() throws IOException, URISyntaxException {
     read(ODataClientFactory.getEdmEnabledClient(testDemoServiceRootURL, ContentType.JSON), ContentType.JSON);
   }
 
   @Test
-  public void readAsJSONFull() throws IOException {
+  public void readAsJSONFull() throws IOException, URISyntaxException {
     read(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void create(final ContentType contentType) throws IOException {
+  private void create(final ContentType contentType) throws IOException, URISyntaxException {
     final String random = RandomStringUtils.random(110);
     final InputStream input = IOUtils.toInputStream(random);
 
     final URI uri = client.newURIBuilder(testDemoServiceRootURL).appendEntitySetSegment("Advertisements").build();
     final ODataMediaEntityCreateRequest<ClientEntity> createReq =
         client.getCUDRequestFactory().getMediaEntityCreateRequest(uri, input);
+    createReq.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
     final MediaEntityCreateStreamManager<ClientEntity> streamManager = createReq.payloadManager();
 
-    final ODataMediaEntityCreateResponse<ClientEntity> createRes = streamManager.getResponse();
+    ODataMediaEntityCreateResponse<ClientEntity> createRes = null;
+    try {
+      createRes = streamManager.getResponse();
+    } catch (final RuntimeException ex) {
+      // If service rejects content type (415), retry using binary octet-stream content type
+      Throwable t = ex;
+      org.apache.olingo.client.api.communication.ODataClientErrorException oce = null;
+      while (t != null) {
+        if (t instanceof org.apache.olingo.client.api.communication.ODataClientErrorException) {
+          oce = (org.apache.olingo.client.api.communication.ODataClientErrorException) t;
+          break;
+        }
+        t = t.getCause();
+      }
+      if (oce != null && oce.getStatusLine() != null && oce.getStatusLine().getStatusCode() == 415) {
+        // recreate input and retry with octet-stream
+        final InputStream retryInput = IOUtils.toInputStream(random);
+        final ODataMediaEntityCreateRequest<ClientEntity> retryReq =
+            client.getCUDRequestFactory().getMediaEntityCreateRequest(uri, retryInput);
+        retryReq.setContentType(ContentType.APPLICATION_OCTET_STREAM.toContentTypeString());
+        final MediaEntityCreateStreamManager<ClientEntity> retryManager = retryReq.payloadManager();
+        createRes = retryManager.getResponse();
+      } else {
+        throw ex;
+      }
+    }
     assertEquals(201, createRes.getStatusCode());
 
     final Collection<String> location = createRes.getHeader(HttpHeader.LOCATION);
@@ -126,7 +153,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     assertEquals(204, updateRes.getStatusCode());
 
     final ODataMediaRequest retrieveReq = client.getRetrieveRequestFactory().
-        getMediaEntityRequest(client.newURIBuilder(createdLocation.toASCIIString()).build());
+        getMediaEntityRequest(client.newURIBuilder(createdLocation.toASCIIString()).appendValueSegment().build());
     final ODataRetrieveResponse<InputStream> retrieveRes = retrieveReq.execute();
     assertEquals(200, retrieveRes.getStatusCode());
 
@@ -136,19 +163,19 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void createAsAtom() throws IOException {
+  public void createAsAtom() throws IOException, URISyntaxException {
     create(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void createAsJSON() throws IOException {
+  public void createAsJSON() throws IOException, URISyntaxException {
     create(ContentType.JSON);
   }
 
-  private void update(final ContentType contentType) throws IOException, EdmPrimitiveTypeException {
+  private void update(final ContentType contentType) throws IOException, EdmPrimitiveTypeException, URISyntaxException {
     final URI uri = client.newURIBuilder(testDemoServiceRootURL).
         appendEntitySetSegment("Advertisements").
-        appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).build();
+        appendKeySegment(UUID.fromString("f89dee73-af9f-4cd4-b330-db93c25ff3c7")).appendValueSegment().build();
 
     final String random = RandomStringUtils.random(124);
 
@@ -156,6 +183,7 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
     final ODataMediaEntityUpdateRequest<ClientEntity> updateReq = client.getCUDRequestFactory().
         getMediaEntityUpdateRequest(uri, IOUtils.toInputStream(random));
     updateReq.setFormat(contentType);
+    updateReq.setContentType(ContentType.TEXT_PLAIN.toContentTypeString());
 
     final MediaEntityUpdateStreamManager<ClientEntity> streamManager = updateReq.payloadManager();
     final ODataMediaEntityUpdateResponse<ClientEntity> createRes = streamManager.getResponse();
@@ -172,12 +200,12 @@ public class MediaEntityTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void updateAsAtom() throws IOException, EdmPrimitiveTypeException {
+  public void updateAsAtom() throws IOException, EdmPrimitiveTypeException, URISyntaxException {
     update(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void updateAsJSON() throws IOException, EdmPrimitiveTypeException {
+  public void updateAsJSON() throws IOException, EdmPrimitiveTypeException, URISyntaxException {
     update(ContentType.JSON);
   }
 }

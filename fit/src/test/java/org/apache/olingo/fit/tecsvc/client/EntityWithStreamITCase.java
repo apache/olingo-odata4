@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +58,7 @@ public class EntityWithStreamITCase extends AbstractParamTecSvcITCase {
   }  
   
   @Test
-  public void readEntitySetWithStreamProperty() {
+  public void readEntitySetWithStreamProperty() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESWithStream").build());    

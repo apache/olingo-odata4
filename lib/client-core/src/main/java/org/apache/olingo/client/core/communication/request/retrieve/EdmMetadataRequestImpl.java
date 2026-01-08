@@ -18,10 +18,12 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.EdmMetadataRequest;
 import org.apache.olingo.client.api.communication.request.retrieve.XMLMetadataRequest;
@@ -43,7 +45,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
     this.serviceRoot = serviceRoot;
   }
 
-  private EdmMetadataResponseImpl getPrivateResponse() {
+  private EdmMetadataResponseImpl getPrivateResponse() throws URISyntaxException, IOException {
     if (privateResponse == null) {
       XMLMetadataRequest request = odataClient.getRetrieveRequestFactory().getXMLMetadataRequest(serviceRoot);
       if (getPrefer() != null) {
@@ -68,12 +70,12 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
   }
 
   @Override
-  public XMLMetadata getXMLMetadata() {
+  public XMLMetadata getXMLMetadata() throws URISyntaxException, IOException {
     return getPrivateResponse().getXMLMetadata();
   }
 
   @Override
-  public ODataRetrieveResponse<Edm> execute() {
+  public ODataRetrieveResponse<Edm> execute() throws URISyntaxException, IOException {
     return getPrivateResponse();
   }
 
@@ -83,7 +85,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
 
     private XMLMetadata metadata = null;
 
-    private EdmMetadataResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
+    private EdmMetadataResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
         final ODataRetrieveResponse<XMLMetadata> xmlMetadataResponse) {
 
       super(odataClient, httpClient, null);
@@ -91,7 +93,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
       super.close();
       xmlMetadataResponse.close();
     }
@@ -116,7 +118,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
       return xmlMetadataResponse.getHeader(name);
     }
 
-    public XMLMetadata getXMLMetadata() {
+    public XMLMetadata getXMLMetadata() throws IOException {
       if (metadata == null) {
         try {
           metadata = xmlMetadataResponse.getBody();
@@ -128,7 +130,7 @@ class EdmMetadataRequestImpl extends AbstractMetadataRequestImpl<Edm> implements
     }
 
     @Override
-    public Edm getBody() {
+    public Edm getBody() throws IOException {
       return odataClient.getReader().readMetadata(getXMLMetadata().getSchemaByNsOrAlias());
     }
   }

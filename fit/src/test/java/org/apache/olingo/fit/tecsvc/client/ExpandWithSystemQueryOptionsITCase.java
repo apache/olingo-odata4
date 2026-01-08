@@ -22,7 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -49,7 +51,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   private static final String PROPERTY_STRING = "PropertyString";
 
   @Test
-  public void filter() {
+  public void filter() throws IOException, URISyntaxException {
     final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
             Collections.singletonMap(QueryOption.FILTER, (Object) "PropertyString eq '2'"));
@@ -86,7 +88,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   @Test
-  public void orderBy() {
+  public void orderBy() throws URISyntaxException, IOException {
     final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
             Collections.<QueryOption, Object> singletonMap(QueryOption.ORDERBY, "PropertyString desc"));
@@ -114,7 +116,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   @Test
-  public void skip() {
+  public void skip() throws IOException, URISyntaxException {
     final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_KEY_NAV, NAV_PROPERTY_ET_KEY_NAV_MANY,
             Collections.singletonMap(QueryOption.SKIP, (Object) "1"));
@@ -143,7 +145,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   @Test
-  public void top() {
+  public void top() throws URISyntaxException, IOException {
     final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_KEY_NAV, NAV_PROPERTY_ET_KEY_NAV_MANY,
             Collections.<QueryOption, Object> singletonMap(QueryOption.TOP, "1"));
@@ -172,7 +174,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   @Test
-  public void combinedSystemQueryOptions() {
+  public void combinedSystemQueryOptions() throws URISyntaxException, IOException {
     Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
     options.put(QueryOption.SELECT, "PropertyInt16,PropertyString");
     options.put(QueryOption.FILTER, "PropertyInt16 eq 1");
@@ -324,7 +326,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }  
   
   @Test
-  public void singleEntityWithExpand() {
+  public void singleEntityWithExpand() throws URISyntaxException, IOException {
     /* A single entity request will be dispatched to a different processor method than entity set request */
     final ODataClient client = getEdmEnabledClient();
     Map<String, Object> keys = new HashMap<String, Object>();
@@ -346,7 +348,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   @Test
-  public void URIEscaping() {
+  public void URIEscaping() throws IOException, URISyntaxException {
     final ODataRetrieveResponse<ClientEntitySet> response =
         buildRequest(ES_TWO_KEY_NAV, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY,
             Collections.<QueryOption, Object> singletonMap(QueryOption.FILTER,
@@ -360,7 +362,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   @Test
-  public void cyclicExpand() {
+  public void cyclicExpand() throws URISyntaxException, IOException {
     // Expand entity in the following order
     // 1 => 2 => 1
     // Entity with Key (PropertyInt16=1, PrroperyString='1') holds references to (PropertyInt16=1, PropertyString='1')
@@ -425,7 +427,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   @Test
-  public void systemQueryOptionOnThirdLevel() {
+  public void systemQueryOptionOnThirdLevel() throws IOException, URISyntaxException {
     final ODataClient client = getEdmEnabledClient();
     Map<QueryOption, Object> options = new EnumMap<QueryOption, Object>(QueryOption.class);
     options.put(QueryOption.EXPAND, NAV_PROPERTY_ET_TWO_KEY_NAV_MANY
@@ -500,6 +502,10 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
       request.execute();
     } catch(ODataServerErrorException e) {
       assertEquals("HTTP/1.1 501 Not Implemented", e.getMessage());
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
  
@@ -571,7 +577,7 @@ public class ExpandWithSystemQueryOptionsITCase extends AbstractParamTecSvcITCas
   }
 
   private ODataRetrieveResponse<ClientEntitySet> buildRequest(final String entitySet, final String navigationProperty,
-      final Map<QueryOption, Object> expandOptions) {
+      final Map<QueryOption, Object> expandOptions) throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(entitySet)
         .expandWithOptions(navigationProperty, expandOptions)
         .build();

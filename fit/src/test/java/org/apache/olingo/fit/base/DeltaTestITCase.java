@@ -30,9 +30,12 @@ import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class DeltaTestITCase extends AbstractTestITCase {
 
-  private void parse(final ContentType format) {
+  private void parse(final ContentType format) throws URISyntaxException, IOException {
     final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
         client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
     req.setPrefer(client.newPreferences().trackChanges());
@@ -75,12 +78,12 @@ public class DeltaTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void atomParse() {
+  public void atomParse() throws URISyntaxException, IOException {
     parse(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void jsonParse() {
+  public void jsonParse() throws URISyntaxException, IOException {
     parse(ContentType.JSON);
   }
 }

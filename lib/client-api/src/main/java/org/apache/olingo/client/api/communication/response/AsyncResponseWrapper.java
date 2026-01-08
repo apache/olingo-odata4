@@ -18,7 +18,9 @@
  */
 package org.apache.olingo.client.api.communication.response;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public interface AsyncResponseWrapper<R extends ODataResponse> {
 
@@ -34,7 +36,7 @@ public interface AsyncResponseWrapper<R extends ODataResponse> {
    *
    * @return 'TRUE' the process has been terminated; 'FALSE' otherwise.
    */
-  boolean isDone();
+  boolean isDone() throws IOException;
 
   /**
    * Gets the real response.
@@ -46,7 +48,7 @@ public interface AsyncResponseWrapper<R extends ODataResponse> {
    *
    * @return real OData response.
    */
-  R getODataResponse();
+  R getODataResponse() throws IOException;
 
   /**
    * Specifies the location for the next monitor check.
@@ -64,7 +66,7 @@ public interface AsyncResponseWrapper<R extends ODataResponse> {
    *
    * @return OData delete response.
    */
-  ODataDeleteResponse delete();
+  ODataDeleteResponse delete() throws URISyntaxException, IOException;
 
   /**
    * A client can request that the DELETE should be executed asynchronously. A 202 Accepted response indicates that the

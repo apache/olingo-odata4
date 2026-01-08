@@ -29,13 +29,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseFactory;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.DefaultHttpResponseFactory;
-import org.apache.http.message.BasicStatusLine;
 import org.apache.olingo.client.api.Configuration;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.ODataBatchableRequest;
@@ -51,6 +44,10 @@ import org.apache.olingo.client.core.communication.request.invoke.ODataInvokeReq
 import org.apache.olingo.commons.api.http.HttpHeader;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.junit.Test;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 
 public class AsyncRequestWrapperTest {
 
@@ -92,7 +89,7 @@ public class AsyncRequestWrapperTest {
   private AsyncRequestWrapperImpl createAsyncRequestWrapperImplWithRetryAfter(int retryAfter)
       throws IOException, URISyntaxException {
 
-    HttpClient httpClient = mock(HttpClient.class);
+    CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
     ODataClient oDataClient = mock(ODataClient.class);
     Configuration configuration = mock(Configuration.class);
     HttpClientFactory httpClientFactory = mock(HttpClientFactory.class);
@@ -105,18 +102,26 @@ public class AsyncRequestWrapperTest {
     when(httpClientFactory.create(any(), any())).thenReturn(httpClient);
     when(httpUriRequestFactory.create(any(), any())).thenReturn(httpUriRequest);
 
-    HttpResponseFactory factory = new DefaultHttpResponseFactory();
-    HttpResponse firstResponse = factory.newHttpResponse(
-        new BasicStatusLine(HttpVersion.HTTP_1_1, 202, null), null);
-    firstResponse.addHeader(HttpHeader.LOCATION, "http://localhost/monitor");
-    firstResponse.addHeader(HttpHeader.RETRY_AFTER, String.valueOf(retryAfter));
+    final org.apache.hc.client5.http.impl.classic.CloseableHttpResponse firstResponse =
+        mock(org.apache.hc.client5.http.impl.classic.CloseableHttpResponse.class);
+    when(firstResponse.getCode()).thenReturn(202);
+    when(firstResponse.getHeaders(HttpHeader.LOCATION)).thenReturn(new org.apache.hc.core5.http.Header[] {
+        new org.apache.hc.core5.http.message.BasicHeader(HttpHeader.LOCATION, "http://localhost/monitor")
+    });
+    when(firstResponse.getHeaders(HttpHeader.RETRY_AFTER)).thenReturn(new org.apache.hc.core5.http.Header[] {
+        new org.apache.hc.core5.http.message.BasicHeader(HttpHeader.RETRY_AFTER, String.valueOf(retryAfter))
+    });
     when(httpClient.execute(any(HttpUriRequest.class))).thenReturn(firstResponse);
 
     AbstractODataRequest oDataRequest = mock(AbstractODataRequest.class);
     ODataResponse oDataResponse = mock(ODataResponse.class);
+    // Ensure the mocked request has basic non-null properties used by AsyncRequestWrapperImpl
+    when(oDataRequest.getMethod()).thenReturn(org.apache.olingo.commons.api.http.HttpMethod.GET);
+    when(oDataRequest.getAccept()).thenReturn("application/json");
+    when(oDataRequest.getHeaderNames()).thenReturn(new java.util.ArrayList<>());
     when(oDataRequest.getResponseTemplate()).thenReturn(oDataResponse);
     when(oDataRequest.getURI()).thenReturn(new URI("http://localhost/path"));
-    when(oDataResponse.initFromHttpResponse(any(HttpResponse.class))).thenReturn(null);
+    when(oDataResponse.initFromHttpResponse(any(ClassicHttpResponse.class))).thenReturn(null);
 
     return new AsyncRequestWrapperImpl(oDataClient, oDataRequest);
   }
@@ -181,7 +186,7 @@ public class AsyncRequestWrapperTest {
   private AsyncResponseWrapperImpl createAsyncRequestWrapperImplWithLocation(String target, String location)
       throws IOException, URISyntaxException {
 
-    HttpClient httpClient = mock(HttpClient.class);
+    CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
     ODataClient oDataClient = mock(ODataClient.class);
     Configuration configuration = mock(Configuration.class);
     HttpClientFactory httpClientFactory = mock(HttpClientFactory.class);
@@ -194,18 +199,27 @@ public class AsyncRequestWrapperTest {
     when(httpClientFactory.create(any(), any())).thenReturn(httpClient);
     when(httpUriRequestFactory.create(any(), any())).thenReturn(httpUriRequest);
 
-    HttpResponseFactory factory = new DefaultHttpResponseFactory();
-    HttpResponse firstResponse = factory.newHttpResponse(
-        new BasicStatusLine(HttpVersion.HTTP_1_1, 202, null), null);
-    firstResponse.addHeader(HttpHeader.LOCATION, location);
+    final org.apache.hc.client5.http.impl.classic.CloseableHttpResponse firstResponse =
+        mock(org.apache.hc.client5.http.impl.classic.CloseableHttpResponse.class);
+    when(firstResponse.getCode()).thenReturn(202);
+    when(firstResponse.getHeaders(HttpHeader.LOCATION)).thenReturn(new org.apache.hc.core5.http.Header[] {
+        new org.apache.hc.core5.http.message.BasicHeader(HttpHeader.LOCATION, location)
+    });
     when(httpClient.execute(any(HttpUriRequest.class))).thenReturn(firstResponse);
 
     ODataResponse oDataResponse = mock(ODataResponse.class);
-    when(oDataResponse.initFromHttpResponse(any(HttpResponse.class))).thenReturn(null);
+    when(oDataResponse.initFromHttpResponse(any(ClassicHttpResponse.class))).thenReturn(null);
 
-    AbstractODataRequest oDataRequest = mock(AbstractODataRequest.class);
+    // Use AbstractODataBasicRequest so we can safely stub getPayload() without ClassCastException
+    AbstractODataBasicRequest<?> oDataRequest = mock(AbstractODataBasicRequest.class);
     when(oDataRequest.getURI()).thenReturn(new URI(target));
     when(oDataRequest.getResponseTemplate()).thenReturn(oDataResponse);
+    // Provide basic required values to avoid NPEs in AsyncRequestWrapperImpl
+    when(oDataRequest.getMethod()).thenReturn(org.apache.olingo.commons.api.http.HttpMethod.GET);
+    when(oDataRequest.getAccept()).thenReturn("application/json");
+    when(oDataRequest.getHeaderNames()).thenReturn(new java.util.ArrayList<>());
+    // ensure payload is null so InputStreamEntity isn't created unexpectedly
+    when(oDataRequest.getPayload()).thenReturn(null);
 
     AsyncRequestWrapperImpl req = new AsyncRequestWrapperImpl(oDataClient, oDataRequest);
     AsyncResponseWrapper wrappedResponse = req.execute();

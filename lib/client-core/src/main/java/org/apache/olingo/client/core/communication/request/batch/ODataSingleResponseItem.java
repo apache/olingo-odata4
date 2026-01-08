@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.core.communication.request.batch;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -86,7 +87,7 @@ public class ODataSingleResponseItem extends AbstractODataBatchResponseItem {
   }
 
   @Override
-  public void close() {
+  public void close() throws IOException {
     super.close();
     if (current != null && !(current instanceof AsyncResponseImpl) && !(current instanceof ODataBatchErrorResponse)) {
       current.close();

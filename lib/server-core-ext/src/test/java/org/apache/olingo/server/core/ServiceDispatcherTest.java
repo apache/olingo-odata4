@@ -33,15 +33,17 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.olingo.commons.api.http.HttpMethod;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.olingo.server.api.OData;
@@ -124,14 +126,15 @@ public class ServiceDispatcherTest {
   }
   
   private HttpResponse httpGET(String url) throws Exception{
-    HttpRequest request = new HttpGet(url);
+      ClassicHttpRequest request = new HttpGet(url);
     return httpSend(request);
   }
 
-  private HttpResponse httpSend(HttpRequest request) throws Exception{
-    DefaultHttpClient http = new DefaultHttpClient();
-    HttpResponse response = http.execute(getLocalhost(), request);
-    return response;
+  private HttpResponse httpSend(ClassicHttpRequest request) throws Exception{
+      try (CloseableHttpClient http = HttpClients.createDefault()) {
+          // Assuming getLocalhost() returns an HttpHost
+          return http.execute(getLocalhost(), request);
+      }
   }
   
   private void helpGETTest(ServiceHandler handler, String path, TestResult validator)
@@ -145,10 +148,10 @@ public class ServiceDispatcherTest {
       TestResult validator) throws Exception {
     beforeTest(handler);
 
-    DefaultHttpClient http = new DefaultHttpClient();
+    CloseableHttpClient http = HttpClients.createDefault();
     
     String editUrl = "http://localhost:" + TOMCAT_PORT + "/" + path;
-    HttpRequest request = new HttpGet(editUrl);
+      ClassicHttpRequest request = new HttpGet(editUrl);
     if (method.equals("POST")) {
       HttpPost post = new HttpPost(editUrl);
       post.setEntity(new StringEntity(payload));

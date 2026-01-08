@@ -18,11 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.request.retrieve;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataValueRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -53,8 +56,8 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ClientPr
   }
 
   @Override
-  public ODataRetrieveResponse<ClientPrimitiveValue> execute() {
-    final HttpResponse res = doExecute();
+  public ODataRetrieveResponse<ClientPrimitiveValue> execute() throws URISyntaxException, IOException {
+    final ClassicHttpResponse res = doExecute();
     return new ODataValueResponseImpl(odataClient, httpClient, res);
   }
 
@@ -65,14 +68,14 @@ public class ODataValueRequestImpl extends AbstractODataRetrieveRequest<ClientPr
 
     private ClientPrimitiveValue value = null;
 
-    private ODataValueResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+    private ODataValueResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
 
     @Override
-    public ClientPrimitiveValue getBody() {
+    public ClientPrimitiveValue getBody() throws IOException {
       if (value == null) {
         final ContentType contentType = ContentType.parse(getContentType());
 

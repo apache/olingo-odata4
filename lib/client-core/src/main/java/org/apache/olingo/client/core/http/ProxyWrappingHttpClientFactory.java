@@ -18,14 +18,17 @@
  */
 package org.apache.olingo.client.core.http;
 
+import java.io.IOException;
 import java.net.URI;
 
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.olingo.client.api.http.WrappingHttpClientFactory;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
@@ -72,25 +75,29 @@ public class ProxyWrappingHttpClientFactory implements WrappingHttpClientFactory
   @Override
   public HttpClient create(final HttpMethod method, final URI uri) {
     // Use wrapped factory to obtain an httpclient instance for given method and uri
-    final DefaultHttpClient httpclient = wrapped.create(method, uri);
+      CloseableHttpClient baseClient = wrapped.create(method, uri);
 
     final HttpHost proxyHost = new HttpHost(proxy.getHost(), proxy.getPort());
-
-    // Sets usage of HTTP proxy
-    httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+    CredentialsProvider credentialsProvider = null;
 
     // Sets proxy authentication, if credentials were provided
     if (proxyUsername != null && proxyPassword != null) {
-      httpclient.getCredentialsProvider().setCredentials(
-              new AuthScope(proxyHost),
-              new UsernamePasswordCredentials(proxyUsername, proxyPassword));
+        BasicCredentialsProvider provider = new BasicCredentialsProvider();
+        provider.setCredentials(new AuthScope(proxyHost),
+              new UsernamePasswordCredentials(proxyUsername, proxyPassword.toCharArray()));
+        credentialsProvider = provider;
     }
 
-    return httpclient;
+      // Build a new immutable HttpClient with proxy settings
+      return HttpClients.custom()
+              .setProxy(proxyHost)
+              .setDefaultCredentialsProvider(credentialsProvider)
+              .setConnectionManagerShared(true)
+              .build();
   }
 
   @Override
-  public void close(final HttpClient httpClient) {
+  public void close(final CloseableHttpClient httpClient) throws IOException {
     wrapped.close(httpClient);
   }
 

@@ -21,7 +21,9 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -50,7 +52,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
 
   
   @Test
-  public void useFilterFactory() {
+  public void useFilterFactory() throws URISyntaxException, IOException {
     final URIFilter filter = getFilterFactory().eq(
         getFilterArgFactory().property("PropertyInt16"), getFilterArgFactory().literal(new Integer(0)));
 
@@ -77,7 +79,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
 
   
   @Test
-  public void timeOfDayLiteral() {
+  public void timeOfDayLiteral() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyTimeOfDay eq 03:26:05");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -86,7 +88,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void booleanLiteral() {
+  public void booleanLiteral() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyBoolean eq false");
     assertEquals(3, response.getBody().getEntities().size());
 
@@ -103,7 +105,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dateLiteral() {
+  public void dateLiteral() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "PropertyDate eq 2012-12-03");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -112,7 +114,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dateTimeOffsetLiteral() {
+  public void dateTimeOffsetLiteral() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:23Z");
     assertEquals(1, result.getBody().getEntities().size());
@@ -122,7 +124,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void int64Literal() {
+  public void int64Literal() throws IOException, URISyntaxException {
     long value = Integer.MAX_VALUE + 1L;
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 gt " + value);
@@ -133,7 +135,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void doubleLiteral() {
+  public void doubleLiteral() throws IOException, URISyntaxException {
     Double value = -17900000000000000000.0;
 
     ODataRetrieveResponse<ClientEntitySet> result =
@@ -145,7 +147,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void simpleEq() {
+  public void simpleEq() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq 1");
 
     assertEquals(2, result.getBody().getEntities().size());
@@ -159,7 +161,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void binaryIntegerOperations() {
+  public void binaryIntegerOperations() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add 1 eq (1 sub 3) div 2 mul 3 add 7");
 
@@ -170,7 +172,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void clientEscaping() {
+  public void clientEscaping() throws IOException, URISyntaxException {
     final String filter = getClient().getFilterFactory().eq(
         getClient().getFilterFactory().getArgFactory().property("PropertyString"),
         getClient().getFilterFactory().getArgFactory().literal("First Resource - positive values")).build();
@@ -192,7 +194,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void stringProperty() {
+  public void stringProperty() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2'");
 
     assertEquals(1, result.getBody().getEntities().size());
@@ -201,7 +203,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void booleanOperator() {
+  public void booleanOperator() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyString eq '2' and PropertyInt16 eq 1");
     assertEquals(1, result.getBody().getEntities().size());
@@ -224,7 +226,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void booleanOperatorWithNull() {
+  public void booleanOperatorWithNull() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq null");
     assertEquals(0, result.getBody().getEntities().size());
 
@@ -236,7 +238,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void unaryWithNullLiterals() {
+  public void unaryWithNullLiterals() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "PropertyComp/PropertyComp/PropertyBoolean eq not null");
     assertEquals(0, result.getBody().getEntities().size());
@@ -252,7 +254,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void methodCallsWithNull() {
+  public void methodCallsWithNull() throws IOException, URISyntaxException {
     // One representative of "stringFuntion" "residue class"
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "endswith(PropertyString,null) eq null"); // null eq null => true
@@ -271,7 +273,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void substringWithNegativeValues() {
+  public void substringWithNegativeValues() throws IOException, URISyntaxException {
     // See OASIS JIRA ODATA-781
 
     // -1 should be treated as 0
@@ -301,7 +303,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void numericBinaryOperationWithNullValues() {
+  public void numericBinaryOperationWithNullValues() throws IOException, URISyntaxException {
     // Create new Entries
     final String filterString = "PropertyString eq null";
 
@@ -326,7 +328,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void numericComparisonOperators() {
+  public void numericComparisonOperators() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 ge 1");
     assertEquals(4, result.getBody().getEntities().size());
 
@@ -353,7 +355,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void binaryOperationIntegerDecimalWithPromotion() {
+  public void binaryOperationIntegerDecimalWithPromotion() throws IOException, URISyntaxException {
     String filterString = ""
         + "PropertyInt16 mod 2 eq " // Choose mod 2 == 1 => { 1, 3, .. }
         + "(((5 sub 1) div 5) " // Integer Division 4 / 5 == 0
@@ -385,7 +387,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void notOperator() {
+  public void notOperator() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "not (PropertyInt16 eq 1)");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -399,7 +401,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void unaryMinusOperator() {
+  public void unaryMinusOperator() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt -2 add --3");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -413,7 +415,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void unaryMinusOperatorDecimal() {
+  public void unaryMinusOperatorDecimal() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 gt -2.0 add --3.0");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -427,25 +429,25 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void stringPropertyEqualsNull() {
+  public void stringPropertyEqualsNull() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyString eq null");
     assertEquals(0, result.getBody().getEntities().size());
   }
 
   @Test
-  public void addNullLiteral() {
+  public void addNullLiteral() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add null eq 1");
     assertEquals(0, result.getBody().getEntities().size());
   }
 
   @Test
-  public void addNullLiteralEqualsNull() {
+  public void addNullLiteralEqualsNull() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 add null eq null");
     assertEquals(4, result.getBody().getEntities().size());
   }
 
   @Test
-  public void substringStartAndEndGiven() {
+  public void substringStartAndEndGiven() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "substring(PropertyString,length('First') add 1,8) eq ('Resource')");
 
@@ -456,7 +458,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void substringStartGiven() {
+  public void substringStartGiven() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_TWO_KEY_NAV, "substring(PropertyComp/PropertyComp/PropertyString,6) eq 'Value'");
 
@@ -487,7 +489,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void yearFunctionDate() {
+  public void yearFunctionDate() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "year(PropertyDate) eq 2015");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -496,7 +498,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void yearFunctionDateTimeOffset() {
+  public void yearFunctionDateTimeOffset() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "year(PropertyDateTimeOffset) eq 2012");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -505,7 +507,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void monthFunctionDateTimeOffset() {
+  public void monthFunctionDateTimeOffset() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDateTimeOffset) eq 12");
     assertEquals(4, result.getBody().getEntities().size());
 
@@ -520,7 +522,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void monthFunctionDate() {
+  public void monthFunctionDate() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "month(PropertyDate) eq 11");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -529,7 +531,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dayFunctionDateTimeOffset() {
+  public void dayFunctionDateTimeOffset() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDateTimeOffset) eq 3");
     assertEquals(4, result.getBody().getEntities().size());
 
@@ -544,7 +546,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dayFunctionDate() {
+  public void dayFunctionDate() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "day(PropertyDate) eq 5");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -553,7 +555,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void hourFunctionDateTimeOffset() {
+  public void hourFunctionDateTimeOffset() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "hour(PropertyDateTimeOffset) eq 7");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -565,7 +567,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void hourFunctionTimeOfDay() {
+  public void hourFunctionTimeOfDay() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "hour(PropertyTimeOfDay) eq 3");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -574,7 +576,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void minuteFunctionDateTimeOffset() {
+  public void minuteFunctionDateTimeOffset() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "minute(PropertyDateTimeOffset) eq 17");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -583,7 +585,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void minuteFunctionTimeOfDay() {
+  public void minuteFunctionTimeOfDay() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "minute(PropertyTimeOfDay) eq 49");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -592,7 +594,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void secondFunctionDateTimeOffset() {
+  public void secondFunctionDateTimeOffset() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "second(PropertyDateTimeOffset) eq 8");
     assertEquals(1, response.getBody().getEntities().size());
 
@@ -601,7 +603,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void secondFunctionTimeOfDay() {
+  public void secondFunctionTimeOfDay() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "second(PropertyTimeOfDay) eq 14");
     assertEquals(1, response.getBody().getEntities().size());
 
@@ -610,7 +612,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void fractionalsecondsDateTimeOffset() {
+  public void fractionalsecondsDateTimeOffset() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_COMP_ALL_PRIM, "fractionalseconds(PropertyComp/PropertyDateTimeOffset) eq 0.1234567");
     assertEquals(2, response.getBody().getEntities().size());
@@ -625,14 +627,14 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void fractionalsecondsDateOfTime() {
+  public void fractionalsecondsDateOfTime() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "fractionalseconds(PropertyTimeOfDay) eq 0");
     assertEquals(4, response.getBody().getEntities().size());
   }
 
   @Test
-  public void dateTimeFunctionsNull() {
+  public void dateTimeFunctionsNull() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response;
 
     response = sendRequest(ES_ALL_PRIM, "year(null) eq null");
@@ -655,7 +657,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void floor() {
+  public void floor() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq floor(3.8)");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -672,7 +674,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void ceiling() {
+  public void ceiling() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq ceiling(2.1)");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -689,7 +691,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void round() {
+  public void round() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_TWO_KEY_NAV, "PropertyInt16 eq round(2.5)");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -720,7 +722,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void endsWith() {
+  public void endsWith() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "endswith(PropertyString,'values')");
     assertEquals(2, result.getBody().getEntities().size());
 
@@ -732,7 +734,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void indexOf() {
+  public void indexOf() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "indexof(PropertyString,'positive') eq 17");
     assertEquals(1, result.getBody().getEntities().size());
@@ -742,7 +744,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void startsWith() {
+  public void startsWith() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "startswith(PropertyString,'First')");
     assertEquals(1, result.getBody().getEntities().size());
 
@@ -751,7 +753,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void toLower() {
+  public void toLower() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "contains(PropertyString,tolower('POSITIVE'))");
     assertEquals(1, result.getBody().getEntities().size());
@@ -761,7 +763,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void toUpper() {
+  public void toUpper() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "contains(PropertyString,concat(toupper('f'),'irst'))");
     assertEquals(1, result.getBody().getEntities().size());
@@ -771,7 +773,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void trim() {
+  public void trim() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "trim(substring(PropertyString,0,6)) eq 'First'");
     assertEquals(1, result.getBody().getEntities().size());
@@ -781,7 +783,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void decimalDiv() {
+  public void decimalDiv() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyDouble eq 0 sub (358000 div 2)");
     assertEquals(1, result.getBody().getEntities().size());
@@ -791,7 +793,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void numericPromotionToInt64() {
+  public void numericPromotionToInt64() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 eq 0");
     assertEquals(2, result.getBody().getEntities().size());
@@ -801,7 +803,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void castEdm64ToDouble() {
+  public void castEdm64ToDouble() throws IOException, URISyntaxException {
     double value = Float.MAX_VALUE + 1;
     ODataRetrieveResponse<ClientEntitySet> result =
         sendRequest(ES_ALL_PRIM, "PropertyInt64 lt " + value);
@@ -809,7 +811,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dateTimeOffsetAddDuration() {
+  public void dateTimeOffsetAddDuration() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:19Z add duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -819,7 +821,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void durationAddDuration() {
+  public void durationAddDuration() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq duration'PT2S' add duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -829,14 +831,14 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void durationLiteral() {
+  public void durationLiteral() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq duration'P1DT'");
     assertEquals(0, response.getBody().getEntities().size());
   }
 
   @Test
-  public void dateAddDuration() {
+  public void dateAddDuration() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDate eq 2012-12-01 add duration'P1DT27H16M23S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -846,7 +848,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dateTimeOffsetSubDuration() {
+  public void dateTimeOffsetSubDuration() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDateTimeOffset eq 2012-12-03T07:16:27Z sub duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -856,7 +858,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void durationSubDuration() {
+  public void durationSubDuration() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration sub duration'PT2S' eq duration'PT4S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -866,7 +868,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dateSubDuration() {
+  public void dateSubDuration() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDate eq 2012-12-03 sub duration'P0DT16H43M37S'");
     assertEquals(1, response.getBody().getEntities().size());
@@ -876,7 +878,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dateSubDate() {
+  public void dateSubDate() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq 2012-12-04 sub 2012-12-04");
     assertEquals(2, response.getBody().getEntities().size());
@@ -886,7 +888,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void dateTimeOffsetSubDateTimeOffset() {
+  public void dateTimeOffsetSubDateTimeOffset() throws URISyntaxException, IOException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyDuration eq 2005-12-03T00:00:00Z sub 2005-12-03T00:00:00Z");
     assertEquals(2, response.getBody().getEntities().size());
@@ -896,7 +898,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void numericPromotion() {
+  public void numericPromotion() throws URISyntaxException, IOException {
     /*
      * The idea is use the largest possible number of a specific type and add a another number to force an
      * implicit conversion to an higher type
@@ -930,7 +932,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void nullComplexProperty() {
+  public void nullComplexProperty() throws URISyntaxException, IOException {
     // Create a new entry.The complex property PropertyCompComp is set to null. So the structure of the property
     // is still there, but filled is null values (primitive types)
     // We define a filter, which returns all entry where PropertyCompComp/PropertyComp/PropertyInt16 is equals to 1
@@ -1005,7 +1007,7 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void comparisonOnStringOperands() {
+  public void comparisonOnStringOperands() throws IOException, URISyntaxException {
     // If check if the expression is true => All entry are returned
     ODataRetrieveResponse<ClientEntitySet> result = sendRequest(ES_ALL_PRIM, "'Tes' lt 'Test'");
     assertEquals(4, result.getBody().getEntities().size());
@@ -1046,12 +1048,13 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
     fail("ESServerSidePaging", "contains(PropertyInt16, 3) eq 'hallo'", HttpStatusCode.BAD_REQUEST);
   }
   
-  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString) {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString)
+          throws URISyntaxException, IOException {
     return sendRequest(entitySet, filterString, null);
   }
 
   private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String filterString,
-      final String cookie) {
+      final String cookie) throws URISyntaxException, IOException {
     final URI uri =
         getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(entitySet)
@@ -1078,11 +1081,15 @@ public class FilterSystemQueryITCase extends AbstractParamTecSvcITCase {
       Assert.fail();
     } catch (ODataClientErrorException e) {
       assertEquals(errorCode.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
   
   @Test
-  public void substringOf() {
+  public void substringOf() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "substringof('Second',PropertyString)");
     assertEquals(1, response.getBody().getEntities().size());

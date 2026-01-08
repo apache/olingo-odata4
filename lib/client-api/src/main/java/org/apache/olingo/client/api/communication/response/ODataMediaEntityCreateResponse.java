@@ -20,6 +20,8 @@ package org.apache.olingo.client.api.communication.response;
 
 import org.apache.olingo.client.api.domain.ClientEntity;
 
+import java.io.IOException;
+
 /**
  * This class implements the response to an OData media entity create request.
  *
@@ -32,5 +34,5 @@ public interface ODataMediaEntityCreateResponse<E extends ClientEntity> extends 
    *
    * @return created object.
    */
-  E getBody();
+  E getBody() throws IOException;
 }

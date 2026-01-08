@@ -26,6 +26,9 @@ import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.client.core.communication.request.invoke.EdmEnabledInvokeRequestFactoryImpl;
 import org.apache.olingo.client.core.uri.URIBuilderImpl;
 import org.apache.olingo.commons.api.edm.Edm;
+import org.apache.olingo.client.api.http.HttpClientException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEnabledODataClient {
 
@@ -54,10 +57,14 @@ public class EdmEnabledODataClientImpl extends ODataClientImpl implements EdmEna
   public Edm getEdm(final String metadataETag) {
     synchronized (this) {
       if (this.edm == null || (metadataETag != null && !metadataETag.equals(this.metadataETag))) {
-        final EdmMetadataRequest metadataReq = getRetrieveRequestFactory().getMetadataRequest(serviceRoot);
-        final ODataRetrieveResponse<Edm> metadataRes = metadataReq.execute();
-        this.metadataETag = metadataRes.getETag();
-        this.edm = metadataRes.getBody();
+          try {
+              final EdmMetadataRequest metadataReq = getRetrieveRequestFactory().getMetadataRequest(serviceRoot);
+              final ODataRetrieveResponse<Edm> metadataRes = metadataReq.execute();
+              this.metadataETag = metadataRes.getETag();
+              this.edm = metadataRes.getBody();
+          } catch (final URISyntaxException | IOException e) {
+              throw new HttpClientException("Failed to retrieve metadata for service root: " + serviceRoot, e);
+          }
       }
     }
     return this.edm;

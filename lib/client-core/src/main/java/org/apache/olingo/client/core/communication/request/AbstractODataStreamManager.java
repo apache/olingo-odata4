@@ -25,7 +25,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.communication.request.ODataPayloadManager;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
 import org.apache.olingo.client.api.http.HttpClientException;
@@ -54,14 +55,14 @@ public abstract class AbstractODataStreamManager<T extends ODataResponse> extend
   /**
    * Wrapper for actual streamed request's future.
    */
-  private final Wrapper<Future<HttpResponse>> futureWrap;
+  private final Wrapper<Future<ClassicHttpResponse>> futureWrap;
 
   /**
    * Constructor.
    *
    * @param futureWrap wrapper of the Future object of the HttpResponse.
    */
-  public AbstractODataStreamManager(final Wrapper<Future<HttpResponse>> futureWrap) {
+  public AbstractODataStreamManager(final Wrapper<Future<ClassicHttpResponse>> futureWrap) {
     this(futureWrap, new PipedOutputStream(null, ConfigurationImpl.DEFAULT_BUFFER_SIZE));
   }
 
@@ -71,7 +72,8 @@ public abstract class AbstractODataStreamManager<T extends ODataResponse> extend
    * @param futureWrap wrapper of the Future object of the HttpResponse.
    * @param output stream to be piped to retrieve the payload.
    */
-  public AbstractODataStreamManager(final Wrapper<Future<HttpResponse>> futureWrap, final PipedOutputStream output) {
+  public AbstractODataStreamManager(final Wrapper<Future<ClassicHttpResponse>> futureWrap,
+                                    final PipedOutputStream output) {
     super(output);
 
     this.futureWrap = futureWrap;
@@ -89,7 +91,7 @@ public abstract class AbstractODataStreamManager<T extends ODataResponse> extend
    * @param futureWrap wrapper of the Future object of the HttpResponse.
    * @param input stream to be used to retrieve the content.
    */
-  public AbstractODataStreamManager(final Wrapper<Future<HttpResponse>> futureWrap, final InputStream input) {
+  public AbstractODataStreamManager(final Wrapper<Future<ClassicHttpResponse>> futureWrap, final InputStream input) {
     super(null);
 
     this.futureWrap = futureWrap;
@@ -120,7 +122,7 @@ public abstract class AbstractODataStreamManager<T extends ODataResponse> extend
    * @param unit time unit.
    * @return HttpResponse.
    */
-  protected HttpResponse getHttpResponse(final long timeout, final TimeUnit unit) {
+  protected ClassicHttpResponse getHttpResponse(final long timeout, final TimeUnit unit) {
     try {
       return futureWrap.getWrapped().get(timeout, unit);
     } catch (Exception e) {

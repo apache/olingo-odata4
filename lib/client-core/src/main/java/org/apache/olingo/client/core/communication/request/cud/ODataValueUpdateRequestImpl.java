@@ -18,13 +18,14 @@
  */
 package org.apache.olingo.client.core.communication.request.cud;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataValueUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataValueUpdateResponse;
@@ -70,9 +71,9 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
   }
 
   @Override
-  public ODataValueUpdateResponse execute() {
+  public ODataValueUpdateResponse execute() throws URISyntaxException, IOException {
     final InputStream input = getPayload();
-    ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
+    request.setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
       return new ODataValueUpdateResponseImpl(odataClient, httpClient, doExecute());
@@ -96,14 +97,14 @@ public class ODataValueUpdateRequestImpl extends AbstractODataBasicRequest<OData
 
     private ClientPrimitiveValue resValue = null;
 
-    private ODataValueUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+    private ODataValueUpdateResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
 
     @Override
-    public ClientPrimitiveValue getBody() {
+    public ClientPrimitiveValue getBody() throws IOException {
       if (resValue == null) {
         final ContentType contentType = ContentType.parse(getAccept());
         

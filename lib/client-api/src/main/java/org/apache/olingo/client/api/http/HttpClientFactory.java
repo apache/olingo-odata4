@@ -18,9 +18,11 @@
  */
 package org.apache.olingo.client.api.http;
 
+import java.io.IOException;
 import java.net.URI;
 
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.olingo.commons.api.http.HttpMethod;
 
 /**
@@ -30,5 +32,5 @@ public interface HttpClientFactory {
 
   HttpClient create(HttpMethod method, URI uri);
 
-  void close(HttpClient httpClient);
+  void close(CloseableHttpClient httpClient) throws IOException;
 }

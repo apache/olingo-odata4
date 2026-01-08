@@ -23,7 +23,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +64,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   private static final String PROPERTY_STRING = "PropertyString";
 
   @Test
-  public void orderBy() {
+  public void orderBy() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendRefSegment()
@@ -72,7 +74,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void orderByReverse() {
+  public void orderByReverse() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendRefSegment()
@@ -82,7 +84,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void navigationToOne() {
+  public void navigationToOne() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(32767)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_ONE).appendRefSegment().build();
@@ -95,7 +97,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void navigationToMany() {
+  public void navigationToMany() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendKeySegment(0)
                           .appendNavigationSegment(NAV_PROPERTY_ET_TWO_PRIM_MANY).orderBy(PROPERTY_INT16)
@@ -105,7 +107,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void filter() {
+  public void filter() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendRefSegment()
                           .filter("PropertyDecimal eq 34").build();
@@ -114,7 +116,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void count() {
+  public void count() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM).appendRefSegment().count(true).build();
     
@@ -126,7 +128,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void skip() {
+  public void skip() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendRefSegment()
@@ -136,7 +138,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void serverDrivenPaging() {
+  public void serverDrivenPaging() throws URISyntaxException, IOException {
     URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_SERVER_SIDE_PAGING)
                           .appendRefSegment().build();
@@ -177,11 +179,13 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
             .execute();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException e) {
+      fail("Unexpected exception while executing responseNonExistingEntity test: " + e);
     }
   }
     
   @Test
-  public void emptyCollection() {
+  public void emptyCollection() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_ALL_PRIM)
                           .appendKeySegment(-32768)
@@ -192,7 +196,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void twoNavigationStepsBeforeRead() {
+  public void twoNavigationStepsBeforeRead() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(1)
@@ -302,6 +306,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing createReferenceNonExistingEntityId test: " + ex);
     }
   }
   
@@ -322,6 +328,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing createReferenceInvalidEntityId test: " + ex);
     }
   }
   
@@ -343,6 +351,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch(ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing createReferenceInvalidHost test: " + ex);
     }
   }
   
@@ -432,6 +442,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch(ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing updateReferenceInvalidEntityID test: " + ex);
     }
   }
   
@@ -451,6 +463,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing updateReferenceNotExistingEntityId test: " + ex);
     }
   }
   
@@ -471,6 +485,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing updateReferenceInvalidHost test: " + ex);
     }
   }
   
@@ -491,6 +507,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing updateReferenceNull test: " + ex);
     }
   }
   
@@ -511,6 +529,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing updateReferenceToPrimitiveProperty test: " + ex);
     }
   }
   
@@ -531,6 +551,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing createReferenceToPrimitiveProperty test: " + ex);
     }
   }
   
@@ -638,7 +660,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void deleteReferenceInCollectionNavigationProperty() {
+  public void deleteReferenceInCollectionNavigationProperty() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(1)
@@ -677,7 +699,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void deleteReferenceOnSingleNavigationProperty() {
+  public void deleteReferenceOnSingleNavigationProperty() throws URISyntaxException, IOException {
     final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
@@ -723,6 +745,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing deleteReferenceNotExistingEntity test: " + ex);
     }
   }
   
@@ -741,6 +765,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing deleteReferenceNotExistingEntityInCollection test: " + ex);
     }
   }
   
@@ -759,6 +785,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing deleteReferenceInvalidEntityId test: " + ex);
     }
   }
   
@@ -777,6 +805,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing deleteReferenceInvalidHost test: " + ex);
     }
   }
   
@@ -794,11 +824,13 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException ex) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), ex.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException ex) {
+      fail("Unexpected exception while executing deleteReferenceOnNonNullableSingleNavigationProperty test: " + ex);
     }
   }
 
   @Test
-  public void navigateTwoTimesThanDeleteReferenceInCollection() {
+  public void navigateTwoTimesThanDeleteReferenceInCollection() throws URISyntaxException, IOException {
     final ODataClient client = getClient();
     final URI uri = client.newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
@@ -835,7 +867,7 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void navigateTwoTimeThanDeleteReference() {
+  public void navigateTwoTimeThanDeleteReference() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
                           .appendEntitySetSegment(ES_KEY_NAV)
                           .appendKeySegment(1)
@@ -878,7 +910,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void deleteSingleValuedNavigationPropertyReferenceWithCollectionValuedNavigationPropertyPartner() {
+  public void deleteSingleValuedNavigationPropertyReferenceWithCollectionValuedNavigationPropertyPartner()
+          throws URISyntaxException, IOException {
     Map<String, Object> esTwoKEyNavKey = new HashMap<String, Object>();
     esTwoKEyNavKey.put("PropertyInt16", 1);
     esTwoKEyNavKey.put("PropertyString", "1");
@@ -939,7 +972,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void deleteCollectionValuedNavigationPropertyReferenceWithSingleValuedNavigationPropertyPartner() {
+  public void deleteCollectionValuedNavigationPropertyReferenceWithSingleValuedNavigationPropertyPartner()
+          throws URISyntaxException, IOException {
     final URI uriDelete = getClient().newURIBuilder(SERVICE_URI)
                                 .appendEntitySetSegment(ES_KEY_NAV)
                                 .appendKeySegment(1)
@@ -1035,7 +1069,8 @@ public class EntityReferencesITCase extends AbstractParamTecSvcITCase {
     }
   }
   
-  private void sendRequest(final URI uri, final int count, final String... expected) {
+  private void sendRequest(final URI uri, final int count, final String... expected)
+          throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request =
         getEdmEnabledClient().getRetrieveRequestFactory().getEntitySetRequest(uri);
     setCookieHeader(request);

@@ -21,7 +21,9 @@ package org.apache.olingo.fit.tecsvc.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -66,7 +68,7 @@ public class BindingITCase extends AbstractParamTecSvcITCase {
   private static final String NAV_PROPERTY_ET_TWO_KEY_NAV_MANY = "NavPropertyETTwoKeyNavMany";
 
   @Test
-  public void createBindingSimple() throws EdmPrimitiveTypeException {
+  public void createBindingSimple() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     ODataClient client = getClient();
     final URI createURI = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build();
 
@@ -263,6 +265,8 @@ public class BindingITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException | IOException e) {
+      fail("Unexpected exception while executing missingEntity test (single navigation): " + e);
     }
 
     // Request to collection navigation propetry
@@ -277,11 +281,15 @@ public class BindingITCase extends AbstractParamTecSvcITCase {
               .getEntityUpdateRequest(entityURI, UpdateType.PATCH, entity).execute();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 
   @Test
-  public void deepInsertWithBindingSameNavigationProperty() {
+  public void deepInsertWithBindingSameNavigationProperty() throws URISyntaxException, IOException {
     final ClientObjectFactory factory = getFactory();
     final ClientEntity entity = factory.newEntity(ET_KEY_NAV);
     entity.getProperties().add(factory.newPrimitiveProperty(PROPERTY_STRING, factory

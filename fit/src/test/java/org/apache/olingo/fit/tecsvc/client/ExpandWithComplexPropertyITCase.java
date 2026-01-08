@@ -33,10 +33,13 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.fit.tecsvc.TecSvcConst;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class ExpandWithComplexPropertyITCase extends AbstractParamTecSvcITCase {
 
   @Test
-  public void readExpandHavingComplexProperty1() {
+  public void readExpandHavingComplexProperty1() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESCompMixPrimCollComp").appendKeySegment(1)
@@ -88,7 +91,7 @@ public class ExpandWithComplexPropertyITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readExpandHavingComplexProperty2() {
+  public void readExpandHavingComplexProperty2() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESCompMixPrimCollComp").appendKeySegment(1)
@@ -134,7 +137,7 @@ public class ExpandWithComplexPropertyITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readExpandHavingComplexProperty3() {
+  public void readExpandHavingComplexProperty3() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESCompMixPrimCollComp").appendKeySegment(1)
@@ -186,7 +189,7 @@ public class ExpandWithComplexPropertyITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readExpandHavingCollComplexProperty1() {
+  public void readExpandHavingCollComplexProperty1() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESCompMixPrimCollComp").appendKeySegment(1)
@@ -236,7 +239,7 @@ public class ExpandWithComplexPropertyITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readExpandHavingCollComplexProperty2() {
+  public void readExpandHavingCollComplexProperty2() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESMixPrimCollComp").appendKeySegment(32767)
@@ -283,7 +286,7 @@ public class ExpandWithComplexPropertyITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readExpandHavingCollComplexPropertyWith$ref$count() {
+  public void readExpandHavingCollComplexPropertyWith$ref$count() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESCompMixPrimCollComp").appendKeySegment(1)

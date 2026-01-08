@@ -29,9 +29,12 @@ import org.apache.olingo.client.api.uri.URIBuilder;
 import org.apache.olingo.commons.api.format.ContentType;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class PropertyTestITCase extends AbstractTestITCase {
 
-  private void _enum(final ODataClient client, final ContentType contentType) {
+  private void _enum(final ODataClient client, final ContentType contentType) throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Products").appendKeySegment(5).appendPropertySegment("CoverColors");
     final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().
@@ -46,21 +49,22 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void enumFromXML() {
+  public void enumFromXML() throws URISyntaxException, IOException {
     _enum(client, ContentType.APPLICATION_XML);
   }
 
   @Test
-  public void enumFromJSON() {
+  public void enumFromJSON() throws URISyntaxException, IOException {
     _enum(edmClient, ContentType.JSON);
   }
 
   @Test
-  public void enumFromFullJSON() {
+  public void enumFromFullJSON() throws URISyntaxException, IOException {
     _enum(client, ContentType.JSON_FULL_METADATA);
   }
 
-  private void geospatial(final ODataClient client, final ContentType contentType) {
+  private void geospatial(final ODataClient client, final ContentType contentType)
+          throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").appendKeySegment(5).appendPropertySegment("Home");
     final ODataPropertyRequest<ClientProperty> req = client.getRetrieveRequestFactory().
@@ -74,17 +78,17 @@ public class PropertyTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void geospatialFromXML() {
+  public void geospatialFromXML() throws URISyntaxException, IOException {
     geospatial(client, ContentType.APPLICATION_XML);
   }
 
   @Test
-  public void geospatialFromJSON() {
+  public void geospatialFromJSON() throws URISyntaxException, IOException {
     geospatial(edmClient, ContentType.JSON);
   }
 
   @Test
-  public void geospatialFromFullJSON() {
+  public void geospatialFromFullJSON() throws URISyntaxException, IOException {
     geospatial(client, ContentType.JSON_FULL_METADATA);
   }
 }

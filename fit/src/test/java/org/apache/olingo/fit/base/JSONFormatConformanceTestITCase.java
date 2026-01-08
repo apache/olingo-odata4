@@ -22,8 +22,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntityRequest;
@@ -52,7 +54,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
    * MUST be prepared to consume a response with full metadata.
    */
   @Test
-  public void item2() {
+  public void item2() throws URISyntaxException, IOException {
     final URI uri = edmClient.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(102).build();
     final ODataEntityRequest<ClientEntity> req = edmClient.getRetrieveRequestFactory().getEntityRequest(uri);
@@ -277,7 +279,7 @@ public class JSONFormatConformanceTestITCase extends AbstractTestITCase {
    * MUST NOT require <tt>odata.streaming=true</tt> in the <tt>Content-Type</tt> header (section 4.4).
    */
   @Test
-  public void item6() throws EdmPrimitiveTypeException {
+  public void item6() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final URI uri = edmClient.newURIBuilder().
         appendEntitySetSegment("Accounts").appendKeySegment(102).
         appendNavigationSegment("MyPaymentInstruments").appendKeySegment(102902).build();

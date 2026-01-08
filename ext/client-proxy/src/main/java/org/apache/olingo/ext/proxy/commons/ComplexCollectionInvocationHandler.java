@@ -97,30 +97,41 @@ public class ComplexCollectionInvocationHandler<T extends ComplexType<?>>
   @SuppressWarnings("unchecked")
   @Override
   public Triple<List<T>, URI, List<ClientAnnotation>> fetchPartial(final URI uri, final Class<T> typeRef) {
-    final ODataPropertyRequest<ClientProperty> req =
-        getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
-    req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
+    try {
+      final ODataPropertyRequest<ClientProperty> req =
+          getClient().getRetrieveRequestFactory().getPropertyRequest(uri);
+      req.setPrefer(getClient().newPreferences().includeAnnotations("*"));
 
-    final ODataRetrieveResponse<ClientProperty> res = req.execute();
+      final ODataRetrieveResponse<ClientProperty> res = req.execute();
 
-    final List<T> resItems = new ArrayList<T>();
+      final List<T> resItems = new ArrayList<T>();
 
-    final ClientProperty property = res.getBody();
-    if (property != null && property.hasCollectionValue()) {
-      for (ClientValue item : (ClientCollectionValue<ClientValue>) property.getValue()) {
-        Class<?> actualRef = null;
-        if (StringUtils.isNotBlank(item.getTypeName())) {
-          actualRef = service.getComplexTypeClass(item.getTypeName());
+      final ClientProperty property = res.getBody();
+      if (property != null && property.hasCollectionValue()) {
+        for (ClientValue item : (ClientCollectionValue<ClientValue>) property.getValue()) {
+          Class<?> actualRef = null;
+          if (StringUtils.isNotBlank(item.getTypeName())) {
+            actualRef = service.getComplexTypeClass(item.getTypeName());
+          }
+          if (actualRef == null) {
+            actualRef = typeRef;
+          }
+
+          resItems.add((T) getComplex(property.getName(), item, actualRef, null, null, true));
         }
-        if (actualRef == null) {
-          actualRef = typeRef;
-        }
-
-        resItems.add((T) getComplex(property.getName(), item, actualRef, null, null, true));
       }
-    }
 
-    return new ImmutableTriple<List<T>, URI, List<ClientAnnotation>>(
-        resItems, null, Collections.<ClientAnnotation> emptyList());
+      return new ImmutableTriple<List<T>, URI, List<ClientAnnotation>>(
+          resItems, null, Collections.<ClientAnnotation> emptyList());
+    } catch (java.net.URISyntaxException e) {
+      LOG.warn("Invalid URI for fetching complex collection '" + uri + "'", e);
+      throw new IllegalArgumentException("Invalid URI while fetching complex collection", e);
+    } catch (java.io.IOException e) {
+      LOG.warn("I/O error while fetching complex collection '" + uri + "'", e);
+      throw new IllegalArgumentException("I/O error while fetching complex collection", e);
+    } catch (Exception e) {
+      LOG.warn("Error fetching complex collection '" + uri + "'", e);
+      throw new IllegalArgumentException("Error fetching complex collection", e);
+    }
   }
 }

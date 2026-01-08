@@ -21,7 +21,9 @@ package org.apache.olingo.fit.base;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -34,7 +36,7 @@ import org.junit.Test;
 
 public class EntityUpdateTestITCase extends AbstractTestITCase {
 
-  private void onContained(final ContentType contentType) {
+  private void onContained(final ContentType contentType) throws URISyntaxException, IOException {
     final String newName = UUID.randomUUID().toString();
     final ClientEntity changes = getClient().getObjectFactory().newEntity(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.PaymentInstrument"));
@@ -57,12 +59,12 @@ public class EntityUpdateTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void atomOnContained() {
+  public void atomOnContained() throws URISyntaxException, IOException {
     onContained(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void jsonOnContained() {
+  public void jsonOnContained() throws URISyntaxException, IOException {
     onContained(ContentType.JSON);
   }
 }

@@ -18,6 +18,7 @@
  */
 package org.apache.olingo.client.api.communication.request.batch;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.olingo.client.api.communication.response.ODataResponse;
@@ -60,5 +61,5 @@ public interface ODataBatchResponseItem extends Iterator<ODataResponse> {
   /**
    * Closes the current batch responses item including all wrapped OData responses.
    */
-  void close();
+  void close() throws IOException;
 }

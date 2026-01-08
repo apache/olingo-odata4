@@ -20,20 +20,20 @@ package org.apache.olingo.client.core.communication.request;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.HttpClientUtils;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.DecompressingHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.header.ODataPreferences;
@@ -63,7 +63,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
   /**
    * HTTP client.
    */
-  protected final HttpClient httpClient;
+  protected final CloseableHttpClient httpClient;
 
   /**
    * HTTP request.
@@ -80,28 +80,53 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     this.odataRequest.setAccept(this.odataRequest.getAccept());
     this.odataRequest.setContentType(this.odataRequest.getContentType());
 
-    extendHeader(HttpHeader.PREFER, new ODataPreferences().respondAsync());
+    extendHeader(HttpHeader.PREFER, new ODataPreferences().respondAsync().toString());
 
     this.odataClient = odataClient;
-    final HttpMethod method = odataRequest.getMethod();
+    final String method = odataRequest.getMethod().toString();
 
     // target uri
     this.uri = odataRequest.getURI();
     Objects.requireNonNull(this.uri, "Target URI can't be null");
 
-    HttpClient _httpClient = odataClient.getConfiguration().getHttpClientFactory().create(method, this.uri);
-    if (odataClient.getConfiguration().isGzipCompression()) {
-      _httpClient = new DecompressingHttpClient(_httpClient);
+    // Prefer HttpClient provided by the configured factory (tests may mock it), fallback to a default builder
+    CloseableHttpClient clientFromFactory = null;
+    try {
+      if (odataClient != null && odataClient.getConfiguration() != null
+          && odataClient.getConfiguration().getHttpClientFactory() != null) {
+        clientFromFactory = (CloseableHttpClient) odataClient.getConfiguration().getHttpClientFactory()
+            .create(odataRequest.getMethod(), this.uri);
+      }
+    } catch (final RuntimeException e) {
+      // ignore and fallback to default
+      clientFromFactory = null;
     }
-    this.httpClient = _httpClient;
 
-    this.request = odataClient.getConfiguration().getHttpUriRequestFactory().create(method, this.uri);
+    if (clientFromFactory != null) {
+      this.httpClient = clientFromFactory;
+    } else {
+      this.httpClient = HttpClients.custom()
+          .addRequestInterceptorFirst((request, entity, context) -> {
+            if (odataClient != null && odataClient.getConfiguration() != null
+                && odataClient.getConfiguration().isGzipCompression()) {
+              request.addHeader(HttpHeaders.ACCEPT_ENCODING, "gzip");
+            }
+          })
+          .build();
+    }
 
-    if (request instanceof HttpEntityEnclosingRequestBase && odataRequest instanceof AbstractODataBasicRequest) {
+    // Create HttpUriRequest
+    this.request = new HttpUriRequestBase(method, this.uri);
+
+
+      if (this.request instanceof HttpUriRequestBase && odataRequest instanceof AbstractODataBasicRequest) {
       AbstractODataBasicRequest<?> br = (AbstractODataBasicRequest<?>) odataRequest;
-      HttpEntityEnclosingRequestBase httpRequest = ((HttpEntityEnclosingRequestBase) request);
-      httpRequest.setEntity(new InputStreamEntity(br.getPayload(), -1));
-    }
+          if (br.getPayload() != null) {
+            this.request.setEntity(
+                new InputStreamEntity(br.getPayload(), ContentType.APPLICATION_OCTET_STREAM)
+            );
+          }
+     }
   }
 
   @Override
@@ -130,7 +155,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     return new AsyncResponseWrapperImpl(doExecute());
   }
 
-  protected HttpResponse doExecute() {
+  protected ClassicHttpResponse doExecute() {
     // Add all available headers
     for (String key : odataRequest.getHeaderNames()) {
       final String value = odataRequest.getHeader(key);
@@ -175,8 +200,8 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
      * @param res HTTP response.
      */
     @SuppressWarnings("unchecked")
-    public AsyncResponseWrapperImpl(final HttpResponse res) {
-      if (res.getStatusLine().getStatusCode() == 202) {
+    public AsyncResponseWrapperImpl(final ClassicHttpResponse res) {
+      if (res.getCode() == 202) {
         retrieveMonitorDetails(res);
       } else {
         response = (R) ((AbstractODataRequest) odataRequest).getResponseTemplate().initFromHttpResponse(res);
@@ -189,12 +214,12 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
 
     @Override
-    public boolean isDone() {
+    public boolean isDone() throws IOException {
       if (response == null) {
         // check to the monitor URL
-        final HttpResponse res = checkMonitor(location);
+        final ClassicHttpResponse res = checkMonitor(location);
 
-        if (res.getStatusLine().getStatusCode() == 202) {
+        if (res.getCode() == 202) {
           retrieveMonitorDetails(res);
         } else {
           response = instantiateResponse(res);
@@ -205,12 +230,12 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
 
     @Override
-    public R getODataResponse() {
-      HttpResponse res = null;
+    public R getODataResponse() throws IOException {
+      ClassicHttpResponse res = null;
       for (int i = 0; response == null && i < MAX_RETRY; i++) {
         res = checkMonitor(location);
 
-        if (res.getStatusLine().getStatusCode() == HttpStatusCode.ACCEPTED.getStatusCode()) {
+        if (res.getCode() == HttpStatusCode.ACCEPTED.getStatusCode()) {
 
           final Header[] headers = res.getHeaders(HttpHeader.RETRY_AFTER);
           if (ArrayUtils.isNotEmpty(headers)) {
@@ -231,7 +256,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
       }
 
       if (response == null) {
-        throw new ODataClientErrorException(res == null ? null : res.getStatusLine());
+        throw new ODataClientErrorException(res == null ? null : new StatusLine(res));
       }
 
       return response;
@@ -257,7 +282,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
 
     @Override
-    public ODataDeleteResponse delete() {
+    public ODataDeleteResponse delete() throws URISyntaxException, IOException {
       final ODataDeleteRequest deleteRequest = odataClient.getCUDRequestFactory().getDeleteRequest(location);
       return deleteRequest.execute();
     }
@@ -276,7 +301,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
 
     @SuppressWarnings("unchecked")
-    private R instantiateResponse(final HttpResponse res) {
+    private R instantiateResponse(final ClassicHttpResponse res) throws IOException {
       R odataResponse;
       try {
         odataResponse = (R) ((AbstractODataRequest) odataRequest).getResponseTemplate().initFromEnclosedPart(res
@@ -285,12 +310,12 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
         LOG.error("Error instantiating odata response", e);
         odataResponse = null;
       } finally {
-        HttpClientUtils.closeQuietly(res);
+        res.close();
       }
       return odataResponse;
     }
 
-    private void retrieveMonitorDetails(final HttpResponse res) {
+    private void retrieveMonitorDetails(final ClassicHttpResponse res) {
       Header[] headers = res.getHeaders(HttpHeader.LOCATION);
       if (ArrayUtils.isNotEmpty(headers)) {
         this.location = createLocation(headers[0].getValue());
@@ -320,7 +345,7 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     }
   }
 
-  protected final HttpResponse checkMonitor(final URI location) {
+  protected final ClassicHttpResponse checkMonitor(final URI location) {
     if (location == null) {
       throw new AsyncRequestException("Invalid async request response. Missing monitor URL");
     }
@@ -331,8 +356,8 @@ public class AsyncRequestWrapperImpl<R extends ODataResponse> extends AbstractRe
     return executeHttpRequest(httpClient, monitor);
   }
 
-  protected final HttpResponse executeHttpRequest(final HttpClient client, final HttpUriRequest req) {
-    final HttpResponse response;
+  protected final ClassicHttpResponse executeHttpRequest(final CloseableHttpClient client, final HttpUriRequest req) {
+    final ClassicHttpResponse response;
     try {
       response = client.execute(req);
     } catch (IOException e) {

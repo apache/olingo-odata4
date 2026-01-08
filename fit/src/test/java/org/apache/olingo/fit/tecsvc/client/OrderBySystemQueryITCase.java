@@ -20,7 +20,9 @@ package org.apache.olingo.fit.tecsvc.client;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataEntitySetRequest;
@@ -38,7 +40,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   private static final String ES_ALL_PRIM = "ESAllPrim";
 
   @Test
-  public void simpleOrderBy() {
+  public void simpleOrderBy() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response = null;
 
     response = sendRequest(ES_ALL_PRIM, "PropertyDate");
@@ -58,7 +60,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void simpleOrderByDescending() {
+  public void simpleOrderByDescending() throws IOException, URISyntaxException {
     ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyDate desc");
     assertEquals(4, response.getBody().getEntities().size());
 
@@ -73,7 +75,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void multipleOrderBy() {
+  public void multipleOrderBy() throws IOException, URISyntaxException {
     final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_ALL_PRIM, "PropertyByte,PropertyInt16");
     assertEquals(4, response.getBody().getEntities().size());
 
@@ -91,7 +93,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void multipleOrderByDescending() {
+  public void multipleOrderByDescending() throws URISyntaxException, IOException {
     final ODataRetrieveResponse<ClientEntitySet> response =
         sendRequest(ES_ALL_PRIM, "PropertyByte,PropertyInt16 desc");
     assertEquals(4, response.getBody().getEntities().size());
@@ -110,7 +112,7 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void orderByWithNull() {
+  public void orderByWithNull() throws URISyntaxException, IOException {
     final ODataRetrieveResponse<ClientEntitySet> response = sendRequest(ES_TWO_PRIM, "PropertyString");
     assertEquals(4, response.getBody().getEntities().size());
 
@@ -132,7 +134,8 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
     fail(ES_TWO_PRIM, "PropertyString add 10", HttpStatusCode.BAD_REQUEST);
   }
 
-  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String orderByString) {
+  private ODataRetrieveResponse<ClientEntitySet> sendRequest(final String entitySet, final String orderByString)
+          throws URISyntaxException, IOException {
     final URI uri =
         getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(entitySet)
@@ -153,6 +156,10 @@ public class OrderBySystemQueryITCase extends AbstractParamTecSvcITCase {
       Assert.fail();
     } catch (ODataClientErrorException e) {
       assertEquals(errorCode.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 }

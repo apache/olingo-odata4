@@ -321,29 +321,37 @@ public class EntityInvocationHandler extends AbstractStructuredInvocationHandler
   }
 
   public EdmStreamValue loadStream() {
-    final URI contentSource = getEntity().getMediaContentSource() == null
-        ? getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build()
-        : getEntity().getMediaContentSource();
+    try {
+      final URI contentSource = getEntity().getMediaContentSource() == null
+          ? getClient().newURIBuilder(baseURI.toASCIIString()).appendValueSegment().build()
+          : getEntity().getMediaContentSource();
 
-    if (this.stream == null
-        && typeRef.getAnnotation(EntityType.class).hasStream()
-        && contentSource != null) {
+      if (this.stream == null
+          && typeRef.getAnnotation(EntityType.class).hasStream()
+          && contentSource != null) {
 
-      final ODataMediaRequest retrieveReq =
-          getClient().getRetrieveRequestFactory().getMediaEntityRequest(contentSource);
+        final ODataMediaRequest retrieveReq =
+            getClient().getRetrieveRequestFactory().getMediaEntityRequest(contentSource);
 
-      if (StringUtils.isNotBlank(getEntity().getMediaContentType())) {
-        retrieveReq.setFormat(ContentType.parse(getEntity().getMediaContentType()));
+        if (StringUtils.isNotBlank(getEntity().getMediaContentType())) {
+          retrieveReq.setFormat(ContentType.parse(getEntity().getMediaContentType()));
+        }
+
+        final ODataRetrieveResponse<InputStream> res = retrieveReq.execute();
+        this.stream = EdmStreamValue.class.cast(Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class<?>[] { EdmStreamValue.class },
+            new EdmStreamValueHandler(res.getContentType(), res.getBody(), contentSource, service)));
       }
 
-      final ODataRetrieveResponse<InputStream> res = retrieveReq.execute();
-      this.stream = EdmStreamValue.class.cast(Proxy.newProxyInstance(
-          Thread.currentThread().getContextClassLoader(),
-          new Class<?>[] { EdmStreamValue.class },
-          new EdmStreamValueHandler(res.getContentType(), res.getBody(), contentSource, service)));
+      return this.stream;
+    } catch (java.net.URISyntaxException e) {
+      LOG.warn("Invalid media content source URI for entity '" + uuid + "'", e);
+      throw new IllegalArgumentException("Invalid media content source URI for " + typeRef.getSimpleName(), e);
+    } catch (Exception e) {
+      LOG.warn("Error retrieving media stream for entity '" + uuid + "'", e);
+      throw new IllegalArgumentException("Error retrieving media stream for " + typeRef.getSimpleName(), e);
     }
-
-    return this.stream;
   }
 
   @Override

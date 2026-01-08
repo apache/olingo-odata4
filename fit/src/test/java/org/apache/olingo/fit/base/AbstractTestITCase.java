@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -74,7 +75,7 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
   protected static String testOAuth2ServiceRootURL;
 
   @BeforeClass
-  public static void setUpODataServiceRoot() throws IOException {
+  public static void setUpODataServiceRoot() throws Exception {
     testStaticServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Static.svc";
     testDemoServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Demo.svc";
     testVocabulariesServiceRootURL = "http://localhost:9080/stub/StaticService/V40/Vocabularies.svc";
@@ -96,7 +97,8 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     return client;
   }
 
-  protected ClientEntity read(final ContentType contentType, final URI editLink) {
+  protected ClientEntity read(final ContentType contentType, final URI editLink)
+          throws URISyntaxException, IOException {
     final ODataEntityRequest<ClientEntity> req = getClient().getRetrieveRequestFactory().getEntityRequest(editLink);
     req.setFormat(contentType);
 
@@ -112,7 +114,8 @@ public abstract class AbstractTestITCase extends AbstractBaseTestITCase {
     return entity;
   }
 
-  protected void createAndDeleteOrder(final String serviceRoot, final ContentType contentType, final int id) {
+  protected void createAndDeleteOrder(final String serviceRoot, final ContentType contentType, final int id)
+      throws Exception {
 
     final ClientEntity order = getClient().getObjectFactory().newEntity(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Order"));

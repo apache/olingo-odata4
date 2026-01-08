@@ -24,7 +24,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -85,7 +87,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
   private static final String EDM_STRING = "Edm.String";
 
   @Test
-  public void deepInsertExpandedResponse() {
+  public void deepInsertExpandedResponse() throws URISyntaxException, IOException {
     assumeTrue("The server XML deserializer does not (yet?!) fill the expand information;"
         + " the response is therefore not expanded in XML.",
         isJson());  // TODO: XML case
@@ -711,7 +713,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
 
   @Test
   @Ignore
-  public void deepInsertOnNavigationPropertyInComplexProperty() {
+  public void deepInsertOnNavigationPropertyInComplexProperty() throws IOException, URISyntaxException {
     final EdmEnabledODataClient client = getEdmEnabledClient();
     final ClientObjectFactory factory = getFactory();
 
@@ -772,7 +774,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void deepUpsert() {
+  public void deepUpsert() throws URISyntaxException, IOException {
     final ODataClient client = getEdmEnabledClient();
     final URI updateURI = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_KEY_NAV)
@@ -1007,7 +1009,7 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
         .getProperty(PROPERTY_INT16).getPrimitiveValue().toValue());
   }
 
-  private String getCookie() {
+  private String getCookie() throws URISyntaxException, IOException {
     final EdmEnabledODataClient client = getEdmEnabledClient();
     final ODataRetrieveResponse<ClientEntitySet> response = client.getRetrieveRequestFactory()
         .getEntitySetRequest(client.newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV).build())
@@ -1016,7 +1018,8 @@ public class DeepInsertITCase extends AbstractParamTecSvcITCase {
     return response.getHeader(HttpHeader.SET_COOKIE).iterator().next();
   }
 
-  private void validateSet(final URI uri, final String cookie, final short... keys) throws EdmPrimitiveTypeException {
+  private void validateSet(final URI uri, final String cookie, final short... keys)
+          throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final EdmEnabledODataClient client = getEdmEnabledClient();
     final ODataEntitySetRequest<ClientEntitySet> request = client.getRetrieveRequestFactory()
         .getEntitySetRequest(uri);

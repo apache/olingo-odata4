@@ -28,12 +28,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.batch.ODataBatchLineIterator;
 import org.apache.olingo.client.api.communication.response.ODataResponse;
@@ -67,12 +68,12 @@ public abstract class AbstractODataResponse implements ODataResponse {
   /**
    * HTTP client.
    */
-  protected final HttpClient httpClient;
+  protected final CloseableHttpClient httpClient;
 
   /**
    * HTTP response.
    */
-  protected final HttpResponse res;
+  protected final ClassicHttpResponse res;
 
   /**
    * Response headers.
@@ -108,7 +109,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   private byte[] inputContent = null;
 
   public AbstractODataResponse(
-      final ODataClient odataClient, final HttpClient httpclient, final HttpResponse res) {
+          final ODataClient odataClient, final CloseableHttpClient httpclient, final ClassicHttpResponse res) {
 
     this.odataClient = odataClient;
     this.httpClient = httpclient;
@@ -150,36 +151,38 @@ public abstract class AbstractODataResponse implements ODataResponse {
     return statusMessage;
   }
 
-  @Override
-  public final ODataResponse initFromHttpResponse(final HttpResponse res) {
-    try {
-      this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
-      this.inputContent = null;
-    } catch (final IllegalStateException | IOException e) {
-      HttpClientUtils.closeQuietly(res);
-      LOG.error("Error retrieving payload", e);
-      throw new ODataRuntimeException(e);
+    @Override
+    public final ODataResponse initFromHttpResponse(final ClassicHttpResponse res) {
+        try {
+            this.payload = res.getEntity() == null ? null : res.getEntity().getContent();
+            this.inputContent = null;
+        } catch (final IllegalStateException | IOException e) {
+            if (res.getEntity() != null) {
+                EntityUtils.consumeQuietly(res.getEntity());
+            }
+            LOG.error("Error retrieving payload", e);
+            throw new ODataRuntimeException(e);
+        }
+
+        for (Header header : res.getHeaders()) {
+            final Collection<String> headerValues;
+            if (headers.containsKey(header.getName())) {
+                headerValues = headers.get(header.getName());
+            } else {
+                headerValues = new HashSet<>();
+                headers.put(header.getName(), headerValues);
+            }
+            headerValues.add(header.getValue());
+        }
+
+        statusCode = res.getCode();
+        statusMessage = res.getReasonPhrase();
+
+        hasBeenInitialized = true;
+        return this;
     }
-    for (Header header : res.getAllHeaders()) {
-      final Collection<String> headerValues;
-      if (headers.containsKey(header.getName())) {
-        headerValues = headers.get(header.getName());
-      } else {
-        headerValues = new HashSet<>();
-        headers.put(header.getName(), headerValues);
-      }
 
-      headerValues.add(header.getValue());
-    }
-
-    statusCode = res.getStatusLine().getStatusCode();
-    statusMessage = res.getStatusLine().getReasonPhrase();
-
-    hasBeenInitialized = true;
-    return this;
-  }
-
-  @Override
+    @Override
   public ODataResponse initFromBatch(
       final Map.Entry<Integer, String> responseLine,
       final Map<String, Collection<String>> headers,
@@ -244,7 +247,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
   }
 
   @Override
-  public void close() {
+  public void close() throws IOException {
     closeHttpResponse();
     odataClient.getConfiguration().getHttpClientFactory().close(httpClient);
 
@@ -306,7 +309,7 @@ public abstract class AbstractODataResponse implements ODataResponse {
         inputStream = new ByteArrayInputStream(inputContent);
         return inputStream;
       } catch (IOException e) {
-        HttpClientUtils.closeQuietly(res);
+          IOUtils.closeQuietly(payload);
         LOG.error("Error retrieving payload", e);
         throw new ODataRuntimeException(e);
       }

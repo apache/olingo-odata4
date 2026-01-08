@@ -81,7 +81,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
     // This should be 202 for service version <= 3.0 and 200 for service version >= 4.0 but it seems that
     // many service implementations are not fully compliant in this respect.
     if (response.getStatusCode() != 202 && response.getStatusCode() != 200) {
-      throw new ODataServerErrorException(new ResponseStatusLine(response), response.getRawResponse());
+      throw new ODataServerErrorException(response);
     }
 
     if (!items.isEmpty()) {
@@ -98,7 +98,7 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
       }
 
       final ODataChangesetResponseItem chgres = (ODataChangesetResponseItem) item;
-
+        try {
       int index = 0;
       for (final Iterator<Integer> itor = items.sortedValues().iterator(); itor.hasNext(); index++) {
         final Integer changesetItemId = itor.next();
@@ -107,9 +107,14 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
         final ODataResponse res = chgres.next();
         if (res.getStatusCode() >= 400) {
           ContentType contentType = ContentType.fromAcceptHeader(request.getAccept());
+          // Build a httpcore5 StatusLine from the ODataResponse and call the StatusLine overload
+          final org.apache.hc.core5.http.ProtocolVersion pv =
+              new org.apache.hc.core5.http.ProtocolVersion("HTTP", 1, 1);
+          final org.apache.hc.core5.http.message.StatusLine sl =
+              new org.apache.hc.core5.http.message.StatusLine(pv, res.getStatusCode(), res.getStatusMessage());
           errors.add(new ODataResponseError(ODataErrorResponseChecker.checkResponse(
                   service.getClient(),
-                  new ResponseStatusLine(res),
+                  sl,
                   res.getRawResponse(),
                   contentType), index, requests.get(index)));
           if (!service.getClient().getConfiguration().isContinueOnError()) {
@@ -143,7 +148,19 @@ public class TransactionalPersistenceManagerImpl extends AbstractPersistenceMana
       if (!errors.isEmpty()) {
         throw new ODataFlushException(response.getStatusCode(), errors);
       }
-    }
-    response.close();
+    }catch (java.io.IOException e) {
+            LOG.warn("I/O error while processing batch response", e);
+            throw new IllegalArgumentException("I/O error while flushing transaction", e);
+        } catch (RuntimeException e) {
+            LOG.warn("Error while processing batch response", e);
+            throw e;
+        } finally {
+            try {
+                response.close();
+            }catch(java.io.IOException e){
+                    LOG.warn("Error closing batch response", e);
+                }
+            }
+        }
   }
 }

@@ -18,14 +18,15 @@
  */
 package org.apache.olingo.client.core.communication.request.cud;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.response.ODataEntityUpdateResponse;
@@ -84,15 +85,15 @@ public class ODataEntityUpdateRequestImpl<E extends ClientEntity>
   }
 
   @Override
-  public ODataEntityUpdateResponse<E> execute() {
+  public ODataEntityUpdateResponse<E> execute() throws URISyntaxException, IOException {
     final InputStream input = getPayload();
-    ((HttpEntityEnclosingRequestBase) request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
+    (request).setEntity(URIUtils.buildInputStreamEntity(odataClient, input));
 
     try {
-      final HttpResponse httpResponse = doExecute();
+      final ClassicHttpResponse httpResponse = doExecute();
       final ODataEntityUpdateResponseImpl response =
               new ODataEntityUpdateResponseImpl(odataClient, httpClient, httpResponse);
-      if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
+      if (httpResponse.getCode() == HttpStatus.SC_NO_CONTENT) {
         response.close();
       }
       return response;
@@ -111,15 +112,15 @@ public class ODataEntityUpdateRequestImpl<E extends ClientEntity>
      */
     private E entity = null;
 
-    private ODataEntityUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+    private ODataEntityUpdateResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public E getBody() {
+    public E getBody() throws IOException {
       if (entity == null) {
         try {
           final ResWrap<Entity> resource = odataClient.getDeserializer(ContentType.parse(getAccept())).

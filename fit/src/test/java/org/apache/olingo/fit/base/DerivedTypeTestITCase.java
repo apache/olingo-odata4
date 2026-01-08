@@ -20,7 +20,9 @@ package org.apache.olingo.fit.base;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -41,7 +43,7 @@ import org.junit.Test;
 
 public class DerivedTypeTestITCase extends AbstractTestITCase {
 
-  private void read(final ContentType contentType) {
+  private void read(final ContentType contentType) throws URISyntaxException, IOException {
     // 1. entity set
     URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("People").
@@ -68,16 +70,16 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readfromAtom() {
+  public void readfromAtom() throws URISyntaxException, IOException {
     read(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void readfromJSON() {
+  public void readfromJSON() throws URISyntaxException, IOException {
     read(ContentType.JSON_FULL_METADATA);
   }
 
-  private void createDelete(final ContentType conentType) {
+  private void createDelete(final ContentType conentType) throws URISyntaxException, IOException {
     final ClientEntity customer = client.getObjectFactory().
         newEntity(new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
 
@@ -139,12 +141,12 @@ public class DerivedTypeTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void createDeleteAsAtom() {
+  public void createDeleteAsAtom() throws URISyntaxException, IOException {
     createDelete(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void createDeleteAsJSON() {
+  public void createDeleteAsJSON() throws URISyntaxException, IOException {
     createDelete(ContentType.JSON_FULL_METADATA);
   }
 }

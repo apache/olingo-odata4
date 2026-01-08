@@ -34,10 +34,13 @@ import org.apache.olingo.commons.api.edm.TargetType;
 import org.apache.olingo.commons.core.edm.primitivetype.EdmPrimitiveTypeFactory;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class MetadataTestITCase extends AbstractTestITCase {
 
   @Test
-  public void vocabularies() {
+  public void vocabularies() throws URISyntaxException, IOException {
     final Edm edm = client.getRetrieveRequestFactory().
         getMetadataRequest(testVocabulariesServiceRootURL).execute().getBody();
     assertNotNull(edm);

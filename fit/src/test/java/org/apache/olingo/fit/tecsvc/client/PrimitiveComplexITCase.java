@@ -24,8 +24,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
@@ -405,7 +407,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readPrimitiveCollectionCount() {
+  public void readPrimitiveCollectionCount() throws URISyntaxException, IOException {
     ODataValueRequest request = getClient().getRetrieveRequestFactory()
         .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCollAllPrim").appendKeySegment(1)
@@ -424,7 +426,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readComplexCollectionCount() {
+  public void readComplexCollectionCount() throws URISyntaxException, IOException {
     ODataValueRequest request = getClient().getRetrieveRequestFactory()
         .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESCompCollAllPrim").appendKeySegment(5678)
@@ -444,7 +446,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void retrieveIntPropertyValueTest() throws EdmPrimitiveTypeException {
+  public void retrieveIntPropertyValueTest() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
         appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyInt16");
     final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
@@ -453,7 +455,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void retrieveBooleanPropertyValueTest() throws EdmPrimitiveTypeException {
+  public void retrieveBooleanPropertyValueTest() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
         appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyBoolean");
     final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
@@ -462,7 +464,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void retrieveDatePropertyValueTest() {
+  public void retrieveDatePropertyValueTest() throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
         appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyDate");
     final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());
@@ -472,7 +474,7 @@ public class PrimitiveComplexITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void retrieveDecimalPropertyValueTest() throws EdmPrimitiveTypeException {
+  public void retrieveDecimalPropertyValueTest() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
         appendEntitySetSegment("ESAllPrim").appendKeySegment(32767).appendPropertySegment("PropertyDecimal");
     final ODataValueRequest req = getClient().getRetrieveRequestFactory().getPropertyValueRequest(uriBuilder.build());

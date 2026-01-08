@@ -20,6 +20,8 @@ package org.apache.olingo.client.api.communication.response;
 
 import org.apache.olingo.client.api.domain.ClientEntity;
 
+import java.io.IOException;
+
 /**
  * This class implements the response to an OData update request.
  *
@@ -33,5 +35,5 @@ public interface ODataEntityUpdateResponse<E extends ClientEntity> extends OData
    *
    * @return updated object.
    */
-  E getBody();
+  E getBody() throws IOException;
 }

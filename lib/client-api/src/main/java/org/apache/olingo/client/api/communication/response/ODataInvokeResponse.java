@@ -20,6 +20,8 @@ package org.apache.olingo.client.api.communication.response;
 
 import org.apache.olingo.client.api.domain.ClientInvokeResult;
 
+import java.io.IOException;
+
 /**
  * This class implements a response to a specific invoke request.
  *
@@ -32,5 +34,5 @@ public interface ODataInvokeResponse<T extends ClientInvokeResult> extends OData
    *
    * @return operation return value.
    */
-  T getBody();
+  T getBody() throws IOException;
 }

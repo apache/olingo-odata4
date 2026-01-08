@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -427,7 +428,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void changesetWithReferences() {
+  public void changesetWithReferences() throws URISyntaxException, IOException {
     BatchManager payload = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI).payloadManager();
 
     final ODataChangeset changeset = payload.addChangeset();
@@ -536,7 +537,7 @@ public class BatchClientITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void changesetBatchRequest() {
+  public void changesetBatchRequest() throws IOException {
     BatchManager payload = getClient().getBatchRequestFactory().getBatchRequest(SERVICE_URI).payloadManager();
     // -----------------------------
     // - Append get request

@@ -21,7 +21,9 @@ package org.apache.olingo.fit.base;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 
 import org.apache.olingo.client.api.EdmEnabledODataClient;
@@ -38,7 +40,8 @@ import org.junit.Test;
  */
 public class EntityRetrieveTestITCase extends AbstractTestITCase {
 
-  private void contained(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException {
+  private void contained(final ODataClient client, final ContentType contentType) throws EdmPrimitiveTypeException,
+          URISyntaxException, IOException {
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(101).
         appendNavigationSegment("MyPaymentInstruments").appendKeySegment(101902).build();
@@ -55,21 +58,22 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void containedFromAtom() throws EdmPrimitiveTypeException {
+  public void containedFromAtom() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     contained(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void containedFromFullJSON() throws EdmPrimitiveTypeException {
+  public void containedFromFullJSON() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     contained(client, ContentType.JSON_FULL_METADATA);
   }
 
   @Test
-  public void containedFromJSON() throws EdmPrimitiveTypeException {
+  public void containedFromJSON() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     contained(edmClient, ContentType.JSON);
   }
 
-  private void entitySetNavigationLink(final ODataClient client, final ContentType contentType) {
+  private void entitySetNavigationLink(final ODataClient client, final ContentType contentType) throws
+          URISyntaxException, IOException {
     final URI uri = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(101).build();
     final ODataEntityRequest<ClientEntity> req = client.getRetrieveRequestFactory().getEntityRequest(uri);
@@ -86,12 +90,12 @@ public class EntityRetrieveTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void entitySetNavigationLinkFromAtom() {
+  public void entitySetNavigationLinkFromAtom() throws URISyntaxException, IOException {
     entitySetNavigationLink(client, ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void entitySetNavigationLinkFromJSON() {
+  public void entitySetNavigationLinkFromJSON() throws URISyntaxException, IOException {
     // only JSON_FULL_METADATA has links, only Edm can recognize entity set navigation
     entitySetNavigationLink(edmClient, ContentType.JSON_FULL_METADATA);
   }

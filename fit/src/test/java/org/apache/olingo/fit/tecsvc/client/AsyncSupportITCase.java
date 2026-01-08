@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Collections;
@@ -75,7 +76,7 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
   private static final int SLEEP_TIMEOUT_IN_MS = 100;
 
   @Test
-  public void clientAsync() throws InterruptedException, ExecutionException, TimeoutException {
+  public void clientAsync() throws InterruptedException, ExecutionException, TimeoutException, IOException {
     ODataClient client = getClient();
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_ALL_PRIM);
@@ -332,7 +333,8 @@ public final class AsyncSupportITCase extends AbstractParamTecSvcITCase {
         "' and value '" + value + "' not found in entitySet '" + entitySet + "'");
   }
 
-  private void waitTillDone(AsyncResponseWrapper<?> async, int maxWaitInSeconds) throws InterruptedException {
+  private void waitTillDone(AsyncResponseWrapper<?> async, int maxWaitInSeconds)
+          throws InterruptedException, IOException {
     int waitCounter = maxWaitInSeconds * 1000;
     while (!async.isDone() && waitCounter > 0) {
       Thread.sleep(SLEEP_TIMEOUT_IN_MS);

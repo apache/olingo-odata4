@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.junit.Test;
 
 public class AsyncTestITCase extends AbstractTestITCase {
 
-  private void withInlineEntry(final ContentType contentType) {
+  private void withInlineEntry(final ContentType contentType) throws IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
@@ -102,18 +103,18 @@ public class AsyncTestITCase extends AbstractTestITCase {
 
   @Ignore
   @Test
-  public void withInlineEntryAsAtom() {
+  public void withInlineEntryAsAtom() throws IOException {
     withInlineEntry(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Ignore
   @Test
-  public void withInlineEntryAsJSON() {
+  public void withInlineEntryAsJSON() throws IOException {
     // this needs to be full, otherwise there is no mean to recognize links
     withInlineEntry(ContentType.JSON_FULL_METADATA);
   }
 
-  private void asyncOrders(final ContentType contentType) {
+  private void asyncOrders(final ContentType contentType) throws IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("async").appendEntitySetSegment("Orders");
 
@@ -137,12 +138,12 @@ public class AsyncTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void asyncOrdersAsAtom() {
+  public void asyncOrdersAsAtom() throws IOException {
     asyncOrders(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void asyncOrdersAsJSON() {
+  public void asyncOrdersAsJSON() throws IOException {
     asyncOrders(ContentType.JSON);
   }
 }

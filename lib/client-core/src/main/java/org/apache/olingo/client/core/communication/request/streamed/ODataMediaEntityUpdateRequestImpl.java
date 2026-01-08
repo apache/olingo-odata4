@@ -18,12 +18,15 @@
  */
 package org.apache.olingo.client.core.communication.request.streamed;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.streamed.MediaEntityUpdateStreamManager;
 import org.apache.olingo.client.api.communication.request.streamed.ODataMediaEntityUpdateRequest;
@@ -100,15 +103,15 @@ public class ODataMediaEntityUpdateRequestImpl<E extends ClientEntity>
 
     private E entity = null;
 
-    private ODataMediaEntityUpdateResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-            final HttpResponse res) {
+    private ODataMediaEntityUpdateResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+            final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public E getBody() {
+    public E getBody() throws IOException {
       if (entity == null) {
         try {
           final ResWrap<Entity> resource = odataClient.getDeserializer(getFormat()).toEntity(getRawResponse());

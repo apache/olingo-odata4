@@ -22,7 +22,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
 import org.apache.olingo.client.api.communication.request.cud.UpdateType;
@@ -50,7 +52,7 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
     client.getConfiguration().setKeyAsSegment(false);
   }
 
-  private void read(final ContentType contentType) {
+  private void read(final ContentType contentType) throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testKeyAsSegmentServiceRootURL).
         appendEntitySetSegment("Accounts").appendKeySegment(101);
 
@@ -70,26 +72,26 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void atomRead() {
+  public void atomRead() throws URISyntaxException, IOException {
     read(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void jsonRead() {
+  public void jsonRead() throws URISyntaxException, IOException {
     read(ContentType.JSON);
   }
 
   @Test
-  public void atomCreateAndDelete() {
+  public void atomCreateAndDelete() throws Exception {
     createAndDeleteOrder(testKeyAsSegmentServiceRootURL, ContentType.APPLICATION_ATOM_XML, 1000);
   }
 
   @Test
-  public void jsonCreateAndDelete() {
+  public void jsonCreateAndDelete() throws Exception {
     createAndDeleteOrder(testKeyAsSegmentServiceRootURL, ContentType.JSON_FULL_METADATA, 1001);
   }
 
-  private void update(final ContentType contentType) {
+  private void update(final ContentType contentType) throws URISyntaxException, IOException {
     final ClientEntity changes = getClient().getObjectFactory().newEntity(
         new FullQualifiedName("Microsoft.Test.OData.Services.ODataWCFService.Customer"));
     final ClientProperty middleName = getClient().getObjectFactory().newPrimitiveProperty("MiddleName",
@@ -116,12 +118,12 @@ public class KeyAsSegmentTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void atomUpdate() {
+  public void atomUpdate() throws URISyntaxException, IOException {
     update(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void jsonUpdate() {
+  public void jsonUpdate() throws URISyntaxException, IOException {
     update(ContentType.JSON);
   }
 }

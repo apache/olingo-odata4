@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -42,7 +44,7 @@ import org.junit.Test;
 public class OpenTypeTestITCase extends AbstractTestITCase {
 
   @Test
-  public void checkOpenTypeEntityTypesExist() {
+  public void checkOpenTypeEntityTypesExist() throws URISyntaxException, IOException {
     final Edm metadata = getClient().getRetrieveRequestFactory().
         getMetadataRequest(testOpenTypeServiceRootURL).execute().getBody();
 
@@ -53,13 +55,14 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
     assertTrue(metadata.getEntityType(new FullQualifiedName(schema.getNamespace(), "RowIndex")).isOpenType());
   }
 
-  private ClientEntity readRow(final ContentType contentType, final String uuid) {
+  private ClientEntity readRow(final ContentType contentType, final String uuid) throws URISyntaxException,
+          IOException {
     final URIBuilder builder = getClient().newURIBuilder(testOpenTypeServiceRootURL).
         appendEntitySetSegment("Row").appendKeySegment(UUID.fromString(uuid));
     return read(contentType, builder.build());
   }
 
-  private void read(final ContentType contentType) {
+  private void read(final ContentType contentType) throws URISyntaxException, IOException {
     ClientEntity row = readRow(contentType, "71f7d0dc-ede4-45eb-b421-555a2aa1e58f");
     assertEquals(EdmPrimitiveTypeKind.Double, row.getProperty("Double").getPrimitiveValue().getTypeKind());
     assertEquals(EdmPrimitiveTypeKind.Guid, row.getProperty("Id").getPrimitiveValue().getTypeKind());
@@ -69,16 +72,16 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void readAsAtom() {
+  public void readAsAtom() throws URISyntaxException, IOException {
     read(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void readAsJSON() {
+  public void readAsJSON() throws URISyntaxException, IOException {
     read(ContentType.JSON_FULL_METADATA);
   }
 
-  private void cud(final ContentType contentType) {
+  private void cud(final ContentType contentType) throws URISyntaxException, IOException {
     final Integer id = 1426;
 
     ClientEntity rowIndex = getClient().getObjectFactory().newEntity(
@@ -178,12 +181,12 @@ public class OpenTypeTestITCase extends AbstractTestITCase {
   }
 
   @Test
-  public void cudAsAtom() {
+  public void cudAsAtom() throws URISyntaxException, IOException {
     cud(ContentType.APPLICATION_ATOM_XML);
   }
 
   @Test
-  public void cudAsJSON() {
+  public void cudAsJSON() throws URISyntaxException, IOException {
     cud(ContentType.JSON_FULL_METADATA);
   }
 

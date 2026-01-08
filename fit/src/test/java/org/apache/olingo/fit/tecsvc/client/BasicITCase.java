@@ -43,8 +43,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.client.methods.HttpUriRequest;
+//import org.apache.http.Header;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.Header;
+//import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.ODataClientErrorException;
@@ -132,7 +134,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   private static final String SERVICE_ROOT_URL = "http://localhost:9080/odata-server-tecsvc/";
   
   @Test
-  public void readServiceDocument() {
+  public void readServiceDocument() throws IOException, URISyntaxException {
     ODataServiceDocumentRequest request = getClient().getRetrieveRequestFactory()
         .getServiceDocumentRequest(SERVICE_URI);
     assertNotNull(request);
@@ -150,7 +152,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readMetadata() {
+  public void readMetadata() throws URISyntaxException, IOException {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);    
@@ -178,7 +180,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readMetadataWithTerm() {
+  public void readMetadataWithTerm() throws URISyntaxException, IOException {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);
@@ -197,7 +199,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readMetadataWithAnnotations() {
+  public void readMetadataWithAnnotations() throws URISyntaxException, IOException {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);
@@ -232,7 +234,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readViaXmlMetadata() {
+  public void readViaXmlMetadata() throws URISyntaxException, IOException {
     XMLMetadataRequest request = getClient().getRetrieveRequestFactory().getXMLMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);
@@ -252,7 +254,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readEntitySet() {
+  public void readEntitySet() throws URISyntaxException, IOException {
     ODataEntitySetRequest<ClientEntitySet> request = getClient().getRetrieveRequestFactory()
         .getEntitySetRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_MIX_PRIM_COLL_COMP).build());
@@ -285,7 +287,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readEntitySetWitInlineCount() {
+  public void readEntitySetWitInlineCount() throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).
         appendEntitySetSegment("ESAllPrim").count(true);
 
@@ -299,7 +301,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readEntitySetWitNext() {
+  public void readEntitySetWitNext() throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESServerSidePaging");
 
     final ODataEntitySetRequest<ClientEntitySet> req = getClient().getRetrieveRequestFactory().
@@ -320,7 +322,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void readEntityCollectionCount() {
+  public void readEntityCollectionCount() throws URISyntaxException, IOException {
     ODataValueRequest request = getClient().getRetrieveRequestFactory()
         .getValueRequest(getClient().newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment("ESServerSidePaging").appendCountSegment().build());
@@ -683,7 +685,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readEntityWithExpandedNavigationProperty() {
+  public void readEntityWithExpandedNavigationProperty() throws URISyntaxException, IOException {
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_KEY_NAV)
         .appendKeySegment(1)
@@ -728,7 +730,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readPropertyValueFromEntityWithAlias() {
+  public void readPropertyValueFromEntityWithAlias() throws URISyntaxException, IOException {
     Map<String, Object> segmentValues = new LinkedHashMap<String, Object>();
     segmentValues.put("PropertyInt16", 1);
     segmentValues.put("KeyAlias1", 11);
@@ -757,7 +759,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void updateCollectionOfComplexCollection() {
+  public void updateCollectionOfComplexCollection() throws URISyntaxException, IOException {
     final ClientEntity entity = getFactory().newEntity(ET_KEY_NAV);
 
     entity.getProperties().add(
@@ -812,7 +814,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void createCollectionOfComplexCollection() {
+  public void createCollectionOfComplexCollection() throws IOException, URISyntaxException {
     /*
      * Create a new entity which contains a collection of complex collections
      * Check if all not filled fields are created by the server
@@ -930,11 +932,15 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
       fail("Expecting bad request");
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 
   @Test
-  public void upsert() throws EdmPrimitiveTypeException {
+  public void upsert() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     final ClientEntity entity = getFactory().newEntity(new FullQualifiedName(SERVICE_NAMESPACE, "ETTwoPrim"));
     entity.getProperties().add(getFactory().newPrimitiveProperty(PROPERTY_STRING,
         getFactory().newPrimitiveValueBuilder().buildString("Test")));
@@ -964,7 +970,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void updatePropertyWithNull() {
+  public void updatePropertyWithNull() throws URISyntaxException, IOException {
     final URI targetURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_ALL_PRIM)
         .appendKeySegment(32767)
@@ -986,7 +992,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test(expected = ODataClientErrorException.class)
-  public void updatePropertyWithNullNotAllowed() {
+  public void updatePropertyWithNullNotAllowed() throws URISyntaxException, IOException {
     final URI targetURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_KEY_NAV)
         .appendKeySegment(32767)
@@ -1000,7 +1006,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void updateMerge() {
+  public void updateMerge() throws URISyntaxException, IOException {
     final URI targetURI = getClient().newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_KEY_NAV)
         .appendKeySegment(1)
@@ -1094,7 +1100,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void updateReplace() {
+  public void updateReplace() throws URISyntaxException, IOException {
     final ODataClient client = getClient();
     final URI targetURI = client.newURIBuilder(SERVICE_URI)
         .appendEntitySetSegment(ES_KEY_NAV)
@@ -1214,7 +1220,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void createEntityWithIEEE754CompatibleParameter() {
+  public void createEntityWithIEEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
@@ -1240,7 +1246,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void createEntityWithIEEE754CompatibleParameterNull() {
+  public void createEntityWithIEEE754CompatibleParameterNull() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM).build();
@@ -1265,7 +1271,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void updateEntityWithIEEE754CompatibleParameter() {
+  public void updateEntityWithIEEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
@@ -1298,7 +1304,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void updateEntityWithIEEE754CompatibleParameterNull() {
+  public void updateEntityWithIEEE754CompatibleParameterNull() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
@@ -1350,11 +1356,15 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
       fail();
     } catch (ODataClientErrorException e) {
       assertEquals(HttpStatusCode.BAD_REQUEST.getStatusCode(), e.getStatusLine().getStatusCode());
+    } catch (URISyntaxException e) {
+        throw new RuntimeException(e);
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 
   @Test
-  public void updateEdmInt64PropertyWithIEE754CompatibleParameter() {
+  public void updateEdmInt64PropertyWithIEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
@@ -1381,7 +1391,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void updateComplexPropertyWithIEEE754CompatibleParamter() {
+  public void updateComplexPropertyWithIEEE754CompatibleParamter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
@@ -1418,7 +1428,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void updatePropertyEdmDecimalWithIEE754CompatibleParameter() {
+  public void updatePropertyEdmDecimalWithIEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
@@ -1445,7 +1455,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readESAllPrimCollectionWithIEEE754CompatibleParameter() {
+  public void readESAllPrimCollectionWithIEEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_ALL_PRIM)
@@ -1485,7 +1495,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readESKeyNavCheckComplexPropertyWithIEEE754CompatibleParameter() {
+  public void readESKeyNavCheckComplexPropertyWithIEEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI)
@@ -1514,7 +1524,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readESKEyNavComplexPropertyWithIEEE754CompatibleParameter() {
+  public void readESKEyNavComplexPropertyWithIEEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
@@ -1542,7 +1552,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
 
   @Test
   @Ignore("The client does not recognize the IEEE754Compatible content-type parameter.")
-  public void readEdmInt64PropertyWithIEEE754CompatibleParameter() {
+  public void readEdmInt64PropertyWithIEEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
@@ -1563,7 +1573,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
 
   @Test
   @Ignore("The client does not recognize the IEEE754Compatible content-type parameter.")
-  public void readEdmDecimalPropertyWithIEEE754CompatibleParameter() {
+  public void readEdmDecimalPropertyWithIEEE754CompatibleParameter() throws URISyntaxException, IOException {
     assumeTrue("There is no IEEE754Compatible content-type parameter in XML.", isJson());
 
     final URI uri = getClient().newURIBuilder(SERVICE_URI).appendEntitySetSegment(ES_KEY_NAV)
@@ -1584,7 +1594,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   
   
   @Test
-  public void test1Olingo1064() throws ODataDeserializerException {
+  public void test1Olingo1064() throws ODataDeserializerException, URISyntaxException, IOException {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);    
@@ -1610,7 +1620,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void test2Olingo1064() throws ODataDeserializerException {
+  public void test2Olingo1064() throws ODataDeserializerException, URISyntaxException, IOException {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);    
@@ -1633,7 +1643,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void test3Olingo1064() throws ODataDeserializerException {
+  public void test3Olingo1064() throws ODataDeserializerException, URISyntaxException, IOException {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);    
@@ -1655,7 +1665,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   
   @SuppressWarnings("unchecked")
   @Test
-  public void test4Olingo1064() throws ODataDeserializerException {
+  public void test4Olingo1064() throws ODataDeserializerException, URISyntaxException, IOException {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);    
@@ -1685,7 +1695,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void testOLINGO975() throws ODataDeserializerException {
+  public void testOLINGO975() throws ODataDeserializerException, URISyntaxException, IOException {
     EdmMetadataRequest request = getClient().getRetrieveRequestFactory().getMetadataRequest(SERVICE_URI);
     assertNotNull(request);
     setCookieHeader(request);    
@@ -1767,7 +1777,7 @@ public class BasicITCase extends AbstractParamTecSvcITCase {
   }
   
   @Test
-  public void issue1144() {
+  public void issue1144() throws URISyntaxException, IOException {
     FilterFactory filFactory = getClient().getFilterFactory();
     FilterArgFactory filArgFactory = filFactory.getArgFactory();
     URIFilter andFilExp = filFactory.and(filFactory.eq("d/olingo.odata.test1.CTBase/AdditionalPropString", "ADD TEST"), 

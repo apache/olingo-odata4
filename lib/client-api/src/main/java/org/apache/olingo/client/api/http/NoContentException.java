@@ -18,7 +18,7 @@
  */
 package org.apache.olingo.client.api.http;
 
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 
 /**
  * Exception to be thrown when trying to read content with HTTP status 204.

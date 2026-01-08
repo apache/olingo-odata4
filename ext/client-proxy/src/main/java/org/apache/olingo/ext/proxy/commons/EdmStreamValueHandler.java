@@ -69,10 +69,21 @@ public class EdmStreamValueHandler extends AbstractInvocationHandler {
 
   public void load() {
     if (this.uri != null) {
-      final ODataRetrieveResponse<InputStream> res =
-              getClient().getRetrieveRequestFactory().getMediaRequest(this.uri).execute();
-      contentType = res.getContentType();
-      stream = res.getBody();
+      try {
+        final ODataRetrieveResponse<InputStream> res =
+                getClient().getRetrieveRequestFactory().getMediaRequest(this.uri).execute();
+        contentType = res.getContentType();
+        stream = res.getBody();
+      } catch (java.net.URISyntaxException e) {
+        LOG.warn("Invalid media URI '" + uri + "'", e);
+        throw new IllegalArgumentException("Invalid media URI: " + uri, e);
+      } catch (java.io.IOException e) {
+        LOG.warn("I/O error while retrieving media from '" + uri + "'", e);
+        throw new IllegalArgumentException("I/O error while retrieving media: " + uri, e);
+      } catch (Exception e) {
+        LOG.warn("Error while retrieving media from '" + uri + "'", e);
+        throw new IllegalArgumentException("Error retrieving media: " + uri, e);
+      }
     }
   }
 

@@ -23,8 +23,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -253,7 +255,7 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void airtCollStringTwoParamNotNull() {
+  public void airtCollStringTwoParamNotNull() throws IOException, URISyntaxException {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters.put("ParameterInt16", getFactory().newPrimitiveValueBuilder().buildInt16((short) 2));
     parameters.put("ParameterDuration", getFactory().newPrimitiveValueBuilder().buildDuration(BigDecimal.valueOf(1)));
@@ -269,7 +271,7 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void airtCollStringTwoParamNull() {
+  public void airtCollStringTwoParamNull() throws IOException, URISyntaxException {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters.put("ParameterInt16", getFactory().newPrimitiveValueBuilder().buildInt16((short) 2));
     parameters.put("ParameterDuration", getFactory().newPrimitiveValueBuilder().buildDuration(null));
@@ -286,7 +288,7 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void allParameterKinds() {
+  public void allParameterKinds() throws IOException, URISyntaxException {
     Map<String, ClientValue> parameters = new HashMap<String, ClientValue>();
     parameters.put("ParameterEnum", getFactory().newEnumValue(null, "String3"));
     parameters.put("ParameterDef", getFactory().newPrimitiveValueBuilder().build());
@@ -317,7 +319,8 @@ public class ActionImportITCase extends AbstractParamTecSvcITCase {
   }
 
   private <T extends ClientInvokeResult> ODataInvokeResponse<T> callAction(final String name,
-      final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal) {
+      final Class<T> resultRef, final Map<String, ClientValue> parameters, final boolean returnMinimal)
+          throws URISyntaxException, IOException {
     assumeTrue("The client would send wrongly formatted parameters in XML.",
         parameters == null || parameters.isEmpty() || isJson());  // TODO: XML case
     final URI actionURI = getClient().newURIBuilder(TecSvcConst.BASE_URI).appendActionCallSegment(name).build();

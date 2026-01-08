@@ -35,15 +35,16 @@ import java.util.regex.Pattern;
 import javax.xml.datatype.Duration;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.net.URIBuilder;
 import org.apache.olingo.commons.core.Encoder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.client.api.http.HttpClientFactory;
@@ -292,16 +293,17 @@ public final class URIUtils {
         throw new ODataRuntimeException("While reading input for not chunked encoding", e);
       }
 
-      entity = new ByteArrayEntity(bytes);
+      entity = new ByteArrayEntity(bytes, ContentType.APPLICATION_OCTET_STREAM);
     } else {
-      entity = new InputStreamEntity(input, -1);
+      entity = new InputStreamEntity(input, -1, ContentType.APPLICATION_OCTET_STREAM);
     }
 
     if (!useChunked && entity.getContentLength() < 0) {
       useChunked = true;
     }
     // both entities can be sent in chunked way or not
-    entity.setChunked(useChunked);
+    // No explicit setChunked call is required with HttpCore5.
+    //entity.setChunked(useChunked);
 
     return entity;
   }

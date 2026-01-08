@@ -18,10 +18,11 @@
  */
 package org.apache.olingo.client.api.communication;
 
-import org.apache.http.StatusLine;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.olingo.commons.api.ex.ODataRuntimeException;
 
 import java.io.InputStream;
+import org.apache.olingo.client.api.communication.response.ODataResponse;
 
 /**
  * Represents a server error in OData.
@@ -49,6 +50,23 @@ public class ODataServerErrorException extends ODataRuntimeException {
    */
   public ODataServerErrorException(final StatusLine statusLine, final InputStream rawResponse) {
     super(statusLine.toString());
+    this.rawResponse = rawResponse;
+  }
+
+  /**
+   * Construct from an ODataResponse to avoid depending on HttpComponents StatusLine in callers.
+   * This is a convenience overload used by modules that only have an ODataResponse instance.
+   */
+  public ODataServerErrorException(final ODataResponse response) {
+    this(response == null ? "" : (response.getStatusCode() + " " + response.getStatusMessage()),
+        response == null ? null : response.getRawResponse());
+  }
+
+  /**
+   * Construct with explicit status text and raw response stream.
+   */
+  public ODataServerErrorException(final String statusText, final InputStream rawResponse) {
+    super(statusText);
     this.rawResponse = rawResponse;
   }
 

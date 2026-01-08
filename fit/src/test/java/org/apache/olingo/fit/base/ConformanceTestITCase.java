@@ -23,7 +23,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.olingo.client.api.communication.request.AsyncRequestFactory;
 import org.apache.olingo.client.api.communication.request.AsyncRequestWrapper;
@@ -57,7 +59,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
    * 4. MUST follow redirects (section 9.1.5).
    */
   @Test
-  public void item4() {
+  public void item4() throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("redirect").
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 
@@ -79,7 +81,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
    * 6. MUST support instances returning properties and navigation properties not specified in metadata (section 11.2).
    */
   @Test
-  public void item6() {
+  public void item6() throws URISyntaxException, IOException {
     final Integer id = 2000;
 
     ClientEntity rowIndex = getClient().getObjectFactory().newEntity(
@@ -122,7 +124,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
    * 10. MAY support deleted entities, link entities, deleted link entities in a delta response (section 11.3).
    */
   @Test
-  public void item10() {
+  public void item10() throws URISyntaxException, IOException {
     final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
         client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
     req.setPrefer(client.newPreferences().trackChanges());
@@ -169,7 +171,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
    * 10. MAY support deleted entities, link entities, deleted link entities in a delta response for asynch req.
    */
   @Test
-  public void itemAsynch10() {
+  public void itemAsynch10() throws URISyntaxException, IOException {
 
     final ODataEntitySetRequest<ClientEntitySet> req = client.getRetrieveRequestFactory().getEntitySetRequest(
         client.newURIBuilder(testStaticServiceRootURL).appendEntitySetSegment("Customers").build());
@@ -210,7 +212,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
    * 11. MAY support asynchronous responses (section 9.1.3).
    */
   @Test
-  public void item11() {
+  public void item11() throws IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("async").appendEntitySetSegment("Orders");
 
@@ -237,7 +239,7 @@ public class ConformanceTestITCase extends AbstractTestITCase {
    * 12. MAY support odata.metadata=minimal in a JSON response (see [OData-JSON]).
    */
   @Test
-  public void item12() {
+  public void item12() throws URISyntaxException, IOException {
     final URIBuilder uriBuilder = client.newURIBuilder(testStaticServiceRootURL).
         appendEntitySetSegment("Customers").appendKeySegment(1).expand("Company");
 

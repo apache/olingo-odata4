@@ -23,6 +23,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -41,7 +43,7 @@ import org.junit.Test;
 public class ExpandSelectITCase extends AbstractParamTecSvcITCase {
 
   @Test
-  public void readSelect() {
+  public void readSelect() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESAllPrim").appendKeySegment(Short.MAX_VALUE)
@@ -73,7 +75,7 @@ public class ExpandSelectITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readExpandSelect() {
+  public void readExpandSelect() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(-365)
@@ -124,7 +126,7 @@ public class ExpandSelectITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void readExpandTwoLevels() {
+  public void readExpandTwoLevels() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESTwoPrim").appendKeySegment(32767)
@@ -167,7 +169,7 @@ public class ExpandSelectITCase extends AbstractParamTecSvcITCase {
   }
 
   @Test
-  public void expandSingleValuedNavigationPropertyWithNullValue() {
+  public void expandSingleValuedNavigationPropertyWithNullValue() throws URISyntaxException, IOException {
     ODataEntityRequest<ClientEntity> request = getEdmEnabledClient().getRetrieveRequestFactory()
         .getEntityRequest(getClient().newURIBuilder(TecSvcConst.BASE_URI)
             .appendEntitySetSegment("ESKeyNav").appendKeySegment(3).expand("NavPropertyETKeyNavOne").build());

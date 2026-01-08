@@ -21,9 +21,11 @@ package org.apache.olingo.client.core.communication.request.retrieve;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.retrieve.ODataDeltaRequest;
 import org.apache.olingo.client.api.communication.response.ODataRetrieveResponse;
@@ -47,8 +49,8 @@ public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ClientDe
   }
 
   @Override
-  public ODataRetrieveResponse<ClientDelta> execute() {
-    final HttpResponse res = doExecute();
+  public ODataRetrieveResponse<ClientDelta> execute() throws URISyntaxException, IOException {
+    final ClassicHttpResponse res = doExecute();
     return new ODataDeltaResponseImpl(odataClient, httpClient, res);
   }
 
@@ -56,14 +58,14 @@ public class ODataDeltaRequestImpl extends AbstractODataRetrieveRequest<ClientDe
 
     private ClientDelta delta = null;
 
-    private ODataDeltaResponseImpl(final ODataClient odataClient, final HttpClient httpClient,
-        final HttpResponse res) {
+    private ODataDeltaResponseImpl(final ODataClient odataClient, final CloseableHttpClient httpClient,
+        final ClassicHttpResponse res) {
 
       super(odataClient, httpClient, res);
     }
 
     @Override
-    public ClientDelta getBody() {
+    public ClientDelta getBody() throws IOException {
       if (delta == null) {
         try {
           InputStream content;

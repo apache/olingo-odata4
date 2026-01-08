@@ -15,7 +15,10 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.olingo.client.api.ODataClient;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityCreateRequest;
 import org.apache.olingo.client.api.communication.request.cud.ODataEntityUpdateRequest;
@@ -66,7 +69,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
    * 1. MUST specify the OData-MaxVersion header in requests (section 8.2.6).
    */
   @Test
-  public void isOdataMaxVersion() {
+  public void isOdataMaxVersion() throws URISyntaxException, IOException {
     final ODataClient client = getClient();
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESAllPrim")
         .appendKeySegment(32767);
@@ -83,7 +86,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
    * 2. MUST specify OData-Version (section 8.1.5) and Content-Type (section 8.1.1) in any request with a payload.
    */
   @Test
-  public void checkClientWithPayloadHeader() {
+  public void checkClientWithPayloadHeader() throws URISyntaxException, IOException {
     assumeTrue("json conformance test with content type", isJson());
 
     ClientEntity newEntity = getFactory().newEntity(ET_ALL_PRIM);
@@ -121,7 +124,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
    * 5. MUST correctly handle next links (section 11.2.5.7).
    */
   @Test
-  public void handleNextLinks() {
+  public void handleNextLinks() throws URISyntaxException, IOException {
     final ODataClient client = getClient();
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_URI).appendEntitySetSegment("ESServerSidePaging");
 
@@ -151,7 +154,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
    * 7. MUST generate PATCH requests for updates, if the client supports updates (section 11.4.3).
    **/
   @Test
-  public void patchEntityRequestForUpdates() {
+  public void patchEntityRequestForUpdates() throws URISyntaxException, IOException {
     final ODataClient client = getClient();
     final ClientEntity patch = client.getObjectFactory().newEntity(ET_TWO_PRIM);     
     final URI uri = client.newURIBuilder(SERVICE_URI)
@@ -185,7 +188,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
    * TODO: correct client FIT test for https authentication
    */  
   @Test
-  public void basicHttpsAuthentication() {
+  public void basicHttpsAuthentication() throws URISyntaxException, IOException {
     final ODataClient client = getClient();
     client.getConfiguration()
             .setHttpClientFactory(new BasicAuthHttpClientFactory("odatajclient", "odatajclient"));
@@ -207,7 +210,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
    * 9. MAY request entity references in place of entities previously returned in the response (section 11.2.7).
    */
   @Test
-  public void entityNavigationReference() {
+  public void entityNavigationReference() throws URISyntaxException, IOException {
     final ODataClient client = getClient();
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_URI)
             .appendEntitySetSegment(ES_TWO_PRIM)
@@ -229,7 +232,7 @@ public class ConformanceITCase extends AbstractParamTecSvcITCase {
    * 12. MAY support odata.metadata=minimal in a JSON response (see [OData-JSON]).
    */
   @Test
-  public void supportMetadataMinimal() {
+  public void supportMetadataMinimal() throws URISyntaxException, IOException {
     assumeTrue("format should be json", isJson());
     ODataClient client = getClient();
     final URIBuilder uriBuilder = client.newURIBuilder(SERVICE_URI)

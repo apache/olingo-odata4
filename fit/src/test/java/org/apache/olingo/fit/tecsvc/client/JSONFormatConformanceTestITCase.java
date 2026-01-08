@@ -15,7 +15,9 @@
  */
 package org.apache.olingo.fit.tecsvc.client;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.olingo.client.api.EdmEnabledODataClient;
@@ -42,7 +44,7 @@ public class JSONFormatConformanceTestITCase extends AbstractParamTecSvcITCase  
    * .
    */
   @Test
-  public void item1() throws EdmPrimitiveTypeException {
+  public void item1() throws EdmPrimitiveTypeException, URISyntaxException, IOException {
     assumeTrue("json conformance test with content type", isJson());
     final EdmEnabledODataClient edmClient = getEdmEnabledClient();
     Map<String, Object> segmentValues = new LinkedHashMap<String, Object>();

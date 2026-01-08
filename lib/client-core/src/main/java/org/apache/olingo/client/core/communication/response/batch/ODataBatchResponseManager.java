@@ -34,6 +34,7 @@ import org.apache.olingo.client.core.communication.request.batch.ODataBatchUtili
 import org.apache.olingo.client.core.communication.request.batch.ODataChangesetResponseItem;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.http.HttpHeader;
+import org.apache.olingo.client.api.http.HttpClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +107,11 @@ public class ODataBatchResponseManager implements Iterator<ODataBatchResponseIte
   @Override
   public ODataBatchResponseItem next() {
     if (current != null) {
-      current.close();
+      try {
+        current.close();
+      } catch (final IOException e) {
+        throw new HttpClientException("Error closing previous batch response item", e);
+      }
     }
 
     if (!hasNext()) {
